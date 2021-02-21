@@ -8,7 +8,7 @@ If you want to contribute you can join the discussion in the [SirActionSlacks di
 
 1. Make sure you have [Node.js](https://nodejs.org/) installed.
 1. Create a fork of this repository and clone it.
-2. Open terminal in that directory and run `npm install` to install dependencies. You also should run `npm update` once in a while to get tool updates.
+2. Open terminal in that directory and run `npm install` to install dependencies.
 3. To compile the code run `npm run dev` in a terminal, or if you are using VSCode you can press `Ctrl+Shfit+B`. This will start a watcher that automatically compiles any code changes you make as long as it's running.
 4. Open the dota workshop tools for the dota-tutorial addon and open Console from the asset browser.
 5. Start the map with `dota_launch_custom_game dota-tutorial dota`. Once the map is running you can restart it with `restart` and reload script with `script_reload`.
