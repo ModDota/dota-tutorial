@@ -1,5 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { findAllPlayers } from "./util";
+import { tutFork, tutSeq } from "./TutorialGraph/Core";
+import { tutGoToLocation, tutSpawnAndKillUnit } from "./TutorialGraph/Steps";
 
 declare global {
     interface CDOTAGamerules {
@@ -74,7 +76,21 @@ export class GameMode {
     private StartGame(): void {
         print("Game starting!");
 
-        // Do some stuff here
+        // Example tutorial graph.
+        // Sequence:
+        // 1. Wait for hero to go to location (0, 0, 0)
+        // 2. Spawn hero at (1000, 0, 0) and wait until it dies
+        // 3. Spawn two heroes at (1500, 0, 0) and wait for both of them to die
+        const tutorial = tutSeq(
+            tutGoToLocation(Vector(0, 0, 0)),
+            tutSpawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0)),
+            tutFork(
+                tutSpawnAndKillUnit("npc_dota_hero_luna", Vector(1500, 0, 0)),
+                tutSpawnAndKillUnit("npc_dota_hero_luna", Vector(1500, 0, 0))
+            )
+        )
+
+        tutorial.start({}, () => print("Tutorial was completed"))
     }
 
     // Called on script_reload
