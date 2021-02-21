@@ -6,5 +6,6 @@
         "types": ["@moddota/panorama-types"],
         "moduleResolution": "node",
         "strict": true
-    }
+    },
+    "include": ["**/*.ts", "../../../../common/**/*.d.ts"]
 }
