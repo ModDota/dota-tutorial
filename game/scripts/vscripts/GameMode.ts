@@ -1,7 +1,4 @@
 import { reloadable } from "./lib/tstl-utils";
-import "./modifiers/modifier_panic";
-
-const heroSelectionTime = 10;
 
 declare global {
     interface CDOTAGamerules {
@@ -31,17 +28,28 @@ export class GameMode {
         GameRules.SetCustomGameTeamMaxPlayers(DOTATeam_t.DOTA_TEAM_BADGUYS, 3);
 
         GameRules.SetShowcaseTime(0);
-        GameRules.SetHeroSelectionTime(heroSelectionTime);
+        GameRules.SetStrategyTime(0);
     }
 
     public OnStateChange(): void {
         const state = GameRules.State_Get();
 
-        // Add 4 bots to lobby in tools
-        if (IsInToolsMode() && state == DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
-            for (let i = 0; i < 4; i++) {
-                Tutorial.AddBot("npc_dota_hero_lina", "", "", false);
-            }
+        if (state == DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
+            Timers.CreateTimer(0.2, () => GameRules.FinishCustomGameSetup());
+        }
+
+        print(`OnStateChanged", ${state}`);
+        if (state == DOTA_GameState.DOTA_GAMERULES_STATE_HERO_SELECTION) {
+            Timers.CreateTimer(0.2, () => {
+                print("Hero Selection timer fired");
+                for (const pID of $range(0, DOTALimits_t.DOTA_MAX_PLAYERS)) {
+                    if (PlayerResource.IsValidPlayerID(pID) && !PlayerResource.HasSelectedHero(pID)) {
+                        PlayerResource.GetPlayer(pID)?.SetSelectedHero("npc_dota_hero_dragon_knight")
+                        print(`Assigned ${pID} to "npc_dota_hero_dragon_knight"`);
+                    }
+                }
+            })
+
         }
 
         // Start game once pregame hits
@@ -64,17 +72,6 @@ export class GameMode {
     }
 
     private OnNpcSpawned(event: NpcSpawnedEvent) {
-        // After a hero unit spawns, apply modifier_panic for 8 seconds
-        const unit = EntIndexToHScript(event.entindex) as CDOTA_BaseNPC; // Cast to npc since this is the 'npc_spawned' event
-        if (unit.IsRealHero()) {
-            Timers.CreateTimer(1, () => {
-                unit.AddNewModifier(unit, undefined, "modifier_panic", { duration: 8 });
-            });
 
-            if (!unit.HasAbility("meepo_earthbind_ts_example")) {
-                // Add lua ability to the unit
-                unit.AddAbility("meepo_earthbind_ts_example");
-            }
-        }
     }
 }

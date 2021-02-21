@@ -3,7 +3,7 @@
         "rootDir": ".",
         "target": "esnext",
         "lib": ["esnext"],
-        "types": ["@moddota/dota-lua-types"],
+        "types": ["@moddota/dota-lua-types", "typescript-to-lua/language-extensions"],
         "plugins": [{ "transform": "@moddota/dota-lua-types/transformer" }],
         "moduleResolution": "node",
         "experimentalDecorators": true,
