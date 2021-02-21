@@ -1,4 +1,5 @@
 import { reloadable } from "./lib/tstl-utils";
+import { findAllPlayers } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -27,34 +28,41 @@ export class GameMode {
         GameRules.SetCustomGameTeamMaxPlayers(DOTATeam_t.DOTA_TEAM_GOODGUYS, 3);
         GameRules.SetCustomGameTeamMaxPlayers(DOTATeam_t.DOTA_TEAM_BADGUYS, 3);
 
+        GameRules.SetSameHeroSelectionEnabled(true);
         GameRules.SetShowcaseTime(0);
         GameRules.SetStrategyTime(0);
     }
 
     public OnStateChange(): void {
         const state = GameRules.State_Get();
+        print(`OnStateChanged", ${state}`);
 
-        if (state == DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
+        if (state === DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
+
+            for (const pID of findAllPlayers()) {
+                print(`Assigning ${pID} to radiant`)
+                PlayerResource.SetCustomTeamAssignment(pID, DOTATeam_t.DOTA_TEAM_GOODGUYS);
+            }
+
+            // Finish setup phase
             Timers.CreateTimer(0.2, () => GameRules.FinishCustomGameSetup());
         }
 
-        print(`OnStateChanged", ${state}`);
-        if (state == DOTA_GameState.DOTA_GAMERULES_STATE_HERO_SELECTION) {
+        if (state === DOTA_GameState.DOTA_GAMERULES_STATE_HERO_SELECTION) {
             Timers.CreateTimer(0.2, () => {
-                print("Hero Selection timer fired");
-                for (const pID of $range(0, DOTALimits_t.DOTA_MAX_PLAYERS)) {
-                    if (PlayerResource.IsValidPlayerID(pID) && !PlayerResource.HasSelectedHero(pID)) {
-                        PlayerResource.GetPlayer(pID)?.SetSelectedHero("npc_dota_hero_dragon_knight")
-                        print(`Assigned ${pID} to "npc_dota_hero_dragon_knight"`);
-                    }
+
+                const playersWithoutHero = findAllPlayers().filter(pID => !PlayerResource.HasSelectedHero(pID));
+                for (const pID of playersWithoutHero) {
+                    print(`Assigning ${pID} hero "npc_dota_hero_dragon_knight"`);
+                    PlayerResource.GetPlayer(pID)!.SetSelectedHero("npc_dota_hero_dragon_knight");
                 }
             })
 
         }
 
         // Start game once pregame hits
-        if (state == DOTA_GameState.DOTA_GAMERULES_STATE_PRE_GAME) {
-            Timers.CreateTimer(0.2, () => this.StartGame());
+        if (state === DOTA_GameState.DOTA_GAMERULES_STATE_PRE_GAME) {
+            Timers.CreateTimer(3, () => this.StartGame());
         }
     }
 
