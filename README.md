@@ -1,20 +1,20 @@
-# ModDota template
+# DOTA 2 Tutorial
 
-A template for Dota 2 Custom Games built with modern technologies. It includes
+This repository contains the community tutorial project as explained [in SirActionSlacks' video](https://www.youtube.com/watch?v=CQK6t8T77yg).
 
-- [TypeScript for Panorama](https://moddota.com/panorama/introduction-to-panorama-ui-with-typescript)
-- [TypeScript for VScripts](https://typescripttolua.github.io/)
-- Simple commands to build and launch your custom game
-- [Continuous Integration](#continuous-integration) support
+If you want to contribute you can join the discussion in the [SirActionSlacks discord](https://discord.gg/mKDAZnM).
 
 ## Getting Started
 
-1. Clone this repository or, if you're planning to have a repository for your custom game on GitHub, [create a new repository from this template](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) and clone it instead.
-2. Open the directory of your custom game and change `name` field in `package.json` file to the name of your addon name.
-3. Open terminal in that directory and run `npm install` to install dependencies. You also should run `npm update` once in a while to get tool updates.
+1. Make sure you have [Node.js](https://nodejs.org/) installed.
+1. Create a fork of this repository and clone it.
+2. Open terminal in that directory and run `npm install` to install dependencies. You also should run `npm update` once in a while to get tool updates.
+3. To compile the code run `npm run dev` in a terminal, or if you are using VSCode you can press `Ctrl+Shfit+B`. This will start a watcher that automatically compiles any code changes you make as long as it's running.
+4. Open the dota workshop tools for the dota-tutorial addon and open Console from the asset browser.
+5. Start the map with `dota_launch_custom_game dota-tutorial dota`. Once the map is running you can restart it with `restart` and reload script with `script_reload`.
 
-After that you can press `Ctrl+Shift+B` in VSCode or run `npm run dev` command in terminal to compile your code and watch for changes.
+## Contributing
 
-## Continuous Integration
+Anyone can contribute by submitting a pull request to this repository with proposed changes, we will review your changes to make sure everything is in line with the project and then merge it.
 
-This template includes a [GitHub Actions](https://github.com/features/actions) [workflow](.github/workflows/ci.yml) that builds your custom game on every commit and fails when there are type errors.
+Please use [the discord](https://discord.gg/mKDAZnM) to coordinate on what to do or if you need some help.

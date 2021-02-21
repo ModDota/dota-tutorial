@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "**/*.js": true,
+        "**/node_modules/": true,
+        "**/*.bin": true,
+        "**/vscripts/**/*.lua": true,
+    }
+}
