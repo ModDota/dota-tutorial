@@ -28,9 +28,8 @@ export class GameMode {
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
         ListenToGameEvent("npc_spawned", event => this.OnNpcSpawned(event), undefined);
 
-        // TODO: Remove later, this is just an example
-        CustomGameEventManager.RegisterListener("my_custom_event", (_, event) => {
-            print(event.bar)
+        CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
+            print("Request to skip to section:", event.section);
         })
     }
 
