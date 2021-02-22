@@ -14,14 +14,25 @@ export type TutorialStep = {
      * Called when the step is started. Should call complete when the step is done. Can use context to share data with other steps.
      */
     start: (context: TutorialContext, complete: () => void) => void
+
+    /**
+     * Called when we want the step to stop its execution. Should cleanup any resources it uses too such as timers and spawned units.
+     */
+    stop: (context: TutorialContext) => void
 }
 
 /**
- * Creates a tutorial step given the start function.
+ * Creates a tutorial step given the start function and optionally the stop function.
  * @param start Called when the step is started. Should call complete when the step is done. Can use context to share data with other steps.
+ * @param stop Called when we want the step to stop its execution. Should cleanup any resources it uses too such as timers and spawned units. If not passed, does nothing on stop.
  */
-export const step = (start: (context: TutorialContext, complete: () => void) => void): TutorialStep => {
-    return { start }
+export const step = (start: (context: TutorialContext, complete: () => void) => void, stop?: (context: TutorialContext) => void): TutorialStep => {
+    // Default implementation for stop does nothing.
+    if (!stop) {
+        stop = () => { }
+    }
+
+    return { start, stop }
 }
 
 /**
@@ -42,7 +53,7 @@ export const fork = (...steps: TutorialStep[]): TutorialStep => {
                 }
             })
         }
-    })
+    }, context => steps.forEach(step => step.stop(context)))
 }
 
 /**
@@ -62,5 +73,5 @@ export const seq = (...steps: TutorialStep[]): TutorialStep => {
         }
 
         startStep(0)
-    })
+    }, context => steps.forEach(step => step.stop(context)))
 }
