@@ -1,7 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { findAllPlayers } from "./util";
 import { tutFork, tutSeq } from "./TutorialGraph/Core";
-import { tutGoToLocation, tutSpawnAndKillUnit } from "./TutorialGraph/Steps";
+import { tutGoToLocation, tutSetCameraTarget, tutSpawnAndKillUnit, tutWait } from "./TutorialGraph/Steps";
 
 declare global {
     interface CDOTAGamerules {
@@ -78,10 +78,20 @@ export class GameMode {
 
         // Example tutorial graph.
         // Sequence:
-        // 1. Wait for hero to go to location (0, 0, 0)
-        // 2. Spawn hero at (1000, 0, 0) and wait until it dies
-        // 3. Spawn two heroes at (1500, 0, 0) and wait for both of them to die
+        // 1. Focus camera on dire ancient
+        // 2. Focus camera on dragon knight (our hero hopefully)
+        // 3. Free camera
+        // 4. Wait for hero to go to location (0, 0, 0)
+        // 5. Spawn hero at (1000, 0, 0) and wait until it dies
+        // 6. Spawn two heroes at (1500, 0, 0) and wait for both of them to die
         const tutorial = tutSeq(
+            tutWait(3),
+            tutSetCameraTarget(Entities.FindAllByName("dota_badguys_fort")[0]),
+            tutWait(5),
+            tutSetCameraTarget(Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
+            tutWait(2),
+            tutSetCameraTarget(undefined),
+            tutWait(2),
             tutGoToLocation(Vector(0, 0, 0)),
             tutSpawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0)),
             tutFork(
