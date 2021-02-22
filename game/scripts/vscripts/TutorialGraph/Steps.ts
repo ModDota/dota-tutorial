@@ -1,3 +1,4 @@
+import { findAllPlayers } from "../util"
 import { tutStep } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
@@ -48,5 +49,30 @@ export const tutSpawnAndKillUnit = (unitName: string, spawnLocation: Vector) => 
         }
 
         checkIsDead()
+    }, () => { })
+}
+
+/**
+ * Waits for an amount of time until completion
+ * @param waitSeconds Time to wait before completion
+ */
+export const tutWait = (waitSeconds: number) => {
+    return tutStep((context, complete) => {
+        Timers.CreateTimer(waitSeconds, () => complete())
+    }, () => { })
+}
+
+/**
+ * Focuses the camera to a target or frees it.
+ * @param target Target to focus the camera on. Can be undefined for freeing the camera.
+ */
+export const tutSetCameraTarget = (target: CBaseEntity | undefined) => {
+    return tutStep((context, complete) => {
+        const playerIds = findAllPlayers()
+
+        // Focus all cameras on the target
+        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, target))
+
+        complete()
     }, () => { })
 }
