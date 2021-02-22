@@ -85,17 +85,17 @@ export const registerModifier = (name?: string) => (modifier: new () => CDOTA_Mo
         }
     };
 
-    let type = LuaModifierType.LUA_MODIFIER_MOTION_NONE;
+    let type = LuaModifierMotionType.NONE;
     let base = (modifier as any).____super;
     while (base) {
         if (base === BaseModifierMotionBoth) {
-            type = LuaModifierType.LUA_MODIFIER_MOTION_BOTH;
+            type = LuaModifierMotionType.BOTH;
             break;
         } else if (base === BaseModifierMotionHorizontal) {
-            type = LuaModifierType.LUA_MODIFIER_MOTION_HORIZONTAL;
+            type = LuaModifierMotionType.HORIZONTAL;
             break;
         } else if (base === BaseModifierMotionVertical) {
-            type = LuaModifierType.LUA_MODIFIER_MOTION_VERTICAL;
+            type = LuaModifierMotionType.VERTICAL;
             break;
         }
 
