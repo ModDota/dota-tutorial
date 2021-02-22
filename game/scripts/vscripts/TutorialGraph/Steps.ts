@@ -1,5 +1,5 @@
 import { findAllPlayers } from "../util"
-import { tutStep } from "./Core"
+import { step } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DOTATeam_t.DOTA_TEAM_GOODGUYS, location, undefined, radius,
@@ -13,8 +13,8 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
  * Creates a tutorial step that waits for a hero to go to a location.
  * @param location Target location
  */
-export const tutGoToLocation = (location: Vector) => {
-    return tutStep((context, complete) => {
+export const goToLocation = (location: Vector) => {
+    return step((context, complete) => {
         Tutorial.CreateLocationTask(location)
 
         // Wait until a hero is at the goal location
@@ -27,7 +27,7 @@ export const tutGoToLocation = (location: Vector) => {
         }
 
         checkIsAtGoal()
-    }, () => { })
+    })
 }
 
 /**
@@ -35,8 +35,8 @@ export const tutGoToLocation = (location: Vector) => {
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
  */
-export const tutSpawnAndKillUnit = (unitName: string, spawnLocation: Vector) => {
-    return tutStep((context, complete) => {
+export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector) => {
+    return step((context, complete) => {
         const unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_NEUTRALS)
 
         // Wait until the unit dies
@@ -49,30 +49,30 @@ export const tutSpawnAndKillUnit = (unitName: string, spawnLocation: Vector) => 
         }
 
         checkIsDead()
-    }, () => { })
+    })
 }
 
 /**
  * Waits for an amount of time until completion
  * @param waitSeconds Time to wait before completion
  */
-export const tutWait = (waitSeconds: number) => {
-    return tutStep((context, complete) => {
+export const wait = (waitSeconds: number) => {
+    return step((context, complete) => {
         Timers.CreateTimer(waitSeconds, () => complete())
-    }, () => { })
+    })
 }
 
 /**
  * Focuses the camera to a target or frees it.
  * @param target Target to focus the camera on. Can be undefined for freeing the camera.
  */
-export const tutSetCameraTarget = (target: CBaseEntity | undefined) => {
-    return tutStep((context, complete) => {
+export const setCameraTarget = (target: CBaseEntity | undefined) => {
+    return step((context, complete) => {
         const playerIds = findAllPlayers()
 
         // Focus all cameras on the target
         playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, target))
 
         complete()
-    }, () => { })
+    })
 }

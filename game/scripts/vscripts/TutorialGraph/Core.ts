@@ -14,30 +14,24 @@ export type TutorialStep = {
      * Called when the step is started. Should call complete when the step is done. Can use context to share data with other steps.
      */
     start: (context: TutorialContext, complete: () => void) => void
-
-    /**
-     * Called when the step is supposed to reset to its initial step.
-     */
-    reset: () => void
 }
 
 /**
- * Creates a tutorial step given the start and reset functions.
+ * Creates a tutorial step given the start function.
  * @param start Called when the step is started. Should call complete when the step is done. Can use context to share data with other steps.
- * @param reset Called when the step is supposed to reset to its initial state.
  */
-export const tutStep = (start: (context: TutorialContext, complete: () => void) => void, reset: () => void): TutorialStep => {
-    return { start, reset }
+export const step = (start: (context: TutorialContext, complete: () => void) => void): TutorialStep => {
+    return { start }
 }
 
 /**
  * Creates a tutorial step that waits for steps to complete in parallel before completing itself.
  * @param steps List of tutorial steps to wrap in parallel.
  */
-export const tutFork = (...steps: TutorialStep[]): TutorialStep => {
+export const fork = (...steps: TutorialStep[]): TutorialStep => {
     const stepsCompleted = steps.map(s => false)
 
-    return tutStep((context, onComplete) => {
+    return step((context, onComplete) => {
         // Once all steps are completed, complete ourselves
         for (let i = 0; i < steps.length; i++) {
             const stepIndex = i
@@ -48,15 +42,15 @@ export const tutFork = (...steps: TutorialStep[]): TutorialStep => {
                 }
             })
         }
-    }, () => steps.forEach(step => step.reset()))
+    })
 }
 
 /**
  * Creates a tutorial step that executes individual steps one after another. The step completes when the final step was completed.
  * @param steps List of tutorial steps to wrap sequentially.
  */
-export const tutSeq = (...steps: TutorialStep[]): TutorialStep => {
-    return tutStep((context, onComplete) => {
+export const seq = (...steps: TutorialStep[]): TutorialStep => {
+    return step((context, onComplete) => {
         const startStep = (i: number) => {
             const step = steps[i]
 
@@ -68,5 +62,5 @@ export const tutSeq = (...steps: TutorialStep[]): TutorialStep => {
         }
 
         startStep(0)
-    }, () => steps.forEach(step => step.reset()))
+    })
 }
