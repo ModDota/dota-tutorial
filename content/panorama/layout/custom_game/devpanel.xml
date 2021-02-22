@@ -1,0 +1,18 @@
+<root>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/devpanel.js" />
+    </scripts>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/devpanel.css" />
+    </styles>
+    <snippets>
+
+    </snippets>
+
+    <Panel class="DevPanel Collapsed">
+        <Label id="CollapseButton" text="^  DEV  ^" />
+
+        <!-- Container to hold section jumping buttons -->
+        <Panel id="ButtonContainer" />
+    </Panel>
+</root>

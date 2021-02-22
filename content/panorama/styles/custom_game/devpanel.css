@@ -1,0 +1,49 @@
+.DevPanel {
+    horizontal-align: right;
+    vertical-align: middle;
+
+    width: 400px;
+    height: 400px;
+    background-color: red;
+
+    transition: position 0.1s ease-in-out 0.0s;
+}
+
+#CollapseButton {
+    width: 400px;
+    height: 30px;
+    color: white;
+    font-weight: bold;
+    font-size: 24;
+    text-align: center;
+    background-color: blue;
+    transform: rotateZ(-90deg);
+    position: -185px 0px 0px;
+    vertical-align: center;
+}
+
+.Collapsed {
+    position: 370px 0px 0px;
+}
+
+#ButtonContainer {
+    position: 30px 0px 0px;
+    height: 400px;
+    width: 370px;
+    flow-children: down;
+}
+
+.SkipButton {
+    background-color: black;
+    color: white;
+    width: 250px;
+    height: 35px;
+    horizontal-align: center;
+    text-align: center;
+    font-size: 30;
+    margin-top: 10px;
+}
+
+.SkipButton:hover {
+    background-color: #333333;
+}

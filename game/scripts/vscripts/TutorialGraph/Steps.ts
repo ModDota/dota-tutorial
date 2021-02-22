@@ -1,11 +1,11 @@
-import { findAllPlayers } from "../util"
+import { findAllPlayersID } from "../util"
 import { step } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
-    DOTATeam_t.DOTA_TEAM_GOODGUYS, location, undefined, radius,
-    DOTA_UNIT_TARGET_TEAM.DOTA_UNIT_TARGET_TEAM_BOTH,
-    DOTA_UNIT_TARGET_TYPE.DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_TYPE.DOTA_UNIT_TARGET_HERO,
-    DOTA_UNIT_TARGET_FLAGS.DOTA_UNIT_TARGET_FLAG_NONE,
+    DotaTeam.BADGUYS, location, undefined, radius,
+    UnitTargetTeam.BOTH,
+    UnitTargetType.HERO,
+    UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
     0, false
 ).length > 0
 
@@ -47,7 +47,7 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector) => {
     let checkTimer: string | undefined = undefined
 
     return step((context, complete) => {
-        unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_NEUTRALS)
+        unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
 
         // Wait until the unit dies
         const checkIsDead = () => {
@@ -97,7 +97,7 @@ export const setCameraTarget = (target: CBaseEntity | undefined) => {
     let playerIds: PlayerID[] | undefined = undefined
 
     return step((context, complete) => {
-        playerIds = findAllPlayers()
+        playerIds = findAllPlayersID()
 
         // Focus all cameras on the target
         playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, target))
