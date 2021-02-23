@@ -1,5 +1,5 @@
 import { findAllPlayersID } from "../util"
-import { step } from "./Core"
+import { step, TutorialContext } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -130,6 +130,28 @@ export const upgradeAbility = (ability:CDOTABaseAbility) => {
             }
         }
         checkAbilityLevel();
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
+}
+
+export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, checkPeriodSeconds: number) => {
+    let checkTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        // Wait until the unit dies
+        const check = () => {
+            if (checkFn(context)) {
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(checkPeriodSeconds, () => check())
+            }
+        }
+
+        check()
     }, context => {
         if (checkTimer) {
             Timers.RemoveTimer(checkTimer)
