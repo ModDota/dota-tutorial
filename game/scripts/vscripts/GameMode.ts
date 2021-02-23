@@ -1,7 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { canPlayerHeroEarnXP, findAllPlayersID, getPlayerHero, setCanPlayerHeroEarnXP } from "./util";
 import * as tut from "./Tutorial/Core"
-import { section01, section02, section03 } from "./Sections/index"
+import { section01, section02, section03, section_levelling } from "./Sections/index"
 
 declare global {
     interface CDOTAGamerules {
@@ -14,7 +14,7 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([section01, section02, section03]);
+    private tutorial = new tut.Tutorial([section01, section02, section03, section_levelling]);
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
