@@ -117,7 +117,6 @@ export class Tutorial {
      * @param sectionName Name of the section to start.
      */
     public startBySectionName(sectionName: string) {
-        print("Section names:", this.sections.map(s => s.name))
         const sectionIndex = this.sections.findIndex(section => section.name === sectionName)
         if (sectionIndex != -1) {
             this.start(sectionIndex)
