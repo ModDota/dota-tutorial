@@ -1,7 +1,8 @@
 import { reloadable } from "./lib/tstl-utils";
-import { canPlayerHeroEarnXP, findAllPlayersID, getPlayerHero, setCanPlayerHeroEarnXP } from "./util";
-import * as tut from "./Tutorial/Core"
-import { section01, section02, section03, section_levelling } from "./Sections/index"
+import { section01, section02, section03, section_levelling } from "./Sections/index";
+import * as tut from "./Tutorial/Core";
+import { findAllPlayersID, getPlayerHero } from "./util";
+import "./modifiers/modifier_visible_through_fog" // temporary, I'm tired and want to sleep, we need to import modifiers somehow though
 
 declare global {
     interface CDOTAGamerules {
@@ -15,6 +16,7 @@ export class GameMode {
     canPlayerHeroEarnXP = false;
 
     private tutorial = new tut.Tutorial([section01, section02, section03, section_levelling]);
+    playerHero?: CDOTA_BaseNPC_Hero;
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
@@ -45,8 +47,8 @@ export class GameMode {
         print("Setting Gamerules");
 
         // Player/Team rules
-        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.GOODGUYS, 1);
-        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.BADGUYS, 0);
+        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.GOODGUYS, 5);
+        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.BADGUYS, 5);
 
         // Game loading rules
         GameRules.EnableCustomGameSetupAutoLaunch(true);
@@ -152,15 +154,6 @@ export class GameMode {
             Timers.CreateTimer(0.2, () => GameRules.FinishCustomGameSetup());
         }
 
-        if (state === GameState.HERO_SELECTION) {
-            Timers.CreateTimer(0.2, () => {
-                const playersWithoutHero = findAllPlayersID().filter(pID => !PlayerResource.HasSelectedHero(pID));
-                for (const pID of playersWithoutHero) {
-                    PlayerResource.GetPlayer(pID)!.SetSelectedHero("npc_dota_hero_dragon_knight");
-                }
-            });
-        }
-
         // Start game once pregame hits
         if (state === GameState.PRE_GAME) {
             Timers.CreateTimer(3, () => this.StartGame());
@@ -170,7 +163,7 @@ export class GameMode {
             // Remove starting TP from player
             Timers.CreateTimer(1, () => {
                 const hero = getPlayerHero();
-                if (hero.HasItemInInventory("item_tpscroll")) {
+                if (hero && hero.HasItemInInventory("item_tpscroll")) {
                     const item = hero.FindItemInInventory("item_tpscroll");
                     if (item) {
                         hero.RemoveItem(item);
@@ -204,18 +197,42 @@ export class GameMode {
         if (!unit) return;
 
         if (unit.IsBaseNPC()) {
+
+            // Check if this is the real player's hero that just spawned, assign it to the gamemode entity if it is
+            if (unit.IsRealHero())
+            {
+                unit.IsTempestDouble()
+
+                if (PlayerResource.IsValidPlayerID(unit.GetPlayerID()) && !PlayerResource.IsFakeClient(unit.GetPlayerID()))
+                {
+                    if (!this.playerHero || this.playerHero != unit)
+                    {
+                        this.playerHero = unit;
+                        this.OnPlayerHeroAssigned(unit);
+                    }
+                }
+            }
+
             // Couriers
             if (unit.IsCourier()) {
                 // Remove the passive bonuses modifiers
-                Timers.CreateTimer(1, () => {
+                Timers.CreateTimer(FrameTime(), () => {
                     if (unit.HasModifier("modifier_courier_passive_bonus")) {
                         unit.RemoveModifierByName("modifier_courier_passive_bonus");
                     }
 
-                    const playerHero = getPlayerHero();
-                    playerHero.SetGold(0, true);
+                    const hero = getPlayerHero();
+                    if (hero)
+                    {
+                        hero.SetGold(0, true);
+                    }
                 });
             }
         }
+    }
+
+    OnPlayerHeroAssigned(hero: CDOTA_BaseNPC_Hero)
+    {
+        hero.SetAbilityPoints(0);
     }
 }

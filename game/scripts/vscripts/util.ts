@@ -28,13 +28,11 @@ export function findRealPlayerID(): PlayerID
 }
 
 /**
- * Get the currently assigned hero of the real player in the game.
+ * @returns The player's hero of the real player in the game.
  */
-export function getPlayerHero(): CDOTA_BaseNPC_Hero
+export function getPlayerHero(): CDOTA_BaseNPC_Hero | undefined
 {
-    const playerID = findRealPlayerID();
-
-    return PlayerResource.GetPlayer(playerID)!.GetAssignedHero();
+    return GameRules.Addon.playerHero;
 }
 
 /**
@@ -52,4 +50,19 @@ export function setCanPlayerHeroEarnXP(canEarnXP: boolean)
 export function canPlayerHeroEarnXP(): boolean
 {
     return GameRules.Addon.canPlayerHeroEarnXP;
+}
+
+/**
+ * Sets whether a unit can be shown through the fog of war.
+ */
+export function setUnitVisibilityThroughFogOfWar(unit: CDOTA_BaseNPC, visible: boolean)
+{
+    if (visible)
+    {
+        unit.AddNewModifier(undefined, undefined, "modifier_visible_through_fog", {});
+    }
+    else
+    {
+        unit.RemoveModifierByName("modifier_visible_through_fog");
+    }
 }
