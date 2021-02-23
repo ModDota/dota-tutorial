@@ -9,4 +9,5 @@ interface SectionStartedEvent {
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
+    ui_loaded: {};
 }
