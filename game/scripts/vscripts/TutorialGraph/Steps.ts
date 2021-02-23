@@ -14,6 +14,8 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
  * @param location Target location
  */
 export const goToLocation = (location: Vector) => {
+    let checkTimer: string | undefined = undefined
+
     return step((context, complete) => {
         Tutorial.CreateLocationTask(location)
 
@@ -22,11 +24,16 @@ export const goToLocation = (location: Vector) => {
             if (isHeroNearby(location, 200)) {
                 complete()
             } else {
-                Timers.CreateTimer(1, () => checkIsAtGoal())
+                checkTimer = Timers.CreateTimer(1, () => checkIsAtGoal())
             }
         }
 
         checkIsAtGoal()
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
     })
 }
 
@@ -36,19 +43,32 @@ export const goToLocation = (location: Vector) => {
  * @param spawnLocation Location to spawn the unit at.
  */
 export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector) => {
+    let unit: CDOTA_BaseNPC | undefined = undefined
+    let checkTimer: string | undefined = undefined
+
     return step((context, complete) => {
-        const unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+        unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
 
         // Wait until the unit dies
         const checkIsDead = () => {
-            if (!unit.IsAlive()) {
+            if (unit && !unit.IsAlive()) {
                 complete()
             } else {
-                Timers.CreateTimer(1, () => checkIsDead())
+                checkTimer = Timers.CreateTimer(1, () => checkIsDead())
             }
         }
 
         checkIsDead()
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+
+        if (unit) {
+            unit.RemoveSelf()
+            unit = undefined
+        }
     })
 }
 
@@ -57,8 +77,15 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector) => {
  * @param waitSeconds Time to wait before completion
  */
 export const wait = (waitSeconds: number) => {
+    let waitTimer: string | undefined = undefined
+
     return step((context, complete) => {
-        Timers.CreateTimer(waitSeconds, () => complete())
+        waitTimer = Timers.CreateTimer(waitSeconds, () => complete())
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
     })
 }
 
@@ -67,12 +94,19 @@ export const wait = (waitSeconds: number) => {
  * @param target Target to focus the camera on. Can be undefined for freeing the camera.
  */
 export const setCameraTarget = (target: CBaseEntity | undefined) => {
+    let playerIds: PlayerID[] | undefined = undefined
+
     return step((context, complete) => {
-        const playerIds = findAllPlayersID()
+        playerIds = findAllPlayersID()
 
         // Focus all cameras on the target
         playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, target))
 
         complete()
+    }, context => {
+        if (playerIds) {
+            playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, undefined))
+            playerIds = undefined
+        }
     })
 }

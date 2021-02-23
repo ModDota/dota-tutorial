@@ -193,9 +193,15 @@ export class GameMode {
     private StartGame(): void {
         print("Game starting!");
 
-        const tutorial = tut.createTutorial(section0)
-        //tut.start(tutorial) // Uncomment it when testing tutorial sections
-        // To start from specific section by index: tut.start(tutorial, 5)
+        const tutorial = new tut.Tutorial([section0, section0, section0])
+
+        print("Starting tutorial from scratch")
+        tutorial.start()
+
+        Timers.CreateTimer(5, () => {
+            print("Skipping tutorial to section with index 2")
+            tutorial.start(2)
+        })
     }
 
     // Called on script_reload
