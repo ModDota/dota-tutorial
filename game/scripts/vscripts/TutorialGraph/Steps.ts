@@ -110,3 +110,30 @@ export const setCameraTarget = (target: CBaseEntity | undefined) => {
         }
     })
 }
+
+/**
+ * Creates a tutorial step that waits for the hero to upgrade an ability
+ * @param ability the ability that needs to be upgraded.
+ */
+export const upgradeAbility = (ability:CDOTABaseAbility) => {
+    let checkTimer: string | undefined = undefined
+    let abilityLevel = ability.GetLevel();
+    let desiredLevel = ability.GetLevel() + 1;
+
+    return step((context, complete) => {
+        const checkAbilityLevel = () => {
+            abilityLevel = ability.GetLevel();
+            if (desiredLevel == abilityLevel) {
+                complete();
+            } else {
+                checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
+            }
+        }
+        checkAbilityLevel();
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
+}
