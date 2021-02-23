@@ -1,3 +1,5 @@
+import "./modifiers/modifier_visible_through_fog"
+
 /**
  * Get a list of all valid players currently in the game.
  */

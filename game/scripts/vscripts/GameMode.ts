@@ -2,7 +2,6 @@ import { reloadable } from "./lib/tstl-utils";
 import { section01, section02, section03, section_levelling } from "./Sections/index";
 import * as tut from "./Tutorial/Core";
 import { findAllPlayersID, getPlayerHero } from "./util";
-import "./modifiers/modifier_visible_through_fog" // temporary, I'm tired and want to sleep, we need to import modifiers somehow though
 
 declare global {
     interface CDOTAGamerules {
