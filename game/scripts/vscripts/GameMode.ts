@@ -1,7 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { canPlayerHeroEarnXP, findAllPlayersID, getPlayerHero, setCanPlayerHeroEarnXP } from "./util";
 import * as tut from "./Tutorial/Core"
-import { section0 } from "./Sections/index"
+import { section01, section02, section03, section_levelling } from "./Sections/index"
 
 declare global {
     interface CDOTAGamerules {
@@ -13,6 +13,8 @@ declare global {
 export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
+
+    private tutorial = new tut.Tutorial([section01, section02, section03, section_levelling]);
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
@@ -30,6 +32,7 @@ export class GameMode {
 
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
+            this.tutorial.startBySectionName(event.section);
         })
     }
 
@@ -38,8 +41,7 @@ export class GameMode {
         this.registerFilters();
     }
 
-    configureGameRules()
-    {
+    configureGameRules() {
         print("Setting Gamerules");
 
         // Player/Team rules
@@ -101,8 +103,7 @@ export class GameMode {
         this.Game.SetUseCustomHeroLevels(true);
     }
 
-    registerFilters()
-    {
+    registerFilters() {
         this.Game.SetDamageFilter(event => this.DamageFilter(event), this);
         this.Game.SetExecuteOrderFilter(event => this.ExecuteOrderFilter(event), this);
         this.Game.SetModifyExperienceFilter(event => this.ModifyExperienceFilter(event), this);
@@ -110,36 +111,30 @@ export class GameMode {
         this.Game.SetItemAddedToInventoryFilter(event => this.ItemAddedToInventoryFilter(event), this);
     }
 
-    DamageFilter(event: DamageFilterEvent): boolean
-    {
+    DamageFilter(event: DamageFilterEvent): boolean {
         return true;
     }
 
-    ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean
-    {
+    ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         return true;
     }
 
-    ModifyExperienceFilter(event: ModifyExperienceFilterEvent): boolean
-    {
+    ModifyExperienceFilter(event: ModifyExperienceFilterEvent): boolean {
         const hero = EntIndexToHScript(event.hero_entindex_const);
         const playerID = event.player_id_const;
 
-        if (hero === getPlayerHero())
-        {
+        if (hero === getPlayerHero()) {
             if (!this.canPlayerHeroEarnXP) return false;
         }
 
         return true;
     }
 
-    ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean
-    {
+    ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean {
         return true;
     }
 
-    ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean
-    {
+    ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {
         return true;
     }
 
@@ -158,8 +153,7 @@ export class GameMode {
         }
 
         if (state === GameState.HERO_SELECTION) {
-            Timers.CreateTimer(0.2, () =>
-            {
+            Timers.CreateTimer(0.2, () => {
                 const playersWithoutHero = findAllPlayersID().filter(pID => !PlayerResource.HasSelectedHero(pID));
                 for (const pID of playersWithoutHero) {
                     PlayerResource.GetPlayer(pID)!.SetSelectedHero("npc_dota_hero_dragon_knight");
@@ -172,17 +166,13 @@ export class GameMode {
             Timers.CreateTimer(3, () => this.StartGame());
         }
 
-        if (state === GameState.GAME_IN_PROGRESS)
-        {
+        if (state === GameState.GAME_IN_PROGRESS) {
             // Remove starting TP from player
-            Timers.CreateTimer(1, () =>
-            {
+            Timers.CreateTimer(1, () => {
                 const hero = getPlayerHero();
-                if (hero.HasItemInInventory("item_tpscroll"))
-                {
+                if (hero.HasItemInInventory("item_tpscroll")) {
                     const item = hero.FindItemInInventory("item_tpscroll");
-                    if (item)
-                    {
+                    if (item) {
                         hero.RemoveItem(item);
                     }
                 }
@@ -193,9 +183,13 @@ export class GameMode {
     private StartGame(): void {
         print("Game starting!");
 
-        const tutorial = tut.createTutorial(section0)
-        //tut.start(tutorial) // Uncomment it when testing tutorial sections
-        // To start from specific section by index: tut.start(tutorial, 5)
+        print("Starting tutorial from scratch")
+        this.tutorial.start()
+
+        Timers.CreateTimer(5, () => {
+            print("Skipping tutorial to section with index 2")
+            this.tutorial.start(2)
+        })
     }
 
     // Called on script_reload
@@ -209,16 +203,12 @@ export class GameMode {
         const unit = EntIndexToHScript(event.entindex);
         if (!unit) return;
 
-        if (unit.IsBaseNPC())
-        {
+        if (unit.IsBaseNPC()) {
             // Couriers
-            if (unit.IsCourier())
-            {
+            if (unit.IsCourier()) {
                 // Remove the passive bonuses modifiers
-                Timers.CreateTimer(1, () =>
-                {
-                    if (unit.HasModifier("modifier_courier_passive_bonus"))
-                    {
+                Timers.CreateTimer(1, () => {
+                    if (unit.HasModifier("modifier_courier_passive_bonus")) {
                         unit.RemoveModifierByName("modifier_courier_passive_bonus");
                     }
 
