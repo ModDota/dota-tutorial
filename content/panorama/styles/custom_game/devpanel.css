@@ -4,9 +4,15 @@
 
     width: 400px;
     height: 400px;
-    background-color: red;
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #272d2eee ), to( #131617ee ) );
 
     transition: position 0.1s ease-in-out 0.0s;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-left: 1px solid ##32383677;
+    border-top: 1px solid ##32383677;
+    border-bottom: 1px solid ##32383677;
+    box-shadow: black -4px -4px 8px 8px;
 }
 
 #CollapseButton {
@@ -16,10 +22,15 @@
     font-weight: bold;
     font-size: 24;
     text-align: center;
-    background-color: blue;
+    background-color: #00000099;
+    box-shadow: #00000033 -2px -2px 1px 4px;
     transform: rotateZ(-90deg);
     position: -185px 0px 0px;
     vertical-align: center;
+}
+
+#CollapseButton:hover {
+    background-color: #000000aa;
 }
 
 .Collapsed {
@@ -34,16 +45,29 @@
 }
 
 .SkipButton {
-    background-color: black;
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d45 ), to( #4d5860 ) );
     color: white;
     width: 250px;
     height: 35px;
     horizontal-align: center;
     text-align: center;
-    font-size: 30;
+    font-size: 24;
     margin-top: 10px;
+    border-top-color: #222222;
+    border-left-color: #303030;
+    border-bottom-color: #333333;
+    border-right-color: #404040;
+    box-shadow: #00000055 -2px -2px 4px 4px;
+    border-style: solid;
+    border-width: 1px;
+    text-shadow: 2px 2px 0px 1.0 #000000;
+    text-transform: uppercase;
 }
 
 .SkipButton:hover {
-    background-color: #333333;
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #4c5561 ), to( #6c7d88 ) );
+    border-top-color: #aaaaaa77;
+    border-left-color: #aaaaaa33;
+    border-bottom-color: #333333;
+    border-right-color: #404040;
 }
