@@ -30,15 +30,13 @@ const start = (complete: () => void) => {
     if (!hero.HasAbility(abilityName)) {
         hero.AddAbility(abilityName);
     }
-    const ability = <CDOTABaseAbility>hero.FindAbilityByName(abilityName);
+    const ability = hero.FindAbilityByName(abilityName)!;
     
     hero.SetAbilityPoints(1);
     ability.SetUpgradeRecommended(true);
 
     graph = tg.seq(
-        tg.fork(
-            tg.upgradeAbility(ability)
-        )
+        tg.upgradeAbility(ability)
     )
 
     graphContext = {}
