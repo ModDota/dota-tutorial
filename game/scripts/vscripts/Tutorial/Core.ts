@@ -111,4 +111,18 @@ export class Tutorial {
 
         startSection(sectionIndex)
     }
+
+    /**
+     * Starts a section of the tutorial given its name. Can be called while already started to stop the current section and start the new one.
+     * @param sectionName Name of the section to start.
+     */
+    public startBySectionName(sectionName: string) {
+        print("Section names:", this.sections.map(s => s.name))
+        const sectionIndex = this.sections.findIndex(section => section.name === sectionName)
+        if (sectionIndex != -1) {
+            this.start(sectionIndex)
+        } else {
+            error("Could not find section with name " + sectionName)
+        }
+    }
 }

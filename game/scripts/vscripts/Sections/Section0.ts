@@ -51,4 +51,6 @@ const stop = () => {
     }
 }
 
-export const section0 = new tut.FunctionalSection("Section 0", start, resetState, stop)
+export const section01 = new tut.FunctionalSection("Section01", start, resetState, stop)
+export const section02 = new tut.FunctionalSection("Section02", start, resetState, stop)
+export const section03 = new tut.FunctionalSection("Section03", start, resetState, stop)
