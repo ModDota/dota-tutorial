@@ -199,8 +199,6 @@ export class GameMode {
 
             // Check if this is the real player's hero that just spawned, assign it to the gamemode entity if it is
             if (unit.IsRealHero()) {
-                unit.IsTempestDouble()
-
                 if (PlayerResource.IsValidPlayerID(unit.GetPlayerID()) && !PlayerResource.IsFakeClient(unit.GetPlayerID())) {
                     if (!this.playerHero || this.playerHero != unit) {
                         this.playerHero = unit;
