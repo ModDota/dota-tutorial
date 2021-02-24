@@ -33,4 +33,4 @@ const onStop = () => {
     }
 }
 
-export const sectionCameraUnlock = new tut.FunctionalSection("SectionCameraUnlock", onStart, onSkipTo, onStop)
+export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.CameraUnlock, onStart, onSkipTo, onStop)

@@ -12,7 +12,8 @@ collapseButton.SetPanelEvent("onactivate", () => {
 const sections = {
     "Intro": SectionName.Section01,
     "Moving": SectionName.Section02,
-    "Items": SectionName.Section03
+    "Camera": SectionName.CameraUnlock,
+    "Items": SectionName.Section03,
 };
 
 // Add a button for each section

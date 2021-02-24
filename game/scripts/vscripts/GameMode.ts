@@ -14,7 +14,7 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([sectionCameraUnlock, section01, section02, section03, section_levelling]);
+    private tutorial = new tut.Tutorial([section01, section02, section03, sectionCameraUnlock, section_levelling]);
     playerHero?: CDOTA_BaseNPC_Hero;
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
