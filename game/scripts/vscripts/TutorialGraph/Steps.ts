@@ -38,19 +38,40 @@ export const goToLocation = (location: Vector) => {
 }
 
 /**
- * Creates a tutorial step that spawns and moves a unit.
+ * Creates a tutorial step that spawns a unit.
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
- * @param moveLocation Location to spawn the unit at.
  * @param team Team the unit belongs to.
  * @param entityKey Entity key for storing CBaseEntity member in the context.
  */
-export const spawnAndMoveUnit = (unitName: string, spawnLocation: Vector, moveLocation: Vector, team: DotaTeam, entityKey?: string) => {
+export const spawnUnit = (unitName: string, spawnLocation: Vector, team: DotaTeam, entityKey?: string) => {
+    return step((context, complete) => {
+        CreateUnitByNameAsync(unitName, spawnLocation, true, undefined, undefined, team,
+            (createdUnit) => {
+
+            if (entityKey) {
+                context[entityKey] = createdUnit
+            }
+
+            complete()
+        })
+    })
+}
+
+/**
+ * Creates a tutorial step that moves a unit.
+ * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
+ * @param moveLocation Location to spawn the unit at.
+ */
+export const moveUnit = (getUnitFunc: () => CDOTA_BaseNPC, moveLocation: Vector) => {
     let unit: CDOTA_BaseNPC
+    let checkTimer: string | undefined = undefined
+    let delayCheckTimer: string | undefined = undefined
 
     return step((context, complete) => {
-        unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, team)
-        let order: ExecuteOrderOptions = {
+        unit = getUnitFunc()
+
+        const order: ExecuteOrderOptions = {
             UnitIndex: unit.GetEntityIndex(),
             OrderType: UnitOrder.MOVE_TO_POSITION,
             Position: moveLocation,
@@ -58,11 +79,26 @@ export const spawnAndMoveUnit = (unitName: string, spawnLocation: Vector, moveLo
         }
 
         ExecuteOrderFromTable(order)
-        if (entityKey) {
-            context[entityKey] = unit
-        }
         
-        complete()
+        const checkIsIdle = (unit: CDOTA_BaseNPC) => {
+            if (unit && unit.IsIdle()) {
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(1, () => checkIsIdle(unit))
+            }
+        }
+
+         delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle(unit))
+    },
+    context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+        if (delayCheckTimer) {
+            Timers.RemoveTimer(delayCheckTimer)
+            delayCheckTimer = undefined
+        }
     })
 }
 
@@ -119,32 +155,14 @@ export const setUnitMoveCapability = (getUnitFunc: () => CDOTA_BaseNPC, unitMove
 
 /**
  * Creates a tutorial step that changes a unit's face direction.
- * @param facingUnitEntityKey Key for the unit entity stored in the context.
+ * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
  * @param faceTowards Point to face towards.
  */
-export const faceTowards = (facingUnitEntityKey: string, faceTowards: Vector) => {
-    let checkTimer: string | undefined = undefined
-
+export const faceTowards = (getUnitFunc: () => CDOTA_BaseNPC, faceTowards: Vector) => {
     return step((context, complete) => {
-        
-        let facingUnit = context[facingUnitEntityKey];
-
-        const checkIsIdle = (unit: CDOTA_BaseNPC) => {
-            if (unit && unit.IsIdle()) {
-                unit.FaceTowards(faceTowards)
-                complete()
-            } else {
-                print('creating timer for unit')
-                checkTimer = Timers.CreateTimer(1, () => checkIsIdle(unit))
-            }
-        }
-
-        checkIsIdle(facingUnit)
-    }, context => {
-        if (checkTimer) {
-            Timers.RemoveTimer(checkTimer)
-            checkTimer = undefined
-        }
+        print('face unit towards!')
+        getUnitFunc().FaceTowards(faceTowards)
+        complete()
     })
 }
 
@@ -193,7 +211,7 @@ export const setCameraTarget = (entityReturnFunc: () => CBaseEntity | undefined)
 export const upgradeAbility = (ability: CDOTABaseAbility) => {
     let checkTimer: string | undefined = undefined
     let abilityLevel = ability.GetLevel();
-    let desiredLevel = ability.GetLevel() + 1;
+    const desiredLevel = ability.GetLevel() + 1;
 
     return step((context, complete) => {
         const checkAbilityLevel = () => {

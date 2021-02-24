@@ -10,7 +10,7 @@ collapseButton.SetPanelEvent("onactivate", () => {
 
 /* Skip to section buttons */
 const sections = {
-    "Intro": SectionName.Section01,
+    "Intro": SectionName.Opening,
     "Moving": SectionName.Section02,
     "Items": SectionName.Section03
 };

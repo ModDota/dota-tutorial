@@ -1,5 +1,5 @@
 import { reloadable } from "./lib/tstl-utils";
-import { section01, section02, section03, section_levelling } from "./Sections/index";
+import { sectionOpening, section02, section03, section_levelling } from "./Sections/index";
 import * as tut from "./Tutorial/Core";
 import { findAllPlayersID, getPlayerHero } from "./util";
 
@@ -14,7 +14,7 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([section01, section02, section03, section_levelling]);
+    private tutorial = new tut.Tutorial([sectionOpening, section02, section03, section_levelling]);
     playerHero?: CDOTA_BaseNPC_Hero;
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
@@ -174,8 +174,6 @@ export class GameMode {
 
     private StartGame(): void {
         print("Game starting!");
-
-        const tutorial = new tut.Tutorial([section01])
 
         print("Starting tutorial from scratch")
         this.tutorial.start()

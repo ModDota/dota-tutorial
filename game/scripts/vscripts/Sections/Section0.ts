@@ -6,7 +6,7 @@ let graphContext: tg.TutorialContext | undefined = undefined
 
 const onStart = (complete: () => void) => {
     print("Started section 0")
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
+    // CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
 
     // Example tutorial graph.
     // Sequence:
