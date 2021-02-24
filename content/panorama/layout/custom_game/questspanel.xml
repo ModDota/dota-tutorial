@@ -1,0 +1,29 @@
+<root>
+    <scripts>
+    </scripts>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/questspanel.css" />
+    </styles>
+    <snippets>
+    </snippets>
+
+    <Panel hittest="false" style="width:100%;height:100%;">
+        <Panel hittest="false" id="QuestsPanelRoot">
+            <Panel hittest="false" class="QuestsPanelHeader">
+                <Panel class="QuestsTitleIcon" />
+                <Label class="QuestsTitle" text="#Quests" />
+                <Panel class="Divider" />
+            </Panel>
+            <Panel hittest="false" class="QuestsPanelContainer">
+                <Panel class="Row" id="PlaceholderQuest1">
+                    <Panel id="QuestsUncompleted" />
+                    <Label class="QuestUncompletedText" text="Find USB Flash drive that contains Half-life 3." />
+                </Panel>
+                <Panel class="Row" id="PlaceholderQuest2">
+                    <Panel id="QuestsCompleted" />
+                    <Label class="QuestCompletedText" text="Kill Omniknight with Techies three times. (3/3)" />
+                </Panel>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

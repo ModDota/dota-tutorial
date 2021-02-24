@@ -8,7 +8,7 @@
 #Title {
 	width: 800px;
     height: 123px;
-	background-image: url("file://{images}/custom_game/title.png");
+    background-image: url("file://{images}/custom_game/loading_screen/title.png");
     background-size: 80% 80%;
     background-repeat: no-repeat;
     margin-top: 50px;

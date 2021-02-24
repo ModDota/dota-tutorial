@@ -6,6 +6,7 @@ collapseButton.SetPanelEvent("onactivate", () => {
     expanded = !expanded;
 
     collapseButton.text = expanded ? "X  DEV  X" : "^  DEV  ^";
+    Game.EmitSound("ui_chat_slide_out");
 });
 
 /* Skip to section buttons */
@@ -21,6 +22,7 @@ for (const [sectionName, sectionCode] of Object.entries(sections)) {
     const button = addSkipToSectionButton(sectionName);
     button.SetPanelEvent("onactivate", ()  => {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: sectionCode});
+        Game.EmitSound("ui_generic_button_click");
     });
 }
 

@@ -181,3 +181,37 @@ export const immediate = (fn: (context: TutorialContext) => void, stopFn?: (cont
         }
     })
 }
+
+/**
+ * Plays a global sound and optionally waits for its completion.
+ * @param soundName Name of the sound
+ * @param waitForCompletion Whether to wait for the sound to complete or not. Default is false.
+ * @param extraDelaySeconds Extra delay to add to the wait time if true was passed for waitForCompletion. Defaults to 0.5s.
+ */
+export const playGlobalSound = (soundName: string, waitForCompletion?: boolean, extraDelaySeconds?: number) => {
+    const defaultExtraDelaySeconds = 0.5
+    let waitTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        EmitGlobalSound(soundName)
+
+        if (waitForCompletion) {
+            // Get any entity so we can get the duration of the sound (not sure why that's needed)
+            const anyEntity = Entities.Next(undefined)
+            if (!anyEntity) {
+                error("Could not find any entity to get duration of sound")
+            }
+
+            const soundDuration = anyEntity.GetSoundDuration(soundName, "") + (extraDelaySeconds !== undefined ? extraDelaySeconds : defaultExtraDelaySeconds)
+
+            waitTimer = Timers.CreateTimer(soundDuration, () => complete())
+        } else {
+            complete()
+        }
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
+    })
+}
