@@ -14,18 +14,18 @@ export abstract class Section {
     /**
      * Called when the section should start. Should contain the main logic for the section. Should call complete when done.
      */
-    public abstract start: (complete: () => void) => void
+    public abstract onStart: (complete: () => void) => void
 
     /**
      * Called when we want to set up the state for this section when skipping to it (ie. when the assumptions it makes about the preceding
      * sections are possibly false such as a hero being alive).
      */
-    public abstract setupState: () => void
+    public abstract onSkipTo: () => void
 
     /**
      * Called when we want this section to stop. Should stop any progress as well as clean up any resources (eg. remove any spawned units or clean up timers).
      */
-    public abstract stop: () => void
+    public abstract onStop: () => void
 }
 
 /**
@@ -35,14 +35,14 @@ export class FunctionalSection extends Section {
     /**
      * Creates a section given its functions.
      * @param name Name of the section.
-     * @param start start function of the section. See Section.start.
-     * @param setupState setupState function of the section. See Section.setupState.
-     * @param stop stop function of the section. See Section.stop.
+     * @param onStart start function of the section. See Section.start.
+     * @param onSkipTo setupState function of the section. See Section.setupState.
+     * @param onStop stop function of the section. See Section.stop.
      */
     constructor(public readonly name: string,
-        public readonly start: (complete: () => void) => void,
-        public readonly setupState: () => void,
-        public readonly stop: () => void) {
+        public readonly onStart: (complete: () => void) => void,
+        public readonly onSkipTo: () => void,
+        public readonly onStop: () => void) {
         super(name)
     }
 }
@@ -80,7 +80,7 @@ export class Tutorial {
         // Stop the current section to make sure any progress is stopped and cleaned up.
         print("Stopping current section")
         if (this.currentSection) {
-            this.currentSection.stop()
+            this.currentSection.onStop()
         }
 
         // Allow starting from a specific section. If one was passed we want
@@ -89,7 +89,7 @@ export class Tutorial {
         if (sectionIndex === undefined) {
             sectionIndex = 0
         } else {
-            this.sections[sectionIndex].setupState()
+            this.sections[sectionIndex].onSkipTo()
         }
 
         const startSection = (i: number) => {
@@ -97,13 +97,13 @@ export class Tutorial {
             print("Starting section", i)
 
             if (i + 1 >= this.sections.length) {
-                this._currentSection.start(() => {
+                this._currentSection.onStart(() => {
                     print("Done with all tutorial sections")
                     this._currentSection = undefined
                     // TODO: End the game? Call some callback?
                 })
             } else {
-                this._currentSection.start(() => {
+                this._currentSection.onStart(() => {
                     startSection(i + 1)
                 })
             }

@@ -1,0 +1,15 @@
+<root>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/sections/section03.js" />
+    </scripts>
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.css" />
+        <include src="file://{resources}/layout/custom_game/sections/section03.css" />
+    </styles>
+    <snippets>
+
+    </snippets>
+    <Panel class="Section03Root">
+
+    </Panel>
+</root>
