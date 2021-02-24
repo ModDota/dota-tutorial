@@ -1,5 +1,5 @@
 import { findAllPlayersID, setUnitVisibilityThroughFogOfWar } from "../util"
-import { step } from "./Core"
+import { step, TutorialContext } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -139,5 +139,40 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
             Timers.RemoveTimer(checkTimer)
             checkTimer = undefined
         }
+    })
+}
+
+/**
+ * Waits for the player to move their camera from its initial location.
+ */
+export const waitForCameraMovement = () => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("camera_movement_detected", _ => {
+            if (listenerId) {
+                CustomGameEventManager.UnregisterListener(listenerId)
+            }
+            complete()
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("detect_camera_movement", {});
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
+ * Calls a function and completes immediately.
+ * @param fn Function to call. Gets passed the context.
+ */
+export const immediate = (fn: (context: TutorialContext) => void) => {
+    return step((context, complete) => {
+        fn(context)
+        complete()
+    }, context => {
     })
 }
