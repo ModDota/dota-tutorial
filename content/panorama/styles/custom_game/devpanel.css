@@ -9,9 +9,9 @@
     transition: position 0.1s ease-in-out 0.0s;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    border-left: 1px solid ##32383677;
-    border-top: 1px solid ##32383677;
-    border-bottom: 1px solid ##32383677;
+    border-left: 1px solid #32383677;
+    border-top: 1px solid #32383677;
+    border-bottom: 1px solid #32383677;
     box-shadow: black -4px -4px 8px 8px;
 }
 

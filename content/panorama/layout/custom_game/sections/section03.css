@@ -1,0 +1,8 @@
+.Section03Root {
+    position: 200% 0px 0px; /* IMPORTANT: hides panel unless section is active */ 
+
+    /*width: 800px;
+    height: 800px;
+    z-index: 98;
+    background-color: red;*/
+}

@@ -4,8 +4,9 @@ import * as tut from "../Tutorial/Core"
 let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
 
-const start = (complete: () => void) => {
+const onStart = (complete: () => void) => {
     print("Started section 0")
+    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
 
     // Example tutorial graph.
     // Sequence:
@@ -39,11 +40,11 @@ const start = (complete: () => void) => {
     })
 }
 
-const resetState = () => {
+const onSkipTo = () => {
     // TODO: Make sure DK exists at spawn and other stuff (yea stuff...)
 }
 
-const stop = () => {
+const onStop = () => {
     if (graph) {
         graph.stop(graphContext ?? {})
         graph = undefined
@@ -51,6 +52,4 @@ const stop = () => {
     }
 }
 
-export const section01 = new tut.FunctionalSection("Section01", start, resetState, stop)
-export const section02 = new tut.FunctionalSection("Section02", start, resetState, stop)
-export const section03 = new tut.FunctionalSection("Section03", start, resetState, stop)
+export const section01 = new tut.FunctionalSection("Section01", onStart, onSkipTo, onStop)
