@@ -198,14 +198,11 @@ export class GameMode {
         if (unit.IsBaseNPC()) {
 
             // Check if this is the real player's hero that just spawned, assign it to the gamemode entity if it is
-            if (unit.IsRealHero())
-            {
+            if (unit.IsRealHero()) {
                 unit.IsTempestDouble()
 
-                if (PlayerResource.IsValidPlayerID(unit.GetPlayerID()) && !PlayerResource.IsFakeClient(unit.GetPlayerID()))
-                {
-                    if (!this.playerHero || this.playerHero != unit)
-                    {
+                if (PlayerResource.IsValidPlayerID(unit.GetPlayerID()) && !PlayerResource.IsFakeClient(unit.GetPlayerID())) {
+                    if (!this.playerHero || this.playerHero != unit) {
                         this.playerHero = unit;
                         this.OnPlayerHeroAssigned(unit);
                     }
@@ -221,8 +218,7 @@ export class GameMode {
                     }
 
                     const hero = getPlayerHero();
-                    if (hero)
-                    {
+                    if (hero) {
                         hero.SetGold(0, true);
                     }
                 });
@@ -230,8 +226,7 @@ export class GameMode {
         }
     }
 
-    OnPlayerHeroAssigned(hero: CDOTA_BaseNPC_Hero)
-    {
+    OnPlayerHeroAssigned(hero: CDOTA_BaseNPC_Hero) {
         hero.SetAbilityPoints(0);
     }
 }

@@ -49,8 +49,7 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibl
     return step((context, complete) => {
         unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
 
-        if (visibleThroughFog)
-        {
+        if (visibleThroughFog) {
             setUnitVisibilityThroughFogOfWar(unit, true);
         }
 
@@ -120,7 +119,7 @@ export const setCameraTarget = (target: CBaseEntity | undefined) => {
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
-export const upgradeAbility = (ability:CDOTABaseAbility) => {
+export const upgradeAbility = (ability: CDOTABaseAbility) => {
     let checkTimer: string | undefined = undefined
     let abilityLevel = ability.GetLevel();
     let desiredLevel = ability.GetLevel() + 1;

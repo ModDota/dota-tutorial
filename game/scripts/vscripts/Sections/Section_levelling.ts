@@ -19,7 +19,7 @@ const start = (complete: () => void) => {
     if (!hero) error("Could not find the player's hero.");
     const abilityName = "dragon_knight_breathe_fire";
 
-    for (let i = 0; i < DOTA_MAX_ABILITIES -1; i++) {
+    for (let i = 0; i < DOTA_MAX_ABILITIES - 1; i++) {
         const a = hero.GetAbilityByIndex(i);
         if (a) {
             hero.RemoveAbilityByHandle(a);
