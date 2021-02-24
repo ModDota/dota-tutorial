@@ -24,7 +24,7 @@ const start = (complete: () => void) => {
         tg.setCameraTarget(undefined),
         tg.wait(2),
         tg.goToLocation(Vector(0, 0, 0)),
-        tg.spawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0)),
+        tg.spawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0), true),
         tg.fork(
             tg.spawnAndKillUnit("npc_dota_hero_luna", Vector(1500, 0, 0)),
             tg.spawnAndKillUnit("npc_dota_hero_luna", Vector(1500, 0, 0))

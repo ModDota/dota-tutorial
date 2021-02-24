@@ -1,4 +1,4 @@
-import { findAllPlayersID } from "../util"
+import { findAllPlayersID, setUnitVisibilityThroughFogOfWar } from "../util"
 import { step } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
@@ -42,12 +42,16 @@ export const goToLocation = (location: Vector) => {
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
  */
-export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector) => {
+export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibleThroughFog?: boolean) => {
     let unit: CDOTA_BaseNPC | undefined = undefined
     let checkTimer: string | undefined = undefined
 
     return step((context, complete) => {
         unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+
+        if (visibleThroughFog) {
+            setUnitVisibilityThroughFogOfWar(unit, true);
+        }
 
         // Wait until the unit dies
         const checkIsDead = () => {
@@ -115,7 +119,7 @@ export const setCameraTarget = (target: CBaseEntity | undefined) => {
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
-export const upgradeAbility = (ability:CDOTABaseAbility) => {
+export const upgradeAbility = (ability: CDOTABaseAbility) => {
     let checkTimer: string | undefined = undefined
     let abilityLevel = ability.GetLevel();
     let desiredLevel = ability.GetLevel() + 1;
