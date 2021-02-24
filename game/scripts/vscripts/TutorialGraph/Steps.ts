@@ -180,7 +180,7 @@ export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, 
     let checkTimer: string | undefined = undefined
 
     return step((context, complete) => {
-        // Wait until the unit dies
+        // Wait until the check is true
         const check = () => {
             if (checkFn(context)) {
                 complete()
