@@ -20,6 +20,11 @@ const start = (complete: () => void) => {
     const hero = getPlayerHero();
     const abilityName = "dragon_knight_breathe_fire";
     
+    if (!hero || hero.IsNull()) {
+        error("No hero found");
+    }
+
+    
 
     for (let i = 0; i < DOTA_MAX_ABILITIES -1; i++) {
         const a = hero.GetAbilityByIndex(i);
