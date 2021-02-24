@@ -16,22 +16,22 @@ const start = (complete: () => void) => {
     // 3. Highlight the skillbutton
 
     const hero = getPlayerHero();
+    if (!hero) error("Could not find the player's hero.");
     const abilityName = "dragon_knight_breathe_fire";
-    
 
-    for (let i = 0; i < DOTA_MAX_ABILITIES -1; i++) {
+    for (let i = 0; i < DOTA_MAX_ABILITIES - 1; i++) {
         const a = hero.GetAbilityByIndex(i);
         if (a) {
-            hero.RemoveAbility(a.GetAbilityName());
+            hero.RemoveAbilityByHandle(a);
         }
-        
     }
 
     if (!hero.HasAbility(abilityName)) {
         hero.AddAbility(abilityName);
     }
-    const ability = hero.FindAbilityByName(abilityName)!;
-    
+    const ability = hero.FindAbilityByName(abilityName);
+    if (!ability) error("Dragon Knight's Breath Fire ability was not found.");
+
     hero.SetAbilityPoints(1);
     ability.SetUpgradeRecommended(true);
 

@@ -1,7 +1,13 @@
 interface SkipToSectionEvent {
-    section: string;
+    section: SectionName;
+}
+
+interface SectionStartedEvent {
+    section: SectionName;
 }
 
 interface CustomGameEventDeclarations {
-    skip_to_section: SkipToSectionEvent
+    section_started: SectionStartedEvent;
+    skip_to_section: SkipToSectionEvent;
+    ui_loaded: {};
 }

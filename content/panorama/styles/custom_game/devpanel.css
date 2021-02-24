@@ -4,15 +4,13 @@
 
     width: 400px;
     height: 400px;
-    background-color: gradient( linear, 0% 0%, 0% 100%, from( #272d2eee ), to( #131617ee ) );
 
     transition: position 0.1s ease-in-out 0.0s;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    border-left: 1px solid ##32383677;
-    border-top: 1px solid ##32383677;
-    border-bottom: 1px solid ##32383677;
-    box-shadow: black -4px -4px 8px 8px;
+    background-color: #181818dd;
+    border: 2px solid #222222;
+    box-shadow: #000000aa -4px -4px 8px 8px;
 }
 
 #CollapseButton {
@@ -45,23 +43,31 @@
 }
 
 .SkipButton {
-    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d45 ), to( #4d5860 ) );
-    color: white;
-    width: 250px;
-    height: 35px;
-    horizontal-align: center;
-    text-align: center;
-    font-size: 24;
-    margin-top: 10px;
-    border-top-color: #222222;
-    border-left-color: #303030;
-    border-bottom-color: #333333;
-    border-right-color: #404040;
-    box-shadow: #00000055 -2px -2px 4px 4px;
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #333333), to( #444444 ) );
+
+    height: 30px;
+    width: 140px;
+
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+
     border-style: solid;
     border-width: 1px;
-    text-shadow: 2px 2px 0px 1.0 #000000;
-    text-transform: uppercase;
+
+    border-top-color: #444444;
+    border-left-color: #494949;
+    border-bottom-color: #111111;
+    border-right-color: #404040;
+
+    transition-property: background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: linear;
+
+    font-size: 24;
+    color: white;
+    text-align: center;
 }
 
 .SkipButton:hover {
