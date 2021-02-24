@@ -152,6 +152,7 @@ export const waitForCameraMovement = () => {
         listenerId = CustomGameEventManager.RegisterListener("camera_movement_detected", _ => {
             if (listenerId) {
                 CustomGameEventManager.UnregisterListener(listenerId)
+                listenerId = undefined
             }
             complete()
         })
@@ -168,11 +169,15 @@ export const waitForCameraMovement = () => {
 /**
  * Calls a function and completes immediately.
  * @param fn Function to call. Gets passed the context.
+ * @param stopFn Optional function to call on stop. Gets passed the context.
  */
-export const immediate = (fn: (context: TutorialContext) => void) => {
+export const immediate = (fn: (context: TutorialContext) => void, stopFn?: (context: TutorialContext) => void) => {
     return step((context, complete) => {
         fn(context)
         complete()
     }, context => {
+        if (stopFn) {
+            stopFn(context)
+        }
     })
 }
