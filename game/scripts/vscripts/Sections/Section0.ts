@@ -18,6 +18,7 @@ const onStart = (complete: () => void) => {
     // 6. Spawn two heroes at (1500, 0, 0) and wait for both of them to die
     graph = tg.seq(
         tg.wait(3),
+        tg.playGlobalSound("abaddon_abad_spawn_01", true),
         tg.setCameraTarget(Entities.FindAllByName("dota_badguys_fort")[0]),
         tg.wait(5),
         tg.setCameraTarget(Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
