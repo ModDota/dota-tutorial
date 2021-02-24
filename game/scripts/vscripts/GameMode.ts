@@ -175,13 +175,15 @@ export class GameMode {
     private StartGame(): void {
         print("Game starting!");
 
+        const tutorial = new tut.Tutorial([section01])
+
         print("Starting tutorial from scratch")
         this.tutorial.start()
 
-        Timers.CreateTimer(5, () => {
-            print("Skipping tutorial to section with index 2")
-            this.tutorial.start(2)
-        })
+        // Timers.CreateTimer(5, () => {
+        //     print("Skipping tutorial to section with index 2")
+        //     tutorial.start(2)
+        // })
     }
 
     // Called on script_reload

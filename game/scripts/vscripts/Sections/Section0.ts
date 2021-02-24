@@ -18,11 +18,11 @@ const onStart = (complete: () => void) => {
     // 6. Spawn two heroes at (1500, 0, 0) and wait for both of them to die
     graph = tg.seq(
         tg.wait(3),
-        tg.setCameraTarget(Entities.FindAllByName("dota_badguys_fort")[0]),
+        tg.setCameraTarget(() => Entities.FindAllByName("dota_badguys_fort")[0]),
         tg.wait(5),
-        tg.setCameraTarget(Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
+        tg.setCameraTarget(() => Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
         tg.wait(2),
-        tg.setCameraTarget(undefined),
+        tg.setCameraTarget(() => undefined),
         tg.wait(2),
         tg.goToLocation(Vector(0, 0, 0)),
         tg.spawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0), true),
@@ -52,4 +52,4 @@ const onStop = () => {
     }
 }
 
-export const section01 = new tut.FunctionalSection("Section01", onStart, onSkipTo, onStop)
+// export const section00 = new tut.FunctionalSection("Section00", onStart, onSkipTo, onStop)

@@ -38,6 +38,35 @@ export const goToLocation = (location: Vector) => {
 }
 
 /**
+ * Creates a tutorial step that spawns and moves a unit.
+ * @param unitName Name of the unit to spawn.
+ * @param spawnLocation Location to spawn the unit at.
+ * @param moveLocation Location to spawn the unit at.
+ * @param team Team the unit belongs to.
+ * @param entityKey Entity key for storing CBaseEntity member in the context.
+ */
+export const spawnAndMoveUnit = (unitName: string, spawnLocation: Vector, moveLocation: Vector, team: DotaTeam, entityKey?: string) => {
+    let unit: CDOTA_BaseNPC
+
+    return step((context, complete) => {
+        unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, team)
+        let order: ExecuteOrderOptions = {
+            UnitIndex: unit.GetEntityIndex(),
+            OrderType: UnitOrder.MOVE_TO_POSITION,
+            Position: moveLocation,
+            Queue: true
+        }
+
+        ExecuteOrderFromTable(order)
+        if (entityKey) {
+            context[entityKey] = unit
+        }
+        
+        complete()
+    })
+}
+
+/**
  * Creates a tutorial step that spawns a unit and waits until it dies.
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
@@ -77,6 +106,49 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibl
 }
 
 /**
+ * Creates a tutorial step that sets a unit's movement capability.
+ * @param getUnitFunc Function that returns a CDOTA_BaseNPC type.
+ * @param unitMoveCap UnitMoveCapability enum for setting move capability.
+ */
+export const setUnitMoveCapability = (getUnitFunc: () => CDOTA_BaseNPC, unitMoveCap: UnitMoveCapability) => {
+    return step((context, complete) => {
+        getUnitFunc().SetMoveCapability(unitMoveCap)
+        complete()
+    })
+}
+
+/**
+ * Creates a tutorial step that changes a unit's face direction.
+ * @param facingUnitEntityKey Key for the unit entity stored in the context.
+ * @param faceTowards Point to face towards.
+ */
+export const faceTowards = (facingUnitEntityKey: string, faceTowards: Vector) => {
+    let checkTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        
+        let facingUnit = context[facingUnitEntityKey];
+
+        const checkIsIdle = (unit: CDOTA_BaseNPC) => {
+            if (unit && unit.IsIdle()) {
+                unit.FaceTowards(faceTowards)
+                complete()
+            } else {
+                print('creating timer for unit')
+                checkTimer = Timers.CreateTimer(1, () => checkIsIdle(unit))
+            }
+        }
+
+        checkIsIdle(facingUnit)
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
+}
+
+/**
  * Waits for an amount of time until completion
  * @param waitSeconds Time to wait before completion
  */
@@ -97,14 +169,13 @@ export const wait = (waitSeconds: number) => {
  * Focuses the camera to a target or frees it.
  * @param target Target to focus the camera on. Can be undefined for freeing the camera.
  */
-export const setCameraTarget = (target: CBaseEntity | undefined) => {
+export const setCameraTarget = (entityReturnFunc: () => CBaseEntity | undefined) => {
     let playerIds: PlayerID[] | undefined = undefined
-
+    
     return step((context, complete) => {
         playerIds = findAllPlayersID()
-
         // Focus all cameras on the target
-        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, target))
+        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, entityReturnFunc()))
 
         complete()
     }, context => {
