@@ -160,7 +160,6 @@ export const setUnitMoveCapability = (getUnitFunc: () => CDOTA_BaseNPC, unitMove
  */
 export const faceTowards = (getUnitFunc: () => CDOTA_BaseNPC, faceTowards: Vector) => {
     return step((context, complete) => {
-        print('face unit towards!')
         getUnitFunc().FaceTowards(faceTowards)
         complete()
     })

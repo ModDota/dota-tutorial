@@ -57,20 +57,27 @@ const onSkipTo = () => {
     print("Skipping to", "Section Opening");
     if (!getPlayerHero()) error("Could not find the player's hero.");
 
-    if (graphContext[CustomNpcKeys.SlacksMudGolem])
-        graphContext[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
-    
-    if (graphContext[CustomNpcKeys.SunsFanMudGolem])
-        graphContext[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
+    clearMudGolems()
 }
 
 const onStop = () => {
     print("Stopping", "Section Opening");
+
+    clearMudGolems()
+
     if (graph) {
         graph.stop(graphContext ?? {})
         graph = undefined
         graphContext = {}
     }
+}
+
+const clearMudGolems = () => {
+    if (graphContext[CustomNpcKeys.SlacksMudGolem])
+        graphContext[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
+    
+    if (graphContext[CustomNpcKeys.SunsFanMudGolem])
+        graphContext[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
 }
 
 export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, onStart, onSkipTo, onStop)
