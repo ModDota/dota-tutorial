@@ -1,5 +1,6 @@
 import { reloadable } from "./lib/tstl-utils";
-import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling } from "./Sections/index";
+import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_casting } from "./Sections/index";
+
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, getPlayerHero } from "./util";
@@ -15,7 +16,8 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, section02, section03, section_levelling]);
+    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_casting]);
+
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
 
