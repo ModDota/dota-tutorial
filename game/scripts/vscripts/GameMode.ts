@@ -1,6 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { section01, section02, section03, section_levelling } from "./Sections/index";
 import * as tut from "./Tutorial/Core";
+import { moveCameraToPosition, moveCameraToUnit } from "./TutorialGraph/Steps";
 import { findAllPlayersID, getPlayerHero } from "./util";
 
 declare global {

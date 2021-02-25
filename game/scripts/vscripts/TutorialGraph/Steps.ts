@@ -116,6 +116,48 @@ export const setCameraTarget = (target: CBaseEntity | undefined) => {
 }
 
 /**
+ * Moves the camera to a unit, with lerp
+ * @param target Unit to move the camera to.
+ * @param lerp Speed at which the camera moves
+ */
+export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
+    let playerIds = findAllPlayersID();
+
+    playerIds.forEach(playerId => {
+        let player = PlayerResource.GetPlayer(playerId);
+
+        if (player) {
+            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
+                unitTargetEntIndex: target.GetEntityIndex(),
+                lerp: lerp
+            })
+        }
+    })
+}
+
+/**
+ * Moves the camera to a position, with lerp
+ * @param position Point to move the camera to.
+ * @param lerp Speed at which the camera moves
+ */
+export const moveCameraToPosition = (position: Vector, lerp: number) => {
+    let playerIds = findAllPlayersID();
+
+    playerIds.forEach(playerId => {
+        let player = PlayerResource.GetPlayer(playerId);
+
+        if (player) {
+            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
+                cameraTargetX: position.x,
+                cameraTargetY: position.y,
+                cameraTargetZ: position.z,
+                lerp: lerp
+            })
+        }
+    })
+}
+
+/**
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
