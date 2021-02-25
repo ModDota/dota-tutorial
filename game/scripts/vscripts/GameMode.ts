@@ -1,7 +1,8 @@
 import { reloadable } from "./lib/tstl-utils";
-import {section02, section03, section_casting, section_levelling } from "./Sections/index";
+import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_castin } from "./Sections/index";
 
 import * as tut from "./Tutorial/Core";
+import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, getPlayerHero } from "./util";
 
 declare global {
@@ -14,10 +15,11 @@ declare global {
 export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
-  
-    private tutorial = new tut.Tutorial([section02, section03, section_levelling, section_casting]);
+
+    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_casting]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
+    context: TutorialContext = {};
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
@@ -179,11 +181,6 @@ export class GameMode {
 
         print("Starting tutorial from scratch")
         this.tutorial.start()
-
-        // Timers.CreateTimer(5, () => {
-        //     print("Skipping tutorial to section with index 2")
-        //     tutorial.start(2)
-        // })
     }
 
     // Called on script_reload
