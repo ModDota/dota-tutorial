@@ -1,5 +1,5 @@
 import { reloadable } from "./lib/tstl-utils";
-import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_castin } from "./Sections/index";
+import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_casting } from "./Sections/index";
 
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
