@@ -2,6 +2,7 @@ declare const enum SectionName {
     Opening = "Opening",
     Section02 = "Section02",
     Section03 = "Section03",
+    CameraUnlock = "CameraUnlock",
 }
 
 declare const enum CustomNpcKeys {
