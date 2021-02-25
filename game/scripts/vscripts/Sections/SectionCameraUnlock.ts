@@ -74,6 +74,7 @@ const onSkipTo = () => {
         if (IsValidEntity(context[CustomNpcKeys.SunsFanMudGolem])) {
             context[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
         }
+        context[CustomNpcKeys.SunsFanMudGolem] = undefined
     }
 
     CreateUnitByNameAsync(CustomNpcKeys.SunsFanMudGolem, sunsfanGolemTargetLocation, true, undefined, undefined, DotaTeam.GOODGUYS, unit => context[CustomNpcKeys.SunsFanMudGolem] = unit)
@@ -84,6 +85,7 @@ const onSkipTo = () => {
         if (IsValidEntity(context[CustomNpcKeys.SlacksMudGolem])) {
             context[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
         }
+        context[CustomNpcKeys.SlacksMudGolem] = undefined
     }
 
     CreateUnitByNameAsync(CustomNpcKeys.SlacksMudGolem, slacksGolemTargetLocation, true, undefined, undefined, DotaTeam.GOODGUYS, unit => context[CustomNpcKeys.SlacksMudGolem] = unit)
