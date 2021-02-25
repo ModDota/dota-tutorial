@@ -78,8 +78,8 @@ export class Tutorial {
      */
     public start(sectionIndex?: number) {
         // Stop the current section to make sure any progress is stopped and cleaned up.
-        print("Stopping current section")
         if (this.currentSection) {
+            print("Stopping current section with name", this.currentSection.name)
             this.currentSection.onStop()
         }
 

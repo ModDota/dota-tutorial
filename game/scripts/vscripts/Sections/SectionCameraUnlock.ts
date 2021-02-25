@@ -1,31 +1,35 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
+import { getOrError, getPlayerHero, setUnitPacifist } from "../util"
 
 let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
 
+const getSunsfanGolem = () => {
+    const sunsfanGolems = Entities.FindAllByClassname(CustomNpcKeys.SunsFanMudGolem)
+    if (sunsfanGolems.length !== 1) {
+        error("SUNSfan golem count not equal to 1 but is " + sunsfanGolems.length)
+    }
+
+    return getOrError(sunsfanGolems[0] as CDOTA_BaseNPC)
+}
+
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.CameraUnlock })
 
-    const playerHero = getPlayerHero()
-    if (!playerHero) {
-        error("Could not find player hero")
-    }
-
-    const radiantFountain = Entities.FindByName(undefined, "ent_dota_fountain_good")
-    if (!radiantFountain) {
-        error("Could not find fountain (ent_dota_fountain_good)")
-    }
+    const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
 
     let sunsfanAttackableTime: number | undefined = undefined
 
     graph = tg.seq(
+        tg.wait(1),
+        tg.setCameraTarget(() => undefined),
+        tg.immediate(() => getOrError(getPlayerHero()).SetMoveCapability(UnitMoveCapability.GROUND)), // This line can be removed once the movement section is there.
         tg.immediate(_ => print("Pre camera movement")),
         tg.waitForCameraMovement(),
         tg.immediate(_ => print("Post camera movement")),
         tg.playGlobalSound("abaddon_abad_spawn_01", true), // where are you going
-        tg.setCameraTarget(playerHero),
+        tg.setCameraTarget(() => getOrError(getPlayerHero())),
         tg.wait(2),
         tg.playGlobalSound("abaddon_abad_spawn_01", true), // need to move camera while moving hero
         tg.playGlobalSound("abaddon_abad_spawn_01", true), // heres a target dummy
@@ -34,14 +38,11 @@ const onStart = (complete: () => void) => {
         tg.wait(1),
         tg.playGlobalSound("abaddon_abad_spawn_01", true), // that was violent
         tg.wait(1),
-        // TODO: Make sunsfan golem attackable
+        tg.immediate(_ => setUnitPacifist(getSunsfanGolem(), false)),
         tg.playGlobalSound("abaddon_abad_spawn_01"), // why health bar over head
         tg.immediate(_ => sunsfanAttackableTime = GameRules.GetGameTime()),
         tg.completeOnCheck(_ => {
-            const golem = Entities.FindAllByClassname("npc_mud_golem_sunsfan")[0]
-            if (!golem) {
-                error("Could not find SUNSfan golem")
-            }
+            const golem = getSunsfanGolem()
 
             const attacked = golem.GetHealth() < golem.GetMaxHealth()
 
@@ -55,20 +56,48 @@ const onStart = (complete: () => void) => {
         }, 0.2),
         tg.immediate(_ => sunsfanAttackableTime = undefined),
         tg.playGlobalSound("abaddon_abad_spawn_01", true), // what are you doing
-        tg.immediate(context => playerHero.HeroLevelUp(true)),
+        tg.immediate(context => getOrError(getPlayerHero()).HeroLevelUp(true)),
         tg.wait(1)
     )
 
     graphContext = {}
 
     graph.start(graphContext, () => {
-
         complete()
     })
 }
 
 const onSkipTo = () => {
-    // TODO: Make sure DK exists at spawn and other stuff (yea stuff...)
+    const playerHero = getOrError(getPlayerHero())
+    const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
+
+    // Put hero in the state we need
+    playerHero.SetMoveCapability(UnitMoveCapability.GROUND)
+
+    // Move hero close to fountain
+    playerHero.SetAbsOrigin(radiantFountain.GetAbsOrigin().__add(Vector(300, 300, 0)))
+
+    // Create or move sunsfan
+    const sunsfanGolems = Entities.FindAllByClassname(CustomNpcKeys.SunsFanMudGolem)
+    const sunsfanGolemTargetLocation = playerHero.GetAbsOrigin().__add(Vector(450, 650, 0))
+    if (sunsfanGolems.length === 0) {
+        CreateUnitByName(CustomNpcKeys.SunsFanMudGolem, sunsfanGolemTargetLocation, true, undefined, undefined, DotaTeam.GOODGUYS)
+    } else if (sunsfanGolems.length === 1) {
+        sunsfanGolems[0].SetAbsOrigin(sunsfanGolemTargetLocation)
+    } else {
+        error("Found more than one SUNSfan golem")
+    }
+
+    // Create or move slacks
+    const slacksGolems = Entities.FindAllByClassname(CustomNpcKeys.SlacksMudGolem)
+    const slacksGolemTargetLocation = playerHero.GetAbsOrigin().__add(Vector(300, 800, 0))
+    if (sunsfanGolems.length === 0) {
+        CreateUnitByName(CustomNpcKeys.SlacksMudGolem, slacksGolemTargetLocation, true, undefined, undefined, DotaTeam.GOODGUYS)
+    } else if (sunsfanGolems.length === 1) {
+        sunsfanGolems[0].SetAbsOrigin(slacksGolemTargetLocation)
+    } else {
+        error("Found more than one Slacks golem")
+    }
 }
 
 const onStop = () => {

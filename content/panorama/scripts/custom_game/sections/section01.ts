@@ -1,5 +1,5 @@
 GameUI.CustomUIConfig().SectionSelector.RegisterSection(
-    SectionName.Section01,
+    SectionName.Opening,
     {
         panel: $.GetContextPanel(),
         onShow: () => {
