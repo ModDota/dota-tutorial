@@ -6,7 +6,7 @@ let graphContext: tg.TutorialContext | undefined = undefined
 
 const onStart = (complete: () => void) => {
     print("Started section 0")
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
+    // CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
 
     // Example tutorial graph.
     // Sequence:
@@ -19,11 +19,11 @@ const onStart = (complete: () => void) => {
     graph = tg.seq(
         tg.wait(3),
         tg.playGlobalSound("abaddon_abad_spawn_01", true),
-        tg.setCameraTarget(Entities.FindAllByName("dota_badguys_fort")[0]),
+        tg.setCameraTarget(() => Entities.FindAllByName("dota_badguys_fort")[0]),
         tg.wait(5),
-        tg.setCameraTarget(Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
+        tg.setCameraTarget(() => Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
         tg.wait(2),
-        tg.setCameraTarget(undefined),
+        tg.setCameraTarget(() => undefined),
         tg.wait(2),
         tg.goToLocation(Vector(0, 0, 0)),
         tg.spawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0), true),
@@ -53,4 +53,4 @@ const onStop = () => {
     }
 }
 
-export const section01 = new tut.FunctionalSection("Section01", onStart, onSkipTo, onStop)
+// export const section00 = new tut.FunctionalSection("Section00", onStart, onSkipTo, onStop)
