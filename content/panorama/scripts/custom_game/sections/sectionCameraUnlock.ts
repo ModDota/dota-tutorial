@@ -1,3 +1,16 @@
+GameUI.CustomUIConfig().SectionSelector.RegisterSection(
+    SectionName.CameraUnlock,
+    {
+        panel: $.GetContextPanel(),
+        onShow: () => {
+            $.Msg(`onShow ${SectionName.CameraUnlock}`);
+        },
+        onHide: () => {
+            $.Msg(`onHide ${SectionName.CameraUnlock}`);
+        }
+    }
+);
+
 /**
  * Distance the camera needs to move from its original position to count as a detection.
  */
