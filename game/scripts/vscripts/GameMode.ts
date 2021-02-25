@@ -1,6 +1,7 @@
 import { reloadable } from "./lib/tstl-utils";
 import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling } from "./Sections/index";
 import * as tut from "./Tutorial/Core";
+import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, getPlayerHero } from "./util";
 
 declare global {
@@ -16,6 +17,7 @@ export class GameMode {
 
     private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, section02, section03, section_levelling]);
     playerHero?: CDOTA_BaseNPC_Hero;
+    context: TutorialContext = {};
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);

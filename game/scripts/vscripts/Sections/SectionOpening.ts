@@ -3,7 +3,6 @@ import * as tut from "../Tutorial/Core"
 import { getPlayerHero } from "../util"
 
 let graph: tg.TutorialStep | undefined = undefined
-let graphContext: tg.TutorialContext
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Opening })
@@ -26,17 +25,17 @@ const onStart = (complete: () => void) => {
             CustomNpcKeys.SunsFanMudGolem),
         tg.fork(
             tg.seq(
-                tg.moveUnit(() => graphContext[CustomNpcKeys.SlacksMudGolem], mudGolemMeetPosition),
-                tg.faceTowards(() => graphContext[CustomNpcKeys.SlacksMudGolem], playerHero.GetAbsOrigin()),
+                tg.moveUnit(context => context[CustomNpcKeys.SlacksMudGolem], mudGolemMeetPosition),
+                tg.faceTowards(context => context[CustomNpcKeys.SlacksMudGolem], playerHero.GetAbsOrigin()),
             ),
             tg.seq(
-                tg.moveUnit(() => graphContext[CustomNpcKeys.SunsFanMudGolem], mudGolemMeetPosition.__add(Vector(150, -150, 0))),
-                tg.faceTowards(() => graphContext[CustomNpcKeys.SunsFanMudGolem], playerHero.GetAbsOrigin()),
+                tg.moveUnit(context => context[CustomNpcKeys.SunsFanMudGolem], mudGolemMeetPosition.__add(Vector(150, -150, 0))),
+                tg.faceTowards(context => context[CustomNpcKeys.SunsFanMudGolem], playerHero.GetAbsOrigin()),
             ),
             tg.seq(
-                tg.setCameraTarget(() => graphContext[CustomNpcKeys.SlacksMudGolem]),
+                tg.setCameraTarget(context => context[CustomNpcKeys.SlacksMudGolem]),
                 tg.wait(3),
-                tg.setCameraTarget(() => graphContext[CustomNpcKeys.SunsFanMudGolem]),
+                tg.setCameraTarget(context => context[CustomNpcKeys.SunsFanMudGolem]),
             )
         ),
         tg.wait(2),
@@ -45,9 +44,7 @@ const onStart = (complete: () => void) => {
         tg.setCameraTarget(() => playerHero),
     )
 
-    graphContext = {}
-
-    graph.start(graphContext, () => {
+    graph.start(GameRules.Addon.context, () => {
         print("Completed", "Section Opening")
         complete()
     })
@@ -66,18 +63,27 @@ const onStop = () => {
     clearMudGolems()
 
     if (graph) {
-        graph.stop(graphContext ?? {})
+        graph.stop(GameRules.Addon.context)
         graph = undefined
-        graphContext = {}
     }
 }
 
 const clearMudGolems = () => {
-    if (graphContext[CustomNpcKeys.SlacksMudGolem])
-        graphContext[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
+    const context = GameRules.Addon.context
 
-    if (graphContext[CustomNpcKeys.SunsFanMudGolem])
-        graphContext[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
+    if (context[CustomNpcKeys.SlacksMudGolem]) {
+        if (IsValidEntity(context[CustomNpcKeys.SlacksMudGolem])) {
+            context[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
+        }
+        context[CustomNpcKeys.SlacksMudGolem] = undefined
+    }
+
+    if (context[CustomNpcKeys.SunsFanMudGolem]) {
+        if (IsValidEntity(context[CustomNpcKeys.SunsFanMudGolem])) {
+            context[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
+        }
+        context[CustomNpcKeys.SunsFanMudGolem] = undefined
+    }
 }
 
 export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, onStart, onSkipTo, onStop)

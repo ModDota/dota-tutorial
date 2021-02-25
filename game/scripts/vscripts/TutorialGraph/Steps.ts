@@ -49,12 +49,12 @@ export const spawnUnit = (unitName: string, spawnLocation: Vector, team: DotaTea
         CreateUnitByNameAsync(unitName, spawnLocation, true, undefined, undefined, team,
             (createdUnit) => {
 
-            if (entityKey) {
-                context[entityKey] = createdUnit
-            }
+                if (entityKey) {
+                    context[entityKey] = createdUnit
+                }
 
-            complete()
-        })
+                complete()
+            })
     })
 }
 
@@ -63,13 +63,13 @@ export const spawnUnit = (unitName: string, spawnLocation: Vector, team: DotaTea
  * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
  * @param moveLocation Location to spawn the unit at.
  */
-export const moveUnit = (getUnitFunc: () => CDOTA_BaseNPC, moveLocation: Vector) => {
+export const moveUnit = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNPC, moveLocation: Vector) => {
     let unit: CDOTA_BaseNPC
     let checkTimer: string | undefined = undefined
     let delayCheckTimer: string | undefined = undefined
 
     return step((context, complete) => {
-        unit = getUnitFunc()
+        unit = getUnitFunc(context)
 
         const order: ExecuteOrderOptions = {
             UnitIndex: unit.GetEntityIndex(),
@@ -79,7 +79,7 @@ export const moveUnit = (getUnitFunc: () => CDOTA_BaseNPC, moveLocation: Vector)
         }
 
         ExecuteOrderFromTable(order)
-        
+
         const checkIsIdle = (unit: CDOTA_BaseNPC) => {
             if (unit && unit.IsIdle()) {
                 complete()
@@ -88,18 +88,18 @@ export const moveUnit = (getUnitFunc: () => CDOTA_BaseNPC, moveLocation: Vector)
             }
         }
 
-         delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle(unit))
+        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle(unit))
     },
-    context => {
-        if (checkTimer) {
-            Timers.RemoveTimer(checkTimer)
-            checkTimer = undefined
-        }
-        if (delayCheckTimer) {
-            Timers.RemoveTimer(delayCheckTimer)
-            delayCheckTimer = undefined
-        }
-    })
+        context => {
+            if (checkTimer) {
+                Timers.RemoveTimer(checkTimer)
+                checkTimer = undefined
+            }
+            if (delayCheckTimer) {
+                Timers.RemoveTimer(delayCheckTimer)
+                delayCheckTimer = undefined
+            }
+        })
 }
 
 /**
@@ -135,21 +135,12 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibl
         }
 
         if (unit) {
-            unit.RemoveSelf()
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
             unit = undefined
         }
-    })
-}
-
-/**
- * Creates a tutorial step that sets a unit's movement capability.
- * @param getUnitFunc Function that returns a CDOTA_BaseNPC type.
- * @param unitMoveCap UnitMoveCapability enum for setting move capability.
- */
-export const setUnitMoveCapability = (getUnitFunc: () => CDOTA_BaseNPC, unitMoveCap: UnitMoveCapability) => {
-    return step((context, complete) => {
-        getUnitFunc().SetMoveCapability(unitMoveCap)
-        complete()
     })
 }
 
@@ -158,9 +149,9 @@ export const setUnitMoveCapability = (getUnitFunc: () => CDOTA_BaseNPC, unitMove
  * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
  * @param faceTowards Point to face towards.
  */
-export const faceTowards = (getUnitFunc: () => CDOTA_BaseNPC, faceTowards: Vector) => {
+export const faceTowards = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNPC, faceTowards: Vector) => {
     return step((context, complete) => {
-        getUnitFunc().FaceTowards(faceTowards)
+        getUnitFunc(context).FaceTowards(faceTowards)
         complete()
     })
 }
@@ -186,13 +177,13 @@ export const wait = (waitSeconds: number) => {
  * Focuses the camera to a target or frees it.
  * @param target Target to focus the camera on. Can be undefined for freeing the camera.
  */
-export const setCameraTarget = (entityReturnFunc: () => CBaseEntity | undefined) => {
+export const setCameraTarget = (entityReturnFunc: (context: TutorialContext) => CBaseEntity | undefined) => {
     let playerIds: PlayerID[] | undefined = undefined
-    
+
     return step((context, complete) => {
         playerIds = findAllPlayersID()
         // Focus all cameras on the target
-        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, entityReturnFunc()))
+        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, entityReturnFunc(context)))
 
         complete()
     }, context => {
