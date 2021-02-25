@@ -215,3 +215,25 @@ export const playGlobalSound = (soundName: string, waitForCompletion?: boolean, 
         }
     })
 }
+
+export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, checkPeriodSeconds: number) => {
+    let checkTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        // Wait until the check is true
+        const check = () => {
+            if (checkFn(context)) {
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(checkPeriodSeconds, () => check())
+            }
+        }
+
+        check()
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
+}
