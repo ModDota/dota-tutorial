@@ -1,5 +1,5 @@
 import { findAllPlayersID, setUnitVisibilityThroughFogOfWar } from "../util"
-import { step } from "./Core"
+import { step, TutorialContext } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -223,6 +223,62 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
             }
         }
         checkAbilityLevel();
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
+}
+
+/**
+ * Plays a global sound and optionally waits for its completion.
+ * @param soundName Name of the sound
+ * @param waitForCompletion Whether to wait for the sound to complete or not. Default is false.
+ * @param extraDelaySeconds Extra delay to add to the wait time if true was passed for waitForCompletion. Defaults to 0.5s.
+ */
+export const playGlobalSound = (soundName: string, waitForCompletion?: boolean, extraDelaySeconds?: number) => {
+    const defaultExtraDelaySeconds = 0.5
+    let waitTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        EmitGlobalSound(soundName)
+
+        if (waitForCompletion) {
+            // Get any entity so we can get the duration of the sound (not sure why that's needed)
+            const anyEntity = Entities.Next(undefined)
+            if (!anyEntity) {
+                error("Could not find any entity to get duration of sound")
+            }
+
+            const soundDuration = anyEntity.GetSoundDuration(soundName, "") + (extraDelaySeconds !== undefined ? extraDelaySeconds : defaultExtraDelaySeconds)
+
+            waitTimer = Timers.CreateTimer(soundDuration, () => complete())
+        } else {
+            complete()
+        }
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
+    })
+}
+
+export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, checkPeriodSeconds: number) => {
+    let checkTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        // Wait until the check is true
+        const check = () => {
+            if (checkFn(context)) {
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(checkPeriodSeconds, () => check())
+            }
+        }
+
+        check()
     }, context => {
         if (checkTimer) {
             Timers.RemoveTimer(checkTimer)
