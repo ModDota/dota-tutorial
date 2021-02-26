@@ -1,5 +1,5 @@
 import { findAllPlayersID, setUnitVisibilityThroughFogOfWar } from "../util"
-import { step } from "./Core"
+import { step, TutorialContext } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -38,6 +38,71 @@ export const goToLocation = (location: Vector) => {
 }
 
 /**
+ * Creates a tutorial step that spawns a unit.
+ * @param unitName Name of the unit to spawn.
+ * @param spawnLocation Location to spawn the unit at.
+ * @param team Team the unit belongs to.
+ * @param entityKey Entity key for storing CBaseEntity member in the context.
+ */
+export const spawnUnit = (unitName: string, spawnLocation: Vector, team: DotaTeam, entityKey?: string) => {
+    return step((context, complete) => {
+        CreateUnitByNameAsync(unitName, spawnLocation, true, undefined, undefined, team,
+            (createdUnit) => {
+
+                if (entityKey) {
+                    context[entityKey] = createdUnit
+                }
+
+                complete()
+            })
+    })
+}
+
+/**
+ * Creates a tutorial step that moves a unit.
+ * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
+ * @param moveLocation Location to spawn the unit at.
+ */
+export const moveUnit = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNPC, moveLocation: Vector) => {
+    let unit: CDOTA_BaseNPC
+    let checkTimer: string | undefined = undefined
+    let delayCheckTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        unit = getUnitFunc(context)
+
+        const order: ExecuteOrderOptions = {
+            UnitIndex: unit.GetEntityIndex(),
+            OrderType: UnitOrder.MOVE_TO_POSITION,
+            Position: moveLocation,
+            Queue: true
+        }
+
+        ExecuteOrderFromTable(order)
+
+        const checkIsIdle = (unit: CDOTA_BaseNPC) => {
+            if (unit && unit.IsIdle()) {
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(1, () => checkIsIdle(unit))
+            }
+        }
+
+        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle(unit))
+    },
+        context => {
+            if (checkTimer) {
+                Timers.RemoveTimer(checkTimer)
+                checkTimer = undefined
+            }
+            if (delayCheckTimer) {
+                Timers.RemoveTimer(delayCheckTimer)
+                delayCheckTimer = undefined
+            }
+        })
+}
+
+/**
  * Creates a tutorial step that spawns a unit and waits until it dies.
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
@@ -70,9 +135,24 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibl
         }
 
         if (unit) {
-            unit.RemoveSelf()
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
             unit = undefined
         }
+    })
+}
+
+/**
+ * Creates a tutorial step that changes a unit's face direction.
+ * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
+ * @param faceTowards Point to face towards.
+ */
+export const faceTowards = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNPC, faceTowards: Vector) => {
+    return step((context, complete) => {
+        getUnitFunc(context).FaceTowards(faceTowards)
+        complete()
     })
 }
 
@@ -97,14 +177,13 @@ export const wait = (waitSeconds: number) => {
  * Focuses the camera to a target or frees it.
  * @param target Target to focus the camera on. Can be undefined for freeing the camera.
  */
-export const setCameraTarget = (target: CBaseEntity | undefined) => {
+export const setCameraTarget = (entityReturnFunc: (context: TutorialContext) => CBaseEntity | undefined) => {
     let playerIds: PlayerID[] | undefined = undefined
 
     return step((context, complete) => {
         playerIds = findAllPlayersID()
-
         // Focus all cameras on the target
-        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, target))
+        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, entityReturnFunc(context)))
 
         complete()
     }, context => {
@@ -122,7 +201,7 @@ export const setCameraTarget = (target: CBaseEntity | undefined) => {
 export const upgradeAbility = (ability: CDOTABaseAbility) => {
     let checkTimer: string | undefined = undefined
     let abilityLevel = ability.GetLevel();
-    let desiredLevel = ability.GetLevel() + 1;
+    const desiredLevel = ability.GetLevel() + 1;
 
     return step((context, complete) => {
         const checkAbilityLevel = () => {
@@ -134,6 +213,102 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
             }
         }
         checkAbilityLevel();
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
+}
+
+/**
+ * Waits for the player to move their camera from its initial location.
+ */
+export const waitForCameraMovement = () => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("camera_movement_detected", _ => {
+            if (listenerId) {
+                CustomGameEventManager.UnregisterListener(listenerId)
+                listenerId = undefined
+            }
+            complete()
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("detect_camera_movement", {});
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
+ * Calls a function and completes immediately.
+ * @param fn Function to call. Gets passed the context.
+ * @param stopFn Optional function to call on stop. Gets passed the context.
+ */
+export const immediate = (fn: (context: TutorialContext) => void, stopFn?: (context: TutorialContext) => void) => {
+    return step((context, complete) => {
+        fn(context)
+        complete()
+    }, context => {
+        if (stopFn) {
+            stopFn(context)
+        }
+    })
+}
+
+/**
+ * Plays a global sound and optionally waits for its completion.
+ * @param soundName Name of the sound
+ * @param waitForCompletion Whether to wait for the sound to complete or not. Default is false.
+ * @param extraDelaySeconds Extra delay to add to the wait time if true was passed for waitForCompletion. Defaults to 0.5s.
+ */
+export const playGlobalSound = (soundName: string, waitForCompletion?: boolean, extraDelaySeconds?: number) => {
+    const defaultExtraDelaySeconds = 0.5
+    let waitTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        EmitGlobalSound(soundName)
+
+        if (waitForCompletion) {
+            // Get any entity so we can get the duration of the sound (not sure why that's needed)
+            const anyEntity = Entities.Next(undefined)
+            if (!anyEntity) {
+                error("Could not find any entity to get duration of sound")
+            }
+
+            const soundDuration = anyEntity.GetSoundDuration(soundName, "") + (extraDelaySeconds !== undefined ? extraDelaySeconds : defaultExtraDelaySeconds)
+
+            waitTimer = Timers.CreateTimer(soundDuration, () => complete())
+        } else {
+            complete()
+        }
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
+    })
+}
+
+export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, checkPeriodSeconds: number) => {
+    let checkTimer: string | undefined = undefined
+
+    return step((context, complete) => {
+        // Wait until the check is true
+        const check = () => {
+            if (checkFn(context)) {
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(checkPeriodSeconds, () => check())
+            }
+        }
+
+        check()
     }, context => {
         if (checkTimer) {
             Timers.RemoveTimer(checkTimer)

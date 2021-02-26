@@ -1,5 +1,11 @@
 declare const enum SectionName {
-    Section01 = "Section01",
-    Section02 = "Section02",
-    Section03 = "Section03",
+    Opening = "Opening",
+    CameraUnlock = "CameraUnlock",
+    Leveling = "Leveling",
+    Casting = "Casting",
+}
+
+declare const enum CustomNpcKeys {
+    SlacksMudGolem = "npc_mud_golem_slacks",
+    SunsFanMudGolem = "npc_mud_golem_sunsfan",
 }

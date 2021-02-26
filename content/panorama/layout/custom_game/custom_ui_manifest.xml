@@ -1,7 +1,6 @@
 <root>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/section-selector.js" />
-        <!-- <include src="file://{resources}/scripts/custom_game/manifest.js" /> -->
     </scripts>
     <Panel>
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/hud.xml" />
@@ -11,5 +10,6 @@
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/section01.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/section02.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/section03.xml" />
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/sectionCameraUnlock.xml" />
     </Panel>
 </root>
