@@ -19,4 +19,6 @@ interface CustomGameEventDeclarations {
     skip_to_section: SkipToSectionEvent;
     move_camera: MoveCameraEvent;
     ui_loaded: {};
+    detect_camera_movement: {};
+    camera_movement_detected: {};
 }

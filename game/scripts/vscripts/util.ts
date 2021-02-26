@@ -60,12 +60,24 @@ export function setUnitVisibilityThroughFogOfWar(unit: CDOTA_BaseNPC, visible: b
     }
 }
 
-export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, duration?: number)
-{
+export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, duration?: number) {
     if (isPacifist) {
-        unit.AddNewModifier(undefined, undefined, "modifier_tutorial_pacifist", {duration: duration});
+        unit.AddNewModifier(undefined, undefined, "modifier_tutorial_pacifist", { duration: duration });
     }
     else {
         unit.RemoveModifierByName("modifier_tutorial_pacifist");
     }
+}
+
+/**
+ * Returns the object if it is not undefined or calls error.
+ * @param obj Object to check and return.
+ * @param msg Optional message to pass for error.
+ */
+export function getOrError<T>(obj: T | undefined, msg?: string): T {
+    if (obj === undefined) {
+        error(msg ?? "Object was undefined")
+    }
+
+    return obj
 }

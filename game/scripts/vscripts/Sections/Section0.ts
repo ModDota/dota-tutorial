@@ -2,11 +2,10 @@ import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
 
 let graph: tg.TutorialStep | undefined = undefined
-let graphContext: tg.TutorialContext | undefined = undefined
 
 const onStart = (complete: () => void) => {
     print("Started section 0")
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
+    // CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Section01 });
 
     // Example tutorial graph.
     // Sequence:
@@ -19,11 +18,11 @@ const onStart = (complete: () => void) => {
     graph = tg.seq(
         tg.wait(3),
         tg.playGlobalSound("abaddon_abad_spawn_01", true),
-        tg.setCameraTarget(Entities.FindAllByName("dota_badguys_fort")[0]),
+        tg.setCameraTarget(_ => Entities.FindAllByName("dota_badguys_fort")[0]),
         tg.wait(5),
-        tg.setCameraTarget(Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
+        tg.setCameraTarget(_ => Entities.FindAllByName("npc_dota_hero_dragon_knight")[0]),
         tg.wait(2),
-        tg.setCameraTarget(undefined),
+        tg.setCameraTarget(_ => undefined),
         tg.wait(2),
         tg.goToLocation(Vector(0, 0, 0)),
         tg.spawnAndKillUnit("npc_dota_hero_crystal_maiden", Vector(1000, 0, 0), true),
@@ -33,9 +32,7 @@ const onStart = (complete: () => void) => {
         )
     )
 
-    graphContext = {}
-
-    graph.start(graphContext, () => {
+    graph.start(GameRules.Addon.context, () => {
         print("Section 0 was completed")
         complete()
     })
@@ -47,10 +44,9 @@ const onSkipTo = () => {
 
 const onStop = () => {
     if (graph) {
-        graph.stop(graphContext ?? {})
+        graph.stop(GameRules.Addon.context)
         graph = undefined
-        graphContext = undefined
     }
 }
 
-export const section01 = new tut.FunctionalSection("Section01", onStart, onSkipTo, onStop)
+// export const section00 = new tut.FunctionalSection("Section00", onStart, onSkipTo, onStop)
