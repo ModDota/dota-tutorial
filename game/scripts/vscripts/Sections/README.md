@@ -52,7 +52,8 @@ Sounds:
 Particles:
 * All currently ongoing particles are destroyed. (not necessarily related to the tutorial, e.g. from an item or an ability)
 
-Tutorial Steps:
+Tutorial:
 * Current step is stopped.
     * This includes removal of currently ongoing objectives, and any particles, sounds, and quest markers associated with them.
 * Quest marker is re-initialized with no ongoing quests.
+* Tutorial context is reset.
