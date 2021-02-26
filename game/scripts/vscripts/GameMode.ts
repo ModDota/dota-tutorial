@@ -1,5 +1,5 @@
 import { reloadable } from "./lib/tstl-utils";
-import { sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_casting } from "./Sections/index";
+import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting } from "./Sections/index";
 
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
@@ -16,7 +16,7 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, section02, section03, section_levelling, section_casting]);
+    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
@@ -95,7 +95,7 @@ export class GameMode {
         this.Game.SetRuneEnabled(RuneType.REGENERATION, false);
         this.Game.SetRuneEnabled(RuneType.XP, false);
 
-        // Levelling rules
+        // Leveling rules
         // Max level of 3
         this.Game.SetCustomXPRequiredToReachNextLevel(
             {
