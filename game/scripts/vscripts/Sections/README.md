@@ -6,5 +6,7 @@ Sections are contained parts of the tutorial. They are composed of 3 functions
 
 Sections can either be created by extending the abstract `Section` class and implementing those three functions or by creating the functions separately and passing them to `FunctionalSection` in the constructor.
 
+The `SectionTemplate.ts` file can be used as a starting point for an empty section.
+
 The tutorial graph system can be used to easily implement common behavior, especially async ones that require waiting (for a condition, for an amount of time, ...) between sequential steps. However it is not mandatory to
 use it and it is possible to implement sections completely without it if desired.
