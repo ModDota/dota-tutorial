@@ -5,6 +5,9 @@ import { getPlayerHero } from "../util";
 let graph: tg.TutorialStep | undefined = undefined;
 let graphContext: tg.TutorialContext | undefined = undefined;
 
+const setupState = () => {
+}
+
 const start = (complete: () => void) => {
     print("Started section casting");
     // Assuming the player knows camera control.
@@ -93,6 +96,7 @@ const stop = () => {
 
 export const sectionCasting = new tut.FunctionalSection(
     SectionName.Casting,
+    setupState,
     start,
     resetState,
     stop

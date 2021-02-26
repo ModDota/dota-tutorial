@@ -1,15 +1,50 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
+import { findRealPlayerID, getPlayerHero } from "../util"
+import { SectionState } from "./SectionState"
 
 let graph: tg.TutorialStep | undefined = undefined
+let sectionOpeningState : SectionState = {
+    playerHeroLevel: 1,
+    playerHeroUnitName: "npc_dota_hero_dragon_knight",
+    playerHeroLocation: Vector(-6700, -6700, 384),
+    playerHeroAbilityPoints: 0,
+    playerHeroGold: 0,
+}
 
-const onStart = (complete: () => void) => {
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Opening })
-
+const setupState = () => {
+    print("Starting state setup")
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
 
+    let player = PlayerResource.GetPlayer(findRealPlayerID())
+
+    if (playerHero.GetLevel() !== sectionOpeningState.playerHeroLevel)
+        print('Fixing hero level')
+        playerHero.AddExperience(-10, ModifyXpReason.UNSPECIFIED, false, true)
+
+    if (player && playerHero.GetUnitName() !== "npc_dota_hero_dragon_knight") {
+        player.GetAssignedHero().RemoveSelf()
+        CreateHeroForPlayer("npc_dota_hero_dragon_knight", player)
+    }
+
+    if (playerHero.GetAbsOrigin() !== sectionOpeningState.playerHeroLocation)
+        print('Resetting hero position')
+        playerHero.SetAbsOrigin(sectionOpeningState.playerHeroLocation)
+
+    if (playerHero.GetAbilityPoints() > 0)
+        print('Resetting ability points')
+        playerHero.SetAbilityPoints(0)
+
+    if (playerHero.GetGold() > 0)
+        print('Resetting gold to 0')
+        playerHero.SetGold(0, false)
+}
+
+const onStart = (complete: () => void) => {
+    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Opening })
+    const playerHero = getPlayerHero();
+    if (!playerHero) error("Could not find the player's hero.");
     const mudGolemMeetPosition = playerHero.GetAbsOrigin().__add(Vector(300, 800, 0))
 
     graph = tg.seq(
@@ -86,4 +121,4 @@ const clearMudGolems = () => {
     }
 }
 
-export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, onStart, onSkipTo, onStop)
+export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, setupState, onStart, onSkipTo, onStop)

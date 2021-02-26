@@ -11,6 +11,8 @@ export abstract class Section {
 
     }
 
+    public abstract setupState: () => void
+
     /**
      * Called when the section should start. Should contain the main logic for the section. Should call complete when done.
      */
@@ -40,6 +42,7 @@ export class FunctionalSection extends Section {
      * @param onStop stop function of the section. See Section.stop.
      */
     constructor(public readonly name: string,
+        public readonly setupState: () => void,
         public readonly onStart: (complete: () => void) => void,
         public readonly onSkipTo: () => void,
         public readonly onStop: () => void) {
@@ -97,12 +100,14 @@ export class Tutorial {
             print("Starting section", i)
 
             if (i + 1 >= this.sections.length) {
+                this._currentSection.setupState()
                 this._currentSection.onStart(() => {
                     print("Done with all tutorial sections")
                     this._currentSection = undefined
                     // TODO: End the game? Call some callback?
                 })
             } else {
+                this._currentSection.setupState()
                 this._currentSection.onStart(() => {
                     startSection(i + 1)
                 })

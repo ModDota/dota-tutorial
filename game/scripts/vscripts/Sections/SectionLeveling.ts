@@ -5,6 +5,9 @@ import { getPlayerHero } from "../util"
 let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
 
+const setupState = () => {
+}
+
 const start = (complete: () => void) => {
     print("Started section leveling")
     // Assuming the player knows camera control.
@@ -59,4 +62,4 @@ const stop = () => {
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(SectionName.Leveling, start, resetState, stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Leveling, setupState, start, resetState, stop)

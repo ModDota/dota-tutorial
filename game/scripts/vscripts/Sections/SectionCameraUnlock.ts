@@ -4,6 +4,9 @@ import { getOrError, getPlayerHero, setUnitPacifist } from "../util"
 
 let graph: tg.TutorialStep | undefined = undefined
 
+const setupState = () => {
+}
+
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.CameraUnlock })
 
@@ -98,4 +101,4 @@ const onStop = () => {
     }
 }
 
-export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.CameraUnlock, onStart, onSkipTo, onStop)
+export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.CameraUnlock, setupState, onStart, onSkipTo, onStop)
