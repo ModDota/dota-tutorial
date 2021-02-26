@@ -1,7 +1,9 @@
 import { reloadable } from "./lib/tstl-utils";
-import { section01, section02, section03, section_levelling } from "./Sections/index";
+import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting } from "./Sections/index";
+
 import * as tut from "./Tutorial/Core";
-import { findAllPlayersID, getPlayerHero, moveCameraToPosition } from "./util";
+import { TutorialContext } from "./TutorialGraph";
+import { findAllPlayersID, getPlayerHero } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -14,8 +16,10 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([section01, section02, section03, section_levelling]);
+    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting]);
+
     playerHero?: CDOTA_BaseNPC_Hero;
+    context: TutorialContext = {};
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
@@ -91,7 +95,7 @@ export class GameMode {
         this.Game.SetRuneEnabled(RuneType.REGENERATION, false);
         this.Game.SetRuneEnabled(RuneType.XP, false);
 
-        // Levelling rules
+        // Leveling rules
         // Max level of 3
         this.Game.SetCustomXPRequiredToReachNextLevel(
             {
@@ -177,11 +181,6 @@ export class GameMode {
 
         print("Starting tutorial from scratch")
         this.tutorial.start()
-
-        Timers.CreateTimer(5, () => {
-            print("Skipping tutorial to section with index 2")
-            this.tutorial.start(2)
-        })
     }
 
     // Called on script_reload

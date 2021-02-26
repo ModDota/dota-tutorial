@@ -60,50 +60,23 @@ export function setUnitVisibilityThroughFogOfWar(unit: CDOTA_BaseNPC, visible: b
     }
 }
 
-export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, duration?: number)
-{
+export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, duration?: number) {
     if (isPacifist) {
-        unit.AddNewModifier(undefined, undefined, "modifier_tutorial_pacifist", {duration: duration});
+        unit.AddNewModifier(undefined, undefined, "modifier_tutorial_pacifist", { duration: duration });
     }
     else {
         unit.RemoveModifierByName("modifier_tutorial_pacifist");
     }
 }
 
-/**
- * Moves the camera to a unit's position. The player can't control the camera
- * while it is being moved.
- * @param target Unit to move the camera to.
- * @param duration Time in seconds it takes to move the camera
+ * Returns the object if it is not undefined or calls error.
+ * @param obj Object to check and return.
+ * @param msg Optional message to pass for error.
  */
-export const moveCameraToUnit = (target: CBaseEntity, duration: number) => {
-    let playerId = findRealPlayerID();
-    let player = PlayerResource.GetPlayer(playerId);
-  
-    if (player) {
-        CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-            unitTargetEntIndex: target.GetEntityIndex(),
-            lerp: duration
-        });
+export function getOrError<T>(obj: T | undefined, msg?: string): T {
+    if (obj === undefined) {
+        error(msg ?? "Object was undefined")
     }
-  }
-  
-  /**
-  * Moves the camera to a position. The player can't control the camera
-  * while it is being moved.
-  * @param position Point to move the camera to.
-  * @param duration Time in seconds it takes to move the camera
-  */
-  export const moveCameraToPosition = (position: Vector, duration: number) => {
-    let playerId = findRealPlayerID();
-    let player = PlayerResource.GetPlayer(playerId);
-    
-    if (player) {
-        CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-            cameraTargetX: position.x,
-            cameraTargetY: position.y,
-            cameraTargetZ: position.z,
-            lerp: duration
-        });
-    }
-  }
+
+    return obj
+}

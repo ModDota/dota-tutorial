@@ -68,7 +68,7 @@ export const seq = (...steps: TutorialStep[]): TutorialStep => {
             if (i + 1 >= steps.length) {
                 step.start(context, onComplete)
             } else {
-                step.start(context, () => startStep(i +  1))
+                step.start(context, () => startStep(i + 1))
             }
         }
 

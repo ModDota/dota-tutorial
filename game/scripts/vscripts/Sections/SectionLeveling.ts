@@ -6,7 +6,7 @@ let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
 
 const start = (complete: () => void) => {
-    print("Started section levelling")
+    print("Started section leveling")
     // Assuming the player knows camera control.
 
     // Sequence:
@@ -42,7 +42,7 @@ const start = (complete: () => void) => {
     graphContext = {}
 
     graph.start(graphContext, () => {
-        print("Section levelling was completed")
+        print("Section leveling was completed")
         complete()
     })
 }
@@ -59,4 +59,4 @@ const stop = () => {
     }
 }
 
-export const section_levelling = new tut.FunctionalSection("Section_Levelling", start, resetState, stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Leveling, start, resetState, stop)
