@@ -9,12 +9,19 @@ Sections can either be created by extending the abstract `Section` class and imp
 The tutorial graph system can be used to easily implement common behavior, especially async ones that require waiting (for a condition, for an amount of time, ...) between sequential steps. However it is not mandatory to
 use it and it is possible to implement sections completely without it if desired.
 
+# Chapter
+Chapter is made of a set of Sections. It usually follows a numerical naming scheme, such as ChapterOne.
+Players can only skip between Chapters.
+
 # Clean Slate
-All sections of the tutorials begin with a clear slate, meaning the game will always begin from the exact same state.
+A clean slate is a state where the game is set to be exactly as it was before any tutorial sequences have been initiated. Any changes that occurred while in a tutorial are reset.
 
-Each section of the tutorial has its Opening portion, which sets all parts needed for it to begin, assuming clean state, such as unit positions, unit levels, and everything's needed for the tutorial at this section.
+Each Chapter of the tutorial has its Opening Section, which sets all parts needed for it to begin assuming clean state, such as unit positions, unit levels, and everything that's needed for the tutorial at this section.
 
-When a section ends, it calls for the clean slate function (TODO: not yet defined) that sets the game at a clean slate state.
+When a Chapter ends naturally due to natural progression, clean slate **is not called**.
+
+When when a Chapter is skipped using `onStop()`, it calls for the clean slate function (TODO: not yet defined) that sets the game at a clean slate state.
+The Chapter that was the game has skipped to calls `onSkipTo()` which should call the clean slate function.
 
 The clean slate state includes:
 Hero:
@@ -25,6 +32,10 @@ Hero:
 * Hero has no ability points.
 * Hero has no gold.
 * Hero has no items, including teleport scrolls.
+* Hero has no modifiers (e.g. Pacifist).
+
+Utility:
+* All utility functions use their default values, if any (when changed via setX).
 
 Units:
 * All units are removed from the map, with the exclusion of jungle creeps and couriers.
@@ -33,6 +44,7 @@ Buildings:
 * All buildings should be standing with full health and should be invulnerable. If a building was destroyed, recreate that building.
     * No need to verify backdoor protection, just plain invulnerability should work.
     * When a tutorial needs to allow player to hit a building, it should remove the invulnerability modifier (and, if relevant, backdoor protection as well).
+* Buildings have no custom modifiers (e.g. Pacifist).
 
 Sounds:
 * All currently ongoing sounds are stopped. (not necessarily related to the tutorial, e.g. from an item or an ability)
