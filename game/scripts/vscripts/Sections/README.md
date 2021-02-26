@@ -20,8 +20,7 @@ Each Chapter of the tutorial has its Opening Section, which sets all parts neede
 
 When a Chapter ends naturally due to natural progression, clean slate **is not called**.
 
-When when a Chapter is skipped using `onStop()`, it calls for the clean slate function (TODO: not yet defined) that sets the game at a clean slate state.
-The Chapter that was the game has skipped to calls `onSkipTo()` which should call the clean slate function.
+When a section is skipped to the game calls `onStop()` on the previously running section which should put the game into a clean slate. The section that is skipped to will then receive a call to `onSkipTo()` where it can assume a clean slate is present and put the game into the state it needs.
 
 The clean slate state includes:
 Hero:
