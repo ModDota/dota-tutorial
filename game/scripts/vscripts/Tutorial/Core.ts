@@ -50,7 +50,7 @@ export class FunctionalSection extends Section {
         public readonly onStart: (complete: () => void) => void,
         public readonly onSkipTo: () => void,
         public readonly onStop: () => void,
-        public readonly orderFilter?: () => boolean
+        public readonly orderFilter?: (event:ExecuteOrderFilterEvent) => boolean
         ) {
         super(name)
     }
