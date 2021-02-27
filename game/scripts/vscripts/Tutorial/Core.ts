@@ -7,8 +7,13 @@ export abstract class Section {
      * Creates a section.
      * @param name Name of the section.
      */
-    constructor(public readonly name: string) {
+    constructor(public readonly name: SectionName) {
 
+    }
+
+    public start(complete: () => void) {
+        CustomGameEventManager.Send_ServerToAllClients("section_started", { section: this.name });
+        this.onStart(complete);
     }
 
     /**
@@ -46,7 +51,7 @@ export class FunctionalSection extends Section {
      * @param onStop stop function of the section. See Section.stop.
      * @param orderFilter? Access the order filter
      */
-    constructor(public readonly name: string,
+    constructor(public readonly name: SectionName,
         public readonly onStart: (complete: () => void) => void,
         public readonly onSkipTo: () => void,
         public readonly onStop: () => void,
@@ -106,13 +111,13 @@ export class Tutorial {
             print("Starting section", i)
 
             if (i + 1 >= this.sections.length) {
-                this._currentSection.onStart(() => {
+                this._currentSection.start(() => {
                     print("Done with all tutorial sections")
                     this._currentSection = undefined
                     // TODO: End the game? Call some callback?
                 })
             } else {
-                this._currentSection.onStart(() => {
+                this._currentSection.start(() => {
                     startSection(i + 1)
                 })
             }

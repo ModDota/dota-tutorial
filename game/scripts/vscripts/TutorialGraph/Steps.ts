@@ -1,5 +1,5 @@
 import { findAllPlayersID, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
-import { step, TutorialContext } from "./Core"
+import * as tg from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -13,15 +13,17 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
  * Creates a tutorial step that waits for a hero to go to a location.
  * @param location Target location
  */
-export const goToLocation = (location: Vector) => {
+export const goToLocation = (location: tg.StepArgument<Vector>) => {
     let checkTimer: string | undefined = undefined
 
-    return step((context, complete) => {
-        Tutorial.CreateLocationTask(location)
+    return tg.step((context, complete) => {
+        const actualLocation = tg.getArg(location, context)
+
+        Tutorial.CreateLocationTask(actualLocation)
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-            if (isHeroNearby(location, 200)) {
+            if (isHeroNearby(actualLocation, 200)) {
                 complete()
             } else {
                 checkTimer = Timers.CreateTimer(1, () => checkIsAtGoal())
@@ -44,51 +46,57 @@ export const goToLocation = (location: Vector) => {
  * @param team Team the unit belongs to.
  * @param entityKey Entity key for storing CBaseEntity member in the context.
  */
-export const spawnUnit = (unitName: string, spawnLocation: Vector, team: DotaTeam, entityKey?: string) => {
-    return step((context, complete) => {
-        CreateUnitByNameAsync(unitName, spawnLocation, true, undefined, undefined, team,
-            (createdUnit) => {
+export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>) => {
+    return tg.step((context, complete) => {
+        const actualUnitName = tg.getArg(unitName, context)
+        const actualSpawnLocation = tg.getArg(spawnLocation, context)
+        const actualTeam = tg.getArg(team, context)
+        const actualEntityKey = tg.getOptionalArg(entityKey, context)
 
-                if (entityKey) {
-                    context[entityKey] = createdUnit
+        CreateUnitByNameAsync(actualUnitName, actualSpawnLocation, true, undefined, undefined, actualTeam,
+            createdUnit => {
+
+                if (actualEntityKey) {
+                    context[actualEntityKey] = createdUnit
                 }
 
                 complete()
-            })
+            }
+        )
     })
 }
 
 /**
  * Creates a tutorial step that moves a unit.
- * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
- * @param moveLocation Location to spawn the unit at.
+ * @param unit The unit to move.
+ * @param moveLocation Location to move the unit to.
  */
-export const moveUnit = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNPC, moveLocation: Vector) => {
-    let unit: CDOTA_BaseNPC
+export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>) => {
     let checkTimer: string | undefined = undefined
     let delayCheckTimer: string | undefined = undefined
 
-    return step((context, complete) => {
-        unit = getUnitFunc(context)
+    return tg.step((context, complete) => {
+        const actualUnit = tg.getArg(unit, context)
+        const actualMoveLocation = tg.getArg(moveLocation, context)
 
         const order: ExecuteOrderOptions = {
-            UnitIndex: unit.GetEntityIndex(),
+            UnitIndex: actualUnit.GetEntityIndex(),
             OrderType: UnitOrder.MOVE_TO_POSITION,
-            Position: moveLocation,
+            Position: actualMoveLocation,
             Queue: true
         }
 
         ExecuteOrderFromTable(order)
 
-        const checkIsIdle = (unit: CDOTA_BaseNPC) => {
-            if (unit && unit.IsIdle()) {
+        const checkIsIdle = () => {
+            if (actualUnit && actualUnit.IsIdle()) {
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(1, () => checkIsIdle(unit))
+                checkTimer = Timers.CreateTimer(1, () => checkIsIdle())
             }
         }
 
-        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle(unit))
+        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
     },
         context => {
             if (checkTimer) {
@@ -107,14 +115,18 @@ export const moveUnit = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNP
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
  */
-export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibleThroughFog?: boolean) => {
+export const spawnAndKillUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, visibleThroughFog?: tg.StepArgument<boolean>) => {
     let unit: CDOTA_BaseNPC | undefined = undefined
     let checkTimer: string | undefined = undefined
 
-    return step((context, complete) => {
-        unit = CreateUnitByName(unitName, spawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+    return tg.step((context, complete) => {
+        const actualUnitName = tg.getArg(unitName, context)
+        const actualSpawnLocation = tg.getArg(spawnLocation, context)
+        const actualVisibleThroughFog = tg.getOptionalArg(visibleThroughFog, context)
 
-        if (visibleThroughFog) {
+        unit = CreateUnitByName(actualUnitName, actualSpawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+
+        if (actualVisibleThroughFog) {
             setUnitVisibilityThroughFogOfWar(unit, true);
         }
 
@@ -149,9 +161,12 @@ export const spawnAndKillUnit = (unitName: string, spawnLocation: Vector, visibl
  * @param getUnitFunc Function that returns a CDota_BaseNPC entity.
  * @param faceTowards Point to face towards.
  */
-export const faceTowards = (getUnitFunc: (context: TutorialContext) => CDOTA_BaseNPC, faceTowards: Vector) => {
-    return step((context, complete) => {
-        getUnitFunc(context).FaceTowards(faceTowards)
+export const faceTowards = (unit: tg.StepArgument<CDOTA_BaseNPC>, faceTowards: tg.StepArgument<Vector>) => {
+    return tg.step((context, complete) => {
+        const actualUnit = tg.getArg(unit, context)
+        const actualFaceTowards = tg.getArg(faceTowards, context)
+
+        actualUnit.FaceTowards(actualFaceTowards)
         complete()
     })
 }
@@ -160,11 +175,12 @@ export const faceTowards = (getUnitFunc: (context: TutorialContext) => CDOTA_Bas
  * Waits for an amount of time until completion
  * @param waitSeconds Time to wait before completion
  */
-export const wait = (waitSeconds: number) => {
+export const wait = (waitSeconds: tg.StepArgument<number>) => {
     let waitTimer: string | undefined = undefined
 
-    return step((context, complete) => {
-        waitTimer = Timers.CreateTimer(waitSeconds, () => complete())
+    return tg.step((context, complete) => {
+        const actualWaitSeconds = tg.getArg(waitSeconds, context)
+        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => complete())
     }, context => {
         if (waitTimer) {
             Timers.RemoveTimer(waitTimer)
@@ -177,13 +193,15 @@ export const wait = (waitSeconds: number) => {
  * Focuses the camera to a target or frees it.
  * @param target Target to focus the camera on. Can be undefined for freeing the camera.
  */
-export const setCameraTarget = (entityReturnFunc: (context: TutorialContext) => CBaseEntity | undefined) => {
+export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>) => {
     let playerIds: PlayerID[] | undefined = undefined
 
-    return step((context, complete) => {
+    return tg.step((context, complete) => {
+        const actualTarget = tg.getArg(target, context)
+
         playerIds = findAllPlayersID()
         // Focus all cameras on the target
-        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, entityReturnFunc(context)))
+        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, actualTarget))
 
         complete()
     }, context => {
@@ -198,17 +216,15 @@ export const setCameraTarget = (entityReturnFunc: (context: TutorialContext) => 
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
-export const upgradeAbility = (ability: CDOTABaseAbility) => {
+export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
     let checkTimer: string | undefined = undefined
-    let abilityLevel = ability.GetLevel();
-    const desiredLevel = ability.GetLevel() + 1;
 
-    ability.SetUpgradeRecommended(true);
-    return step((context, complete) => {
+    return tg.step((context, complete) => {
+        const actualAbility = tg.getArg(ability, context);
+        const desiredLevel = actualAbility.GetLevel() + 1;
+
         const checkAbilityLevel = () => {
-            abilityLevel = ability.GetLevel();
-            if (desiredLevel == abilityLevel) {
-                ability.SetUpgradeRecommended(false);
+            if (desiredLevel == actualAbility.GetLevel()) {
                 complete();
             } else {
                 checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
@@ -217,8 +233,9 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
         checkAbilityLevel();
     }, context => {
         if (checkTimer) {
+            const actualAbility = tg.getArg(ability, context);
             Timers.RemoveTimer(checkTimer)
-            ability.SetUpgradeRecommended(false);
+            actualAbility.SetUpgradeRecommended(false);
             checkTimer = undefined
         }
     })
@@ -230,7 +247,7 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
 export const waitForCameraMovement = () => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
-    return step((context, complete) => {
+    return tg.step((context, complete) => {
         listenerId = CustomGameEventManager.RegisterListener("camera_movement_detected", _ => {
             if (listenerId) {
                 CustomGameEventManager.UnregisterListener(listenerId)
@@ -253,8 +270,8 @@ export const waitForCameraMovement = () => {
  * @param fn Function to call. Gets passed the context.
  * @param stopFn Optional function to call on stop. Gets passed the context.
  */
-export const immediate = (fn: (context: TutorialContext) => void, stopFn?: (context: TutorialContext) => void) => {
-    return step((context, complete) => {
+export const immediate = (fn: (context: tg.TutorialContext) => void, stopFn?: (context: tg.TutorialContext) => void) => {
+    return tg.step((context, complete) => {
         fn(context)
         complete()
     }, context => {
@@ -270,21 +287,25 @@ export const immediate = (fn: (context: TutorialContext) => void, stopFn?: (cont
  * @param waitForCompletion Whether to wait for the sound to complete or not. Default is false.
  * @param extraDelaySeconds Extra delay to add to the wait time if true was passed for waitForCompletion. Defaults to 0.5s.
  */
-export const playGlobalSound = (soundName: string, waitForCompletion?: boolean, extraDelaySeconds?: number) => {
+export const playGlobalSound = (soundName: tg.StepArgument<string>, waitForCompletion?: tg.StepArgument<boolean>, extraDelaySeconds?: tg.StepArgument<number>) => {
     const defaultExtraDelaySeconds = 0.5
     let waitTimer: string | undefined = undefined
 
-    return step((context, complete) => {
-        EmitGlobalSound(soundName)
+    return tg.step((context, complete) => {
+        const actualSoundName = tg.getArg(soundName, context)
+        const actualWaitForCompletion = tg.getOptionalArg(waitForCompletion, context)
+        const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        if (waitForCompletion) {
+        EmitGlobalSound(actualSoundName)
+
+        if (actualWaitForCompletion) {
             // Get any entity so we can get the duration of the sound (not sure why that's needed)
             const anyEntity = Entities.Next(undefined)
             if (!anyEntity) {
                 error("Could not find any entity to get duration of sound")
             }
 
-            const soundDuration = anyEntity.GetSoundDuration(soundName, "") + (extraDelaySeconds !== undefined ? extraDelaySeconds : defaultExtraDelaySeconds)
+            const soundDuration = anyEntity.GetSoundDuration(actualSoundName, "") + (actualExtraDelaySeconds !== undefined ? actualExtraDelaySeconds : defaultExtraDelaySeconds)
 
             waitTimer = Timers.CreateTimer(soundDuration, () => complete())
         } else {
@@ -298,16 +319,18 @@ export const playGlobalSound = (soundName: string, waitForCompletion?: boolean, 
     })
 }
 
-export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, checkPeriodSeconds: number) => {
+export const completeOnCheck = (checkFn: (context: tg.TutorialContext) => boolean, checkPeriodSeconds: tg.StepArgument<number>) => {
     let checkTimer: string | undefined = undefined
 
-    return step((context, complete) => {
+    return tg.step((context, complete) => {
+        const actualCheckPeriodSeconds = tg.getArg(checkPeriodSeconds, context)
+
         // Wait until the check is true
         const check = () => {
             if (checkFn(context)) {
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(checkPeriodSeconds, () => check())
+                checkTimer = Timers.CreateTimer(actualCheckPeriodSeconds, () => check())
             }
         }
 
@@ -322,14 +345,15 @@ export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, 
 
 /**
  * Updates the goal UI periodically using the given function returning goals. Never completes and should be used together with forkAny().
- * @param getGoals Function returning goals to display in the UI.
+ * @param getGoals Goals or function returning goals that gets called periodically to display in the UI.
  */
-export const trackGoals = (getGoals: (context: TutorialContext) => Goal[]) => {
+export const trackGoals = (goals: tg.StepArgument<Goal[]>) => {
     let timer: string | undefined = undefined
 
-    return step((context, complete) => {
+    return tg.step((context, complete) => {
         const track = () => {
-            setGoalsUI(getGoals(context))
+            const actualGoals = tg.getArg(goals, context)
+            setGoalsUI(actualGoals)
 
             timer = Timers.CreateTimer(0.5, () => track())
         }

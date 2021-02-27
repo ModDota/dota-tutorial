@@ -3,7 +3,7 @@ import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, s
 
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getPlayerHero } from "./util";
+import { findAllPlayersID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -107,6 +107,9 @@ export class GameMode {
 
         this.Game.SetUseCustomHeroLevels(true);
         this.Game.SetAllowNeutralItemDrops(false);
+
+        // Make the fountain unable to attack
+        setUnitPacifist(getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC), true)
     }
 
     registerFilters() {
@@ -123,7 +126,7 @@ export class GameMode {
 
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         // Cancel orders if false
-        if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && this.tutorial.currentSection.orderFilter(event) == false) {
+        if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
             return false;
         }
         return true;
