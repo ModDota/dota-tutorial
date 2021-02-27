@@ -1,5 +1,5 @@
 import { findAllPlayersID, setUnitVisibilityThroughFogOfWar } from "../util"
-import { step, TutorialContext } from "./Core"
+import { fork, step, TutorialContext } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,

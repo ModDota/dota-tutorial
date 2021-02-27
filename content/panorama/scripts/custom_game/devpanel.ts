@@ -15,6 +15,7 @@ const sections = {
     "Camera Unlock": SectionName.CameraUnlock,
     "Leveling": SectionName.Leveling,
     "Casting": SectionName.Casting,
+    "Chapter 2 Opening": SectionName.Chapter2Opening
 };
 
 // Add a button for each section

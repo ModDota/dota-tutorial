@@ -1,9 +1,9 @@
 import { reloadable } from "./lib/tstl-utils";
-import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting } from "./Sections/index";
+import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, chapter2Opening } from "./Sections/index";
 
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getPlayerHero } from "./util";
+import { findAllPlayersID, findRealPlayerID, getPlayerHero } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -15,8 +15,9 @@ declare global {
 export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
+    canPlayerIssueOrders = true;
 
-    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting]);
+    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, chapter2Opening]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
@@ -121,6 +122,9 @@ export class GameMode {
     }
 
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+        // Ignores all orders when the flag is set to false
+        if (!this.canPlayerIssueOrders && event.issuer_player_id_const == findRealPlayerID()) return false;
+
         return true;
     }
 

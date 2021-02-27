@@ -1,6 +1,6 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
+import { getPlayerHero, setCanPlayerIssueOrders } from "../util"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -13,7 +13,7 @@ const onStart = (complete: () => void) => {
     const mudGolemMeetPosition = playerHero.GetAbsOrigin().__add(Vector(300, 800, 0))
 
     graph = tg.seq(
-        tg.immediate(() => playerHero.SetMoveCapability(UnitMoveCapability.NONE)),
+        tg.immediate(() => setCanPlayerIssueOrders(false)),
         tg.setCameraTarget(() => playerHero),
         tg.spawnUnit(CustomNpcKeys.SlacksMudGolem,
             playerHero.GetAbsOrigin().__add(Vector(0, 1500, 0)),

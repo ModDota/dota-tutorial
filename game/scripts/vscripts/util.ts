@@ -69,7 +69,7 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
     }
 }
 
-/*
+/**
  * Returns the object if it is not undefined or calls error.
  * @param obj Object to check and return.
  * @param msg Optional message to pass for error.
@@ -80,4 +80,13 @@ export function getOrError<T>(obj: T | undefined, msg?: string): T {
     }
 
     return obj
+}
+
+/**
+ * Sets whether a player can give orders to any of his controlled units and hero.
+ * @param canIssueOrders Whether the player can now give orders to his controlled units and hero.
+ */
+export function setCanPlayerIssueOrders(canIssueOrders: boolean)
+{
+    GameRules.Addon.canPlayerIssueOrders = canIssueOrders;
 }
