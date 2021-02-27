@@ -1,6 +1,6 @@
 import * as tut from "../../Tutorial/Core";
 
-const sectionName: SectionName = SectionName.Opening
+const sectionName: SectionName = SectionName.Chapter1_Opening
 
 function onStart() {
     print("Starting", sectionName);

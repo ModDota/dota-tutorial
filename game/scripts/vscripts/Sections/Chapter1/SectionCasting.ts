@@ -92,7 +92,7 @@ const stop = () => {
 };
 
 export const sectionCasting = new tut.FunctionalSection(
-    SectionName.Casting,
+    SectionName.Chapter1_Casting,
     start,
     resetState,
     stop

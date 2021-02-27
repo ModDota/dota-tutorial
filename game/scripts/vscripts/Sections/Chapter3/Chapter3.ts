@@ -30,7 +30,7 @@ enum GoalState {
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
-        section: SectionName.Chapter3Opening,
+        section: SectionName.Chapter3_Opening,
     });
 
     // Return a list of goals to display depending on which parts we have started and completed.
@@ -400,7 +400,7 @@ const onStop = () => {
 };
 
 export const sectionOpening = new tut.FunctionalSection(
-    SectionName.Chapter3Opening,
+    SectionName.Chapter3_Opening,
     onStart,
     onSkipTo,
     onStop,

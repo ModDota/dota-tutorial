@@ -59,4 +59,4 @@ const stop = () => {
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(SectionName.Leveling, start, resetState, stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, start, resetState, stop)

@@ -85,4 +85,4 @@ const clearMudGolems = () => {
     }
 }
 
-export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, onStart, onSkipTo, onStop)
+export const sectionOpening = new tut.FunctionalSection(SectionName.Chapter1_Opening, onStart, onSkipTo, onStop)
