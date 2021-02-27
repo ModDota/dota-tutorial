@@ -203,10 +203,12 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
     let abilityLevel = ability.GetLevel();
     const desiredLevel = ability.GetLevel() + 1;
 
+    ability.SetUpgradeRecommended(true);
     return step((context, complete) => {
         const checkAbilityLevel = () => {
             abilityLevel = ability.GetLevel();
             if (desiredLevel == abilityLevel) {
+                ability.SetUpgradeRecommended(false);
                 complete();
             } else {
                 checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
@@ -216,6 +218,7 @@ export const upgradeAbility = (ability: CDOTABaseAbility) => {
     }, context => {
         if (checkTimer) {
             Timers.RemoveTimer(checkTimer)
+            ability.SetUpgradeRecommended(false);
             checkTimer = undefined
         }
     })
