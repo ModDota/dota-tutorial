@@ -51,7 +51,7 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
         const actualUnitName = tg.getArg(unitName, context)
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualTeam = tg.getArg(team, context)
-        const actualEntityKey = entityKey ? tg.getArg(entityKey, context) : undefined
+        const actualEntityKey = tg.getOptionalArg(entityKey, context)
 
         CreateUnitByNameAsync(actualUnitName, actualSpawnLocation, true, undefined, undefined, actualTeam,
             createdUnit => {
