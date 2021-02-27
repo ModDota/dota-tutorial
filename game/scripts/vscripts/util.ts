@@ -69,7 +69,7 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
     }
 }
 
-/**
+/*
  * Returns the object if it is not undefined or calls error.
  * @param obj Object to check and return.
  * @param msg Optional message to pass for error.
