@@ -1,0 +1,13 @@
+"lang"
+{
+    "Language"    "schinese"
+    "Tokens"
+    {
+        "npc_mud_golem_sunsfan"    "Sunsfan"
+        "npc_mud_golem_slacks"    "Slacks"
+        "npc_dota_tutorial_radiant_melee_creep"    "Radiant Melee Creep"
+        "npc_dota_tutorial_radiant_ranged_creep"    "Radiant Ranged Creep"
+        "npc_dota_tutorial_dire_melee_creep"    "Dire Melee Creep"
+        "npc_dota_tutorial_dire_ranged_creep"    "Dire Ranged Creep"
+    }
+}

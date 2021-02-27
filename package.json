@@ -1,23 +1,39 @@
 {
-    "name": "dota_tutorial",
-    "private": true,
-    "scripts": {
-        "postinstall": "node scripts/install.js",
-        "launch": "node scripts/launch.js",
-        "build": "run-p build:*",
-        "build:panorama": "tsc --project content/panorama/scripts/custom_game/tsconfig.json",
-        "build:vscripts": "tstl --project game/scripts/vscripts/tsconfig.json",
-        "dev": "run-p dev:*",
-        "dev:panorama": "tsc --project content/panorama/scripts/custom_game/tsconfig.json --watch",
-        "dev:vscripts": "tstl --project game/scripts/vscripts/tsconfig.json --watch"
-    },
-    "devDependencies": {
-        "@moddota/dota-lua-types": "^4.7.1",
-        "@moddota/panorama-types": "^1.5.0",
-        "find-steam-app": "^1.0.2",
-        "fs-extra": "^9.0.0",
-        "npm-run-all": "^4.1.5",
-        "typescript": "^3.9.3",
-        "typescript-to-lua": "0.38.0"
-    }
+  "name": "dota_tutorial",
+  "private": true,
+  "scripts": {
+    "postinstall": "node scripts/install.js",
+    "launch": "node scripts/launch.js",
+    "build": "run-p build:*",
+    "build:panorama": "tsc --project content/panorama/scripts/custom_game/tsconfig.json",
+    "build:vscripts": "tstl --project game/scripts/vscripts/tsconfig.json",
+    "dev": "run-p dev:*",
+    "dev:panorama": "tsc --project content/panorama/scripts/custom_game/tsconfig.json --watch",
+    "dev:vscripts": "tstl --project game/scripts/vscripts/tsconfig.json --watch",
+    "dev:localizationCompiler": "tsc --project node_modules/~resource/tsconfig.json",
+    "dev:localizationCompilerWatcher": "tsc --project node_modules/~resource/tsconfig.json --watch",
+    "dev:runlocalizationWatcher": "node node_modules/~generator/fsWatcher.js",
+    "init": "link-module-alias && node node_modules/~generator/init.js"
+  },
+  "devDependencies": {
+    "@moddota/dota-lua-types": "^4.7.1",
+    "@moddota/panorama-types": "^1.5.0",
+    "find-steam-app": "^1.0.2",
+    "fs-extra": "^9.0.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.9.3",
+    "typescript-to-lua": "0.38.0",
+    "@types/node": "^14.14.22",
+    "ts-node": "^9.1.1"
+  },
+  "_moduleAliases": {
+    "~resource": "game/resource",
+    "~generator": "node_modules/@shushishtok/tooltip_generator"
+  },
+  "dependencies": {
+    "@shushishtok/tooltip_generator": "^1.5.6",
+    "link-module-alias": "^1.2.0",
+    "node-watch": "^0.7.1",
+    "valve-kv": "^1.1.0"
+  }
 }
