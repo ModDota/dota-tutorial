@@ -106,6 +106,7 @@ export class GameMode {
         );
 
         this.Game.SetUseCustomHeroLevels(true);
+        this.Game.SetAllowNeutralItemDrops(false);
     }
 
     registerFilters() {
