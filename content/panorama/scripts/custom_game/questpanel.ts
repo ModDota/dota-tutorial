@@ -29,7 +29,5 @@ GameEvents.Subscribe("set_goals", event => {
         const label = $.CreatePanel("Label", rowPanel, "");
         label.AddClass(goal.completed ? "QuestCompletedText" : "QuestUncompletedText");
         label.text = goal.text;
-
-        $.Msg("Goal:", goal)
     }
 });
