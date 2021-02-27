@@ -1,121 +1,94 @@
-import { defaultSectionState, SectionState } from "../Sections/SectionState";
-import { getPlayerHero, findRealPlayerID } from "../util";
+import { defaultSectionState, FilledSectionState, SectionState } from "./SectionState"
+import { getOrError, getPlayerHero } from "../util"
 
-export const setupState = (sectionState: SectionState) : void => {
+function isObject<T>(item: T) {
+    return item && typeof item === "object" && !Array.isArray(item)
+}
+
+function mergeDeep(target: any, source: any): any {
+    const output = Object.assign({}, target)
+    if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(key => {
+            if (isObject(source[key])) {
+                if (!(key in target)) {
+                    Object.assign(output, { [key]: source[key] })
+                } else {
+                    output[key] = mergeDeep(target[key], source[key])
+                }
+            } else {
+                Object.assign(output, { [key]: source[key] })
+            }
+        })
+    }
+    return output
+}
+
+export const setupState = (sectionState: SectionState): void => {
     print("Starting state setup")
-    let playerHero = getPlayerHero();
-    if (!playerHero) error("Could not find the player's hero.");
 
-    let player = PlayerResource.GetPlayer(findRealPlayerID())
+    // Use defaults and override them with the passed state
+    const state: FilledSectionState = mergeDeep(defaultSectionState, sectionState)
 
-    if (sectionState.playerHeroUnitName ||
-        (sectionState.playerHeroXP && playerHero.GetCurrentXP() !== sectionState.playerHeroXP)) {
-        playerHero = replacePlayerHero(player, playerHero, sectionState)
+    // Player / hero
+    let playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.")
+
+    if (playerHero.GetCurrentXP() !== state.playerHeroXP || playerHero.GetUnitName() !== state.playerHeroUnitName) {
+        playerHero = PlayerResource.ReplaceHeroWith(playerHero.GetPlayerOwner().GetPlayerID(), state.playerHeroUnitName, state.playerHeroGold, state.playerHeroXP)
+    }
+
+    if (state.playerHeroLocation !== undefined && state.playerHeroLocation.__sub(playerHero.GetAbsOrigin()).Length2D() > state.playerHeroLocationTolerance) {
+        playerHero.Stop()
+        playerHero.SetAbsOrigin(state.playerHeroLocation)
+    }
+
+    playerHero.SetAbilityPoints(state.playerHeroAbilityPoints)
+    playerHero.SetGold(state.playerHeroGold, false)
+
+    // Golems
+    if (state.requireSlacksGolem) {
+        createOrMoveGolem(CustomNpcKeys.SlacksMudGolem, state.slacksLocation, state.playerHeroLocation)
     } else {
-        if (playerHero.GetUnitName() !== defaultSectionState.playerHeroUnitName)
-            playerHero = replacePlayerHero(player, playerHero, defaultSectionState)
+        clearGolem(CustomNpcKeys.SlacksMudGolem)
     }
-   
-    if (sectionState.playerHeroLocation) {
-        updateHeroPosition(playerHero, sectionState.playerHeroLocation)
+
+    if (state.sunsFanLocation) {
+        createOrMoveGolem(CustomNpcKeys.SunsFanMudGolem, state.sunsFanLocation, state.playerHeroLocation)
     } else {
-        if (defaultSectionState.playerHeroLocation) {
-            updateHeroPosition(playerHero, defaultSectionState.playerHeroLocation)
-        }
+        clearGolem(CustomNpcKeys.SunsFanMudGolem)
     }
-
-    if (sectionState.playerHeroAbilityPoints) {
-        updateAbilityPoints(playerHero, sectionState.playerHeroAbilityPoints)
-    } else {
-        if (defaultSectionState.playerHeroAbilityPoints)
-            updateAbilityPoints(playerHero, defaultSectionState.playerHeroAbilityPoints)
-    }
-
-    if (sectionState.playerHeroGold) {
-        updateGold(playerHero, sectionState.playerHeroGold)
-    } else {
-        if (defaultSectionState.playerHeroGold)
-            updateGold(playerHero, defaultSectionState.playerHeroGold)
-    }
-    
-    if (sectionState.requireMudgolems)
-        createMudgolems(sectionState)
-    else
-        clearMudGolems()
-
 }
 
-function replacePlayerHero(player: CDOTAPlayer | undefined, playerHero: CDOTA_BaseNPC_Hero, sectionState: SectionState) : CDOTA_BaseNPC_Hero {
-    let heroName = sectionState.playerHeroUnitName ?? defaultSectionState.playerHeroUnitName
-    let heroGold = sectionState.playerHeroGold ?? defaultSectionState.playerHeroGold
-    let heroXP = sectionState.playerHeroXP ?? defaultSectionState.playerHeroXP
-
-    if (player && heroName && heroGold && heroXP) {
-        playerHero = PlayerResource.ReplaceHeroWith(player.GetPlayerID(), heroName, heroGold, heroXP)
-    }
-
-    return playerHero
-}
-
-function updateHeroPosition(playerHero: CDOTA_BaseNPC_Hero, newPosition: Vector) {
-    playerHero.Stop()
-    playerHero.SetAbsOrigin(newPosition)
-}
-
-function updateAbilityPoints(playerHero: CDOTA_BaseNPC_Hero, abilityPoints: number) {
-    if (playerHero.GetAbilityPoints() !== abilityPoints)
-        playerHero.SetAbilityPoints(abilityPoints)
-}
-
-function updateGold(playerHero: CDOTA_BaseNPC_Hero, goldAmount: number) {
-    if (playerHero.GetGold() !== goldAmount)
-        playerHero.SetGold(goldAmount, false)
-}
-
-function createMudgolems(sectionState: SectionState) {
+function createOrMoveGolem(unitName: string, location: Vector, faceTo?: Vector) {
     const context = GameRules.Addon.context
 
-    if (sectionState.mudGolemsLocations) {
-        if (!context[CustomNpcKeys.SunsFanMudGolem]) {
-            CreateUnitByNameAsync(CustomNpcKeys.SunsFanMudGolem, sectionState.mudGolemsLocations.sunsFanLocation, true, undefined, undefined, DotaTeam.GOODGUYS, 
-                unit => {
-                    if (sectionState.playerHeroLocation)
-                        unit.FaceTowards(sectionState.playerHeroLocation)
-                    else if (defaultSectionState.playerHeroLocation)
-                        unit.FaceTowards(defaultSectionState.playerHeroLocation)
-                    context[CustomNpcKeys.SunsFanMudGolem] = unit
-                }
-            )
+    const postCreate = (unit: CDOTA_BaseNPC) => {
+        if (unit.GetAbsOrigin().__sub(location).Length2D() > 100) {
+            unit.SetAbsOrigin(location)
+            unit.Stop()
         }
 
-        if (!context[CustomNpcKeys.SlacksMudGolem]) {
-            CreateUnitByNameAsync(CustomNpcKeys.SlacksMudGolem, sectionState.mudGolemsLocations.slacksLocation, true, undefined, undefined, DotaTeam.GOODGUYS, 
-                unit => {
-                    if (sectionState.playerHeroLocation)
-                        unit.FaceTowards(sectionState.playerHeroLocation)
-                    else if (defaultSectionState.playerHeroLocation)
-                        unit.FaceTowards(defaultSectionState.playerHeroLocation)
-                    context[CustomNpcKeys.SlacksMudGolem] = unit
-                }
-            )
+        if (faceTo) {
+            unit.FaceTowards(faceTo)
         }
+
+        context[unitName] = unit
+    }
+
+    if (!context[unitName]) {
+        CreateUnitByNameAsync(unitName, location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => postCreate(unit))
+    } else {
+        postCreate(context[unitName])
     }
 }
 
-function clearMudGolems() {
+function clearGolem(unitName: string) {
     const context = GameRules.Addon.context
 
-    if (context[CustomNpcKeys.SunsFanMudGolem]) {
-        if (IsValidEntity(context[CustomNpcKeys.SunsFanMudGolem])) {
-            context[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
+    if (context[unitName]) {
+        if (IsValidEntity(context[unitName])) {
+            context[unitName].RemoveSelf()
         }
-        context[CustomNpcKeys.SunsFanMudGolem] = undefined
-    }
 
-    if (context[CustomNpcKeys.SlacksMudGolem]) {
-        if (IsValidEntity(context[CustomNpcKeys.SlacksMudGolem])) {
-            context[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
-        }
-        context[CustomNpcKeys.SlacksMudGolem] = undefined
+        context[unitName] = undefined
     }
 }

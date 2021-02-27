@@ -1,11 +1,15 @@
 import * as tg from "../TutorialGraph/index";
 import * as tut from "../Tutorial/Core";
 import { getPlayerHero } from "../util";
-import { SectionState } from "./SectionState";
+import { SectionState } from "../Tutorial/SectionState";
 
 let graph: tg.TutorialStep | undefined = undefined;
 let graphContext: tg.TutorialContext | undefined = undefined;
-const sectionCastingState: SectionState  = {}
+
+const initialState: SectionState = {
+    requireSlacksGolem: true,
+    slacksLocation: Vector(-6250, -6050, 256),
+};
 
 const start = (complete: () => void) => {
     print("Started section casting");
@@ -91,7 +95,7 @@ const stop = () => {
 
 export const sectionCasting = new tut.FunctionalSection(
     SectionName.Casting,
-    sectionCastingState,
+    initialState,
     start,
     stop
 );

@@ -1,4 +1,4 @@
-import { SectionState } from "../Sections/SectionState"
+import { SectionState } from "./SectionState"
 import { setupState } from "./SetupState"
 
 /**

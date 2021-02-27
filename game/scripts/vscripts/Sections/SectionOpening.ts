@@ -1,10 +1,10 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
 import { getPlayerHero } from "../util"
-import { SectionState } from "./SectionState"
+import { SectionState } from "../Tutorial/SectionState"
 
 let graph: tg.TutorialStep | undefined = undefined
-const sectionOpeningState : SectionState = {}
+const initialState: SectionState = {}
 
 const onStart = (complete: () => void) => {
     const playerHero = getPlayerHero();
@@ -60,6 +60,6 @@ const onStop = () => {
 
 export const sectionOpening = new tut.FunctionalSection(
     SectionName.Opening,
-    sectionOpeningState,
+    initialState,
     onStart,
     onStop)

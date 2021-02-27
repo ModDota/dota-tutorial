@@ -1,5 +1,5 @@
 import * as tut from "../Tutorial/Core";
-import { SectionState } from "./SectionState";
+import { SectionState } from "../Tutorial/SectionState";
 
 const sectionName: SectionName = SectionName.Opening
 const sectionTemplateState: SectionState = {}

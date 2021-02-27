@@ -1,15 +1,15 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
 import { getOrError, getPlayerHero, setUnitPacifist } from "../util"
-import { SectionState } from "./SectionState"
+import { SectionState } from "../Tutorial/SectionState"
 
 let graph: tg.TutorialStep | undefined = undefined
-const sectionCameraUnlockState: SectionState = {
-    requireMudgolems: true,
-    mudGolemsLocations: {
-        sunsFanLocation: Vector(-6400, -5900, 0),
-        slacksLocation: Vector(-6250, -6050, 0)
-    }
+
+const initialState: SectionState = {
+    requireSunsfanGolem: true,
+    requireSlacksGolem: true,
+    sunsFanLocation: Vector(-6400, -5900, 256),
+    slacksLocation: Vector(-6250, -6050, 256),
 }
 
 enum CameraUnlockContextKey {
@@ -119,7 +119,7 @@ const onStop = () => {
 
 export const sectionCameraUnlock = new tut.FunctionalSection(
     SectionName.CameraUnlock,
-    sectionCameraUnlockState,
+    initialState,
     onStart,
     onStop
 )
