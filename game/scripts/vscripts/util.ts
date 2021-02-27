@@ -81,3 +81,11 @@ export function getOrError<T>(obj: T | undefined, msg?: string): T {
 
     return obj
 }
+
+/**
+ * Updates the goal display.
+ * @param goals Goals to display in the UI.
+ */
+export function setGoalsUI(goals: Goal[]) {
+    CustomGameEventManager.Send_ServerToAllClients("set_goals", { goals });
+}

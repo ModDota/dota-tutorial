@@ -1,4 +1,4 @@
-import { findAllPlayersID, setUnitVisibilityThroughFogOfWar } from "../util"
+import { findAllPlayersID, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
 import { step, TutorialContext } from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
@@ -314,5 +314,30 @@ export const completeOnCheck = (checkFn: (context: TutorialContext) => boolean, 
             Timers.RemoveTimer(checkTimer)
             checkTimer = undefined
         }
+    })
+}
+
+/**
+ * Updates the goal UI periodically using the given function returning goals. Never completes and should be used together with forkAny().
+ * @param getGoals Function returning goals to display in the UI.
+ */
+export const trackGoals = (getGoals: (context: TutorialContext) => Goal[]) => {
+    let timer: string | undefined = undefined
+
+    return step((context, complete) => {
+        const track = () => {
+            setGoalsUI(getGoals(context))
+
+            timer = Timers.CreateTimer(0.5, () => track())
+        }
+
+        track()
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        setGoalsUI([])
     })
 }
