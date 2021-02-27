@@ -4,7 +4,6 @@ const sectionName: SectionName = SectionName.Opening
 
 function onStart() {
     print("Starting", sectionName);
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
 }
 
 function onSkipTo() {

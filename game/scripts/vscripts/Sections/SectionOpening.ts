@@ -5,7 +5,6 @@ import { getPlayerHero } from "../util"
 let graph: tg.TutorialStep | undefined = undefined
 
 const onStart = (complete: () => void) => {
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Opening })
 
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
