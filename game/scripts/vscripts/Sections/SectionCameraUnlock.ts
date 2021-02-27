@@ -43,9 +43,9 @@ const onStart = (complete: () => void) => {
     }
 
     // Track the goals and do the main action in parallel. When the main action is done forkAny() will complete and clear the goals.
-    graph = tg.forkAny(
+    graph = tg.forkAny([
         tg.trackGoals(getGoals),
-        tg.seq(
+        tg.seq([
             // Init
             tg.wait(1),
             tg.setCameraTarget(() => undefined),
@@ -95,8 +95,8 @@ const onStart = (complete: () => void) => {
             tg.playGlobalSound("abaddon_abad_spawn_01", true), // what are you doing
             tg.immediate(_ => getOrError(getPlayerHero()).HeroLevelUp(true)),
             tg.wait(1),
-        )
-    )
+        ])
+    ])
 
     graph.start(GameRules.Addon.context, () => {
         complete()
