@@ -1,12 +1,11 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
 import { getPlayerHero } from "../util"
+import { SectionState } from "./SectionState"
 
 let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
-
-const setupState = () => {
-}
+const sectionLevellingState : SectionState = {}
 
 const start = (complete: () => void) => {
     print("Started section leveling")
@@ -50,10 +49,6 @@ const start = (complete: () => void) => {
     })
 }
 
-const resetState = () => {
-    // TODO: Make sure DK exists at spawn and other stuff (yea stuff...)
-}
-
 const stop = () => {
     if (graph) {
         graph.stop(graphContext ?? {})
@@ -62,4 +57,8 @@ const stop = () => {
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(SectionName.Leveling, setupState, start, resetState, stop)
+export const sectionLeveling = new tut.FunctionalSection(
+    SectionName.Leveling, 
+    sectionLevellingState, 
+    start, 
+    stop)

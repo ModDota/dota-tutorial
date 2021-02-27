@@ -1,17 +1,12 @@
 import * as tut from "../Tutorial/Core";
+import { SectionState } from "./SectionState";
 
 const sectionName: SectionName = SectionName.Opening
-
-const setupState = () => {
-}
+const sectionTemplateState: SectionState = {}
 
 function onStart() {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
-}
-
-function onSkipTo() {
-    print("Skipping to", sectionName);
 }
 
 function onStop() {
@@ -20,8 +15,7 @@ function onStop() {
 
 export const sectionExampleEmpty = new tut.FunctionalSection(
     sectionName,
-    setupState,
+    sectionTemplateState,
     onStart,
-    onSkipTo,
     onStop
 );

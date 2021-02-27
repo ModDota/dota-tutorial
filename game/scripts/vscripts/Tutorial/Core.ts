@@ -1,3 +1,6 @@
+import { SectionState } from "../Sections/SectionState"
+import { setupState } from "./SetupState"
+
 /**
  * Tutorial section that contains logic for a single section of the tutorial. Should also
  * be able to handle setup and cleanup of its state.
@@ -11,18 +14,12 @@ export abstract class Section {
 
     }
 
-    public abstract setupState: () => void
+    public abstract sectionState: SectionState
 
     /**
      * Called when the section should start. Should contain the main logic for the section. Should call complete when done.
      */
     public abstract onStart: (complete: () => void) => void
-
-    /**
-     * Called when we want to set up the state for this section when skipping to it (ie. when the assumptions it makes about the preceding
-     * sections are possibly false such as a hero being alive).
-     */
-    public abstract onSkipTo: () => void
 
     /**
      * Called when we want this section to stop. Should stop any progress as well as clean up any resources (eg. remove any spawned units or clean up timers).
@@ -42,9 +39,8 @@ export class FunctionalSection extends Section {
      * @param onStop stop function of the section. See Section.stop.
      */
     constructor(public readonly name: string,
-        public readonly setupState: () => void,
+        public readonly sectionState: SectionState,
         public readonly onStart: (complete: () => void) => void,
-        public readonly onSkipTo: () => void,
         public readonly onStop: () => void) {
         super(name)
     }
@@ -92,22 +88,21 @@ export class Tutorial {
         if (sectionIndex === undefined) {
             sectionIndex = 0
         } else {
-            this.sections[sectionIndex].onSkipTo()
+            // this.sections[sectionIndex].onSkipTo()
         }
 
         const startSection = (i: number) => {
             this._currentSection = this.sections[i]
+            setupState(this._currentSection.sectionState)
             print("Starting section", i)
 
             if (i + 1 >= this.sections.length) {
-                this._currentSection.setupState()
                 this._currentSection.onStart(() => {
                     print("Done with all tutorial sections")
                     this._currentSection = undefined
                     // TODO: End the game? Call some callback?
                 })
             } else {
-                this._currentSection.setupState()
                 this._currentSection.onStart(() => {
                     startSection(i + 1)
                 })
