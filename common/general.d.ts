@@ -14,3 +14,8 @@ declare const enum CustomNpcKeys {
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep"
 }
+
+type Goal = {
+    text: string
+    completed: boolean
+}

@@ -107,6 +107,7 @@ export class GameMode {
         );
 
         this.Game.SetUseCustomHeroLevels(true);
+        this.Game.SetAllowNeutralItemDrops(false);
     }
 
     registerFilters() {
@@ -124,6 +125,12 @@ export class GameMode {
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         // Ignores all orders when the flag is set to false
         if (!this.canPlayerIssueOrders && event.issuer_player_id_const == findRealPlayerID()) return false;
+
+
+        // Cancel orders if false
+        if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
+            return false;
+        }
 
         return true;
     }

@@ -6,6 +6,10 @@ interface SectionStartedEvent {
     section: SectionName;
 }
 
+interface SetGoalsEvent {
+    goals: Goal[];
+}
+
 interface MoveCameraEvent {
     cameraTargetX?: number;
     cameraTargetY?: number;
@@ -21,4 +25,5 @@ interface CustomGameEventDeclarations {
     ui_loaded: {};
     detect_camera_movement: {};
     camera_movement_detected: {};
+    set_goals: SetGoalsEvent;
 }

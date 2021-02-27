@@ -10,7 +10,7 @@
 .QuestsPanelHeader {
     width: 100%;
     height: 6%;
-   
+
     vertical-align: top;
 }
 
@@ -46,7 +46,7 @@
     brightness: 0.6;
 }
 
-.QuestsPanelContainer {
+#QuestsPanelContainer {
     width: 100%;
     height: 94%;
     vertical-align: bottom;
@@ -59,7 +59,7 @@
     height: 5%;
 }
 
-#QuestsUncompleted {
+.QuestsUncompleted {
     width: 26px;
     height: 26px;
 
@@ -70,7 +70,7 @@
     brightness: 1.5;
 }
 
-#QuestsCompleted {
+.QuestsCompleted {
     width: 26px;
     height: 26px;
 

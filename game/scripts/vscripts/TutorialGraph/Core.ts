@@ -36,7 +36,7 @@ export const step = (start: (context: TutorialContext, complete: () => void) => 
 }
 
 /**
- * Creates a tutorial step that waits for steps to complete in parallel before completing itself.
+ * Creates a tutorial step that waits for all steps to complete in parallel before completing itself.
  * @param steps List of tutorial steps to wrap in parallel.
  */
 export const fork = (...steps: TutorialStep[]): TutorialStep => {
@@ -51,6 +51,22 @@ export const fork = (...steps: TutorialStep[]): TutorialStep => {
                 if (stepsCompleted.every(c => c)) {
                     onComplete()
                 }
+            })
+        }
+    }, context => steps.forEach(step => step.stop(context)))
+}
+
+/**
+ * Creates a tutorial step that waits for any step to complete in parallel before completing itself.
+ * @param steps List of tutorial steps to wrap in parallel.
+ */
+export const forkAny = (...steps: TutorialStep[]): TutorialStep => {
+    return step((context, onComplete) => {
+        // Once one step completes, stop all others and complete ourselves
+        for (const step of steps) {
+            step.start(context, () => {
+                steps.filter(otherStep => otherStep !== step).forEach(otherStep => otherStep.stop(context))
+                onComplete()
             })
         }
     }, context => steps.forEach(step => step.stop(context)))
