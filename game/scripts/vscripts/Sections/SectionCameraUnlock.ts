@@ -16,6 +16,8 @@ enum GoalState {
     Completed
 }
 
+const targetDummySpawnOffset = Vector(500, 500, 0)
+
 const onStart = (complete: () => void) => {
     const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
 
@@ -62,9 +64,8 @@ const onStart = (complete: () => void) => {
 
             // Kill target dummy
             tg.playGlobalSound("abaddon_abad_spawn_01", true), // heres a target dummy
-            // TODO: Use dummy unit
             tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Started),
-            tg.spawnAndKillUnit("npc_dota_observer_wards", radiantFountain.GetAbsOrigin().__add(Vector(500, 0, 0))),
+            tg.spawnAndKillUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset)),
             tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Completed),
             tg.wait(1),
             tg.playGlobalSound("abaddon_abad_spawn_01", true), // that was violent
@@ -79,7 +80,7 @@ const onStart = (complete: () => void) => {
             tg.completeOnCheck(context => {
                 const golem = getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC | undefined)
 
-                const attacked = golem.GetHealth() < golem.GetMaxHealth()
+                const attacked = !golem.IsAlive() || golem.GetHealth() < golem.GetMaxHealth()
 
                 // Play a sound if the player didn't attack SUNSfan golem for 10 seconds
                 if (!attacked && sunsfanAttackableTime && GameRules.GetGameTime() - sunsfanAttackableTime > 10) {
