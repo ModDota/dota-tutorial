@@ -5,6 +5,26 @@ export type TutorialContext = {
     [key: string]: any
 }
 
+export type StepArgument<T> = T | ((context: TutorialContext) => T)
+
+export const getArg = <T>(arg: StepArgument<T>, context: TutorialContext): T => {
+    // TODO: Make this work when T is a function
+    if (typeof arg === "function") {
+        return (arg as (context: TutorialContext) => T)(context)
+    }
+
+    return arg as T
+}
+
+export const getOptionalArg = <T>(arg: StepArgument<T> | undefined, context: TutorialContext): T | undefined => {
+    if (arg === undefined) {
+        return undefined
+    }
+
+    return getArg(arg, context)
+}
+
+
 /**
  * Node in the tutorial graph. Can be composed with tutStep and tutFork to build
  * a tutorial graph.
@@ -39,55 +59,86 @@ export const step = (start: (context: TutorialContext, complete: () => void) => 
  * Creates a tutorial step that waits for all steps to complete in parallel before completing itself.
  * @param steps List of tutorial steps to wrap in parallel.
  */
-export const fork = (...steps: TutorialStep[]): TutorialStep => {
-    const stepsCompleted = steps.map(s => false)
+export const fork = (steps: StepArgument<TutorialStep[]>): TutorialStep => {
+    let actualSteps: TutorialStep[] | undefined = undefined
 
     return step((context, onComplete) => {
+        actualSteps = getArg(steps, context)
+
+        const stepsCompleted = actualSteps.map(s => false)
+
         // Once all steps are completed, complete ourselves
-        for (let i = 0; i < steps.length; i++) {
+        for (let i = 0; i < actualSteps.length; i++) {
             const stepIndex = i
-            steps[stepIndex].start(context, () => {
+            actualSteps[stepIndex].start(context, () => {
                 stepsCompleted[stepIndex] = true
                 if (stepsCompleted.every(c => c)) {
                     onComplete()
                 }
             })
         }
-    }, context => steps.forEach(step => step.stop(context)))
+    }, context => {
+        if (actualSteps) {
+            actualSteps.forEach(step => step.stop(context))
+            actualSteps = undefined
+        }
+    })
 }
 
 /**
  * Creates a tutorial step that waits for any step to complete in parallel before completing itself.
  * @param steps List of tutorial steps to wrap in parallel.
  */
-export const forkAny = (...steps: TutorialStep[]): TutorialStep => {
+export const forkAny = (steps: StepArgument<TutorialStep[]>): TutorialStep => {
+    let actualSteps: TutorialStep[] | undefined = undefined
+
     return step((context, onComplete) => {
+        actualSteps = getArg(steps, context)
+
         // Once one step completes, stop all others and complete ourselves
-        for (const step of steps) {
+        for (const step of actualSteps) {
             step.start(context, () => {
-                steps.filter(otherStep => otherStep !== step).forEach(otherStep => otherStep.stop(context))
+                if (actualSteps) {
+                    actualSteps.filter(otherStep => otherStep !== step).forEach(otherStep => otherStep.stop(context))
+                }
                 onComplete()
             })
         }
-    }, context => steps.forEach(step => step.stop(context)))
+    }, context => {
+        if (actualSteps) {
+            actualSteps.forEach(step => step.stop(context))
+            actualSteps = undefined
+        }
+    })
 }
 
 /**
  * Creates a tutorial step that executes individual steps one after another. The step completes when the final step was completed.
  * @param steps List of tutorial steps to wrap sequentially.
  */
-export const seq = (...steps: TutorialStep[]): TutorialStep => {
-    return step((context, onComplete) => {
-        const startStep = (i: number) => {
-            const step = steps[i]
+export const seq = (steps: StepArgument<TutorialStep[]>): TutorialStep => {
+    let actualSteps: TutorialStep[] | undefined = undefined
 
-            if (i + 1 >= steps.length) {
-                step.start(context, onComplete)
-            } else {
-                step.start(context, () => startStep(i + 1))
+    return step((context, onComplete) => {
+        actualSteps = getArg(steps, context)
+
+        const startStep = (i: number) => {
+            if (actualSteps) {
+                const step = actualSteps[i]
+
+                if (i + 1 >= actualSteps.length) {
+                    step.start(context, onComplete)
+                } else {
+                    step.start(context, () => startStep(i + 1))
+                }
             }
         }
 
         startStep(0)
-    }, context => steps.forEach(step => step.stop(context)))
+    }, context => {
+        if (actualSteps) {
+            actualSteps.forEach(step => step.stop(context))
+            actualSteps = undefined
+        }
+    })
 }
