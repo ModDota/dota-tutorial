@@ -16,6 +16,8 @@ enum GoalState {
     Completed
 }
 
+const targetDummySpawnOffset = Vector(500, 500, 0)
+
 const onStart = (complete: () => void) => {
     const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
 
@@ -41,9 +43,9 @@ const onStart = (complete: () => void) => {
     }
 
     // Track the goals and do the main action in parallel. When the main action is done forkAny() will complete and clear the goals.
-    graph = tg.forkAny(
+    graph = tg.forkAny([
         tg.trackGoals(getGoals),
-        tg.seq(
+        tg.seq([
             // Init
             tg.wait(1),
             tg.setCameraTarget(() => undefined),
@@ -62,9 +64,8 @@ const onStart = (complete: () => void) => {
 
             // Kill target dummy
             tg.playGlobalSound("abaddon_abad_spawn_01", true), // heres a target dummy
-            // TODO: Use dummy unit
             tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Started),
-            tg.spawnAndKillUnit("npc_dota_observer_wards", radiantFountain.GetAbsOrigin().__add(Vector(500, 0, 0))),
+            tg.spawnAndKillUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset)),
             tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Completed),
             tg.wait(1),
             tg.playGlobalSound("abaddon_abad_spawn_01", true), // that was violent
@@ -79,7 +80,7 @@ const onStart = (complete: () => void) => {
             tg.completeOnCheck(context => {
                 const golem = getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC | undefined)
 
-                const attacked = golem.GetHealth() < golem.GetMaxHealth()
+                const attacked = !golem.IsAlive() || golem.GetHealth() < golem.GetMaxHealth()
 
                 // Play a sound if the player didn't attack SUNSfan golem for 10 seconds
                 if (!attacked && sunsfanAttackableTime && GameRules.GetGameTime() - sunsfanAttackableTime > 10) {
@@ -94,8 +95,8 @@ const onStart = (complete: () => void) => {
             tg.playGlobalSound("abaddon_abad_spawn_01", true), // what are you doing
             tg.immediate(_ => getOrError(getPlayerHero()).HeroLevelUp(true)),
             tg.wait(1),
-        )
-    )
+        ])
+    ])
 
     graph.start(GameRules.Addon.context, () => {
         complete()

@@ -12,7 +12,8 @@ declare const enum CustomNpcKeys {
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
-    RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep"
+    RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
+    TargetDummy = "npc_target_dummy",
 }
 
 type Goal = {

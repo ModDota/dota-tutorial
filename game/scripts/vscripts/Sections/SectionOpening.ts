@@ -22,26 +22,26 @@ const onStart = (complete: () => void) => {
             playerHero.GetAbsOrigin().__add(Vector(1500, 500, 0)),
             DotaTeam.GOODGUYS,
             CustomNpcKeys.SunsFanMudGolem),
-        tg.fork(
-            tg.seq(
+        tg.fork([
+            tg.seq([
                 tg.moveUnit(context => context[CustomNpcKeys.SlacksMudGolem], mudGolemMeetPosition),
                 tg.faceTowards(context => context[CustomNpcKeys.SlacksMudGolem], playerHero.GetAbsOrigin()),
-            ),
-            tg.seq(
+            ]),
+            tg.seq([
                 tg.moveUnit(context => context[CustomNpcKeys.SunsFanMudGolem], mudGolemMeetPosition.__add(Vector(150, -150, 0))),
                 tg.faceTowards(context => context[CustomNpcKeys.SunsFanMudGolem], playerHero.GetAbsOrigin()),
-            ),
-            tg.seq(
+            ]),
+            tg.seq([
                 tg.setCameraTarget(context => context[CustomNpcKeys.SlacksMudGolem]),
                 tg.wait(3),
                 tg.setCameraTarget(context => context[CustomNpcKeys.SunsFanMudGolem]),
-            )
-        ),
+            ])
+        ]),
         tg.wait(2),
         tg.setCameraTarget(() => Entities.FindAllByName("dota_badguys_fort")[0]),
         tg.wait(5),
         tg.setCameraTarget(() => playerHero),
-    )
+    ])
 
     graph.start(GameRules.Addon.context, () => {
         print("Completed", "Section Opening")
