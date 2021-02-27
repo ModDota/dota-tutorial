@@ -18,16 +18,14 @@ const onStart = (complete: () => void) => {
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
 
-    graph = tg.seq(
-        tg.setCameraTarget(() => undefined),
+    graph = tg.seq([
+        tg.setCameraTarget(undefined),
         tg.immediate(() => setCanPlayerIssueOrders(true)),
         tg.goToLocation(Vector(-6574, -3742, 256)),
         tg.immediate(() => playerHero.Stop()),
         //tg.immediate(() => setCanPlayerIssueOrders(false)),
-        tg.fork(
-            ...radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-6795, -3474, 256), DotaTeam.GOODGUYS, undefined)),
-            ...direCreepNames.map(unit => tg.spawnUnit(unit, Vector(-5911, 5187, 128), DotaTeam.BADGUYS, undefined)),
-        ),
+        tg.fork(context => radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-6795, -3474, 256), DotaTeam.GOODGUYS, undefined))),
+        tg.fork(context => direCreepNames.map(unit => tg.spawnUnit(unit, Vector(-5911, 5187, 128), DotaTeam.BADGUYS, undefined))),
         tg.immediate(context =>
             {
                 // Group radiant creeps
@@ -47,12 +45,9 @@ const onStart = (complete: () => void) => {
                 }
                 print(radiantCreeps.length)
             }),
-        tg.fork(
-            ...radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(-6288, 3280, 128))),
-        ),
+        tg.fork(context => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(-6288, 3280, 128)))),
         tg.immediate(_ =>
         {
-            print(radiantCreeps.length);
             for (const radiantCreep of radiantCreeps) {
                 ExecuteOrderFromTable({
                     OrderType: UnitOrder.ATTACK_MOVE,
@@ -69,11 +64,11 @@ const onStart = (complete: () => void) => {
                 })
             }
         }),
-        tg.setCameraTarget(_ => radiantCreeps[0]),
+        tg.setCameraTarget(radiantCreeps[0]),
         tg.wait(5),
-        tg.setCameraTarget(_ => undefined),
+        tg.setCameraTarget(undefined),
         tg.immediate(_ => setCanPlayerIssueOrders(true)),
-    )
+    ])
 
     graph.start(GameRules.Addon.context, () => {
         print("Completed", sectionName)

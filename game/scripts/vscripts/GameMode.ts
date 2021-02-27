@@ -3,7 +3,7 @@ import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, c
 
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -128,7 +128,6 @@ export class GameMode {
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         // Ignores all orders when the flag is set to false
         if (!this.canPlayerIssueOrders && event.issuer_player_id_const == findRealPlayerID()) return false;
-
 
         // Cancel orders if false
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {

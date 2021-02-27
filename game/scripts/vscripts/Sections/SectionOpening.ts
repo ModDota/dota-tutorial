@@ -11,7 +11,7 @@ const onStart = (complete: () => void) => {
 
     const mudGolemMeetPosition = playerHero.GetAbsOrigin().__add(Vector(300, 800, 0))
 
-    graph = tg.seq(
+    graph = tg.seq([
         tg.immediate(() => setCanPlayerIssueOrders(false)),
         tg.setCameraTarget(() => playerHero),
         tg.spawnUnit(CustomNpcKeys.SlacksMudGolem,
