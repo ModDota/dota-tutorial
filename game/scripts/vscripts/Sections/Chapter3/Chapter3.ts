@@ -33,8 +33,6 @@ const onStart = (complete: () => void) => {
         section: SectionName.Chapter3_Opening,
     });
 
-    
-
     // Return a list of goals to display depending on which parts we have started and completed.
     const getGoals = (context: TutorialContext) => {
         const isGoalStarted = (key: NeutralGoalKeys) =>
@@ -107,10 +105,10 @@ const onStart = (complete: () => void) => {
 
     const units: CDOTA_BaseNPC[] = [];
 
-    if (IsInToolsMode()) {
-        playerHero.SetBaseDamageMin(1000);
-        playerHero.SetBaseDamageMax(1000);
-    }
+    // if (IsInToolsMode()) {
+    //     playerHero.SetBaseDamageMin(1000);
+    //     playerHero.SetBaseDamageMax(1000);
+    // }
 
     playerHero.SetMoveCapability(UnitMoveCapability.GROUND);
     playerHero.SetAbsOrigin(GetGroundPosition(Vector(-4000, -550), undefined));
@@ -129,13 +127,15 @@ const onStart = (complete: () => void) => {
         "npc_dota_neutral_spawner"
     );
 
-    graph = tg.forkAny(
+    graph = tg.forkAny([
         tg.trackGoals(getGoals),
-        tg.seq(
+        tg.seq([
             tg.wait(1),
             // Show message and explain what the "neutral spawn indicators" on the minimap are.
             // Kill them after so that we can make our own.
             tg.immediate(() => DestroyNeutrals()),
+
+
             tg.immediate(
                 (context) =>
                     (context[NeutralGoalKeys.MoveToCamp] = GoalState.Started)
@@ -148,6 +148,9 @@ const onStart = (complete: () => void) => {
 
             // Tell the player to skill dragon blood for extra armor, so that it's better against attacks (big part of fighting neutrals is not taking too much damage)
             tg.immediate((context) => {
+                if (playerHero.GetLevel() < 2) {
+                    playerHero.HeroLevelUp(false);
+                }
                 playerHero.SetAbilityPoints(1);
             }),
             tg.upgradeAbility(dragon_knight_dragon_blood),
@@ -188,7 +191,7 @@ const onStart = (complete: () => void) => {
             }),
 
             // Check if they are killed
-            tg.fork(
+            tg.fork([
                 tg.completeOnCheck((ctx) => {
                     return units.every((unit) => {
                         return !unit || unit.IsNull() || !unit.IsAlive();
@@ -209,15 +212,19 @@ const onStart = (complete: () => void) => {
                     }
                     return false;
                 }, 0.1),
-                
-            ),
+            ]),
 
             tg.immediate((context) => {
+                playerHero.HeroLevelUp(true);
                 context[NeutralGoalKeys.KillNeutralsSatyrs] =
                     GoalState.Completed;
                 context[NeutralGoalKeys.PickupItemArcaneRing] =
                     GoalState.Started;
+                context[NeutralGoalKeys.UpgradeAbility] = GoalState.Started;
             }),
+
+            tg.upgradeAbility(dragon_knight_dragon_blood),
+            tg.immediate((context) => { context[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed}),
 
             // Explain that neutrals drop items, how it works. Tell the player to pick it up.
             tg.completeOnCheck(() => {
@@ -268,7 +275,7 @@ const onStart = (complete: () => void) => {
                 DotaTeam.NEUTRALS,
                 "giant_1"
             ),
-            tg.fork(
+            tg.fork([
                 tg.completeOnCheck((ctx) => {
                     const unit = ctx["alpha_1"] as CDOTA_BaseNPC;
                     if (!unit || unit.IsNull() || !unit.IsAlive()) {
@@ -306,10 +313,10 @@ const onStart = (complete: () => void) => {
                     }
                     return false;
                 }, 0.1)
-            ),
+            ]),
 
             // Tell the player to pick up both items
-            tg.fork(
+            tg.fork([
                 tg.immediate((context) => {
                     context[NeutralGoalKeys.KillNeutralsWolves] =
                         GoalState.Completed;
@@ -320,7 +327,7 @@ const onStart = (complete: () => void) => {
                 tg.completeOnCheck(() => {
                     return playerHero.HasItemInInventory(dropInStashItemName);
                 }, 0.1)
-            ),
+            ]),
 
             // Tell the player how to switch items, make sure the possesed mask is in the right slot.
             tg.immediate((context) => {
@@ -351,7 +358,7 @@ const onStart = (complete: () => void) => {
                 playerHero.GetTeam(),
                 "warlock"
             ),
-            tg.fork(
+            tg.fork([
                 tg.completeOnCheck((ctx) => {
                     let warlock = ctx["warlock"] as CDOTA_BaseNPC_Hero;
                     if (warlock.HasItemInInventory(giveAwayItemName)) {
@@ -368,9 +375,9 @@ const onStart = (complete: () => void) => {
                     }
                     return false;
                 }, 0.1)
-            )
-        )
-    );
+            ]),
+        ])
+    ]);
 
     graph.start(GameRules.Addon.context, () => {
         print("Completed", "Section CH3 Opening");
@@ -397,8 +404,7 @@ export const sectionChapter3Opening = new tut.FunctionalSection(
     onStart,
     onSkipTo,
     onStop,
-    Chapter3OrderFilter,
-    
+    Chapter3OrderFilter
 );
 
 // Certain order will need to be filtered, if the player sabotages themselves they will get stuck
@@ -406,8 +412,6 @@ export function Chapter3OrderFilter(event: ExecuteOrderFilterEvent): boolean {
     const giveAwayItemName = "item_arcane_ring";
     const dropInStashItemName = "item_mysterious_hat";
     const keepItemName = "item_possessed_mask";
-    
-    
 
     const unitIndex = event.units["0"];
     if (!unitIndex) {

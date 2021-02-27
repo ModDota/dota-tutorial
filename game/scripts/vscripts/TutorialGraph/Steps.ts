@@ -222,9 +222,10 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
     return tg.step((context, complete) => {
         const actualAbility = tg.getArg(ability, context);
         const desiredLevel = actualAbility.GetLevel() + 1;
-
+        actualAbility.SetUpgradeRecommended(true);
         const checkAbilityLevel = () => {
             if (desiredLevel == actualAbility.GetLevel()) {
+                actualAbility.SetUpgradeRecommended(false);
                 complete();
             } else {
                 checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
