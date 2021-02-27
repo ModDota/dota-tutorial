@@ -121,6 +121,10 @@ export class GameMode {
     }
 
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+        // Cancel orders if false
+        if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && this.tutorial.currentSection.orderFilter(event) == false) {
+            return false;
+        }
         return true;
     }
 
