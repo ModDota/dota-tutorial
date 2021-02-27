@@ -1,4 +1,4 @@
-import * as tut from "../Tutorial/Core";
+import * as tut from "../../Tutorial/Core";
 
 const sectionName: SectionName = SectionName.Opening
 
