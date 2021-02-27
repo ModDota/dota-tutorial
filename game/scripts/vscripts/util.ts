@@ -89,3 +89,10 @@ export function getOrError<T>(obj: T | undefined, msg?: string): T {
 export function setGoalsUI(goals: Goal[]) {
     CustomGameEventManager.Send_ServerToAllClients("set_goals", { goals });
 }
+/*
+ * Destroy all neutrals on the map
+*/
+export function DestroyNeutrals() {
+    const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
+    units.forEach(x => x.Destroy());
+}
