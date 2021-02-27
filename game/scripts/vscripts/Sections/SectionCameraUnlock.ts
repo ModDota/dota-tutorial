@@ -17,8 +17,6 @@ enum GoalState {
 }
 
 const onStart = (complete: () => void) => {
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.CameraUnlock });
-
     const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
 
     let sunsfanAttackableTime: number | undefined = undefined
