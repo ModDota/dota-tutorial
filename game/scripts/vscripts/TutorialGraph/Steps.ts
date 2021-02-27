@@ -216,15 +216,15 @@ export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
-export const upgradeAbility = (ability: CDOTABaseAbility) => {
+export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
     let checkTimer: string | undefined = undefined
-    let abilityLevel = ability.GetLevel();
-    const desiredLevel = ability.GetLevel() + 1;
 
     return tg.step((context, complete) => {
+        const actualAbility = tg.getArg(ability, context);
+        const desiredLevel = actualAbility.GetLevel() + 1;
+
         const checkAbilityLevel = () => {
-            abilityLevel = ability.GetLevel();
-            if (desiredLevel == abilityLevel) {
+            if (desiredLevel == actualAbility.GetLevel()) {
                 complete();
             } else {
                 checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
