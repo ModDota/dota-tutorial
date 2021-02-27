@@ -6,7 +6,6 @@ const sectionTemplateState: SectionState = {}
 
 function onStart() {
     print("Starting", sectionName);
-    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
 }
 
 function onStop() {

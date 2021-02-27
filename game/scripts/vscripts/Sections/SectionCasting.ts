@@ -66,12 +66,12 @@ const start = (complete: () => void) => {
         {}
     );
 
-    graph = tg.seq(
+    graph = tg.seq([
         tg.completeOnCheck(
             () => !ability.IsCooldownReady() && !pugna.IsAlive(),
             0.1
         )
-    );
+    ]);
 
     graphContext = {};
 

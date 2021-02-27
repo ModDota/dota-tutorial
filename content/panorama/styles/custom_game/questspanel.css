@@ -10,7 +10,7 @@
 .QuestsPanelHeader {
     width: 100%;
     height: 6%;
-   
+
     vertical-align: top;
 }
 
@@ -46,7 +46,7 @@
     brightness: 0.6;
 }
 
-.QuestsPanelContainer {
+#QuestsPanelContainer {
     width: 100%;
     height: 94%;
     vertical-align: bottom;
@@ -59,7 +59,7 @@
     height: 5%;
 }
 
-#QuestsUncompleted {
+.QuestsUncompleted {
     width: 26px;
     height: 26px;
 
@@ -70,15 +70,15 @@
     brightness: 1.5;
 }
 
-#QuestsCompleted {
+.QuestsCompleted {
     width: 26px;
     height: 26px;
 
     background-image: url("file://{images}/custom_game/quests/QuestCompleted.png");
     background-size: 100% 100%;
     margin-left: 10px;
-    wash-color: white;
-    brightness: 1.5;
+    wash-color: gray;
+    brightness: 1.3;
 }
 
 .QuestUncompletedText {
@@ -91,7 +91,7 @@
 }
 
 .QuestCompletedText {
-    color: #FFBA00;
+    color: gray;
     margin-top: 3px;
     font-weight: bold;
     text-shadow: 1px 1px 0px 2.0 #000000;

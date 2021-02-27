@@ -1,6 +1,8 @@
 <root>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/section-selector.js" />
+        <include src="file://{resources}/scripts/custom_game/move-camera.js" />
+        <!-- <include src="file://{resources}/scripts/custom_game/manifest.js" /> -->
     </scripts>
     <Panel>
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/hud.xml" />

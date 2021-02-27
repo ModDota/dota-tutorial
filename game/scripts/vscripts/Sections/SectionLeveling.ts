@@ -37,9 +37,9 @@ const start = (complete: () => void) => {
     hero.SetAbilityPoints(1);
     ability.SetUpgradeRecommended(true);
 
-    graph = tg.seq(
+    graph = tg.seq([
         tg.upgradeAbility(ability)
-    )
+    ])
 
     graphContext = {}
 
