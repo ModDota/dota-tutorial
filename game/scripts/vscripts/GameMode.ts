@@ -20,7 +20,7 @@ export class GameMode {
         chapters.chapter1.sectionCameraUnlock,
         chapters.chapter1.sectionLeveling,
         chapters.chapter1.sectionCasting,
-        chapters.chapter3.sectionChapter3Opening
+        chapters.chapter3.sectionOpening
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;

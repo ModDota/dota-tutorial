@@ -30,7 +30,7 @@ enum GoalState {
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
-        section: SectionName.Chapter3_Opening,
+        section: SectionName.Chapter3Opening,
     });
 
     // Return a list of goals to display depending on which parts we have started and completed.
@@ -399,16 +399,16 @@ const onStop = () => {
     }
 };
 
-export const sectionChapter3Opening = new tut.FunctionalSection(
-    SectionName.Chapter3_Opening,
+export const sectionOpening = new tut.FunctionalSection(
+    SectionName.Chapter3Opening,
     onStart,
     onSkipTo,
     onStop,
-    Chapter3OrderFilter
+    orderFilter
 );
 
 // Certain order will need to be filtered, if the player sabotages themselves they will get stuck
-export function Chapter3OrderFilter(event: ExecuteOrderFilterEvent): boolean {
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     const giveAwayItemName = "item_arcane_ring";
     const dropInStashItemName = "item_mysterious_hat";
     const keepItemName = "item_possessed_mask";
