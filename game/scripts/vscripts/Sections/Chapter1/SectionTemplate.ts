@@ -20,7 +20,7 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     graph = tg.seq([
-        tg.immediate(() => print("Hello world"))
+        tg.immediate(context => print("Hello world"))
     ]);
 
     graph.start(GameRules.Addon.context, () => {
