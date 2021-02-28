@@ -1,4 +1,5 @@
-import { findAllPlayersID, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { findAllPlayersID, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import * as dg from "../Dialog"
 import * as tg from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
@@ -213,6 +214,48 @@ export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>
 }
 
 /**
+ * Moves the camera to a unit, with lerp
+ * @param target Unit to move the camera to.
+ * @param lerp Speed at which the camera moves
+ */
+export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
+    let playerIds = findAllPlayersID();
+
+    playerIds.forEach(playerId => {
+        let player = PlayerResource.GetPlayer(playerId);
+
+        if (player) {
+            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
+                unitTargetEntIndex: target.GetEntityIndex(),
+                lerp: lerp
+            })
+        }
+    })
+}
+
+/**
+ * Moves the camera to a position, with lerp
+ * @param position Point to move the camera to.
+ * @param lerp Speed at which the camera moves
+ */
+export const moveCameraToPosition = (position: Vector, lerp: number) => {
+    let playerIds = findAllPlayersID();
+
+    playerIds.forEach(playerId => {
+        let player = PlayerResource.GetPlayer(playerId);
+
+        if (player) {
+            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
+                cameraTargetX: position.x,
+                cameraTargetY: position.y,
+                cameraTargetZ: position.z,
+                lerp: lerp
+            })
+        }
+    })
+}
+
+/**
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
@@ -222,9 +265,10 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
     return tg.step((context, complete) => {
         const actualAbility = tg.getArg(ability, context);
         const desiredLevel = actualAbility.GetLevel() + 1;
-
+        actualAbility.SetUpgradeRecommended(true);
         const checkAbilityLevel = () => {
             if (desiredLevel == actualAbility.GetLevel()) {
+                actualAbility.SetUpgradeRecommended(false);
                 complete();
             } else {
                 checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
@@ -233,7 +277,9 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
         checkAbilityLevel();
     }, context => {
         if (checkTimer) {
+            const actualAbility = tg.getArg(ability, context);
             Timers.RemoveTimer(checkTimer)
+            actualAbility.SetUpgradeRecommended(false);
             checkTimer = undefined
         }
     })
@@ -297,13 +343,7 @@ export const playGlobalSound = (soundName: tg.StepArgument<string>, waitForCompl
         EmitGlobalSound(actualSoundName)
 
         if (actualWaitForCompletion) {
-            // Get any entity so we can get the duration of the sound (not sure why that's needed)
-            const anyEntity = Entities.Next(undefined)
-            if (!anyEntity) {
-                error("Could not find any entity to get duration of sound")
-            }
-
-            const soundDuration = anyEntity.GetSoundDuration(actualSoundName, "") + (actualExtraDelaySeconds !== undefined ? actualExtraDelaySeconds : defaultExtraDelaySeconds)
+            const soundDuration = getSoundDuration(actualSoundName) + (actualExtraDelaySeconds !== undefined ? actualExtraDelaySeconds : defaultExtraDelaySeconds)
 
             waitTimer = Timers.CreateTimer(soundDuration, () => complete())
         } else {
@@ -364,5 +404,58 @@ export const trackGoals = (goals: tg.StepArgument<Goal[]>) => {
         }
 
         setGoalsUI([])
+    })
+}
+
+/**
+ * Plays a dialog with sound and text and waits for the sound to finish before completing.
+ * @param soundName Name of the sound
+ * @param text Text to display during the dialog
+ * @param unit Unit that is talking
+ * @param extraDelaySeconds Extra delay to add to the wait time. Defaults to 0.5s.
+ */
+export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
+    const defaultExtraDelaySeconds = 0.5
+    let waitTimer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualSoundName = tg.getArg(soundName, context)
+        const actualUnit = tg.getArg(unit, context)
+        const actualText = tg.getArg(text, context)
+        const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
+
+        const duration = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5)
+
+        waitTimer = Timers.CreateTimer(duration, () => complete())
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
+    })
+}
+
+/**
+ * Plays a text-only dialog and waits for a passed amount of time to finish before completing.
+ * @param text Text to display during the dialog
+ * @param unit Unit that is talking
+ * @param waitSeconds Time to wait for in seconds.
+ */
+export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
+    let waitTimer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualUnit = tg.getArg(unit, context)
+        const actualText = tg.getArg(text, context)
+        const actualWaitSeconds = tg.getArg(waitSeconds, context)
+
+        dg.playText(actualText, actualUnit, actualWaitSeconds)
+
+        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => complete())
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
     })
 }

@@ -14,9 +14,9 @@ const allUI = new Set(uiWithShop).add(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP
 allUI.forEach(element => GameUI.SetDefaultUIEnabled(element, false));
 
 const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
-    [SectionName.Opening]: uiEmpty,
-    [SectionName.CameraUnlock]: uiWithMinimap,
-    [SectionName.Leveling]: uiWithActionPanel,
+    [SectionName.Chapter1_Opening]: uiEmpty,
+    [SectionName.Chapter1_CameraUnlock]: uiWithMinimap,
+    [SectionName.Chapter1_Leveling]: uiWithActionPanel,
     // Don't add final section for now to enable all UI at the end
     //[SectionName.Casting]: uiWithActionPanel,
 }
@@ -40,6 +40,7 @@ function except<T>(a: Set<T>, b: Set<T>): Set<T> {
 }
 
 /** UI Highlighting */
+
 const hudRoot = $.GetContextPanel().GetParent()!.GetParent()!.GetParent()!;
 
 function findPanelAtPath(path: string): Panel | undefined {
@@ -73,7 +74,6 @@ function highlightUiElement(path: string) {
         highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
     }
 }
-
 
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");

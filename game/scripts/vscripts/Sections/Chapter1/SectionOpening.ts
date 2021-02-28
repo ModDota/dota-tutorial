@@ -1,18 +1,20 @@
-import * as tg from "../TutorialGraph/index"
-import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
+import * as tg from "../../TutorialGraph/index"
+import * as tut from "../../Tutorial/Core"
+import { findRealPlayerID, getPlayerHero } from "../../util"
+import { RequiredState } from "../../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
+let canPlayerIssueOrders = true;
+const requiredState: RequiredState = {
+}
 
 const onStart = (complete: () => void) => {
-
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
-
     const mudGolemMeetPosition = playerHero.GetAbsOrigin().__add(Vector(300, 800, 0))
 
-    graph = tg.seq(context => [
-        tg.immediate(() => playerHero.SetMoveCapability(UnitMoveCapability.NONE)),
+    graph = tg.seq([
+        tg.immediate(() => canPlayerIssueOrders = false),
         tg.setCameraTarget(() => playerHero),
         tg.spawnUnit(CustomNpcKeys.SlacksMudGolem,
             playerHero.GetAbsOrigin().__add(Vector(0, 1500, 0)),
@@ -49,17 +51,8 @@ const onStart = (complete: () => void) => {
     })
 }
 
-const onSkipTo = () => {
-    print("Skipping to", "Section Opening");
-    if (!getPlayerHero()) error("Could not find the player's hero.");
-
-    clearMudGolems()
-}
-
 const onStop = () => {
     print("Stopping", "Section Opening");
-
-    clearMudGolems()
 
     if (graph) {
         graph.stop(GameRules.Addon.context)
@@ -67,22 +60,19 @@ const onStop = () => {
     }
 }
 
-const clearMudGolems = () => {
-    const context = GameRules.Addon.context
+export const sectionOpening = new tut.FunctionalSection(
+    SectionName.Chapter1_Opening,
+    requiredState,
+    onStart,
+    onStop,
+    sectionOneOpeningOrderFilter
+)
 
-    if (context[CustomNpcKeys.SlacksMudGolem]) {
-        if (IsValidEntity(context[CustomNpcKeys.SlacksMudGolem])) {
-            context[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
-        }
-        context[CustomNpcKeys.SlacksMudGolem] = undefined
-    }
+function sectionOneOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+    // Allow all orders that aren't done by the player
+    if (event.issuer_player_id_const != findRealPlayerID()) return true;
 
-    if (context[CustomNpcKeys.SunsFanMudGolem]) {
-        if (IsValidEntity(context[CustomNpcKeys.SunsFanMudGolem])) {
-            context[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
-        }
-        context[CustomNpcKeys.SunsFanMudGolem] = undefined
-    }
+    if (!canPlayerIssueOrders) return false;
+
+    return true;
 }
-
-export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, onStart, onSkipTo, onStop)

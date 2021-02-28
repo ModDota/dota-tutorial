@@ -1,9 +1,8 @@
 import { reloadable } from "./lib/tstl-utils";
-import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting } from "./Sections/index";
-
+import * as chapters from "./Sections/index";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -16,7 +15,14 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting]);
+    private tutorial = new tut.Tutorial([
+        chapters.chapter1.sectionOpening,
+        chapters.chapter1.sectionCameraUnlock,
+        chapters.chapter1.sectionLeveling,
+        chapters.chapter1.sectionCasting,
+        chapters.chapter2.sectionOpening,
+        chapters.chapter3.sectionOpening
+    ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
@@ -129,6 +135,7 @@ export class GameMode {
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
             return false;
         }
+
         return true;
     }
 
@@ -189,13 +196,59 @@ export class GameMode {
 
         print("Starting tutorial from scratch")
         this.tutorial.start()
+
     }
 
     // Called on script_reload
     public Reload() {
         print("Script reloaded!");
 
-        // Do some stuff here
+        // // this controls whether the dialog is tied to a unit or displayed
+        // // in the center of the screen
+        // const sendToAll = false;
+
+        // let sampleDialog: DialogData[] = [
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_1",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //     },
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_2",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //     },
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_3",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //     },
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_4",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //         forceBreak: true,
+        //     },
+        // ];
+
+        // let hero = getPlayerHero();
+        // if (hero) {
+        //     let unit = CreateUnitByName("npc_dota_hero_omniknight", hero.GetAbsOrigin(), true, undefined, undefined, DotaTeam.GOODGUYS);
+
+        //     // initialize the unit with dialog
+        //     this.dialogController.giveUnitDialog(unit, sampleDialog);
+
+        //     // start the dialog with our hero as the source
+        //     this.dialogController.onDialogStart(hero, unit);
+        // }
     }
 
     private OnNpcSpawned(event: NpcSpawnedEvent) {
