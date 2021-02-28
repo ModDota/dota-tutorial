@@ -80,11 +80,6 @@ const onStart = (complete: () => void) => {
     })
 }
 
-const onSkipTo = () => {
-    print("Skipping to", sectionName);
-    if (!getPlayerHero()) error("Could not find the player's hero.")
-}
-
 const onStop = () => {
     print("Stopping", sectionName);
     if (graph)
@@ -97,7 +92,7 @@ const onStop = () => {
 export const SectionOpening = new tut.FunctionalSection(
     SectionName.Chapter2_Opening,
     requiredState,
-    onSkipTo,
+    onStart,
     onStop,
     chapter2OpeningOrderFilter
 );
