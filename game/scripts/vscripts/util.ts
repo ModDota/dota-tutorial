@@ -131,7 +131,7 @@ export function getSoundDuration(soundName: string) {
  * Prints all key values of an event. (though it actually would work on any array, I guess)
  * @param event An event that should be printed.
  */
-export function PrintEventTable(event: any) {
+export function printEventTable(event: any) {
     for (const key in event) {
         print(key, event[key])
     }

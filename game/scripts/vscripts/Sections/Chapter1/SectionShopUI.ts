@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, PrintEventTable, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero } from "../../util";
 import { TutorialContext } from "../../TutorialGraph/index";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
@@ -89,10 +89,10 @@ export const sectionShopUI = new tut.FunctionalSection(
     requiredState,
     onStart,
     onStop,
-    sectionShopUIOrderFilter
+    orderFilter
 );
 
-function sectionShopUIOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const != findRealPlayerID()) return true
 
     if (event.order_type == UnitOrder.PURCHASE_ITEM) {
