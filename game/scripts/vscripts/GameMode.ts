@@ -2,7 +2,7 @@ import { reloadable } from "./lib/tstl-utils";
 import * as chapters from "./Sections/index";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -20,6 +20,7 @@ export class GameMode {
         chapters.chapter1.sectionCameraUnlock,
         chapters.chapter1.sectionLeveling,
         chapters.chapter1.sectionCasting,
+        chapters.chapter2.sectionOpening,
         chapters.chapter3.sectionOpening
     ]);
 
@@ -134,6 +135,7 @@ export class GameMode {
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
             return false;
         }
+
         return true;
     }
 

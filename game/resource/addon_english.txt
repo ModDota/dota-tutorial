@@ -1,13 +1,20 @@
 "lang"
 {
-	"Language"		"English"
+	"Language" "english"
 	"Tokens"
-	{		
-		"addon_game_name"													"Dota Tutorial"
+	{
+        "addon_game_name"													"Dota Tutorial"
 
-    "Dialog_test_1"       "What the fuck did you just fucking say about me, you little bitch? I'll have you know I graduated top of my class in the Navy Seals, and I've been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills."
-    "Dialog_test_2"       "I am trained in gorilla warfare and I'm the top sniper in the entire US armed forces. You are nothing to me but just another target."
-    "Dialog_test_3"       "I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words."
-    "Dialog_test_4"       "You think you can get away with saying that shit to me over the Internet? Think again, fucker. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot."
-  }
+        "Dialog_test_1"       "What the fuck did you just fucking say about me, you little bitch? I'll have you know I graduated top of my class in the Navy Seals, and I've been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills."
+        "Dialog_test_2"       "I am trained in gorilla warfare and I'm the top sniper in the entire US armed forces. You are nothing to me but just another target."
+        "Dialog_test_3"       "I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words."
+        "Dialog_test_4"       "You think you can get away with saying that shit to me over the Internet? Think again, fucker. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot."
+  
+        "npc_mud_golem_sunsfan" "Sunsfan"
+        "npc_mud_golem_slacks" "Slacks"
+        "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
+        "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
+        "npc_dota_tutorial_dire_melee_creep" "Melee Creep"
+        "npc_dota_tutorial_dire_ranged_creep" "Ranged Creep"
+    }
 }
