@@ -1,10 +1,13 @@
-import * as tut from "../Tutorial/Core";
-import * as tg from "../TutorialGraph/index";
-import { findRealPlayerID, getPlayerHero } from "../util";
+import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
+import { findRealPlayerID, getPlayerHero } from "../../util";
 
-const sectionName: SectionName = SectionName.Chapter2Opening
+const sectionName: SectionName = SectionName.Chapter2_Opening
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = true;
+const requiredState: RequiredState = {
+}
 
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 const direCreepNames = [CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireRangedCreep];
@@ -91,9 +94,9 @@ const onStop = () => {
     }
 }
 
-export const chapter2Opening = new tut.FunctionalSection(
-    sectionName,
-    onStart,
+export const SectionOpening = new tut.FunctionalSection(
+    SectionName.Chapter2_Opening,
+    requiredState,
     onSkipTo,
     onStop,
     chapter2OpeningOrderFilter
