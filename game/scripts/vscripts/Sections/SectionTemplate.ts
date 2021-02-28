@@ -1,8 +1,8 @@
 import * as tut from "../Tutorial/Core";
-import { SectionState } from "../Tutorial/SectionState";
+import { RequiredState } from "../Tutorial/RequiredState";
 
 const sectionName: SectionName = SectionName.Opening
-const sectionTemplateState: SectionState = {}
+const sectionTemplateState: RequiredState = {}
 
 function onStart() {
     print("Starting", sectionName);

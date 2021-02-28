@@ -1,58 +1,40 @@
-import { defaultSectionState, FilledSectionState, SectionState } from "./SectionState"
+import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
 import { getOrError, getPlayerHero } from "../util"
 
-function isObject<T>(item: T) {
-    return item && typeof item === "object" && !Array.isArray(item)
-}
-
-function mergeDeep(target: any, source: any): any {
-    const output = Object.assign({}, target)
-    if (isObject(target) && isObject(source)) {
-        Object.keys(source).forEach(key => {
-            if (isObject(source[key])) {
-                if (!(key in target)) {
-                    Object.assign(output, { [key]: source[key] })
-                } else {
-                    output[key] = mergeDeep(target[key], source[key])
-                }
-            } else {
-                Object.assign(output, { [key]: source[key] })
-            }
-        })
-    }
-    return output
-}
-
-export const setupState = (sectionState: SectionState): void => {
+/**
+ * Sets up the state to match the passed state requirement.
+ * @param stateReq State requirement to match.
+ */
+export const setupState = (stateReq: RequiredState): void => {
     print("Starting state setup")
 
-    // Use defaults and override them with the passed state
-    const state: FilledSectionState = mergeDeep(defaultSectionState, sectionState)
+    // Use defaults and override them with the passed state. Does not work if we have nested objects.
+    const state: FilledRequiredState = { ...defaultRequiredState, ...stateReq }
 
     // Player / hero
-    let playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.")
+    let hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
-    if (playerHero.GetCurrentXP() !== state.playerHeroXP || playerHero.GetUnitName() !== state.playerHeroUnitName) {
-        playerHero = PlayerResource.ReplaceHeroWith(playerHero.GetPlayerOwner().GetPlayerID(), state.playerHeroUnitName, state.playerHeroGold, state.playerHeroXP)
+    if (hero.GetCurrentXP() !== state.heroXP || hero.GetUnitName() !== state.heroUnitName) {
+        hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, state.heroXP)
     }
 
-    if (state.playerHeroLocation !== undefined && state.playerHeroLocation.__sub(playerHero.GetAbsOrigin()).Length2D() > state.playerHeroLocationTolerance) {
-        playerHero.Stop()
-        playerHero.SetAbsOrigin(state.playerHeroLocation)
+    if (state.heroLocation !== undefined && state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
+        hero.Stop()
+        hero.SetAbsOrigin(state.heroLocation)
     }
 
-    playerHero.SetAbilityPoints(state.playerHeroAbilityPoints)
-    playerHero.SetGold(state.playerHeroGold, false)
+    hero.SetAbilityPoints(state.heroAbilityPoints)
+    hero.SetGold(state.heroGold, false)
 
     // Golems
     if (state.requireSlacksGolem) {
-        createOrMoveGolem(CustomNpcKeys.SlacksMudGolem, state.slacksLocation, state.playerHeroLocation)
+        createOrMoveGolem(CustomNpcKeys.SlacksMudGolem, state.slacksLocation, state.heroLocation)
     } else {
         clearGolem(CustomNpcKeys.SlacksMudGolem)
     }
 
     if (state.sunsFanLocation) {
-        createOrMoveGolem(CustomNpcKeys.SunsFanMudGolem, state.sunsFanLocation, state.playerHeroLocation)
+        createOrMoveGolem(CustomNpcKeys.SunsFanMudGolem, state.sunsFanLocation, state.heroLocation)
     } else {
         clearGolem(CustomNpcKeys.SunsFanMudGolem)
     }

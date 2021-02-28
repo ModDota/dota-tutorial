@@ -1,11 +1,11 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
 import { getOrError, getPlayerHero, setUnitPacifist } from "../util"
-import { SectionState } from "../Tutorial/SectionState"
+import { RequiredState } from "../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
 
-const initialState: SectionState = {
+const requiredState: RequiredState = {
     requireSunsfanGolem: true,
     requireSlacksGolem: true,
     sunsFanLocation: Vector(-6400, -5900, 256),
@@ -119,7 +119,7 @@ const onStop = () => {
 
 export const sectionCameraUnlock = new tut.FunctionalSection(
     SectionName.CameraUnlock,
-    initialState,
+    requiredState,
     onStart,
     onStop
 )

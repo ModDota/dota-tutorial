@@ -1,12 +1,12 @@
 import * as tg from "../TutorialGraph/index"
 import * as tut from "../Tutorial/Core"
 import { getPlayerHero } from "../util"
-import { SectionState } from "../Tutorial/SectionState"
+import { RequiredState } from "../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
 
-const initialState: SectionState = {
+const requiredState: RequiredState = {
     requireSlacksGolem: true,
     slacksLocation: Vector(-6250, -6050, 256),
 }
@@ -63,6 +63,6 @@ const stop = () => {
 
 export const sectionLeveling = new tut.FunctionalSection(
     SectionName.Leveling,
-    initialState,
+    requiredState,
     start,
     stop)
