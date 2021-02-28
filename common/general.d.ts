@@ -4,6 +4,7 @@ declare const enum SectionName {
     Leveling = "Leveling",
     Casting = "Casting",
     Chapter2Opening = "Chapter2 Opening"
+    Chapter3_Opening = "Chapter3_Opening",
 }
 
 declare const enum CustomNpcKeys {

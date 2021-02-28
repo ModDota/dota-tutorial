@@ -16,6 +16,7 @@ const sections = {
     "Leveling": SectionName.Leveling,
     "Casting": SectionName.Casting,
     "Chapter 2 Opening": SectionName.Chapter2Opening
+    "CH3": SectionName.Chapter3_Opening,
 };
 
 // Add a button for each section
