@@ -29,8 +29,6 @@ const targetDummySpawnOffset = Vector(500, 500, 0)
 const onStart = (complete: () => void) => {
     const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
 
-    let sunsfanAttackableTime: number | undefined = undefined
-
     // Return a list of goals to display depending on which parts we have started and completed.
     const getGoals = (context: tg.TutorialContext) => {
         const isGoalStarted = (key: CameraUnlockContextKey) => context[key] === GoalState.Started || context[key] === GoalState.Completed
@@ -65,42 +63,46 @@ const onStart = (complete: () => void) => {
             tg.waitForCameraMovement(),
             tg.immediate(_ => print("Post camera movement")),
             tg.immediate(context => context[CameraUnlockContextKey.CameraMove] = GoalState.Completed),
-            tg.playGlobalSound("abaddon_abad_spawn_01", true),
+            tg.textDialog(LocalizationKey.Script_1_Camera_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.setCameraTarget(_ => getOrError(getPlayerHero())),
-            tg.wait(2),
-            tg.playGlobalSound("abaddon_abad_spawn_01", true), // need to move camera while moving hero
+            tg.textDialog(LocalizationKey.Script_1_Camera_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
             // Kill target dummy
-            tg.playGlobalSound("abaddon_abad_spawn_01", true), // heres a target dummy
-            tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Started),
-            tg.spawnAndKillUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset)),
-            tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Completed),
-            tg.wait(1),
-            tg.playGlobalSound("abaddon_abad_spawn_01", true), // that was violent
+            tg.textDialog(LocalizationKey.Script_1_Camera_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
+            tg.fork([
+                tg.seq([
+                    tg.textDialog(LocalizationKey.Script_1_Camera_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // TODO: Make the dummy say this line
+                    tg.textDialog(LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                ]),
+                tg.seq([
+                    tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Started),
+                    tg.spawnAndKillUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset)),
+                    tg.immediate(context => context[CameraUnlockContextKey.KillDummy] = GoalState.Completed),
+                ])
+            ]),
+            tg.textDialog(LocalizationKey.Script_1_Camera_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // TODO: Make the dummy say this line
+            tg.textDialog(LocalizationKey.Script_1_Camera_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
             // Kill SUNSfan
             tg.immediate(context => context[CameraUnlockContextKey.KillSunsfan] = GoalState.Started),
-            tg.wait(1),
             tg.immediate(context => setUnitPacifist(getOrError(context[CustomNpcKeys.SunsFanMudGolem]), false)),
             tg.immediate(context => getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC).SetTeam(DotaTeam.NEUTRALS)),
-            tg.playGlobalSound("abaddon_abad_spawn_01"), // why health bar over head
-            tg.immediate(_ => sunsfanAttackableTime = GameRules.GetGameTime()),
-            tg.completeOnCheck(context => {
-                const golem = getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC | undefined)
-
-                const attacked = !golem.IsAlive() || golem.GetHealth() < golem.GetMaxHealth()
-
-                // Play a sound if the player didn't attack SUNSfan golem for 10 seconds
-                if (!attacked && sunsfanAttackableTime && GameRules.GetGameTime() - sunsfanAttackableTime > 10) {
-                    EmitGlobalSound("abaddon_abad_spawn_01") // come on / attack the man
-                    sunsfanAttackableTime = undefined
-                }
-
-                return attacked
-            }, 0.2),
+            tg.forkAny([
+                // Show a dialog after 10 seconds if the player didn't attack yet encouraging them.
+                tg.seq([
+                    tg.wait(10),
+                    tg.textDialog(LocalizationKey.Script_1_Camera_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                    tg.neverComplete()
+                ]),
+                tg.completeOnCheck(context => {
+                    const golem = getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC | undefined)
+                    return !IsValidEntity(golem) || !golem.IsAlive() || golem.GetHealth() < golem.GetMaxHealth()
+                }, 0.2)
+            ]),
             tg.immediate(context => context[CameraUnlockContextKey.KillSunsfan] = GoalState.Completed),
-            tg.immediate(_ => sunsfanAttackableTime = undefined),
-            tg.playGlobalSound("abaddon_abad_spawn_01", true), // what are you doing
+            tg.textDialog(LocalizationKey.Script_1_Camera_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Camera_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.immediate(_ => getOrError(getPlayerHero()).HeroLevelUp(true)),
             tg.wait(1),
         ])

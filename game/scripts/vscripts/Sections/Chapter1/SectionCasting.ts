@@ -4,7 +4,6 @@ import { getPlayerHero } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 
 let graph: tg.TutorialStep | undefined = undefined;
-let graphContext: tg.TutorialContext | undefined = undefined;
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
@@ -70,16 +69,20 @@ const start = (complete: () => void) => {
         {}
     );
 
+    // TODO: Fix order of dialog and gameplay
     graph = tg.seq([
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // TODO: Should be said by sunsfan's ghost
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
         tg.completeOnCheck(
             () => !ability.IsCooldownReady() && !pugna.IsAlive(),
             0.1
-        )
+        ),
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
     ]);
 
-    graphContext = {};
-
-    graph.start(graphContext, () => {
+    graph.start(GameRules.Addon.context, () => {
         print("Section casting was completed");
         complete();
     });
@@ -87,9 +90,8 @@ const start = (complete: () => void) => {
 
 const stop = () => {
     if (graph) {
-        graph.stop(graphContext ?? {});
+        graph.stop(GameRules.Addon.context);
         graph = undefined;
-        graphContext = undefined;
     }
 };
 
