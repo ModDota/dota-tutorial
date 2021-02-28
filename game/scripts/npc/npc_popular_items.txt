@@ -1,0 +1,9 @@
+"DOTAHeroes"
+{
+    "npc_dota_hero_dragon_knight"
+	{
+		"popular_items"
+		{
+		}
+	}
+}

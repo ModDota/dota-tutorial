@@ -1,0 +1,14 @@
+"itembuilds"
+{
+	"author"		"Slacks"
+	"hero"			"npc_dota_hero_dragon_knight"
+	"Title"			"Items a first time Dragon Knight needs this very second"
+
+	"Items"
+	{
+		"#DOTA_Item_Build_Starting_Items"
+		{
+            "item" "item_tango"
+		}
+	}
+}

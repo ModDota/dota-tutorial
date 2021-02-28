@@ -15,6 +15,7 @@ const sections = {
     "CH1 - Camera Unlock": SectionName.Chapter1_CameraUnlock,
     "CH1 - Leveling": SectionName.Chapter1_Leveling,
     "CH1 - Casting": SectionName.Chapter1_Casting,
+    "CH1 - Shop UI": SectionName.Chapter1_ShopUI,
     "CH2 - Opening": SectionName.Chapter2_Opening,
     "CH3": SectionName.Chapter3_Opening,
 };

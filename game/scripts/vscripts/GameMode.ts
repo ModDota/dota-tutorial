@@ -20,6 +20,7 @@ export class GameMode {
         chapters.chapter1.sectionCameraUnlock,
         chapters.chapter1.sectionLeveling,
         chapters.chapter1.sectionCasting,
+        chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
         chapters.chapter3.sectionOpening
     ]);
