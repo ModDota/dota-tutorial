@@ -76,7 +76,7 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
 export function setGameFrozen(freeze: boolean) {
     Tutorial.SetTimeFrozen(freeze);
     let entity: CBaseEntity | undefined = Entities.First();
-    while(entity != undefined) {
+    while (entity != undefined) {
         if (entity.IsBaseNPC()) {
             if (entity.IsAlive() && entity.IsCreep() || entity.IsHero()) {
                 if (freeze) {
@@ -124,4 +124,23 @@ export function DestroyNeutrals() {
 export function getSoundDuration(soundName: string) {
     const anyEntity = getOrError(Entities.Next(undefined), "Could not find any entity")
     return anyEntity.GetSoundDuration(soundName, "")
+}
+
+
+/**
+ * Prints all key values of an event. (though it actually would work on any array, I guess)
+ * @param event An event that should be printed.
+ */
+export function PrintEventTable(event: any) {
+    for (const key in event) {
+        print(key, event[key])
+    }
+}
+
+/**
+ * Shows a "dota" error message to the player.
+ * @param message The error message that should be shown to the player.
+ */
+export function displayDotaErrorMessage(message: string) {
+    FireGameEvent("dota_hud_error_message", { reason: 80, message: message })
 }
