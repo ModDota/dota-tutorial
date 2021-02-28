@@ -89,7 +89,7 @@ const onStop = () => {
     }
 }
 
-export const SectionOpening = new tut.FunctionalSection(
+export const sectionOpening = new tut.FunctionalSection(
     SectionName.Chapter2_Opening,
     requiredState,
     onStart,

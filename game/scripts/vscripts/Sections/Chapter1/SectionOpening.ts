@@ -68,7 +68,7 @@ export const sectionOpening = new tut.FunctionalSection(
     sectionOneOpeningOrderFilter
 )
 
-export function sectionOneOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+function sectionOneOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean {
     // Allow all orders that aren't done by the player
     if (event.issuer_player_id_const != findRealPlayerID()) return true;
 
