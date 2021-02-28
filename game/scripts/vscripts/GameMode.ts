@@ -1,4 +1,3 @@
-import { DialogController } from "./lib/dialog";
 import { reloadable } from "./lib/tstl-utils";
 import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, sectionChapter3Opening } from "./Sections/index";
 
@@ -17,7 +16,6 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private dialogController = new DialogController();
     private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, sectionChapter3Opening]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -40,15 +38,6 @@ export class GameMode {
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
-        })
-        CustomGameEventManager.RegisterListener("dialog_complete", (source, data: DialogCompleteEvent) => {
-            this.dialogController.onDialogEnded(source, data)
-        })
-        CustomGameEventManager.RegisterListener("dialog_confirm", (source, event: DialogConfirmEvent) => {
-            this.dialogController.onDialogConfirm(source, event)
-        })
-        CustomGameEventManager.RegisterListener("dialog_confirm_expire", (source, event: DialogConfirmExpireEvent) => {
-            this.dialogController.onDialogConfirmExpired(source, event)
         })
     }
 
@@ -200,7 +189,7 @@ export class GameMode {
 
         print("Starting tutorial from scratch")
         this.tutorial.start()
-        
+
     }
 
     // Called on script_reload
