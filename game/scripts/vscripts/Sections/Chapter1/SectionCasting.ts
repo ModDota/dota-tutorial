@@ -1,9 +1,15 @@
-import * as tg from "../TutorialGraph/index";
-import * as tut from "../Tutorial/Core";
-import { getPlayerHero } from "../util";
+import * as tg from "../../TutorialGraph/index";
+import * as tut from "../../Tutorial/Core";
+import { getPlayerHero } from "../../util";
+import { RequiredState } from "../../Tutorial/RequiredState";
 
 let graph: tg.TutorialStep | undefined = undefined;
 let graphContext: tg.TutorialContext | undefined = undefined;
+
+const requiredState: RequiredState = {
+    requireSlacksGolem: true,
+    slacksLocation: Vector(-6250, -6050, 256),
+};
 
 const start = (complete: () => void) => {
     print("Started section casting");
@@ -79,10 +85,6 @@ const start = (complete: () => void) => {
     });
 };
 
-const resetState = () => {
-    // TODO: Make sure DK exists at spawn and other stuff (yea stuff...)
-};
-
 const stop = () => {
     if (graph) {
         graph.stop(graphContext ?? {});
@@ -92,8 +94,8 @@ const stop = () => {
 };
 
 export const sectionCasting = new tut.FunctionalSection(
-    SectionName.Casting,
+    SectionName.Chapter1_Casting,
+    requiredState,
     start,
-    resetState,
     stop
 );

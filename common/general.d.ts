@@ -1,9 +1,9 @@
 declare const enum SectionName {
-    Opening = "Opening",
-    CameraUnlock = "CameraUnlock",
-    Leveling = "Leveling",
-    Casting = "Casting",
-    Chapter2Opening = "Chapter2 Opening",
+    Chapter1_Opening = "Chapter1_Opening",
+    Chapter1_CameraUnlock = "Chapter1_CameraUnlock",
+    Chapter1_Leveling = "Chapter1_Leveling",
+    Chapter1_Casting = "Chapter1_Casting",
+    Chapter2_Opening = "Chapter2 Opening",
     Chapter3_Opening = "Chapter3_Opening",
 }
 

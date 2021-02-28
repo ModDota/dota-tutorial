@@ -1,3 +1,6 @@
+import { RequiredState } from "./RequiredState"
+import { setupState } from "./SetupState"
+
 /**
  * Tutorial section that contains logic for a single section of the tutorial. Should also
  * be able to handle setup and cleanup of its state.
@@ -11,6 +14,11 @@ export abstract class Section {
 
     }
 
+    /**
+     * State the game needs to be in and will be put in before starting this section.
+     */
+    public abstract requiredState: RequiredState
+
     public start(complete: () => void) {
         CustomGameEventManager.Send_ServerToAllClients("section_started", { section: this.name });
         this.onStart(complete);
@@ -22,21 +30,13 @@ export abstract class Section {
     public abstract onStart: (complete: () => void) => void
 
     /**
-     * Called when we want to set up the state for this section when skipping to it (ie. when the assumptions it makes about the preceding
-     * sections are possibly false such as a hero being alive).
-     */
-    public abstract onSkipTo: () => void
-
-    /**
      * Called when we want this section to stop. Should stop any progress as well as clean up any resources (eg. remove any spawned units or clean up timers).
      */
     public abstract onStop: () => void
 
-    public orderFilter? (event:ExecuteOrderFilterEvent) {
+    public orderFilter?(event: ExecuteOrderFilterEvent) {
         return true;
     }
-
-
 }
 
 /**
@@ -46,17 +46,16 @@ export class FunctionalSection extends Section {
     /**
      * Creates a section given its functions.
      * @param name Name of the section.
-     * @param onStart start function of the section. See Section.start.
-     * @param onSkipTo setupState function of the section. See Section.setupState.
-     * @param onStop stop function of the section. See Section.stop.
+     * @param requiredState State the game needs to be in and will be put in before starting this section.
+     * @param onStart Start function of the section. See Section.onStart.
+     * @param onStop Stop function of the section. See Section.onStop.
      * @param orderFilter? Access the order filter
      */
     constructor(public readonly name: SectionName,
+        public readonly requiredState: RequiredState,
         public readonly onStart: (complete: () => void) => void,
-        public readonly onSkipTo: () => void,
         public readonly onStop: () => void,
-        public readonly orderFilter?: (event:ExecuteOrderFilterEvent) => boolean
-        ) {
+        public readonly orderFilter?: (event: ExecuteOrderFilterEvent) => boolean) {
         super(name)
     }
 }
@@ -87,8 +86,8 @@ export class Tutorial {
     }
 
     /**
-     * Starts the tutorial. Can be called while already started to stop the current section and start the new one.
-     * @param sectionIndex Section to start at. If not passed starts with the first section. If passed also calls setupState on that section before starting it.
+     * Starts the tutorial. Can be called while already started to stop the current section and start the new one. Also calls setupState with the new section's required state before starting it.
+     * @param sectionIndex Section to start at. If not passed starts with the first section.
      */
     public start(sectionIndex?: number) {
         // Stop the current section to make sure any progress is stopped and cleaned up.
@@ -97,17 +96,14 @@ export class Tutorial {
             this.currentSection.onStop()
         }
 
-        // Allow starting from a specific section. If one was passed we want
-        // to also setup the state for it. Otherwise we just start from the beginning
-        // and assume we don't need any setup.
+        // If no section index was passed, start from the beginning.
         if (sectionIndex === undefined) {
             sectionIndex = 0
-        } else {
-            this.sections[sectionIndex].onSkipTo()
         }
 
         const startSection = (i: number) => {
             this._currentSection = this.sections[i]
+            setupState(this._currentSection.requiredState)
             print("Starting section", i)
 
             if (i + 1 >= this.sections.length) {
@@ -138,6 +134,4 @@ export class Tutorial {
             error("Could not find section with name " + sectionName)
         }
     }
-
-    
 }
