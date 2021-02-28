@@ -69,6 +69,27 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
     }
 }
 
+/**
+ * Freezes time and puts all units into the idle animation. This doesn't literally
+ * pause the game, but it effectively does.
+ */
+export function setGameFrozen(freeze: boolean) {
+    Tutorial.SetTimeFrozen(freeze);
+    let entity: CBaseEntity | undefined = Entities.First();
+    while(entity != undefined) {
+        if (entity.IsBaseNPC()) {
+            if (entity.IsAlive() && entity.IsCreep() || entity.IsHero()) {
+                if (freeze) {
+                    entity.StartGesture(GameActivity.DOTA_IDLE);
+                } else {
+                    entity.RemoveGesture(GameActivity.DOTA_IDLE);
+                }
+            }
+        }
+        entity = Entities.Next(entity);
+    }
+}
+
 /*
  * Returns the object if it is not undefined or calls error.
  * @param obj Object to check and return.
@@ -88,4 +109,11 @@ export function getOrError<T>(obj: T | undefined, msg?: string): T {
  */
 export function setGoalsUI(goals: Goal[]) {
     CustomGameEventManager.Send_ServerToAllClients("set_goals", { goals });
+}
+/*
+ * Destroy all neutrals on the map
+*/
+export function DestroyNeutrals() {
+    const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
+    units.forEach(x => x.Destroy());
 }

@@ -11,10 +11,11 @@ collapseButton.SetPanelEvent("onactivate", () => {
 
 /* Skip to section buttons */
 const sections = {
-    "Opening": SectionName.Opening,
-    "Camera Unlock": SectionName.CameraUnlock,
-    "Leveling": SectionName.Leveling,
-    "Casting": SectionName.Casting,
+    "CH1 - Opening": SectionName.Chapter1_Opening,
+    "CH1 - Camera Unlock": SectionName.Chapter1_CameraUnlock,
+    "CH1 - Leveling": SectionName.Chapter1_Leveling,
+    "CH1 - Casting": SectionName.Chapter1_Casting,
+    "CH3": SectionName.Chapter3_Opening,
 };
 
 // Add a button for each section

@@ -213,6 +213,48 @@ export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>
 }
 
 /**
+ * Moves the camera to a unit, with lerp
+ * @param target Unit to move the camera to.
+ * @param lerp Speed at which the camera moves
+ */
+export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
+    let playerIds = findAllPlayersID();
+
+    playerIds.forEach(playerId => {
+        let player = PlayerResource.GetPlayer(playerId);
+
+        if (player) {
+            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
+                unitTargetEntIndex: target.GetEntityIndex(),
+                lerp: lerp
+            })
+        }
+    })
+}
+
+/**
+ * Moves the camera to a position, with lerp
+ * @param position Point to move the camera to.
+ * @param lerp Speed at which the camera moves
+ */
+export const moveCameraToPosition = (position: Vector, lerp: number) => {
+    let playerIds = findAllPlayersID();
+
+    playerIds.forEach(playerId => {
+        let player = PlayerResource.GetPlayer(playerId);
+
+        if (player) {
+            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
+                cameraTargetX: position.x,
+                cameraTargetY: position.y,
+                cameraTargetZ: position.z,
+                lerp: lerp
+            })
+        }
+    })
+}
+
+/**
  * Creates a tutorial step that waits for the hero to upgrade an ability
  * @param ability the ability that needs to be upgraded.
  */
@@ -222,9 +264,10 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
     return tg.step((context, complete) => {
         const actualAbility = tg.getArg(ability, context);
         const desiredLevel = actualAbility.GetLevel() + 1;
-
+        actualAbility.SetUpgradeRecommended(true);
         const checkAbilityLevel = () => {
             if (desiredLevel == actualAbility.GetLevel()) {
+                actualAbility.SetUpgradeRecommended(false);
                 complete();
             } else {
                 checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
@@ -233,7 +276,9 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
         checkAbilityLevel();
     }, context => {
         if (checkTimer) {
+            const actualAbility = tg.getArg(ability, context);
             Timers.RemoveTimer(checkTimer)
+            actualAbility.SetUpgradeRecommended(false);
             checkTimer = undefined
         }
     })

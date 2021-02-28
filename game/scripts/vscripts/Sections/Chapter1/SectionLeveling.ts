@@ -1,7 +1,7 @@
-import * as tg from "../TutorialGraph/index"
-import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
-import { RequiredState } from "../Tutorial/RequiredState"
+import * as tg from "../../TutorialGraph/index"
+import * as tut from "../../Tutorial/Core"
+import { getPlayerHero } from "../../util"
+import { RequiredState } from "../../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
 let graphContext: tg.TutorialContext | undefined = undefined
@@ -61,8 +61,4 @@ const stop = () => {
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(
-    SectionName.Leveling,
-    requiredState,
-    start,
-    stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, requiredState, start, stop)

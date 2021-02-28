@@ -1,7 +1,7 @@
-import * as tg from "../TutorialGraph/index";
-import * as tut from "../Tutorial/Core";
-import { getPlayerHero } from "../util";
-import { RequiredState } from "../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
+import * as tut from "../../Tutorial/Core";
+import { getPlayerHero } from "../../util";
+import { RequiredState } from "../../Tutorial/RequiredState";
 
 let graph: tg.TutorialStep | undefined = undefined;
 let graphContext: tg.TutorialContext | undefined = undefined;
@@ -94,7 +94,7 @@ const stop = () => {
 };
 
 export const sectionCasting = new tut.FunctionalSection(
-    SectionName.Casting,
+    SectionName.Chapter1_Casting,
     requiredState,
     start,
     stop

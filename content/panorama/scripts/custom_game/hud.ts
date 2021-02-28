@@ -14,9 +14,9 @@ const allUI = new Set(uiWithShop).add(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP
 allUI.forEach(element => GameUI.SetDefaultUIEnabled(element, false));
 
 const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
-    [SectionName.Opening]: uiEmpty,
-    [SectionName.CameraUnlock]: uiWithMinimap,
-    [SectionName.Leveling]: uiWithActionPanel,
+    [SectionName.Chapter1_Opening]: uiEmpty,
+    [SectionName.Chapter1_CameraUnlock]: uiWithMinimap,
+    [SectionName.Chapter1_Leveling]: uiWithActionPanel,
     // Don't add final section for now to enable all UI at the end
     //[SectionName.Casting]: uiWithActionPanel,
 }
