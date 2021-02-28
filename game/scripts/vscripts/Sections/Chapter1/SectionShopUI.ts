@@ -82,6 +82,11 @@ const onStart = (complete: () => void) => {
 
 function onStop() {
     print("Stopping", sectionName);
+
+    if (graph) {
+        graph.stop(GameRules.Addon.context);
+        graph = undefined;
+    }
 }
 
 export const sectionShopUI = new tut.FunctionalSection(
