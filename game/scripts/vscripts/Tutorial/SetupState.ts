@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { getOrError, getPlayerHero } from "../util"
+import { findAllPlayersID, getOrError, getPlayerHero } from "../util"
 
 /**
  * Sets up the state to match the passed state requirement.
@@ -18,7 +18,12 @@ export const setupState = (stateReq: RequiredState): void => {
         hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, state.heroXP)
     }
 
-    if (state.heroLocation !== undefined && state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
+    // Focus all cameras on the hero
+    const playerIds = findAllPlayersID()
+    playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, hero))
+
+    // Move the hero if not within tolerance
+    if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
         hero.Stop()
         hero.SetAbsOrigin(state.heroLocation)
     }
