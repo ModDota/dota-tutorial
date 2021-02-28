@@ -1,6 +1,6 @@
-import * as tg from "../TutorialGraph/index"
-import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
+import * as tg from "../../TutorialGraph/index"
+import * as tut from "../../Tutorial/Core"
+import { getPlayerHero } from "../../util"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -85,4 +85,4 @@ const clearMudGolems = () => {
     }
 }
 
-export const sectionOpening = new tut.FunctionalSection(SectionName.Opening, onStart, onSkipTo, onStop)
+export const sectionOpening = new tut.FunctionalSection(SectionName.Chapter1_Opening, onStart, onSkipTo, onStop)

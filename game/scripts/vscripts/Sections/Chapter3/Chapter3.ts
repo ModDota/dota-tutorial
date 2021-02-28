@@ -399,16 +399,16 @@ const onStop = () => {
     }
 };
 
-export const sectionChapter3Opening = new tut.FunctionalSection(
+export const sectionOpening = new tut.FunctionalSection(
     SectionName.Chapter3_Opening,
     onStart,
     onSkipTo,
     onStop,
-    Chapter3OrderFilter
+    orderFilter
 );
 
 // Certain order will need to be filtered, if the player sabotages themselves they will get stuck
-export function Chapter3OrderFilter(event: ExecuteOrderFilterEvent): boolean {
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     const giveAwayItemName = "item_arcane_ring";
     const dropInStashItemName = "item_mysterious_hat";
     const keepItemName = "item_possessed_mask";

@@ -1,12 +1,12 @@
 GameUI.CustomUIConfig().SectionSelector.RegisterSection(
-    SectionName.CameraUnlock,
+    SectionName.Chapter1_CameraUnlock,
     {
         panel: $.GetContextPanel(),
         onShow: () => {
-            $.Msg(`onShow ${SectionName.CameraUnlock}`);
+            $.Msg(`onShow ${SectionName.Chapter1_CameraUnlock}`);
         },
         onHide: () => {
-            $.Msg(`onHide ${SectionName.CameraUnlock}`);
+            $.Msg(`onHide ${SectionName.Chapter1_CameraUnlock}`);
         }
     }
 );

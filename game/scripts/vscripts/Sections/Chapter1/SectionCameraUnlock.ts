@@ -1,7 +1,7 @@
-import * as tg from "../TutorialGraph/index"
-import * as tut from "../Tutorial/Core"
-import { getOrError, getPlayerHero, setUnitPacifist } from "../util"
-import { TutorialContext } from "../TutorialGraph/index"
+import * as tg from "../../TutorialGraph/index"
+import * as tut from "../../Tutorial/Core"
+import { getOrError, getPlayerHero, setUnitPacifist } from "../../util"
+import { TutorialContext } from "../../TutorialGraph/index"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -145,4 +145,4 @@ const onStop = () => {
     }
 }
 
-export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.CameraUnlock, onStart, onSkipTo, onStop)
+export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.Chapter1_CameraUnlock, onStart, onSkipTo, onStop)

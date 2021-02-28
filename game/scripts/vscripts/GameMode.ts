@@ -1,6 +1,5 @@
 import { reloadable } from "./lib/tstl-utils";
-import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, sectionChapter3Opening } from "./Sections/index";
-
+import * as chapters from "./Sections/index";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
@@ -16,7 +15,13 @@ export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
 
-    private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting, sectionChapter3Opening]);
+    private tutorial = new tut.Tutorial([
+        chapters.chapter1.sectionOpening,
+        chapters.chapter1.sectionCameraUnlock,
+        chapters.chapter1.sectionLeveling,
+        chapters.chapter1.sectionCasting,
+        chapters.chapter3.sectionOpening
+    ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
@@ -189,7 +194,7 @@ export class GameMode {
 
         print("Starting tutorial from scratch")
         this.tutorial.start()
-        
+
     }
 
     // Called on script_reload
