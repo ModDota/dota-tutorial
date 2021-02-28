@@ -38,3 +38,42 @@ function except<T>(a: Set<T>, b: Set<T>): Set<T> {
     b.forEach(e => result.delete(e));
     return result;
 }
+
+/** UI Highlighting */
+const hudRoot = $.GetContextPanel().GetParent()!.GetParent()!.GetParent()!;
+
+function findPanelAtPath(path: string): Panel | undefined {
+    const splitPath = path.split("/");
+    let panel = hudRoot;
+    for (let i = 0; i < splitPath.length; i++) {
+        const child = panel.FindChild(splitPath[i]);
+        if (child === null) {
+            $.Msg(`Failed to find ${splitPath[i]} in ${splitPath.slice(0, i).join("/")}`);
+            return undefined;
+        }
+        panel = child;
+    }
+    return panel;
+}
+
+function highlightUiElement(path: string) {
+    const element = findPanelAtPath(path);
+    // Can't highlight if the scale is too small/large/uninitialized
+    if (element && element.actualuiscale_x > 0.01) {
+        const parent = element.GetParent()!;
+
+        const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
+        highlightPanel.SetParent(parent);
+
+        highlightPanel.AddClass("UIHighlight");
+
+        // Set size/position
+        highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
+        highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
+        highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
+    }
+}
+
+
+//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
+//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
