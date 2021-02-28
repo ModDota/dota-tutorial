@@ -27,10 +27,10 @@ interface DialogReceivedEvent {
     SendToAll: boolean;
     DialogEntIndex: EntityIndex;
     PlayerHeroEntIndex: EntityIndex;
-    ShowAdvanceButton: number;
+    ShowAdvanceButton: boolean;
     DialogLine: number;
-    ConfirmToken: string;
-    DialogPlayerConfirm: boolean | number;
+    ConfirmToken?: string;
+    DialogPlayerConfirm?: boolean;
     DialogAdvanceTime: number;
 }
 
@@ -43,13 +43,13 @@ interface DialogCompleteEvent {
 
 interface DialogConfirmEvent {
     nPlayerID: PlayerID;
-    ConfirmToken: string | null;
+    ConfirmToken?: string;
     DialogEntIndex: EntityIndex | null;
     DialogLine: number;
 }
 
 interface DialogConfirmExpireEvent {
-    ConfirmToken: string | null;
+    ConfirmToken?: string;
     DialogEntIndex: EntityIndex | null;
     DialogLine: number;
 }
@@ -61,7 +61,7 @@ interface CustomGameEventDeclarations {
     dialog_confirm_expire: DialogConfirmExpireEvent;
     dialog_confirm: DialogConfirmEvent;
     dialog_complete: DialogCompleteEvent;
-    dialog: any; // DialogReceivedEvent, but doesn't work because I don't understand typescript
+    dialog: DialogReceivedEvent;
     dialog_player_confirm: DialogConfirmedEvent;
     ui_loaded: {};
     detect_camera_movement: {};
