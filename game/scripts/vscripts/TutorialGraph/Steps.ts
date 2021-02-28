@@ -1,4 +1,5 @@
-import { findAllPlayersID, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { findAllPlayersID, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import * as dg from "../Dialog"
 import * as tg from "./Core"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
@@ -342,13 +343,7 @@ export const playGlobalSound = (soundName: tg.StepArgument<string>, waitForCompl
         EmitGlobalSound(actualSoundName)
 
         if (actualWaitForCompletion) {
-            // Get any entity so we can get the duration of the sound (not sure why that's needed)
-            const anyEntity = Entities.Next(undefined)
-            if (!anyEntity) {
-                error("Could not find any entity to get duration of sound")
-            }
-
-            const soundDuration = anyEntity.GetSoundDuration(actualSoundName, "") + (actualExtraDelaySeconds !== undefined ? actualExtraDelaySeconds : defaultExtraDelaySeconds)
+            const soundDuration = getSoundDuration(actualSoundName) + (actualExtraDelaySeconds !== undefined ? actualExtraDelaySeconds : defaultExtraDelaySeconds)
 
             waitTimer = Timers.CreateTimer(soundDuration, () => complete())
         } else {
@@ -409,5 +404,58 @@ export const trackGoals = (goals: tg.StepArgument<Goal[]>) => {
         }
 
         setGoalsUI([])
+    })
+}
+
+/**
+ * Plays a dialog with sound and text and waits for the sound to finish before completing.
+ * @param soundName Name of the sound
+ * @param text Text to display during the dialog
+ * @param unit Unit that is talking
+ * @param extraDelaySeconds Extra delay to add to the wait time. Defaults to 0.5s.
+ */
+export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
+    const defaultExtraDelaySeconds = 0.5
+    let waitTimer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualSoundName = tg.getArg(soundName, context)
+        const actualUnit = tg.getArg(unit, context)
+        const actualText = tg.getArg(text, context)
+        const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
+
+        const duration = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5)
+
+        waitTimer = Timers.CreateTimer(duration, () => complete())
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
+    })
+}
+
+/**
+ * Plays a text-only dialog and waits for a passed amount of time to finish before completing.
+ * @param text Text to display during the dialog
+ * @param unit Unit that is talking
+ * @param waitSeconds Time to wait for in seconds.
+ */
+export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
+    let waitTimer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualUnit = tg.getArg(unit, context)
+        const actualText = tg.getArg(text, context)
+        const actualWaitSeconds = tg.getArg(waitSeconds, context)
+
+        dg.playText(actualText, actualUnit, actualWaitSeconds)
+
+        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => complete())
+    }, context => {
+        if (waitTimer) {
+            Timers.RemoveTimer(waitTimer)
+            waitTimer = undefined
+        }
     })
 }
