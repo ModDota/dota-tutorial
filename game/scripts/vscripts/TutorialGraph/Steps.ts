@@ -459,3 +459,10 @@ export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<
         }
     })
 }
+
+/**
+ * Step which never completes. Useful in conjunction with forkAny() to prevent one of the branches from completing.
+ */
+export const neverComplete = () => {
+    return tg.step(_ => { })
+}
