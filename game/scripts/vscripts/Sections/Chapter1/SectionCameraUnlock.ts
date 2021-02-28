@@ -2,8 +2,16 @@ import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
 import { getOrError, getPlayerHero, setUnitPacifist } from "../../util"
 import { TutorialContext } from "../../TutorialGraph/index"
+import { RequiredState } from "../../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
+
+const requiredState: RequiredState = {
+    requireSunsfanGolem: true,
+    requireSlacksGolem: true,
+    sunsFanLocation: Vector(-6400, -5900, 256),
+    slacksLocation: Vector(-6250, -6050, 256),
+}
 
 enum CameraUnlockContextKey {
     CameraMove,
@@ -24,7 +32,7 @@ const onStart = (complete: () => void) => {
     let sunsfanAttackableTime: number | undefined = undefined
 
     // Return a list of goals to display depending on which parts we have started and completed.
-    const getGoals = (context: TutorialContext) => {
+    const getGoals = (context: tg.TutorialContext) => {
         const isGoalStarted = (key: CameraUnlockContextKey) => context[key] === GoalState.Started || context[key] === GoalState.Completed
         const isGoalCompleted = (key: CameraUnlockContextKey) => context[key] === GoalState.Completed
 
@@ -103,41 +111,6 @@ const onStart = (complete: () => void) => {
     })
 }
 
-const onSkipTo = () => {
-    const context = GameRules.Addon.context
-
-    const playerHero = getOrError(getPlayerHero())
-    const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
-
-    // Put hero in the state we need
-    playerHero.SetMoveCapability(UnitMoveCapability.GROUND)
-
-    // Move hero close to fountain
-    playerHero.SetAbsOrigin(radiantFountain.GetAbsOrigin().__add(Vector(300, 300, 0)))
-
-    // Remove and create sunsfan
-    const sunsfanGolemTargetLocation = playerHero.GetAbsOrigin().__add(Vector(300, 800, 0))
-    if (context[CustomNpcKeys.SunsFanMudGolem]) {
-        if (IsValidEntity(context[CustomNpcKeys.SunsFanMudGolem])) {
-            context[CustomNpcKeys.SunsFanMudGolem].RemoveSelf()
-        }
-        context[CustomNpcKeys.SunsFanMudGolem] = undefined
-    }
-
-    CreateUnitByNameAsync(CustomNpcKeys.SunsFanMudGolem, sunsfanGolemTargetLocation, true, undefined, undefined, DotaTeam.GOODGUYS, unit => context[CustomNpcKeys.SunsFanMudGolem] = unit)
-
-    // Remove and create slacks
-    const slacksGolemTargetLocation = playerHero.GetAbsOrigin().__add(Vector(450, 650, 0))
-    if (context[CustomNpcKeys.SlacksMudGolem]) {
-        if (IsValidEntity(context[CustomNpcKeys.SlacksMudGolem])) {
-            context[CustomNpcKeys.SlacksMudGolem].RemoveSelf()
-        }
-        context[CustomNpcKeys.SlacksMudGolem] = undefined
-    }
-
-    CreateUnitByNameAsync(CustomNpcKeys.SlacksMudGolem, slacksGolemTargetLocation, true, undefined, undefined, DotaTeam.GOODGUYS, unit => context[CustomNpcKeys.SlacksMudGolem] = unit)
-}
-
 const onStop = () => {
     if (graph) {
         graph.stop(GameRules.Addon.context)
@@ -145,4 +118,4 @@ const onStop = () => {
     }
 }
 
-export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.Chapter1_CameraUnlock, onStart, onSkipTo, onStop)
+export const sectionCameraUnlock = new tut.FunctionalSection(SectionName.Chapter1_CameraUnlock, requiredState, onStart, onStop)

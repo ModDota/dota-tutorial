@@ -1,13 +1,13 @@
 import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
 
-const sectionName: SectionName = SectionName.Chapter1_Opening
+const sectionName: SectionName = SectionName.Chapter1_Opening;
+
+const requiredState: RequiredState = {
+};
 
 function onStart() {
     print("Starting", sectionName);
-}
-
-function onSkipTo() {
-    print("Skipping to", sectionName);
 }
 
 function onStop() {
@@ -16,7 +16,7 @@ function onStop() {
 
 export const sectionExampleEmpty = new tut.FunctionalSection(
     sectionName,
+    requiredState,
     onStart,
-    onSkipTo,
     onStop
 );

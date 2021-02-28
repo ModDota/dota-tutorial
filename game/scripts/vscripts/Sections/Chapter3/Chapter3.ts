@@ -3,6 +3,7 @@ import * as tut from "../../Tutorial/Core";
 import { DestroyNeutrals, getPlayerHero } from "../../util";
 import { GameMode } from "../../GameMode";
 import { TutorialContext } from "../../TutorialGraph/index";
+import { RequiredState } from "../../Tutorial/RequiredState";
 
 let graph: tg.TutorialStep | undefined = undefined;
 // Use this variable to detect whether item has been moved // TODO better solution
@@ -26,6 +27,9 @@ enum NeutralGoalKeys {
 enum GoalState {
     Started,
     Completed,
+}
+
+const requiredState: RequiredState = {
 }
 
 const onStart = (complete: () => void) => {
@@ -224,7 +228,7 @@ const onStart = (complete: () => void) => {
             }),
 
             tg.upgradeAbility(dragon_knight_dragon_blood),
-            tg.immediate((context) => { context[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed}),
+            tg.immediate((context) => { context[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed }),
 
             // Explain that neutrals drop items, how it works. Tell the player to pick it up.
             tg.completeOnCheck(() => {
@@ -385,11 +389,6 @@ const onStart = (complete: () => void) => {
     });
 };
 
-const onSkipTo = () => {
-    print("Skipping to", "Section CH3 Opening");
-    if (!getPlayerHero()) error("Could not find the player's hero.");
-};
-
 const onStop = () => {
     print("Stopping", "Section Opening");
 
@@ -401,8 +400,8 @@ const onStop = () => {
 
 export const sectionOpening = new tut.FunctionalSection(
     SectionName.Chapter3_Opening,
+    requiredState,
     onStart,
-    onSkipTo,
     onStop,
     orderFilter
 );
