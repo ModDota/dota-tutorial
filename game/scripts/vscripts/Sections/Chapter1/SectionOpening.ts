@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getPlayerHero } from "../../util"
+import { findRealPlayerID, getPlayerHero, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
@@ -20,6 +20,7 @@ const onStart = (complete: () => void) => {
             playerHero.GetAbsOrigin().__add(Vector(0, 1500, 0)),
             DotaTeam.GOODGUYS,
             CustomNpcKeys.SlacksMudGolem),
+        tg.immediate((context) => setUnitPacifist(context[CustomNpcKeys.SlacksMudGolem], true)),
         tg.spawnUnit(CustomNpcKeys.SunsFanMudGolem,
             playerHero.GetAbsOrigin().__add(Vector(1500, 500, 0)),
             DotaTeam.GOODGUYS,
