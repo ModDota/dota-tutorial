@@ -17,3 +17,20 @@ type Goal = {
     text: string
     completed: boolean
 }
+
+interface DialogData {
+    text: string;
+    advanceTime: number;
+    sendToAll: boolean;
+    advance: boolean;
+    gesture: GameActivity;
+    forceBreak?: boolean;
+    skipFacePlayer?: boolean;
+    dialogStopsMovement?: boolean;
+    sound?: string;
+}
+
+interface UnitDialog {
+    currentLine: number;
+    lines: DialogData[];
+}

@@ -117,3 +117,12 @@ export function DestroyNeutrals() {
     const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
     units.forEach(x => x.Destroy());
 }
+
+/**
+ * Returns the duration of the given sound in seconds.
+ * @param soundName Name of the sound.
+ */
+export function getSoundDuration(soundName: string) {
+    const anyEntity = getOrError(Entities.Next(undefined), "Could not find any entity")
+    return anyEntity.GetSoundDuration(soundName, "")
+}
