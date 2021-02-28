@@ -7,14 +7,14 @@ let g_szPendingDialog: string | null = null;
 let g_nCurrentDialogEnt: EntityIndex | null = null;
 let g_nCurrentDialogLine = -1;
 let g_bSentToAll = false;
-let g_szConfirmToken: string | null = null;
+let g_szConfirmToken: string | undefined = undefined;
 let g_bShowAdvanceButton = 1;
 const flThink = 0.005;
 
-function OnDialogReceived(data: DialogReceivedEvent) {
+function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     if (data["DialogText"] === "") return;
 
-    g_bSentToAll = data["SendToAll"];
+    g_bSentToAll = data["SendToAll"] === 1;
     if (!g_bSentToAll) {
         let vAbsOrigin = Entities.GetAbsOrigin(data["DialogEntIndex"]);
         let nX = Game.WorldToScreenX(
@@ -206,7 +206,7 @@ function OnDialogPlayerAllConfirmed() {
     $("#Player" + 1 + "Confirm").RemoveClass("Confirmed");
     $("#Player" + 2 + "Confirm").RemoveClass("Confirmed");
     $("#Player" + 3 + "Confirm").RemoveClass("Confirmed");
-    g_szConfirmToken = null;
+    g_szConfirmToken = undefined;
 }
 
 function OnCloseDialogButtonPressed() {

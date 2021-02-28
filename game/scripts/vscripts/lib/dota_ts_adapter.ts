@@ -107,7 +107,7 @@ export const registerModifier = (name?: string) => (modifier: new () => CDOTA_Mo
 
 function clearTable(table: object) {
     for (const key in table) {
-        delete (table as any)[key];
+        (table as any)[key] = undefined;
     }
 }
 
