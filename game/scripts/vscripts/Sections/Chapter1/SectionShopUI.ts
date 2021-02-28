@@ -98,7 +98,7 @@ export const sectionShopUI = new tut.FunctionalSection(
 );
 
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
-    if (event.issuer_player_id_const != findRealPlayerID()) return true
+    if (event.issuer_player_id_const !== findRealPlayerID()) return true
 
     if (event.order_type == UnitOrder.PURCHASE_ITEM) {
         if (waitingForPlayerToPurchaseTango) {

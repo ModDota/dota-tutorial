@@ -76,7 +76,7 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
 export function setGameFrozen(freeze: boolean) {
     Tutorial.SetTimeFrozen(freeze);
     let entity: CBaseEntity | undefined = Entities.First();
-    while (entity != undefined) {
+    while (entity !== undefined) {
         if (entity.IsBaseNPC()) {
             if (entity.IsAlive() && entity.IsCreep() || entity.IsHero()) {
                 if (freeze) {
