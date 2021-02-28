@@ -1,9 +1,10 @@
 import * as tut from "../Tutorial/Core";
 import * as tg from "../TutorialGraph/index";
-import { getPlayerHero, setCanPlayerIssueOrders } from "../util";
+import { findRealPlayerID, getPlayerHero } from "../util";
 
 const sectionName: SectionName = SectionName.Chapter2Opening
 let graph: tg.TutorialStep | undefined = undefined
+let canPlayerIssueOrders = true;
 
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 const direCreepNames = [CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireRangedCreep];
@@ -20,10 +21,10 @@ const onStart = (complete: () => void) => {
 
     graph = tg.seq([
         tg.setCameraTarget(undefined),
-        tg.immediate(() => setCanPlayerIssueOrders(true)),
+        tg.immediate(() => canPlayerIssueOrders = true),
         tg.goToLocation(Vector(-6574, -3742, 256)),
         tg.immediate(() => playerHero.Stop()),
-        //tg.immediate(() => setCanPlayerIssueOrders(false)),
+        tg.immediate(() => canPlayerIssueOrders = false),
         tg.fork(context => radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-6795, -3474, 256), DotaTeam.GOODGUYS, undefined))),
         tg.fork(context => direCreepNames.map(unit => tg.spawnUnit(unit, Vector(-5911, 5187, 128), DotaTeam.BADGUYS, undefined))),
         tg.immediate(context =>
@@ -67,7 +68,7 @@ const onStart = (complete: () => void) => {
         tg.setCameraTarget(radiantCreeps[0]),
         tg.wait(5),
         tg.setCameraTarget(undefined),
-        tg.immediate(_ => setCanPlayerIssueOrders(true)),
+        tg.immediate(_ => canPlayerIssueOrders = true),
     ])
 
     graph.start(GameRules.Addon.context, () => {
@@ -94,5 +95,15 @@ export const chapter2Opening = new tut.FunctionalSection(
     sectionName,
     onStart,
     onSkipTo,
-    onStop
+    onStop,
+    chapter2OpeningOrderFilter
 );
+
+export function chapter2OpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+    // Allow all orders that aren't done by the player
+    if (event.issuer_player_id_const != findRealPlayerID()) return true;
+
+    if (!canPlayerIssueOrders) return false;
+
+    return true;
+}

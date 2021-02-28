@@ -82,14 +82,6 @@ export function getOrError<T>(obj: T | undefined, msg?: string): T {
     return obj
 }
 
-/**
- * Sets whether a player can give orders to any of his controlled units and hero.
- * @param canIssueOrders Whether the player can now give orders to his controlled units and hero.
- */
-export function setCanPlayerIssueOrders(canIssueOrders: boolean){
-    GameRules.Addon.canPlayerIssueOrders = canIssueOrders;
-}
-
 /** Updates the goal display.
   * @param goals Goals to display in the UI.
   */

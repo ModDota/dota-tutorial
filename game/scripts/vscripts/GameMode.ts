@@ -15,7 +15,6 @@ declare global {
 export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
     canPlayerHeroEarnXP = false;
-    canPlayerIssueOrders = true;
 
     private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, chapter2Opening]);
 
@@ -126,9 +125,6 @@ export class GameMode {
     }
 
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
-        // Ignores all orders when the flag is set to false
-        if (!this.canPlayerIssueOrders && event.issuer_player_id_const == findRealPlayerID()) return false;
-
         // Cancel orders if false
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
             return false;
