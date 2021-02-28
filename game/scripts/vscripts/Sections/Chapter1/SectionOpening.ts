@@ -19,11 +19,13 @@ const onStart = (complete: () => void) => {
         tg.spawnUnit(CustomNpcKeys.SlacksMudGolem,
             playerHero.GetAbsOrigin().__add(Vector(0, 1500, 0)),
             DotaTeam.GOODGUYS,
-            CustomNpcKeys.SlacksMudGolem),
+            CustomNpcKeys.SlacksMudGolem
+        ),
         tg.spawnUnit(CustomNpcKeys.SunsFanMudGolem,
             playerHero.GetAbsOrigin().__add(Vector(1500, 500, 0)),
             DotaTeam.GOODGUYS,
-            CustomNpcKeys.SunsFanMudGolem),
+            CustomNpcKeys.SunsFanMudGolem
+        ),
         tg.fork([
             tg.seq([
                 tg.moveUnit(context => context[CustomNpcKeys.SlacksMudGolem], mudGolemMeetPosition),
@@ -39,9 +41,18 @@ const onStart = (complete: () => void) => {
                 tg.setCameraTarget(context => context[CustomNpcKeys.SunsFanMudGolem]),
             ])
         ]),
-        tg.wait(2),
+        tg.textDialog(LocalizationKey.Script_1_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
         tg.setCameraTarget(() => Entities.FindAllByName("dota_badguys_fort")[0]),
-        tg.wait(5),
+        tg.textDialog(LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
         tg.setCameraTarget(() => playerHero),
     ])
 
