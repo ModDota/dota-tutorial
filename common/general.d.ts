@@ -3,7 +3,7 @@ declare const enum SectionName {
     CameraUnlock = "CameraUnlock",
     Leveling = "Leveling",
     Casting = "Casting",
-    Chapter2Opening = "Chapter2 Opening"
+    Chapter2Opening = "Chapter2 Opening",
     Chapter3_Opening = "Chapter3_Opening",
 }
 
