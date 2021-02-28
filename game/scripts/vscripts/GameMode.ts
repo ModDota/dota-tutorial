@@ -1,3 +1,4 @@
+import { DialogController } from "./lib/dialog";
 import { reloadable } from "./lib/tstl-utils";
 import { sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting } from "./Sections/index";
 
@@ -17,6 +18,7 @@ export class GameMode {
     canPlayerHeroEarnXP = false;
 
     private tutorial = new tut.Tutorial([sectionOpening, sectionCameraUnlock, sectionLeveling, sectionCasting]);
+    private dialogController = new DialogController();
 
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
@@ -38,6 +40,15 @@ export class GameMode {
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
+        })
+        CustomGameEventManager.RegisterListener("dialog_complete", (source, data: DialogCompleteEvent) => {
+            this.dialogController.onDialogEnded(source, data)
+        })
+        CustomGameEventManager.RegisterListener("dialog_confirm", (source, event: DialogConfirmEvent) => {
+            this.dialogController.onDialogConfirm(source, event)
+        })
+        CustomGameEventManager.RegisterListener("dialog_confirm_expire", (source, event: DialogConfirmExpireEvent) => {
+            this.dialogController.onDialogConfirmExpired(source, event)
         })
     }
 
@@ -187,7 +198,52 @@ export class GameMode {
     public Reload() {
         print("Script reloaded!");
 
-        // Do some stuff here
+        // // this controls whether the dialog is tied to a unit or displayed
+        // // in the center of the screen
+        // const sendToAll = false;
+
+        // let sampleDialog: DialogData[] = [
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_1",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //     },
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_2",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //     },
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_3",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //     },
+        //     {
+        //         advance: true,
+        //         text: "Dialog_test_4",
+        //         advanceTime: 10,
+        //         sendToAll: sendToAll,
+        //         gesture: GameActivity.DOTA_CAST_ABILITY_2,
+        //         forceBreak: true,
+        //     },
+        // ];
+
+        // let hero = getPlayerHero();
+        // if (hero) {
+        //     let unit = CreateUnitByName("npc_dota_hero_omniknight", hero.GetAbsOrigin(), true, undefined, undefined, DotaTeam.GOODGUYS);
+
+        //     // initialize the unit with dialog
+        //     this.dialogController.giveUnitDialog(unit, sampleDialog);
+
+        //     // start the dialog with our hero as the source
+        //     this.dialogController.onDialogStart(hero, unit);
+        // }
     }
 
     private OnNpcSpawned(event: NpcSpawnedEvent) {
