@@ -442,7 +442,6 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  * @param waitSeconds Time to wait for in seconds.
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
-    const defaultExtraDelaySeconds = 0.5
     let waitTimer: string | undefined = undefined
 
     return tg.step((context, complete) => {
