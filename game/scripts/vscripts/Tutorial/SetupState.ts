@@ -56,7 +56,7 @@ function createOrMoveGolem(unitName: string, location: Vector, faceTo?: Vector) 
         context[unitName] = unit
     }
 
-    if (!context[unitName]) {
+    if (!context[unitName] || !context[unitName].IsAlive()) {
         CreateUnitByNameAsync(unitName, location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => postCreate(unit))
     } else {
         postCreate(context[unitName])
