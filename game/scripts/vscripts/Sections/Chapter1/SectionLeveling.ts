@@ -4,7 +4,6 @@ import { getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
-let graphContext: tg.TutorialContext | undefined = undefined
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
@@ -42,12 +41,11 @@ const start = (complete: () => void) => {
     ability.SetUpgradeRecommended(true);
 
     graph = tg.seq([
-        tg.upgradeAbility(ability)
+        tg.upgradeAbility(ability),
+        tg.textDialog(LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3) // TODO: This should be said by sunsfan's ghost
     ])
 
-    graphContext = {}
-
-    graph.start(graphContext, () => {
+    graph.start(GameRules.Addon.context, () => {
         print("Section leveling was completed")
         complete()
     })
@@ -55,9 +53,8 @@ const start = (complete: () => void) => {
 
 const stop = () => {
     if (graph) {
-        graph.stop(graphContext ?? {})
+        graph.stop(GameRules.Addon.context)
         graph = undefined
-        graphContext = undefined
     }
 }
 
