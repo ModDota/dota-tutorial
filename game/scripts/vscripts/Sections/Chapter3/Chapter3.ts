@@ -2,7 +2,7 @@ import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import { DestroyNeutrals, getPlayerHero } from "../../util";
 import { GameMode } from "../../GameMode";
-import { TutorialContext } from "../../TutorialGraph/index";
+import { TutorialContext, TutorialStep } from "../../TutorialGraph/index";
 
 let graph: tg.TutorialStep | undefined = undefined;
 // Use this variable to detect whether item has been moved // TODO better solution
@@ -105,11 +105,6 @@ const onStart = (complete: () => void) => {
 
     const units: CDOTA_BaseNPC[] = [];
 
-    // if (IsInToolsMode()) {
-    //     playerHero.SetBaseDamageMin(1000);
-    //     playerHero.SetBaseDamageMax(1000);
-    // }
-
     playerHero.SetMoveCapability(UnitMoveCapability.GROUND);
     playerHero.SetAbsOrigin(GetGroundPosition(Vector(-4000, -550), undefined));
 
@@ -122,20 +117,15 @@ const onStart = (complete: () => void) => {
     )!;
     const neutralCampPostion = neutralCamp?.GetAbsOrigin();
 
-    GameRules.SpawnNeutralCreeps();
-    const neutralCamps = Entities.FindAllByClassname(
-        "npc_dota_neutral_spawner"
-    );
+    const stepArray: TutorialStep[] = [];
 
-    graph = tg.forkAny([
-        tg.trackGoals(getGoals),
-        tg.seq([
-            tg.wait(1),
+    GameRules.SpawnNeutralCreeps();
+
+    const goToCamp = () => {
+        return [
             // Show message and explain what the "neutral spawn indicators" on the minimap are.
             // Kill them after so that we can make our own.
             tg.immediate(() => DestroyNeutrals()),
-
-
             tg.immediate(
                 (context) =>
                     (context[NeutralGoalKeys.MoveToCamp] = GoalState.Started)
@@ -143,19 +133,29 @@ const onStart = (complete: () => void) => {
             tg.goToLocation(markerLocation),
             tg.immediate((context) => {
                 context[NeutralGoalKeys.MoveToCamp] = GoalState.Completed;
-                context[NeutralGoalKeys.UpgradeAbility] = GoalState.Started;
             }),
+        ];
+    };
 
-            // Tell the player to skill dragon blood for extra armor, so that it's better against attacks (big part of fighting neutrals is not taking too much damage)
+    const upgradeAbility_1 = () => {
+        return [
             tg.immediate((context) => {
+                context[NeutralGoalKeys.UpgradeAbility] = GoalState.Started;
                 if (playerHero.GetLevel() < 2) {
                     playerHero.HeroLevelUp(false);
                 }
                 playerHero.SetAbilityPoints(1);
             }),
-            tg.upgradeAbility(dragon_knight_dragon_blood),
+            tg.upgradeAbility(dragon_knight_dragon_blood!),
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed;
+            }),
+        ];
+    };
 
-            // Create the units
+    const spawnAndKillSatyrs = () => {
+        return [
+            // Create the units[
             tg.spawnUnit(
                 "npc_dota_neutral_satyr_trickster",
                 neutralCampPostion.__add(RandomVector(50)),
@@ -185,8 +185,6 @@ const onStart = (complete: () => void) => {
                 units.push(ctx["trickster_1"] as CDOTA_BaseNPC);
                 units.push(ctx["trickster_2"] as CDOTA_BaseNPC);
                 units.push(ctx["soulstealer_1"] as CDOTA_BaseNPC);
-
-                ctx[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed;
                 ctx[NeutralGoalKeys.KillNeutralsSatyrs] = GoalState.Started;
             }),
 
@@ -215,48 +213,76 @@ const onStart = (complete: () => void) => {
             ]),
 
             tg.immediate((context) => {
-                playerHero.HeroLevelUp(true);
                 context[NeutralGoalKeys.KillNeutralsSatyrs] =
                     GoalState.Completed;
-                context[NeutralGoalKeys.PickupItemArcaneRing] =
-                    GoalState.Started;
+            }),
+        ];
+    };
+
+    const upgradeAbility_2 = () => {
+        return [
+            tg.immediate((context) => {
+                playerHero.HeroLevelUp(true);
                 context[NeutralGoalKeys.UpgradeAbility] = GoalState.Started;
             }),
+            tg.upgradeAbility(dragon_knight_dragon_blood!),
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed;
+            }),
+        ];
+    };
 
-            tg.upgradeAbility(dragon_knight_dragon_blood),
-            tg.immediate((context) => { context[NeutralGoalKeys.UpgradeAbility] = GoalState.Completed}),
-
+    const pickUpArcaneRing = () => {
+        return [
             // Explain that neutrals drop items, how it works. Tell the player to pick it up.
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.PickupItemArcaneRing] =
+                    GoalState.Started;
+            }),
             tg.completeOnCheck(() => {
                 return playerHero.HasItemInInventory(giveAwayItemName);
-            }, 1),
-
-            // Tell the player that some neutral items have active abilities, tell them to use it.
+            }, 0.1),
             tg.immediate((context) => {
                 context[NeutralGoalKeys.PickupItemArcaneRing] =
                     GoalState.Completed;
+            }),
+        ];
+    };
+
+    const useArcaneRing = () => {
+        return [
+            // Tell the player that some neutral items have active abilities, tell them to use it.
+            tg.immediate((context) => {
                 context[NeutralGoalKeys.UseNeutralItem] = GoalState.Started;
             }),
             tg.completeOnCheck(() => {
                 let item = playerHero.FindItemInInventory(giveAwayItemName);
                 return item != null && !item.IsCooldownReady();
-            }, 1),
-
+            }, 0.1),
             tg.immediate((context) => {
                 context[NeutralGoalKeys.UseNeutralItem] = GoalState.Completed;
+            }),
+        ];
+    };
+
+    const moveOutOfNeutralBox = () => {
+        return [
+            // Tell the player that neutrals creeps spawn every minute, considered their box is empty. Mention stacking.
+            tg.immediate((context) => {
                 context[NeutralGoalKeys.MoveOutOfNeutralBox] =
                     GoalState.Started;
             }),
-
-            // Teach the player about when neutrals are respawning (Maybe even adjust/freeze the clock?)
             tg.goToLocation(markerLocation),
             tg.immediate((context) => {
                 context[NeutralGoalKeys.MoveOutOfNeutralBox] =
                     GoalState.Completed;
-                context[NeutralGoalKeys.KillNeutralsWolves] = GoalState.Started;
-                context[NeutralGoalKeys.PickupItems] = GoalState.Started;
             }),
-            // Spawn new creeps, this time we do wolves.
+        ];
+    };
+
+    const spawnAndKillWolves = () => {
+        return [
+            
             tg.spawnUnit(
                 "npc_dota_neutral_alpha_wolf",
                 neutralCampPostion.__add(RandomVector(50)),
@@ -264,17 +290,23 @@ const onStart = (complete: () => void) => {
                 "alpha_1"
             ),
             tg.spawnUnit(
-                "npc_dota_neutral_alpha_wolf",
-                neutralCampPostion.__add(RandomVector(50)),
-                DotaTeam.NEUTRALS,
-                "alpha_2"
-            ),
-            tg.spawnUnit(
                 "npc_dota_neutral_giant_wolf",
                 neutralCampPostion.__add(RandomVector(50)),
                 DotaTeam.NEUTRALS,
                 "giant_1"
             ),
+            tg.spawnUnit(
+                "npc_dota_neutral_giant_wolf",
+                neutralCampPostion.__add(RandomVector(50)),
+                DotaTeam.NEUTRALS,
+                "giant_2"
+            ),
+
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.KillNeutralsWolves] = GoalState.Started;
+            }),    
+
+
             tg.fork([
                 tg.completeOnCheck((ctx) => {
                     const unit = ctx["alpha_1"] as CDOTA_BaseNPC;
@@ -307,76 +339,103 @@ const onStart = (complete: () => void) => {
                 }, 0.1),
 
                 tg.completeOnCheck((ctx) => {
-                    const unit = ctx["alpha_2"] as CDOTA_BaseNPC;
+                    const unit = ctx["giant_2"] as CDOTA_BaseNPC;
                     if (!unit || unit.IsNull() || !unit.IsAlive()) {
                         return true;
                     }
                     return false;
-                }, 0.1)
-            ]),
-
-            // Tell the player to pick up both items
-            tg.fork([
-                tg.immediate((context) => {
-                    context[NeutralGoalKeys.KillNeutralsWolves] =
-                        GoalState.Completed;
-                }),
-                tg.completeOnCheck(() => {
-                    return playerHero.HasItemInInventory(keepItemName);
                 }, 0.1),
-                tg.completeOnCheck(() => {
-                    return playerHero.HasItemInInventory(dropInStashItemName);
-                }, 0.1)
             ]),
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.KillNeutralsWolves] =
+                    GoalState.Completed;
+            }),
+        ];
+    };
 
-            // Tell the player how to switch items, make sure the possesed mask is in the right slot.
+    const pickupItems = () => {
+        // Tell the player to pick up both items
+        return [
+            tg.immediate((context) => {
+                movedToStash = false;
+                context[NeutralGoalKeys.PickupItems] = GoalState.Started;
+            }),
+            tg.completeOnCheck(() => {
+                return playerHero.HasItemInInventory(keepItemName);
+            }, 0.1),
+            tg.completeOnCheck(() => {
+                return playerHero.HasItemInInventory(dropInStashItemName);
+            }, 0.1),
             tg.immediate((context) => {
                 context[NeutralGoalKeys.PickupItems] = GoalState.Completed;
-                context[NeutralGoalKeys.SwitchItems] = GoalState.Started;
-                Msg("Take possesed mask as neutal item");
             }),
-            tg.completeOnCheck((context) => {
-                let item = playerHero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT);
-                if (item) {
-                    if (item.GetAbilityName() == keepItemName) {
-                        movedToStash = false;
-                        context[NeutralGoalKeys.SwitchItems] =
-                            GoalState.Completed;
-                        context[NeutralGoalKeys.ShareItem] = GoalState.Started;
-                        context[NeutralGoalKeys.StashItem] = GoalState.Started;
-                        return true;
-                    }
-                }
-                return false;
-            }, 0.1),
+        ];
+    };
 
-            // Create an allied hero (Warlock) and make them transfer the arcane ring to warlock.
-            // Also let them place the mysterious hat in the neutral stash
+    const switchItems = () => {
+        // Tell the player how to switch items, make sure the possesed mask is in the right slot.
+        return [
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.SwitchItems] = GoalState.Started;
+            }),
+            tg.completeOnCheck(() => {
+                let item = playerHero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT);
+                return item != null && item.GetAbilityName() == keepItemName;
+            }, 0.1),
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.SwitchItems] = GoalState.Completed;
+            }),
+        ];
+    };
+
+    const shareItem = () => {
+        return [
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.ShareItem] = GoalState.Started;
+            }),
             tg.spawnUnit(
                 "npc_dota_hero_warlock",
                 markerLocation,
                 playerHero.GetTeam(),
                 "warlock"
             ),
-            tg.fork([
-                tg.completeOnCheck((ctx) => {
-                    let warlock = ctx["warlock"] as CDOTA_BaseNPC_Hero;
-                    if (warlock.HasItemInInventory(giveAwayItemName)) {
-                        ctx[NeutralGoalKeys.ShareItem] = GoalState.Completed;
-                        return true;
-                    }
-                    return false;
-                }, 0.1),
-                // Checking the neutral stash is impossible?
-                tg.completeOnCheck((ctx) => {
-                    if (movedToStash) {
-                        ctx[NeutralGoalKeys.StashItem] = GoalState.Completed;
-                        return true;
-                    }
-                    return false;
-                }, 0.1)
-            ]),
-        ])
+
+            tg.completeOnCheck((ctx) => {
+                let warlock = ctx["warlock"] as CDOTA_BaseNPC_Hero;
+                return warlock.HasItemInInventory(giveAwayItemName);
+            }, 0.1),
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.ShareItem] = GoalState.Completed;
+            }),
+        ];
+    };
+
+    const stashItem = () => {
+        return [
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.StashItem] = GoalState.Started;
+            }),
+            tg.completeOnCheck(() => {
+                return movedToStash;
+            }, 0.1),
+            tg.immediate((context) => {
+                context[NeutralGoalKeys.StashItem] = GoalState.Completed;
+            }),
+        ];
+    };
+
+    graph = tg.forkAny([
+        tg.trackGoals(getGoals),
+        tg.seq([
+            ...goToCamp(),
+            ...upgradeAbility_1(),
+            ...spawnAndKillSatyrs(),
+            tg.fork([...upgradeAbility_2(), ...pickUpArcaneRing()]),
+            ...useArcaneRing(),
+            ...moveOutOfNeutralBox(),
+            tg.fork([...spawnAndKillWolves(), ...pickupItems()]),
+            tg.fork([...switchItems(), ...shareItem(), ...stashItem()]),
+        ]),
     ]);
 
     graph.start(GameRules.Addon.context, () => {
