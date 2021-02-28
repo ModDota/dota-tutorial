@@ -30,28 +30,23 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => canPlayerIssueOrders = false),
         tg.fork(context => radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-6795, -3474, 256), DotaTeam.GOODGUYS, undefined))),
         tg.fork(context => direCreepNames.map(unit => tg.spawnUnit(unit, Vector(-5911, 5187, 128), DotaTeam.BADGUYS, undefined))),
-        tg.immediate(context =>
-            {
-                // Group radiant creeps
-                const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
+        tg.immediate(context => {
+            // Group radiant creeps
+            const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
 
-                for (const creep of creeps)
-                {
-                    if (creep.GetUnitName() == CustomNpcKeys.RadiantMeleeCreep || creep.GetUnitName() == CustomNpcKeys.RadiantRangedCreep)
-                    {
-                        radiantCreeps.push(creep);
-                    }
-
-                    if (creep.GetUnitName() == CustomNpcKeys.DireMeleeCreep || creep.GetUnitName() == CustomNpcKeys.DireRangedCreep)
-                    {
-                        direCreeps.push(creep);
-                    }
+            for (const creep of creeps) {
+                if (creep.GetUnitName() == CustomNpcKeys.RadiantMeleeCreep || creep.GetUnitName() == CustomNpcKeys.RadiantRangedCreep) {
+                    radiantCreeps.push(creep);
                 }
-                print(radiantCreeps.length)
-            }),
+
+                if (creep.GetUnitName() == CustomNpcKeys.DireMeleeCreep || creep.GetUnitName() == CustomNpcKeys.DireRangedCreep) {
+                    direCreeps.push(creep);
+                }
+            }
+            print(radiantCreeps.length)
+        }),
         tg.fork(context => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(-6288, 3280, 128)))),
-        tg.immediate(_ =>
-        {
+        tg.immediate(_ => {
             for (const radiantCreep of radiantCreeps) {
                 ExecuteOrderFromTable({
                     OrderType: UnitOrder.ATTACK_MOVE,
@@ -82,8 +77,7 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
-    if (graph)
-    {
+    if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
     }
