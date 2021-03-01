@@ -1,9 +1,14 @@
-import * as tg from "../TutorialGraph/index"
-import * as tut from "../Tutorial/Core"
-import { getPlayerHero } from "../util"
+import * as tg from "../../TutorialGraph/index"
+import * as tut from "../../Tutorial/Core"
+import { getPlayerHero } from "../../util"
+import { RequiredState } from "../../Tutorial/RequiredState"
 
 let graph: tg.TutorialStep | undefined = undefined
-let graphContext: tg.TutorialContext | undefined = undefined
+
+const requiredState: RequiredState = {
+    requireSlacksGolem: true,
+    slacksLocation: Vector(-6250, -6050, 256),
+}
 
 const start = (complete: () => void) => {
     print("Started section leveling")
@@ -36,27 +41,21 @@ const start = (complete: () => void) => {
     ability.SetUpgradeRecommended(true);
 
     graph = tg.seq([
-        tg.upgradeAbility(ability)
+        tg.upgradeAbility(ability),
+        tg.textDialog(LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3) // TODO: This should be said by sunsfan's ghost
     ])
 
-    graphContext = {}
-
-    graph.start(graphContext, () => {
+    graph.start(GameRules.Addon.context, () => {
         print("Section leveling was completed")
         complete()
     })
 }
 
-const resetState = () => {
-    // TODO: Make sure DK exists at spawn and other stuff (yea stuff...)
-}
-
 const stop = () => {
     if (graph) {
-        graph.stop(graphContext ?? {})
+        graph.stop(GameRules.Addon.context)
         graph = undefined
-        graphContext = undefined
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(SectionName.Leveling, start, resetState, stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, requiredState, start, stop)

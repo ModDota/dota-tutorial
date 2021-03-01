@@ -1,0 +1,197 @@
+.DialogLogRoot {
+    width: 100%;
+    height: 100%;
+}
+
+.TopLeftMenu {
+    width: 200px;
+    height: 40px;
+    margin-top: 9px;
+    margin-left: -5px;
+    background-color: #000a;
+    border-bottom: 1px solid #111111ff;
+    border-top: 1px solid #111111ff;
+    border-right: 1px solid #111111ff;
+    border-radius: 5px;
+    opacity: 1.2;
+    transition-duration: 0.05s;
+    transition-property: background-image;
+    transition-timing-function: ease-in-out;
+}
+
+.TopLeftMenuButton {
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    margin-bottom: 0px;
+    opacity: 0.5;
+    wash-color: #cdf;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+    tooltip-position: bottom;
+}
+
+#DialogLogButton {
+    background-image: url("s2r://panorama/images/control_icons/dota_logo_white_png.vtex");
+    background-size: 100%;
+    margin-top: 2px;
+    margin-left: 160px;
+    transition-duration: 0.3s;
+    transition-property: wash-color;
+    transition-timing-function: ease-in-out;
+}
+
+#DialogLogButton:hover {
+    wash-color: white;
+    transition-duration: 0.3s;
+    transition-property: wash-color;
+    transition-timing-function: ease-in-out;
+}
+
+#DialogLog {
+    vertical-align: bottom;
+    horizontal-align: center;
+
+    width: 800px;
+    height: 800px;
+
+    margin-bottom: 200px;
+
+    background-color: #111920dd;
+    background-size: 100%;
+
+    flow-children: down;
+
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+    transition-property: opacity, transform;
+    transition-duration: 0.3s;
+}
+
+#DialogLog.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+#DialogTitle {
+    margin: 10px;
+    horizontal-align: center;
+
+    text-transform: uppercase;
+    color: gradient(linear, 0% 0%, 0% 100%, from(#e7d291), to(#965d01));
+    text-shadow: 0px 1px 1px 2 black;
+    font-weight: bold;
+    font-size: 22px;
+    letter-spacing: 2px;
+}
+
+#DialogLineContainer {
+    flow-children: down;
+    horizontal-align: center;
+    overflow: squish scroll;
+
+    background-color: #111920bb;
+    border-top: 1px solid #ffffff05;
+    border-bottom: 1px solid #ffffff03;
+
+    height: 80%;
+    width: 90%;
+}
+
+.DialogLine {
+    flow-children: right;
+
+    margin: 5px 10px;
+    width: 90%;
+
+    vertical-align: center;
+    horizontal-align: center;
+}
+
+#DialogPortrait {
+    width: 128px;
+    border-radius: 100%;
+    box-shadow: fill #000000af -6px -6px 12px 12px;
+    border: 2px solid black;
+
+    margin-right: 10px;
+    margin-top: 20px;
+}
+
+.DialogLineText {
+    font-style: italics;
+    font-weight: bold;
+    font-size: 18px;
+    text-overflow: shrink;
+}
+
+.SpeechBubbleBackground {
+    width: 100%;
+    height: 100%;
+    background-color: gradient(
+        linear,
+        0% 0%,
+        0% 100%,
+        from(#ddd),
+        color-stop (0.5, #9ca6a6),
+        to(#818fb6)
+    );
+    border-radius: 14px;
+    margin: 2px;
+}
+
+.SpeechBubbleContainer {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.SpeechBubbleBackgroundOutline {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    margin: 0px;
+    border-radius: 16px;
+}
+
+.SpeechBubbleCalloutSquash {
+    width: 64px;
+    height: 64px;
+    transform: translateX(-22px) translateY(-8px);
+    pre-transform-scale2d: 1, 0.4;
+    padding: 8px;
+}
+
+.SpeechBubbleCallout {
+    width: 100%;
+    height: 100%;
+    transform: rotateZ(45deg);
+    background-color: #9ca6a6;
+    border: 4px solid black;
+}
+
+#SpeechBubbleContainer {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.DialogLabelSizer {
+    color: #81818100;
+}
+
+.DialogPanelText {
+    color: black;
+    font-style: italics;
+    font-weight: bold;
+    font-size: 18px;
+    text-overflow: shrink;
+    max-width: 600px;
+    max-height: 200px;
+    margin: 26px 36px;
+}
+
+#CloseButton {
+    horizontal-align: center;
+    vertical-align: center;
+}

@@ -2,7 +2,8 @@ import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import { DestroyNeutrals, getPlayerHero } from "../../util";
 import { GameMode } from "../../GameMode";
-import { TutorialContext, TutorialStep } from "../../TutorialGraph/index";
+import { TutorialContext } from "../../TutorialGraph/index";
+import { RequiredState } from "../../Tutorial/RequiredState";
 
 let graph: tg.TutorialStep | undefined = undefined;
 // Use this variable to detect whether item has been moved // TODO better solution
@@ -27,6 +28,8 @@ enum GoalState {
     Started,
     Completed,
 }
+
+const requiredState: RequiredState = {};
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
@@ -116,8 +119,6 @@ const onStart = (complete: () => void) => {
         100
     )!;
     const neutralCampPostion = neutralCamp?.GetAbsOrigin();
-
-    const stepArray: TutorialStep[] = [];
 
     GameRules.SpawnNeutralCreeps();
 
@@ -222,8 +223,11 @@ const onStart = (complete: () => void) => {
     const upgradeAbility_2 = () => {
         return [
             tg.immediate((context) => {
-                playerHero.HeroLevelUp(true);
                 context[NeutralGoalKeys.UpgradeAbility] = GoalState.Started;
+                if (playerHero.GetLevel() < 3) {
+                    playerHero.HeroLevelUp(false);
+                }
+                playerHero.SetAbilityPoints(1);
             }),
             tg.upgradeAbility(dragon_knight_dragon_blood!),
             tg.immediate((context) => {
@@ -282,7 +286,6 @@ const onStart = (complete: () => void) => {
 
     const spawnAndKillWolves = () => {
         return [
-            
             tg.spawnUnit(
                 "npc_dota_neutral_alpha_wolf",
                 neutralCampPostion.__add(RandomVector(50)),
@@ -304,8 +307,7 @@ const onStart = (complete: () => void) => {
 
             tg.immediate((context) => {
                 context[NeutralGoalKeys.KillNeutralsWolves] = GoalState.Started;
-            }),    
-
+            }),
 
             tg.fork([
                 tg.completeOnCheck((ctx) => {
@@ -385,7 +387,7 @@ const onStart = (complete: () => void) => {
             tg.immediate((context) => {
                 context[NeutralGoalKeys.SwitchItems] = GoalState.Completed;
             }),
-        ];
+        ]
     };
 
     const shareItem = () => {
@@ -393,12 +395,6 @@ const onStart = (complete: () => void) => {
             tg.immediate((context) => {
                 context[NeutralGoalKeys.ShareItem] = GoalState.Started;
             }),
-            tg.spawnUnit(
-                "npc_dota_hero_warlock",
-                markerLocation,
-                playerHero.GetTeam(),
-                "warlock"
-            ),
 
             tg.completeOnCheck((ctx) => {
                 let warlock = ctx["warlock"] as CDOTA_BaseNPC_Hero;
@@ -409,6 +405,15 @@ const onStart = (complete: () => void) => {
             }),
         ];
     };
+
+    const createWarlock = () => [
+        tg.spawnUnit(
+            "npc_dota_hero_warlock",
+            markerLocation,
+            playerHero.GetTeam(),
+            "warlock"
+        ),
+    ];
 
     const stashItem = () => {
         return [
@@ -428,6 +433,7 @@ const onStart = (complete: () => void) => {
         tg.trackGoals(getGoals),
         tg.seq([
             ...goToCamp(),
+            ...createWarlock(),
             ...upgradeAbility_1(),
             ...spawnAndKillSatyrs(),
             tg.fork([...upgradeAbility_2(), ...pickUpArcaneRing()]),
@@ -444,11 +450,6 @@ const onStart = (complete: () => void) => {
     });
 };
 
-const onSkipTo = () => {
-    print("Skipping to", "Section CH3 Opening");
-    if (!getPlayerHero()) error("Could not find the player's hero.");
-};
-
 const onStop = () => {
     print("Stopping", "Section Opening");
 
@@ -458,16 +459,16 @@ const onStop = () => {
     }
 };
 
-export const sectionChapter3Opening = new tut.FunctionalSection(
+export const sectionOpening = new tut.FunctionalSection(
     SectionName.Chapter3_Opening,
+    requiredState,
     onStart,
-    onSkipTo,
     onStop,
-    Chapter3OrderFilter
+    orderFilter
 );
 
 // Certain order will need to be filtered, if the player sabotages themselves they will get stuck
-export function Chapter3OrderFilter(event: ExecuteOrderFilterEvent): boolean {
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     const giveAwayItemName = "item_arcane_ring";
     const dropInStashItemName = "item_mysterious_hat";
     const keepItemName = "item_possessed_mask";
