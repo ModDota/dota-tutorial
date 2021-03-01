@@ -18,9 +18,9 @@ declare const enum CustomNpcKeys {
 }
 
 type Goal = {
-    text: string
-    completed: boolean
-}
+    text: string;
+    completed: boolean;
+};
 
 interface DialogData {
     text: string;
