@@ -111,7 +111,6 @@ const onStart = (complete: () => void) => {
                         direCreeps.push(creep);
                     }
                 }
-                print(radiantCreeps.length)
             }),
             tg.immediate(context => {
                 context[ChapterTwoOpeningGoalKeys.ListenToSunsfanAndSlacks] = GoalState.Completed
