@@ -114,6 +114,34 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
 }
 
 /**
+ * Creates a tutorial step that orders a unit to use an ability.
+ * @param caster Unit that will use the ability.
+ * @param target Target of the ability.
+ * @param abilityName Name of the ability.
+ * @param orderType Type of unit order used for casting the ability with ExecuteOrderFromTable.
+ */
+export const useAbility = (caster: tg.StepArgument<CDOTA_BaseNPC>, target: tg.StepArgument<CDOTA_BaseNPC>, abilityName: tg.StepArgument<string>, orderType: UnitOrder) => {
+    return tg.step((context, complete) => {
+        const actualCaster = tg.getArg(caster, context)
+        const actualTarget = tg.getArg(target, context)
+        const ability = actualCaster.FindAbilityByName(tg.getArg(abilityName, context)) as CDOTABaseAbility
+
+        let order: ExecuteOrderOptions = {
+            UnitIndex: actualCaster.GetEntityIndex(),
+            OrderType: orderType,
+            Position: actualTarget.GetAbsOrigin(),
+            TargetIndex: actualTarget.GetEntityIndex(),
+            AbilityIndex: ability.GetEntityIndex(),
+            Queue: true
+        };
+        
+        ExecuteOrderFromTable(order)
+
+        complete()
+    })
+}
+
+/**
  * Creates a tutorial step that spawns a unit and waits until it dies.
  * @param unitName Name of the unit to spawn.
  * @param spawnLocation Location to spawn the unit at.
