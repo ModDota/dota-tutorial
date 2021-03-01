@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero } from "../../util";
+import { getOrError, getPlayerHero, printEventTable } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { TutorialContext } from "../../TutorialGraph/index";
 
@@ -44,21 +44,17 @@ const getGoals = (context: TutorialContext) => {
     return goals;
 };
 
-function generateInvisHeros() {
-    const riki = CreateUnitByName("npc_dota_hero_riki", GetGroundPosition(Vector(1700, -3600), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const mirana = CreateUnitByName("npc_dota_hero_mirana", GetGroundPosition(Vector(1300, -3600), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const axe = CreateUnitByName("npc_dota_hero_axe", GetGroundPosition(Vector(900, -3600), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const wisp = CreateUnitByName("npc_dota_hero_wisp", GetGroundPosition(Vector(1700, -3800), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const invoker = CreateUnitByName("npc_dota_hero_invoker", GetGroundPosition(Vector(1300, -3800), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const bane = CreateUnitByName("npc_dota_hero_bane", GetGroundPosition(Vector(900, -3800), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const slark = CreateUnitByName("npc_dota_hero_slark", GetGroundPosition(Vector(900, -4500), undefined), true, undefined, undefined, DotaTeam.BADGUYS);
-    const allInvisHeros = [riki, mirana, axe, wisp, invoker, bane, slark];
-    for (const hero of allInvisHeros) {
-        hero.SetBaseMoveSpeed(200);
-        hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
-    }
-    return allInvisHeros;
-}
+const invisHeroInfo = [
+    { name: "npc_dota_hero_riki", loc: GetGroundPosition(Vector(500, -4200), undefined) },
+    { name: "npc_dota_hero_mirana", loc: GetGroundPosition(Vector(500, -4000), undefined) },
+    { name: "npc_dota_hero_clinkz", loc: GetGroundPosition(Vector(700, -3900), undefined) },
+    { name: "npc_dota_hero_bounty_hunter", loc: GetGroundPosition(Vector(900, -3700), undefined) },
+    { name: "npc_dota_hero_invoker", loc: GetGroundPosition(Vector(600, -4800), undefined) },
+    { name: "npc_dota_hero_nyx_assassin", loc: GetGroundPosition(Vector(600, -4500), undefined) },
+    { name: "npc_dota_hero_slark", loc: GetGroundPosition(Vector(900, -4500), undefined) },
+    { name: "npc_dota_hero_weaver", loc: GetGroundPosition(Vector(400, -4500), undefined) },
+    { name: "npc_dota_hero_sand_king", loc: GetGroundPosition(Vector(400, -4800), undefined) },
+];
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -66,24 +62,28 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
     playerHero.SetMoveCapability(UnitMoveCapability.GROUND);
 
-    const allInvisHeros = generateInvisHeros();
-
     const observerWardItem = CreateItem("item_ward_observer", undefined, undefined);
     const sentryWardItem = CreateItem("item_ward_sentry", undefined, undefined);
 
     graph = tg.forkAny([
         tg.trackGoals(getGoals),
         tg.seq([
+            tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name))),
+            tg.immediate(ctx => {
+                for (const invisHero of invisHeroInfo) {
+                    const hero: CDOTA_BaseNPC_Hero = ctx[invisHero.name];
+                    hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
+                }
+            }),
+
             tg.wait(1),
+
             tg.immediate(() => {
                 CreateItemOnPositionSync(Vector(2200, -3800), observerWardItem)
                 CreateItemOnPositionSync(Vector(2200, -3900), sentryWardItem)
             }),
 
-            tg.immediate(
-                (context) =>
-                    (context[NeutralGoalKeys.FetchWards] = GoalState.Started)
-            ),
+            tg.immediate(context => context[NeutralGoalKeys.FetchWards] = GoalState.Started),
             tg.completeOnCheck(() => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
             tg.immediate((context) => {
                 context[NeutralGoalKeys.FetchWards] = GoalState.Completed;
@@ -97,7 +97,7 @@ function onStart(complete: () => void) {
                 return false;
             }, 1),
 
-            tg.immediate((context) => {
+            tg.immediate(context => {
                 context[NeutralGoalKeys.PlaceObserverWard] = GoalState.Completed;
                 context[NeutralGoalKeys.PlaceSentryWard] = GoalState.Started;
             }),
@@ -107,9 +107,10 @@ function onStart(complete: () => void) {
                 return (!item)
             }, 1),
 
-            tg.immediate((context) => {
+            tg.immediate(context => {
                 context[NeutralGoalKeys.PlaceSentryWard] = GoalState.Completed;
-                for (const hero of allInvisHeros) {
+                for (const invisHero of invisHeroInfo) {
+                    const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     if (hero.GetName() !== "npc_dota_hero_riki") {
                         const runDirection = hero.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                         hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)))
@@ -118,6 +119,7 @@ function onStart(complete: () => void) {
             }),
 
             tg.wait(100),
+            tg.immediate(() => disposeHeroes()),
         ])
     ])
 
@@ -131,8 +133,18 @@ function onStop() {
     print("Stopping", sectionName);
 
     if (graph) {
-        graph.stop(GameRules.Addon.context)
-        graph = undefined
+        graph.stop(GameRules.Addon.context);
+        disposeHeroes();
+        graph = undefined;
+    }
+}
+
+function disposeHeroes() {
+    for (const invisHero of invisHeroInfo) {
+        const hero: CDOTA_BaseNPC_Hero | undefined = GameRules.Addon.context[invisHero.name];
+        if (hero && IsValidEntity(hero) && hero.IsAlive())
+            hero.RemoveSelf();
+        GameRules.Addon.context[invisHero.name] = undefined;
     }
 }
 
@@ -144,7 +156,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const targetZ = event.position_z;
 
         const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility
-        if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry" || ability.GetName() === "item_ward_observer")
+        if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry")
             return (targetZ === 512 && distance < 500)
         return true;
     }
@@ -152,8 +164,11 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         return false;
     if (event.order_type === UnitOrder.MOVE_ITEM)
         return false;
+    if (event.order_type === UnitOrder.CAST_TOGGLE)
+        return false;
     return true;
 }
+
 export const sectionWards = new tut.FunctionalSection(
     sectionName,
     requiredState,
