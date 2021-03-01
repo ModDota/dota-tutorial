@@ -410,6 +410,37 @@ export const trackGoals = (goals: tg.StepArgument<Goal[]>) => {
 }
 
 /**
+ * Creates a step that tracks goals at the same time as executing a given step. Completes when the given step was completed.
+ * @param goals Goals to track.
+ * @param step Step to execute.
+ */
+export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep) => {
+    let timer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const track = () => {
+            const actualGoals = tg.getArg(goals, context)
+            setGoalsUI(actualGoals)
+
+            timer = Timers.CreateTimer(0.5, () => track())
+        }
+
+        track()
+
+        step.start(context, () => complete())
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        setGoalsUI([])
+
+        step.stop(context)
+    })
+}
+
+/**
  * Plays a dialog with sound and text and waits for the sound to finish before completing.
  * @param soundName Name of the sound
  * @param text Text to display during the dialog
