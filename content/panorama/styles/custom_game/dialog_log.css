@@ -4,15 +4,10 @@
 }
 
 .TopLeftMenu {
-    width: 200px;
+    width: 240px;
     height: 40px;
     margin-top: 9px;
     margin-left: -5px;
-    background-color: #000a;
-    border-bottom: 1px solid #111111ff;
-    border-top: 1px solid #111111ff;
-    border-right: 1px solid #111111ff;
-    border-radius: 5px;
     opacity: 1.2;
     transition-duration: 0.05s;
     transition-property: background-image;
@@ -32,16 +27,48 @@
 }
 
 #DialogLogButton {
-    background-image: url("s2r://panorama/images/control_icons/dota_logo_white_png.vtex");
-    background-size: 100%;
-    margin-top: 2px;
+    background-image: url("file://{images}/custom_game/message_log/message_log.png");
+    background-size: 95%;
+    margin-top: 6px;
     margin-left: 160px;
     transition-duration: 0.3s;
     transition-property: wash-color;
     transition-timing-function: ease-in-out;
 }
 
-#DialogLogButton:hover {
+#SkipButton {
+    background-image: url("file://{images}/custom_game/skip_section/skip_section.png");
+    background-size: 100%;
+    margin-top: 5px;
+    margin-left: 205px;
+    transition-duration: 0.3s;
+    transition-property: wash-color;
+    transition-timing-function: ease-in-out;
+}
+
+@keyframes 'RefreshButtonAnimation'
+{
+    0%
+    {
+        transform: rotateZ( 0deg );
+    }
+    100%
+    {
+        transform: rotateZ( 180deg );
+    }
+}
+
+#SkipButton.Activated {
+    animation-name: RefreshButtonAnimation;
+    animation-duration: 0.55s;
+    animation-delay: 0.15s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+    animation-direction: reverse;
+}
+
+#DialogLogButton:hover,
+#SkipButton:hover {
     wash-color: white;
     transition-duration: 0.3s;
     transition-property: wash-color;
