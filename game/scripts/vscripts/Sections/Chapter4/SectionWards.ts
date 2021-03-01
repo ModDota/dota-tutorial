@@ -1,10 +1,10 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero, printEventTable } from "../../util";
+import { getOrError, getPlayerHero } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { TutorialContext } from "../../TutorialGraph/index";
 
-enum NeutralGoalKeys {
+enum GoalKeys {
     FetchWards,
     PlaceObserverWard,
     PlaceSentryWard
@@ -20,27 +20,27 @@ const sectionName: SectionName = SectionName.Chapter4_Wards;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
-    heroLocation: GetGroundPosition(Vector(1900, -3500), undefined)
+    heroLocation: Vector(1900, -3500, 256)
 };
 const markerLocation = Vector(1000, -4100);
 
 const getGoals = (context: TutorialContext) => {
-    const isGoalStarted = (key: NeutralGoalKeys) =>
+    const isGoalStarted = (key: GoalKeys) =>
         context[key] === GoalState.Started ||
         context[key] === GoalState.Completed;
-    const isGoalCompleted = (key: NeutralGoalKeys) =>
+    const isGoalCompleted = (key: GoalKeys) =>
         context[key] === GoalState.Completed;
 
     const goals: Goal[] = [];
-    const addGoal = (key: NeutralGoalKeys, text: string) => {
+    const addGoal = (key: GoalKeys, text: string) => {
         if (isGoalStarted(key)) {
             goals.push({ text: text, completed: isGoalCompleted(key) });
         }
     };
 
-    addGoal(NeutralGoalKeys.FetchWards, "Go pick those up and come back here.");
-    addGoal(NeutralGoalKeys.PlaceObserverWard, "Lets put an observer ward on this high ground.");
-    addGoal(NeutralGoalKeys.PlaceSentryWard, "Lets put a sentry ward on this high ground.");
+    addGoal(GoalKeys.FetchWards, "Go pick those up and come back here.");
+    addGoal(GoalKeys.PlaceObserverWard, "Lets put an observer ward on this high ground.");
+    addGoal(GoalKeys.PlaceSentryWard, "Lets put a sentry ward on this high ground.");
     return goals;
 };
 
@@ -69,6 +69,7 @@ function onStart(complete: () => void) {
         tg.trackGoals(getGoals),
         tg.seq([
             tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name))),
+
             tg.immediate(ctx => {
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = ctx[invisHero.name];
@@ -79,41 +80,36 @@ function onStart(complete: () => void) {
             tg.wait(1),
 
             tg.immediate(() => {
-                CreateItemOnPositionSync(Vector(2200, -3800), observerWardItem)
-                CreateItemOnPositionSync(Vector(2200, -3900), sentryWardItem)
+                CreateItemOnPositionSync(Vector(2200, -3800), observerWardItem);
+                CreateItemOnPositionSync(Vector(2200, -3900), sentryWardItem);
             }),
 
-            tg.immediate(context => context[NeutralGoalKeys.FetchWards] = GoalState.Started),
+            tg.immediate(context => context[GoalKeys.FetchWards] = GoalState.Started),
+
             tg.completeOnCheck(() => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
+
             tg.immediate((context) => {
-                context[NeutralGoalKeys.FetchWards] = GoalState.Completed;
-                context[NeutralGoalKeys.PlaceObserverWard] = GoalState.Started;
+                context[GoalKeys.FetchWards] = GoalState.Completed;
+                context[GoalKeys.PlaceObserverWard] = GoalState.Started;
                 Tutorial.CreateLocationTask(markerLocation);
             }),
-            tg.completeOnCheck(() => {
-                const item = playerHero.GetItemInSlot(0);
-                if (item)
-                    return item.GetName() === "item_ward_sentry"
-                return false;
-            }, 1),
+
+            tg.completeOnCheck(() => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
 
             tg.immediate(context => {
-                context[NeutralGoalKeys.PlaceObserverWard] = GoalState.Completed;
-                context[NeutralGoalKeys.PlaceSentryWard] = GoalState.Started;
+                context[GoalKeys.PlaceObserverWard] = GoalState.Completed;
+                context[GoalKeys.PlaceSentryWard] = GoalState.Started;
             }),
 
-            tg.completeOnCheck(() => {
-                const item = playerHero.GetItemInSlot(0);
-                return (!item)
-            }, 1),
+            tg.completeOnCheck(() => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
             tg.immediate(context => {
-                context[NeutralGoalKeys.PlaceSentryWard] = GoalState.Completed;
+                context[GoalKeys.PlaceSentryWard] = GoalState.Completed;
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     if (hero.GetName() !== "npc_dota_hero_riki") {
                         const runDirection = hero.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
-                        hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)))
+                        hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)));
                     }
                 }
             }),
@@ -124,8 +120,8 @@ function onStart(complete: () => void) {
     ])
 
     graph.start(GameRules.Addon.context, () => {
-        print("Completed", sectionName)
-        complete()
+        print("Completed", sectionName);
+        complete();
     })
 }
 
@@ -155,17 +151,18 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const distance = highgroundPosition.__sub(targetPosition2D).Length2D();
         const targetZ = event.position_z;
 
-        const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility
-        if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry")
-            return (targetZ === 512 && distance < 500)
+        const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility;
+        if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry") {
+            return targetZ === 512 && distance < 500;
+        }
+
         return true;
     }
-    if (event.order_type === UnitOrder.DROP_ITEM)
+
+    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM || event.order_type === UnitOrder.CAST_TOGGLE) {
         return false;
-    if (event.order_type === UnitOrder.MOVE_ITEM)
-        return false;
-    if (event.order_type === UnitOrder.CAST_TOGGLE)
-        return false;
+    }
+
     return true;
 }
 
