@@ -23,6 +23,7 @@ export class GameMode {
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
         chapters.chapter3.sectionOpening,
+        chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
     ]);
 
