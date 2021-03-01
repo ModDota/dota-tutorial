@@ -20,7 +20,7 @@ const sectionName: SectionName = SectionName.Chapter4_Wards;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
-    heroLocation: GetGroundPosition(Vector(1900, -3500), undefined)
+    heroLocation: Vector(1900, -3500, 256)
 };
 const markerLocation = Vector(1000, -4100);
 
@@ -152,12 +152,17 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const targetZ = event.position_z;
 
         const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility;
-        if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry")
-            return (targetZ === 512 && distance < 500);
+        if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry") {
+            return targetZ === 512 && distance < 500;
+        }
+
         return true;
     }
-    if (event.order_type === UnitOrder.DROP_ITEM || UnitOrder.MOVE_ITEM || UnitOrder.CAST_TOGGLE)
+
+    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM || event.order_type === UnitOrder.CAST_TOGGLE) {
         return false;
+    }
+
     return true;
 }
 
