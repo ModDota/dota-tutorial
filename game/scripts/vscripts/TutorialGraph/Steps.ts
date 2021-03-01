@@ -1,4 +1,4 @@
-import { findAllPlayersID, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { findAllPlayersID, getPlayerHero, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 
@@ -20,11 +20,13 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
     return tg.step((context, complete) => {
         const actualLocation = tg.getArg(location, context)
 
-        Tutorial.CreateLocationTask(actualLocation)
+        MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
+
             if (isHeroNearby(actualLocation, 200)) {
+                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
                 complete()
             } else {
                 checkTimer = Timers.CreateTimer(1, () => checkIsAtGoal())
