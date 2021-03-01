@@ -11,6 +11,7 @@
         "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
         "npc_dota_tutorial_dire_melee_creep" "Melee Creep"
         "npc_dota_tutorial_dire_ranged_creep" "Ranged Creep"
+        "dota_item_build_title_default" "Items for future victim"
 
         "Script_1_Opening_1" "Oh look at this! New blood! The dragon knight himself!"
         "Script_1_Opening_2" "Fresh from the Netflix anime are you? Welcome to the world of dota 2! We are here to teach you how to navigate the best game ever made."
