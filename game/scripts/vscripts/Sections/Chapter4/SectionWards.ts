@@ -118,7 +118,7 @@ function onStart(complete: () => void) {
                 }
             }),
 
-            tg.wait(100),
+            tg.wait(5),
             tg.immediate(() => disposeHeroes()),
         ])
     ])
