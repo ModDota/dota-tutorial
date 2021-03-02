@@ -54,11 +54,11 @@ interface DialogConfirmExpireEvent {
     DialogLine: number;
 }
 
-interface DetectCommand {
+interface DetectCommandEvent {
     command: number //DOTAKeybindCommand_t
 }
 
-interface CommandDetected {
+interface CommandDetectedEvent {
     command: number //DOTAKeybindCommand_t
 }
 
@@ -75,6 +75,6 @@ interface CustomGameEventDeclarations {
     detect_camera_movement: {};
     camera_movement_detected: {};
     set_goals: SetGoalsEvent;
-    detect_command: DetectCommand;
-    command_detected: CommandDetected;
+    detect_command: DetectCommandEvent;
+    command_detected: CommandDetectedEvent;
 }
