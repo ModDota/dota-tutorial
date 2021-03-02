@@ -37,7 +37,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_1" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter1PlayButton()"><Label text="#Play"/></Button>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter1PlayButton()"><Label text="#SkipChapter"/></Button>
                     </Panel>
                 </Panel>
                 <Panel class="ChapterContainer" id="Chapter2">
@@ -46,7 +46,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_2" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter2PlayButton()"><Label text="#Play"/></Button>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter2PlayButton()"><Label text="#SkipChapter"/></Button>
                     </Panel>
                 </Panel>
                 <Panel class="ChapterContainer" id="Chapter3">
@@ -55,7 +55,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_3" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter3PlayButton()"><Label text="#Play"/></Button>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter3PlayButton()"><Label text="#SkipChapter"/></Button>
                     </Panel>
                 </Panel>
                 <Panel class="ChapterContainer" id="Chapter4">
@@ -64,7 +64,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_4" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter4PlayButton()"><Label text="#Play"/></Button>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter4PlayButton()"><Label text="#SkipChapter"/></Button>
                     </Panel>
                 </Panel>
                 <Panel class="ChapterContainer" id="Chapter5">
@@ -73,7 +73,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_5" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter5PlayButton()"><Label text="#Play"/></Button>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter5PlayButton()"><Label text="#SkipChapter"/></Button>
                     </Panel>
                 </Panel>
                 <Panel class="ChapterContainer" id="Chapter6">
@@ -82,7 +82,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_6" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter6PlayButton()"><Label text="#Play"/></Button>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter6PlayButton()"><Label text="#SkipChapter"/></Button>
                     </Panel>
                 </Panel>
             </Panel>

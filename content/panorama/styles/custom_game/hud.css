@@ -94,6 +94,17 @@
     background-image: url("file://{images}/custom_game/skip_section/backgroundcover.png");
     background-size: 140% 102%;
     background-position: -38px -34px;
+    transition-property: background-image;
+    transition-duration: 0.2s;
+}
+
+.ChapterContainer:hover {
+    background-image: url("file://{images}/custom_game/skip_section/backgroundcoverhover.png");
+    background-size: 140% 104%;
+    background-position: -38px -34px;
+
+    transition-property: background-image;
+    transition-duration: 0.2s;
 }
 
 .ChapterArtContainer {
@@ -183,9 +194,11 @@
 #ChapterPlayButton {
     min-width: 120px;
     height: 36px;
-
     horizontal-align: center;
     vertical-align: bottom;
-    
     margin-bottom: 10px;
+}
+
+.ButtonBevel Label {
+    font-size: 14px;
 }
