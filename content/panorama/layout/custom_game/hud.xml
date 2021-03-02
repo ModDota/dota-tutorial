@@ -16,13 +16,76 @@
     <Panel hittest="false" class="MainHud">
         <Panel hittest="false" class="TopLeftMenu">
             <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')"  onmouseout="UIHideTextTooltip()" />
-            <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleSkipMenu();" onmouseover="UIShowTextTooltip('#SkipMenu')"  onmouseout="UIHideTextTooltip()" />
+            <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleChaptersMenu();" onmouseover="UIShowTextTooltip('#Chapters')"  onmouseout="UIHideTextTooltip()" />
         </Panel>
 
         <Panel id="DialogLog" hittest="false">
             <Label id="DialogTitle" class="TitleFont" text="#Message_Log" hittest="false"/>
             <Panel id="DialogLineContainer" />
             <Button id="CloseButton" class="ButtonBevel" onactivate="Close()"><Label text="#Close"/></Button>
+        </Panel>
+
+        <Panel id="ChaptersMenu" hittest="false">
+            <Panel class="ChaptersMenuHeader">
+                <Label class="ChaptersTitle" text="#Chapters" hittest="false"/>
+                <Button class="ChaptersCloseButton" onactivate="ChaptersClose()" onmouseover="UIShowTextTooltip('#Close')"  onmouseout="UIHideTextTooltip()"/>
+            </Panel>
+            <Panel class="ChaptersMenuContents">
+                <Panel class="ChapterContainer" id="Chapter1">
+                    <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_1_BriefInformation')"  onmouseout="UIHideTextTooltip()">
+                        <Panel class="Chapter1Art" />
+                    </Panel>
+                    <Panel class="ChapterInformationContainer">
+                        <Label class="ChaptersSubTitle" text="#Chapter_1" hittest="false"/>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter1PlayButton()"><Label text="#Play"/></Button>
+                    </Panel>
+                </Panel>
+                <Panel class="ChapterContainer" id="Chapter2">
+                    <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_2_BriefInformation')"  onmouseout="UIHideTextTooltip()">
+                        <Panel class="Chapter2Art" />
+                    </Panel>
+                    <Panel class="ChapterInformationContainer">
+                        <Label class="ChaptersSubTitle" text="#Chapter_2" hittest="false"/>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter2PlayButton()"><Label text="#Play"/></Button>
+                    </Panel>
+                </Panel>
+                <Panel class="ChapterContainer" id="Chapter3">
+                    <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_3_BriefInformation')"  onmouseout="UIHideTextTooltip()">
+                        <Panel class="Chapter3Art" />
+                    </Panel>
+                    <Panel class="ChapterInformationContainer">
+                        <Label class="ChaptersSubTitle" text="#Chapter_3" hittest="false"/>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter3PlayButton()"><Label text="#Play"/></Button>
+                    </Panel>
+                </Panel>
+                <Panel class="ChapterContainer" id="Chapter4">
+                    <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_4_BriefInformation')"  onmouseout="UIHideTextTooltip()">
+                        <Panel class="Chapter4Art" />
+                    </Panel>
+                    <Panel class="ChapterInformationContainer">
+                        <Label class="ChaptersSubTitle" text="#Chapter_4" hittest="false"/>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter4PlayButton()"><Label text="#Play"/></Button>
+                    </Panel>
+                </Panel>
+                <Panel class="ChapterContainer" id="Chapter5">
+                    <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_5_BriefInformation')"  onmouseout="UIHideTextTooltip()">
+                        <Panel class="Chapter5Art" />
+                    </Panel>
+                    <Panel class="ChapterInformationContainer">
+                        <Label class="ChaptersSubTitle" text="#Chapter_5" hittest="false"/>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter5PlayButton()"><Label text="#Play"/></Button>
+                    </Panel>
+                </Panel>
+                <Panel class="ChapterContainer" id="Chapter6">
+                    <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_6_BriefInformation')"  onmouseout="UIHideTextTooltip()">
+                        <Panel class="Chapter6Art" />
+                    </Panel>
+                    <Panel class="ChapterInformationContainer">
+                        <Label class="ChaptersSubTitle" text="#Chapter_6" hittest="false"/>
+                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="Chapter6PlayButton()"><Label text="#Play"/></Button>
+                    </Panel>
+                </Panel>
+            </Panel>
         </Panel>
   </Panel>
 </root>

@@ -107,8 +107,8 @@
     horizontal-align: center;
 
     text-transform: uppercase;
-    color: gradient(linear, 0% 0%, 0% 100%, from(#e7d291), to(#965d01));
-    text-shadow: 0px 1px 1px 2 black;
+    color: #ffffffdd;
+    text-shadow: 0px 0px 20px 1.0 #3382ff44;
     font-weight: bold;
     font-size: 22px;
     letter-spacing: 2px;

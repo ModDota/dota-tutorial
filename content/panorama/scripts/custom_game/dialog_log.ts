@@ -9,13 +9,14 @@ function ToggleDialogLog() {
     $.Msg("ToggleDialogLog");
 
     $("#DialogLog").ToggleClass("Visible");
-    Game.EmitSound("ui_chat_slide_out");
+    Game.EmitSound("ui_chat_slide_in");
 }
 
 function Close() {
     $.Msg("ToggleDialogLog");
 
     $("#DialogLog").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
 }
 
 function AddLine(data: NetworkedData<DialogReceivedEvent>) {
