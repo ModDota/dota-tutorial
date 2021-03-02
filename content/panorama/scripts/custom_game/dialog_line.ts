@@ -1,7 +1,7 @@
 "use strict";
 
 function SetItem(unitName: string, text: string) {
-    ($("#DialogPortrait") as HeroImage).heroname = unitName;
+    ($("#DialogPortrait") as ScenePanel).SetUnit(unitName, "", true);
     ($("#DialogText") as LabelPanel).text = text;
 }
 
