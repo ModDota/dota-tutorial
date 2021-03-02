@@ -75,12 +75,43 @@ function highlightUiElement(path: string) {
     }
 }
 
-//** Skip Section Panel */
-function ToggleSkipMenu() {
-    $.Msg("ToggleSkipMenu");
+//** Chapters Panel */
+function ToggleChaptersMenu() {
+    $.Msg("ToggleChaptersMenu");
 
-    
+    $("#ChaptersMenu").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_in");
+}
+
+function ChaptersClose() {
+    $.Msg("ToggleChaptersMenu");
+
+    $("#ChaptersMenu").SetHasClass("Visible", false);
     Game.EmitSound("ui_chat_slide_out");
+}
+
+function Chapter1PlayButton() {
+    $.Msg("Chapter1PlayButton");
+}
+
+function Chapter2PlayButton() {
+    $.Msg("Chapter2PlayButton");
+}
+
+function Chapter3PlayButton() {
+    $.Msg("Chapter3PlayButton");
+}
+
+function Chapter4PlayButton() {
+    $.Msg("Chapter4PlayButton");
+}
+
+function Chapter5PlayButton() {
+    $.Msg("Chapter5PlayButton");
+}
+
+function Chapter6PlayButton() {
+    $.Msg("Chapter6PlayButton");
 }
 
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");

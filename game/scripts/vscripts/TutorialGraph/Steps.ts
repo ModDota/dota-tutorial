@@ -312,6 +312,62 @@ export const waitForCameraMovement = () => {
 }
 
 /**
+ * Waits for a command to be executed. See panorama's DOTAKeybindCommand_t for the commands. Overrides the default behavior for the command so this can only be used if we merely want to detect the hotkey.
+ * @param command Command to wait for. See DOTAKeybindCommand_t.
+ */
+export const waitForCommand = (command: number) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("command_detected", (source, event) => {
+            if (event.command === command) {
+                if (listenerId) {
+                    CustomGameEventManager.UnregisterListener(listenerId)
+                    listenerId = undefined
+                }
+
+                complete()
+            }
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("detect_command", { command });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
+ * Waits until a modifier key was held down.
+ * @param key Modifier key to wait for.
+ */
+export const waitForModifierKey = (key: ModifierKey) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("modifier_key_detected", (source, event) => {
+            if (event.key === key) {
+                if (listenerId) {
+                    CustomGameEventManager.UnregisterListener(listenerId)
+                    listenerId = undefined
+                }
+
+                complete()
+            }
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("detect_modifier_key", { key });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
  * Calls a function and completes immediately.
  * @param fn Function to call. Gets passed the context.
  * @param stopFn Optional function to call on stop. Gets passed the context.
@@ -410,6 +466,44 @@ export const trackGoals = (goals: tg.StepArgument<Goal[]>) => {
 }
 
 /**
+ * Creates a step that tracks goals at the same time as executing a given step. Completes when the given step was completed.
+ * @param goals Goals to track.
+ * @param step Step to execute.
+ */
+export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep) => {
+    let timer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const track = () => {
+            const actualGoals = tg.getArg(goals, context)
+            setGoalsUI(actualGoals)
+
+            timer = Timers.CreateTimer(0.5, () => track())
+        }
+
+        track()
+
+        step.start(context, () => {
+            if (timer) {
+                Timers.RemoveTimer(timer)
+                timer = undefined
+            }
+
+            complete()
+        })
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        setGoalsUI([])
+
+        step.stop(context)
+    })
+}
+
+/**
  * Plays a dialog with sound and text and waits for the sound to finish before completing.
  * @param soundName Name of the sound
  * @param text Text to display during the dialog
@@ -467,4 +561,93 @@ export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<
  */
 export const neverComplete = () => {
     return tg.step(_ => { })
+}
+
+/**
+ * Creates a particle system at a location and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
+ * @param particleName Name of the particle system.
+ * @param location Location to spawn the particles at.
+ * @param duration Optional duration after which to destroy the particles and complete.
+ */
+export const createParticleAtLocation = (particleName: tg.StepArgument<string>, location: tg.StepArgument<Vector>, duration?: tg.StepArgument<number>) => {
+    let timer: string | undefined = undefined
+    let particle: ParticleID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualParticleName = tg.getArg(particleName, context)
+        const actualLocation = tg.getArg(location, context)
+        const actualDuration = tg.getOptionalArg(duration, context)
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, true)
+        }
+
+        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
+        ParticleManager.SetParticleControl(particle, 1, actualLocation)
+
+        if (actualDuration !== undefined) {
+            timer = Timers.CreateTimer(actualDuration, () => {
+                if (particle) {
+                    ParticleManager.DestroyParticle(particle, false)
+                    particle = undefined
+                }
+
+                complete()
+            })
+        }
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, false)
+            particle = undefined
+        }
+    })
+}
+
+/**
+ * Creates a particle system attached to a unit and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
+ * @param particleName Name of the particle system.
+ * @param unit Unit to attach the particles to.
+ * @param duration Optional duration after which to destroy the particles and complete.
+ */
+export const createParticleAttachedToUnit = (particleName: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, duration?: tg.StepArgument<number>) => {
+    let timer: string | undefined = undefined
+    let particle: ParticleID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualParticleName = tg.getArg(particleName, context)
+        const actualUnit = tg.getArg(unit, context)
+        const actualDuration = tg.getOptionalArg(duration, context)
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, true)
+        }
+
+        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
+
+        if (actualDuration !== undefined) {
+            timer = Timers.CreateTimer(actualDuration, () => {
+                if (particle) {
+                    ParticleManager.DestroyParticle(particle, false)
+                    particle = undefined
+                }
+
+                complete()
+            })
+        }
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, false)
+            particle = undefined
+        }
+    })
 }

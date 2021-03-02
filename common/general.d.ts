@@ -41,3 +41,9 @@ interface UnitDialog {
     currentLine: number;
     lines: DialogData[];
 }
+
+declare const enum ModifierKey {
+    Alt,
+    Shift,
+    Control,
+}

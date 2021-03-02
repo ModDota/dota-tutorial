@@ -144,3 +144,26 @@ export function printEventTable(event: any) {
 export function displayDotaErrorMessage(message: string) {
     FireGameEvent("dota_hud_error_message", { reason: 80, message: message })
 }
+        
+/**
+ * Checks if a point is inside an array of points
+ * @param point The point to check
+ * @param polygon The array of points to check against
+ */        
+export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
+    let inside = false;
+    let j = polygon.length - 1;
+
+    for (let i = 0; i < polygon.length; j = i++) {
+        if (
+            polygon[i].y > point.y != polygon[j].y > point.y &&
+            point.x <
+                ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
+                    (polygon[j].y - polygon[i].y) +
+                    polygon[i].x
+        ) {
+            inside = !inside;
+        }
+    }
+    return inside
+}

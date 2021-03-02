@@ -10,3 +10,195 @@
     border-style: solid;
     box-shadow: yellow 0px 0px 10px 0px;
 }
+
+#ChaptersMenu {
+    width: 1200px;
+    height: 400px;
+    align: center center;
+
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+    transition-property: opacity, transform;
+    transition-duration: 0.3s;
+    z-index: 5;
+
+    background-color: #111920dd;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+}
+
+#ChaptersMenu.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+.ChaptersMenuHeader {
+    width: 100%;
+    height: 10%;
+}
+
+.ChaptersTitle {
+    text-align: center;
+    align: center center;
+
+    text-transform: uppercase;
+    color: #ffffffdd;
+    text-shadow: 0px 0px 20px 1.0 #3382ff44;
+    font-weight: bold;
+    font-size: 25px;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+.ChaptersCloseButton {
+    horizontal-align: right;
+    width: 30px;
+    height: 30px;
+    
+    background-size: 100%;
+    background-color: #444;
+    background-image: url("file://{images}/custom_game/skip_section/close_icon.png");
+    background-repeat: no-repeat;
+
+    margin-top: 8px;
+    margin-right: 8px;
+    brightness: 1;
+    transition-property: brightness;
+    transition-duration: 0.2s;
+
+    border-radius: 5px;
+}
+
+.ChaptersCloseButton:hover {
+    brightness: 1.5;
+}
+
+.ChaptersMenuContents {
+    width: 100%;
+    height: 90%;
+    vertical-align: bottom;
+    flow-children: right;
+}
+
+.ChapterContainer {
+    height: 340px;
+    width: 188px;
+    
+    margin-left: 10px;
+    margin-top: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border: 2px solid #222222;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    background-image: url("file://{images}/custom_game/skip_section/backgroundcover.png");
+    background-size: 140% 102%;
+    background-position: -38px -34px;
+    transition-property: background-image;
+    transition-duration: 0.2s;
+}
+
+.ChapterContainer:hover {
+    background-image: url("file://{images}/custom_game/skip_section/backgroundcoverhover.png");
+    background-size: 140% 104%;
+    background-position: -38px -34px;
+
+    transition-property: background-image;
+    transition-duration: 0.2s;
+}
+
+.ChapterArtContainer {
+    width: 100%;
+    height: 60%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/background.png");
+
+    tooltip-position: top;
+}
+
+.ChapterInformationContainer {
+    width: 100%;
+    height: 40%;
+    vertical-align: bottom;
+}
+
+.Chapter1Art {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/Chapter1Art.png");
+    margin-top: 10px;
+}
+
+.Chapter2Art {
+    width: 100%;
+    height: 100%;
+    background-size: 90% 90%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/Chapter2Art.png");
+    margin-top: 25px;
+}
+
+.Chapter3Art {
+    width: 100%;
+    height: 100%;
+    background-size: 95% 90%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/Chapter3Art.png");
+    margin-top: 25px;
+    margin-left: 10px;
+}
+
+.Chapter4Art {
+    width: 100%;
+    height: 100%;
+    background-size: 80% 70%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/Chapter4Art.png");
+    background-position: 20px 20px;
+    margin-top: 10px;
+}
+
+.Chapter5Art {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/Chapter5Art.png");
+}
+
+.Chapter6Art {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/Chapter6Art.png");
+}
+
+.ChaptersSubTitle {
+    text-align: center;
+    align: center top;
+    text-transform: uppercase;
+    color: #ffffffdd;
+    text-shadow: 0px 0px 20px 1.0 #3382ff44;
+    font-weight: bold;
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+#ChapterPlayButton {
+    min-width: 120px;
+    height: 36px;
+    horizontal-align: center;
+    vertical-align: bottom;
+    margin-bottom: 10px;
+}
+
+.ButtonBevel Label {
+    font-size: 14px;
+}
