@@ -340,6 +340,34 @@ export const waitForCommand = (command: number) => {
 }
 
 /**
+ * Waits until a modifier key was held down.
+ * @param key Modifier key to wait for.
+ */
+export const waitForModifierKey = (key: ModifierKey) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("modifier_key_detected", (source, event) => {
+            if (event.key === key) {
+                if (listenerId) {
+                    CustomGameEventManager.UnregisterListener(listenerId)
+                    listenerId = undefined
+                }
+
+                complete()
+            }
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("detect_modifier_key", { key });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
  * Calls a function and completes immediately.
  * @param fn Function to call. Gets passed the context.
  * @param stopFn Optional function to call on stop. Gets passed the context.

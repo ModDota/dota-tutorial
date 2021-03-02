@@ -3,6 +3,7 @@
         <include src="file://{resources}/scripts/custom_game/section-selector.js" />
         <include src="file://{resources}/scripts/custom_game/move-camera.js" />
         <include src="file://{resources}/scripts/custom_game/command-detection.js" />
+        <include src="file://{resources}/scripts/custom_game/modifier-key-detection.js" />
         <!-- <include src="file://{resources}/scripts/custom_game/manifest.js" /> -->
     </scripts>
     <Panel>

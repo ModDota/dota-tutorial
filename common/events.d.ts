@@ -62,6 +62,14 @@ interface CommandDetectedEvent {
     command: number //DOTAKeybindCommand_t
 }
 
+interface DetectModifierKeyEventEvent {
+    key: ModifierKey
+}
+
+interface ModifierKeyDetectedEvent {
+    key: ModifierKey
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -77,4 +85,6 @@ interface CustomGameEventDeclarations {
     set_goals: SetGoalsEvent;
     detect_command: DetectCommandEvent;
     command_detected: CommandDetectedEvent;
+    detect_modifier_key: DetectModifierKeyEventEvent;
+    modifier_key_detected: ModifierKeyDetectedEvent;
 }
