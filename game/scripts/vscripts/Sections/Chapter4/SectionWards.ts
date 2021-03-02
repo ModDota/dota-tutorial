@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { TutorialContext } from "../../TutorialGraph/index";
 
@@ -167,13 +167,17 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 
         const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility;
         if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry") {
-            return targetZ === 512 && distance < 500;
+            if (targetZ === 512 && distance < 500) {
+                displayDotaErrorMessage("Place the ward on the highground.")
+                return false;
+            }
         }
 
         return true;
     }
 
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM || event.order_type === UnitOrder.CAST_TOGGLE) {
+        displayDotaErrorMessage("Dropping, moving or toggling your items is disabled during this section.")
         return false;
     }
 
