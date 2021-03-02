@@ -95,7 +95,7 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             if (actualUnit && actualUnit.IsIdle()) {
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(1, () => checkIsIdle())
+                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
             }
         }
 
