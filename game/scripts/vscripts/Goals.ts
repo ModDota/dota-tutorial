@@ -1,3 +1,5 @@
+const goalCompleteSoundName = "ui.npe_objective_complete"
+
 export abstract class TrackableGoal {
     private _completed = false
     private _started = false
@@ -8,6 +10,7 @@ export abstract class TrackableGoal {
     complete() {
         this._started = true
         this._completed = true
+        EmitGlobalSound(goalCompleteSoundName)
     }
 
     /**
