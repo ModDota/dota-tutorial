@@ -427,7 +427,14 @@ export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep)
 
         track()
 
-        step.start(context, () => complete())
+        step.start(context, () => {
+            if (timer) {
+                Timers.RemoveTimer(timer)
+                timer = undefined
+            }
+
+            complete()
+        })
     }, context => {
         if (timer) {
             Timers.RemoveTimer(timer)
