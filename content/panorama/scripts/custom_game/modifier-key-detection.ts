@@ -2,20 +2,19 @@ const shouldDetectModifierKeys: { [key: string]: boolean } = {};
 
 function detectModifierKeys() {
     for (const key of Object.keys(shouldDetectModifierKeys).map(k => parseInt(k) as ModifierKey)) {
-
         if (shouldDetectModifierKeys[key]) {
-            let isDown = false
+            let isDown = false;
 
             switch (key) {
                 case ModifierKey.Alt:
-                    isDown = GameUI.IsAltDown()
-                    break
+                    isDown = GameUI.IsAltDown();
+                    break;
                 case ModifierKey.Shift:
-                    isDown = GameUI.IsShiftDown()
-                    break
+                    isDown = GameUI.IsShiftDown();
+                    break;
                 case ModifierKey.Control:
-                    isDown = GameUI.IsControlDown()
-                    break
+                    isDown = GameUI.IsControlDown();
+                    break;
             }
 
             if (isDown) {
@@ -25,10 +24,10 @@ function detectModifierKeys() {
         }
     }
 
-    $.Schedule(0.2, detectModifierKeys)
+    $.Schedule(0.2, detectModifierKeys);
 }
 
-detectModifierKeys()
+detectModifierKeys();
 
 GameEvents.Subscribe("detect_modifier_key", event => {
     shouldDetectModifierKeys[event.key] = true;

@@ -19,10 +19,10 @@ GameEvents.Subscribe("detect_command", event => {
     const keybind = Game.GetKeybindForCommand(command);
 
     if (!addedKeybind[keybind]) {
-        const commandName = `Command_${event.command}`
+        const commandName = `Command_${event.command}`;
 
-        Game.CreateCustomKeyBind(keybind, commandName)
+        Game.CreateCustomKeyBind(keybind, commandName);
         Game.AddCommand(commandName, () => onCommand(command), "", 0);
-        addedKeybind[keybind] = true
+        addedKeybind[keybind] = true;
     }
 });
