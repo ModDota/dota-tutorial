@@ -44,4 +44,5 @@ interface UnitDialog {
 declare const enum ModifierKey {
     Alt,
     Shift,
+    Control,
 }

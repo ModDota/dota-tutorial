@@ -13,6 +13,9 @@ function detectModifierKeys() {
                 case ModifierKey.Shift:
                     isDown = GameUI.IsShiftDown()
                     break
+                case ModifierKey.Control:
+                    isDown = GameUI.IsControlDown()
+                    break
             }
 
             if (isDown) {
