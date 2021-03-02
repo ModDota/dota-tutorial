@@ -62,7 +62,7 @@ interface CommandDetectedEvent {
     command: number //DOTAKeybindCommand_t
 }
 
-interface DetectModifierKeyEventEvent {
+interface DetectModifierKeyEvent {
     key: ModifierKey
 }
 
@@ -85,6 +85,6 @@ interface CustomGameEventDeclarations {
     set_goals: SetGoalsEvent;
     detect_command: DetectCommandEvent;
     command_detected: CommandDetectedEvent;
-    detect_modifier_key: DetectModifierKeyEventEvent;
+    detect_modifier_key: DetectModifierKeyEvent;
     modifier_key_detected: ModifierKeyDetectedEvent;
 }
