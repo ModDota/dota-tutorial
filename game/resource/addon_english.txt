@@ -5,6 +5,23 @@
 	{
         "addon_game_name" "Dota Tutorial"
 
+        // ******************** UI Localization ********************
+        "Message_Log" "Message Log"
+        "Chapters" "Chapters"
+        "Close" "Close"
+        "Chapter_1" "Fountain"
+        "Chapter_1_BriefInformation" "Chapter 1 Brief Information"
+        "Chapter_2" "Top Lane"
+        "Chapter_2_BriefInformation" "Chapter 2 Brief Information"
+        "Chapter_3" "Jungle"
+        "Chapter_3_BriefInformation" "Chapter 3 Brief Information"
+        "Chapter_4" "Vision"
+        "Chapter_4_BriefInformation" "Chapter 4 Brief Information"
+        "Chapter_5" "Roshan"
+        "Chapter_5_BriefInformation" "Chapter 5 Brief Information"
+        "Chapter_6" "Back Home"
+        "Chapter_6_BriefInformation" "Chapter 6 Brief Information"
+
         "npc_mud_golem_sunsfan" "Sunsfan"
         "npc_mud_golem_slacks" "Slacks"
         "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
