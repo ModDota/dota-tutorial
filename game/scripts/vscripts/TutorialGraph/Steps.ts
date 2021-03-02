@@ -468,3 +468,92 @@ export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<
 export const neverComplete = () => {
     return tg.step(_ => { })
 }
+
+/**
+ * Creates a particle system at a location and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
+ * @param particleName Name of the particle system.
+ * @param location Location to spawn the particles at.
+ * @param duration Optional duration after which to destroy the particles and complete.
+ */
+export const createParticleAtLocation = (particleName: tg.StepArgument<string>, location: tg.StepArgument<Vector>, duration?: tg.StepArgument<number>) => {
+    let timer: string | undefined = undefined
+    let particle: ParticleID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualParticleName = tg.getArg(particleName, context)
+        const actualLocation = tg.getArg(location, context)
+        const actualDuration = tg.getOptionalArg(duration, context)
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, true)
+        }
+
+        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
+        ParticleManager.SetParticleControl(particle, 1, actualLocation)
+
+        if (actualDuration !== undefined) {
+            timer = Timers.CreateTimer(actualDuration, () => {
+                if (particle) {
+                    ParticleManager.DestroyParticle(particle, false)
+                    particle = undefined
+                }
+
+                complete()
+            })
+        }
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, false)
+            particle = undefined
+        }
+    })
+}
+
+/**
+ * Creates a particle system attached to a unit and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
+ * @param particleName Name of the particle system.
+ * @param unit Unit to attach the particles to.
+ * @param duration Optional duration after which to destroy the particles and complete.
+ */
+export const createParticleAttachedToUnit = (particleName: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, duration?: tg.StepArgument<number>) => {
+    let timer: string | undefined = undefined
+    let particle: ParticleID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualParticleName = tg.getArg(particleName, context)
+        const actualUnit = tg.getArg(unit, context)
+        const actualDuration = tg.getOptionalArg(duration, context)
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, true)
+        }
+
+        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
+
+        if (actualDuration !== undefined) {
+            timer = Timers.CreateTimer(actualDuration, () => {
+                if (particle) {
+                    ParticleManager.DestroyParticle(particle, false)
+                    particle = undefined
+                }
+
+                complete()
+            })
+        }
+    }, context => {
+        if (timer) {
+            Timers.RemoveTimer(timer)
+            timer = undefined
+        }
+
+        if (particle) {
+            ParticleManager.DestroyParticle(particle, false)
+            particle = undefined
+        }
+    })
+}
