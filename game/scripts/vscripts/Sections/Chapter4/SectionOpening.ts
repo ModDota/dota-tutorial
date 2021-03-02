@@ -145,7 +145,6 @@ function checkIfScanCoversTheLocation(targetScanLocation: Vector): boolean {
         }
         displayDotaErrorMessage("Scan the required location");
         scanLocation = undefined;
-        return false;
     }
     return false;
 }
@@ -174,18 +173,16 @@ export const sectionOpening = new tut.FunctionalSection(
     requiredState,
     onStart,
     onStop,
-    chapter4OpeningOrderFilter,
+    orderFilter,
 );
 
-export function chapter4OpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true;
 
-    if (event.order_type == UnitOrder.RADAR) {
+    if (event.order_type === UnitOrder.RADAR) {
         scanLocation = Vector(event.position_x, event.position_y);
         return true;
     }
 
-    if (!canPlayerIssueOrders) return false;
-
-    return true;
+    return canPlayerIssueOrders;
 }
