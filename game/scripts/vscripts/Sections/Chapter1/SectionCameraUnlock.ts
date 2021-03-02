@@ -57,8 +57,6 @@ const onStart = (complete: () => void) => {
             tg.setCameraTarget(() => undefined),
             tg.immediate(_ => getOrError(getPlayerHero()).SetMoveCapability(UnitMoveCapability.GROUND)), // This line can be removed once the movement section is there.
 
-            tg.waitForModifierKey(ModifierKey.Alt),
-
             // Player should move his camera
             tg.immediate(_ => print("Pre camera movement")),
             tg.immediate(context => context[CameraUnlockContextKey.CameraMove] = GoalState.Started),
