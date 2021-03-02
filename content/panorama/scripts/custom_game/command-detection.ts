@@ -1,28 +1,28 @@
 /**
  * Dictionary object for commands to detect.
  */
-const shouldDetectCommand: { [key: number]: boolean } = {};
-const addedKeybind: { [key: string]: boolean } = {};
+const shouldDetectCommand = new Set<number>();
+const addedKeybind = new Set<string>();
 
 function onCommand(command: DOTAKeybindCommand_t) {
-    if (shouldDetectCommand[command]) {
+    if (shouldDetectCommand.has(command)) {
         GameEvents.SendCustomGameEventToServer("command_detected", { command: command });
-        shouldDetectCommand[command] = false;
+        shouldDetectCommand.delete(command);
     }
 }
 
 GameEvents.Subscribe("detect_command", event => {
     const { command } = event;
 
-    shouldDetectCommand[command] = true;
+    shouldDetectCommand.add(command);
 
     const keybind = Game.GetKeybindForCommand(command);
 
-    if (!addedKeybind[keybind]) {
+    if (!addedKeybind.has(keybind)) {
         const commandName = `Command_${event.command}`;
 
         Game.CreateCustomKeyBind(keybind, commandName);
         Game.AddCommand(commandName, () => onCommand(command), "", 0);
-        addedKeybind[keybind] = true;
+        addedKeybind.add(keybind);
     }
 });
