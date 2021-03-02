@@ -7,7 +7,9 @@ import { TutorialContext } from "../../TutorialGraph/index";
 enum GoalKeys {
     FetchWards,
     PlaceObserverWard,
-    PlaceSentryWard
+    PlaceSentryWard,
+    AttackRiki,
+    HoldAlt
 }
 
 enum GoalState {
@@ -41,11 +43,13 @@ const getGoals = (context: TutorialContext) => {
     addGoal(GoalKeys.FetchWards, "Go pick those up and come back here.");
     addGoal(GoalKeys.PlaceObserverWard, "Lets put an observer ward on this high ground.");
     addGoal(GoalKeys.PlaceSentryWard, "Lets put a sentry ward on this high ground.");
+    addGoal(GoalKeys.AttackRiki, "Go attack Riki with right mouse click on him.");
+    addGoal(GoalKeys.HoldAlt, "Hold Alt button to check sentry range.");
     return goals;
 };
-
+const rikiPosition2D = Vector(200, -4200);
 const invisHeroInfo = [
-    { name: "npc_dota_hero_riki", loc: GetGroundPosition(Vector(500, -4200), undefined) },
+    { name: "npc_dota_hero_riki", loc: GetGroundPosition(rikiPosition2D, undefined) },
     { name: "npc_dota_hero_mirana", loc: GetGroundPosition(Vector(500, -4000), undefined) },
     { name: "npc_dota_hero_clinkz", loc: GetGroundPosition(Vector(700, -3900), undefined) },
     { name: "npc_dota_hero_bounty_hunter", loc: GetGroundPosition(Vector(900, -3700), undefined) },
@@ -70,9 +74,9 @@ function onStart(complete: () => void) {
         tg.seq([
             tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name))),
 
-            tg.immediate(ctx => {
+            tg.immediate(context => {
                 for (const invisHero of invisHeroInfo) {
-                    const hero: CDOTA_BaseNPC_Hero = ctx[invisHero.name];
+                    const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
                 }
             }),
@@ -88,7 +92,7 @@ function onStart(complete: () => void) {
 
             tg.completeOnCheck(() => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
 
-            tg.immediate((context) => {
+            tg.immediate(context => {
                 context[GoalKeys.FetchWards] = GoalState.Completed;
                 context[GoalKeys.PlaceObserverWard] = GoalState.Started;
                 Tutorial.CreateLocationTask(markerLocation);
@@ -112,8 +116,18 @@ function onStart(complete: () => void) {
                         hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)));
                     }
                 }
+                context[GoalKeys.AttackRiki] = GoalState.Started;
             }),
 
+            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context["npc_dota_hero_riki"].GetAbsOrigin()).Length2D() < 400, 0.1),
+
+            tg.immediate(context => {
+                context[GoalKeys.AttackRiki] = GoalState.Completed;
+                const riki: CDOTA_BaseNPC_Hero = context["npc_dota_hero_riki"];
+                const runDirection = riki.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
+                riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
+                context[GoalKeys.HoldAlt] = GoalState.Started;
+            }),
             tg.wait(5),
             tg.immediate(() => disposeHeroes()),
         ])
