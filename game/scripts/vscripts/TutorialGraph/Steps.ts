@@ -312,6 +312,34 @@ export const waitForCameraMovement = () => {
 }
 
 /**
+ * Waits for a command to be executed. See panorama's DOTAKeybindCommand_t for the commands. Overrides the default behavior for the command so this can only be used if we merely want to detect the hotkey.
+ * @param command Command to wait for. See DOTAKeybindCommand_t.
+ */
+export const waitForCommand = (command: number) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("command_detected", (source, event) => {
+            if (event.command === command) {
+                if (listenerId) {
+                    CustomGameEventManager.UnregisterListener(listenerId)
+                    listenerId = undefined
+                }
+
+                complete()
+            }
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("detect_command", { command });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
  * Calls a function and completes immediately.
  * @param fn Function to call. Gets passed the context.
  * @param stopFn Optional function to call on stop. Gets passed the context.
