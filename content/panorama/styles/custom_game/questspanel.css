@@ -15,8 +15,8 @@
 }
 
 .QuestsTitleIcon {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
 
     background-image: url("file://{images}/custom_game/quests/QuestsTitleIcon.png");
     background-size: 100% 100%;
@@ -32,9 +32,10 @@
 
     font-weight: semi-bold;
     font-family: Radiance, FZKai-Z03, TH Sarabun New, YDYGO 540;
-    font-size: 23px;
+    font-size: 24px;
     letter-spacing: 1px;
     margin-left: 40px;
+    margin-top: -2px;
 }
 
 .Divider {
@@ -42,7 +43,7 @@
     width: 44%;
     height: 1px;
     margin-left: 10px;
-    margin-top: 30px;
+    margin-top: 32px;
     brightness: 0.6;
 }
 

@@ -9,6 +9,7 @@ function ToggleDialogLog() {
     $.Msg("ToggleDialogLog");
 
     $("#DialogLog").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_out");
 }
 
 function Close() {
