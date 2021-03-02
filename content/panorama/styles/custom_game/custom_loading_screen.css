@@ -11,6 +11,6 @@
     background-image: url("file://{images}/custom_game/loading_screen/title.png");
     background-size: 80% 80%;
     background-repeat: no-repeat;
-    margin-top: 50px;
-    margin-left: 10px;
+    margin-top: 20px;
+    margin-left: 20px;
 }

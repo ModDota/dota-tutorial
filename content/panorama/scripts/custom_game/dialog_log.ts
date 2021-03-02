@@ -1,12 +1,15 @@
-// Not sure where a more appropriate place for this is
 interface DialogLinePanel extends LabelPanel {
     SetItem(unitName: string, text: string): void;
 }
+
+const MAX_CHAT_LENGTH = 50;
+let lines: Panel[] = [];
 
 function ToggleDialogLog() {
     $.Msg("ToggleDialogLog");
 
     $("#DialogLog").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_out");
 }
 
 function Close() {
@@ -32,6 +35,13 @@ function AddLine(data: NetworkedData<DialogReceivedEvent>) {
     );
 
     linePanel.SetItem(unitName, DialogText);
+
+    lines.push(linePanel);
+
+    if (lines.length >= MAX_CHAT_LENGTH) {
+        const lineToHide = lines.length - MAX_CHAT_LENGTH;
+        lines[lineToHide].DeleteAsync(0);
+    }
 
     $("#DialogLineContainer").ScrollToBottom();
 }

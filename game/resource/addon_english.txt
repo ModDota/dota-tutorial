@@ -72,5 +72,18 @@
         "Script_1_Closing_4" "we are giving you back control over your camera. It's time to walk and look baby. Goodluck!"
         "Script_1_Closing_5" "did you really think we would just let you out? NO! WE HAVE THOUSANDS OF TREES!"
         "Script_1_Closing_6" "go baby infant! Follow this very not ominous path! Practice your moving and camera control! Keep in mind that you can move your camera in two ways. Number one is for cool people: where you middle click your mouse on the ground and hold it while dragging. Or you can be like my idiot mud golem brother, and move your cursor to the edge of the screen. All of this of course you can change in your game settings."
+        "Script_2_Opening_1" "And here we are. Welcome to the top radiant barracks. Before you lay several buildings each with their own purpose and destiny."
+        "Script_2_Opening_2" "Except for that one there. That’s a moon well."
+        "Script_2_Opening_3" "Yes, that is just there to look cool. Do you think its cool? I do."
+        "Script_2_Opening_4" "Very good. So, to your right you can see the melee barracks, and to the left you see the ranged barracks. These two buildings spawn creeps."
+        "Script_2_Opening_5" "Don't worry, not creeps like people that have bodypillows. Creeps like... uh... what are creeps like?"
+        "Script_2_Opening_6" "The creeps spawn every 30 seconds and walk down the path ahead of them, called a lane. The creeps are uncontrollable and have one mission, to mindlessly walk down the path and attack any enemy they come in contact with. This includes enemy heroes, buildings, or emotions!"
+        "Script_2_Opening_7" "That's right. The creeps act as your cannon fodder, making sure that the enemy cant just go to your side of the map and hurt you, or they will be stabbed by a thousand little swords."
+        "Script_2_Opening_8" "These barracks are what spawn these creeps, so as you can imagine if you destroy the enemy’s barracks, then they will become weakened. There is one set of barracks in each of the three lanes. These lanes are referred to as top, middle and bottom."
+        "Script_2_Opening_9" "Now, if you destroy the barracks, the enemy creeps don't just stop spawning. They continue to spawn, but your creeps get stronger in each lane that lacks an enemy barracks. And if you take them all, you are awarded MEGA CREEPS which are very powerful and can gang up to kill even heroes!"
+        "Script_2_Opening_10" "Indeed! Think of Dota like this: killing other players allows you to have time to hit their buildings while they respawn. Hitting buildings is the true goal of Dota, for when there are no buildings the enemy ancient is exposed. The game in a nutshell is essentially an elaborate tug of war where both sides try to outpush the other."
+        "Script_2_Opening_11" "Yes. Well that technically would be the opposite of a tug of war."
+        "Script_2_Opening_12" "Quiet, you!"
+        "Script_2_Opening_13" "Dota is a game about creeps, and exposing things. This is actually not a joke!"
     }
 }
