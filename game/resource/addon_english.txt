@@ -21,6 +21,7 @@
         "Chapter_5_BriefInformation" "Chapter 5 Brief Information"
         "Chapter_6" "Back Home"
         "Chapter_6_BriefInformation" "Chapter 6 Brief Information"
+        "SkipChapter" "Skip to Chapter"
 
         "npc_mud_golem_sunsfan" "Sunsfan"
         "npc_mud_golem_slacks" "Slacks"
