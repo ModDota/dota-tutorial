@@ -151,23 +151,19 @@ export function displayDotaErrorMessage(message: string) {
  * @param polygon The array of points to check against
  */        
 export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
-    let oddNodes = false;
-    let j = polygon.length;
-    for (let i = 1; i < polygon.length; i++) {
+    let inside = false;
+    let j = polygon.length - 1;
+
+    for (let i = 0; i < polygon.length; j = i++) {
         if (
-            (polygon[i].y < point.y && polygon[j].y >= point.y) ||
-            (polygon[j].y < point.y && polygon[i].y >= point.y)
+            polygon[i].y > point.y != polygon[j].y > point.y &&
+            point.x <
+                ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
+                    (polygon[j].y - polygon[i].y) +
+                    polygon[i].x
         ) {
+            inside = !inside;
         }
-        if (
-            polygon[i].x +
-                ((point.y - polygon[i].y) / (polygon[j].y - polygon[i].y)) *
-                    (polygon[j].x - polygon[i].x) <
-            point.x
-        ) {
-            oddNodes = !oddNodes;
-        }
-        j = i;
     }
-    return oddNodes;
+    return inside
 }
