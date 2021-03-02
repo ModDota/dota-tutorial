@@ -1,15 +1,28 @@
 <root>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/hud.js" />
+        <include src="s2r://panorama/scripts/custom_game/dialog_log.vjs_c" />
     </scripts>
     <styles>
         <include src="s2r://panorama/styles/dotastyles.css" />
         <include src="file://{resources}/styles/custom_game/hud.css" />
+        <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
+        <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" /> 
+        <include src="s2r://panorama/styles/custom_game/dialog_log.vcss_c" />
     </styles>
     <snippets>
 
     </snippets>
     <Panel hittest="false" class="MainHud">
+        <Panel hittest="false" class="TopLeftMenu">
+            <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')"  onmouseout="UIHideTextTooltip()" />
+            <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleSkipMenu();" onmouseover="UIShowTextTooltip('#SkipMenu')"  onmouseout="UIHideTextTooltip()" />
+        </Panel>
 
-    </Panel>
+        <Panel id="DialogLog" hittest="false">
+            <Label id="DialogTitle" class="TitleFont" text="#Message_Log" hittest="false"/>
+            <Panel id="DialogLineContainer" />
+            <Button id="CloseButton" class="ButtonBevel" onactivate="Close()"><Label text="#Close"/></Button>
+        </Panel>
+  </Panel>
 </root>

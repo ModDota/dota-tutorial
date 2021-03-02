@@ -75,5 +75,13 @@ function highlightUiElement(path: string) {
     }
 }
 
+//** Skip Section Panel */
+function ToggleSkipMenu() {
+    $.Msg("ToggleSkipMenu");
+
+    
+    Game.EmitSound("ui_chat_slide_out");
+}
+
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
