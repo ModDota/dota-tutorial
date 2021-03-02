@@ -222,6 +222,8 @@ const onStart = (complete: () => void) => {
 
     const upgradeAbility_2 = () => {
         return [
+    const upgradeAbility_2 = () => [
+        tg.seq([
             tg.immediate((context) => {
                 context[NeutralGoalKeys.UpgradeAbility] = GoalState.Started;
                 if (playerHero.GetLevel() < 3) {
@@ -235,9 +237,13 @@ const onStart = (complete: () => void) => {
             }),
         ];
     };
+        ]),
+    ];
 
     const pickUpArcaneRing = () => {
         return [
+    const pickUpArcaneRing = () => [
+        tg.seq([
             // Explain that neutrals drop items, how it works. Tell the player to pick it up.
             tg.immediate((context) => {
                 context[NeutralGoalKeys.PickupItemArcaneRing] =
@@ -252,6 +258,8 @@ const onStart = (complete: () => void) => {
             }),
         ];
     };
+        ]),
+    ];
 
     const useArcaneRing = () => {
         return [
@@ -388,6 +396,7 @@ const onStart = (complete: () => void) => {
                 context[NeutralGoalKeys.SwitchItems] = GoalState.Completed;
             }),
         ]
+        ];
     };
 
     const shareItem = () => {
@@ -441,6 +450,13 @@ const onStart = (complete: () => void) => {
             ...moveOutOfNeutralBox(),
             tg.fork([...spawnAndKillWolves(), ...pickupItems()]),
             tg.fork([...switchItems(), ...shareItem(), ...stashItem()]),
+            ...spawnAndKillWolves(),
+            ...pickupItems(),
+            tg.fork((context) => [
+                ...switchItems(),
+                ...shareItem(),
+                ...stashItem(),
+            ]),
         ]),
     ]);
 
