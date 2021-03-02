@@ -1,44 +1,15 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, printEventTable } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { TutorialContext } from "../../TutorialGraph/index";
+import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Opening;
 
 let graph: tg.TutorialStep | undefined = undefined;
 
-enum GoalKeys {
-    ScanFailed,
-    ScanSucceed
-}
-
-enum GoalState {
-    Started,
-    Completed,
-}
-
 const requiredState: RequiredState = {
     heroLocation: GetGroundPosition(Vector(-3000, 3800), undefined)
-};
-
-const getGoals = (context: TutorialContext) => {
-    const isGoalStarted = (key: GoalKeys) =>
-        context[key] === GoalState.Started ||
-        context[key] === GoalState.Completed;
-    const isGoalCompleted = (key: GoalKeys) =>
-        context[key] === GoalState.Completed;
-
-    const goals: Goal[] = [];
-    const addGoal = (key: GoalKeys, text: string) => {
-        if (isGoalStarted(key)) {
-            goals.push({ text: text, completed: isGoalCompleted(key) });
-        }
-    };
-
-    addGoal(GoalKeys.ScanFailed, "Click on scan with leftmouse button, then click on the target place to scan. ");
-    addGoal(GoalKeys.ScanSucceed, "Scan on the next target position. ");
-    return goals;
 };
 
 let canPlayerIssueOrders = true;
@@ -58,10 +29,16 @@ let radiantCreeps: CDOTA_BaseNPC[] = [];
 function onStart(complete: () => void) {
     print("Starting", sectionName);
 
+    const goalTracker = new GoalTracker();
+    const goalListenDialog = goalTracker.addBoolean("Listen to the dialog.");
+    const goalScanFailed = goalTracker.addBoolean("Click on scan with leftmouse button, then click on the target place to scan.");
+    const goalScanSucceed = goalTracker.addBoolean("Scan on the next target position.");
+
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
-    graph = tg.forkAny([
-        tg.trackGoals(getGoals),
+    goalListenDialog.start();
+
+    graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.immediate(() => playerHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
             tg.setCameraTarget(playerHero),
@@ -114,14 +91,15 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(undefined),
             tg.immediate(context => {
                 scanLocation = undefined;
-                context[GoalKeys.ScanFailed] = GoalState.Started;
+                goalListenDialog.complete();
+                goalScanFailed.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.completeOnCheck(_ => checkIfScanCoversTheLocation(firstScanLocation), 1),
 
             tg.immediate(context => {
-                context[GoalKeys.ScanFailed] = GoalState.Completed;
+                goalScanFailed.complete();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
             tg.wait(scanDuration),
@@ -131,20 +109,20 @@ function onStart(complete: () => void) {
             tg.immediate(context => {
                 context[rikiName].SetAttackCapability(UnitAttackCapability.NO_ATTACK);
                 scanLocation = undefined;
-                context[GoalKeys.ScanSucceed] = GoalState.Started;
+                goalScanSucceed.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.completeOnCheck(_ => checkIfScanCoversTheLocation(secondScanLocation), 1),
 
             tg.immediate(context => {
-                context[GoalKeys.ScanSucceed] = GoalState.Completed;
+                goalScanSucceed.complete();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
             tg.wait(scanDuration),
             tg.wait(5),
         ])
-    ]);
+    );
 
     graph.start(GameRules.Addon.context, () => {
         print("Completed", sectionName);
