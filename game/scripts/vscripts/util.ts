@@ -144,6 +144,23 @@ export function printEventTable(event: any) {
 export function displayDotaErrorMessage(message: string) {
     FireGameEvent("dota_hud_error_message", { reason: 80, message: message })
 }
+
+/**
+ * Highlights a panel along a path
+ * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
+ * @param duration Optional time in seconds after which to remove the highlight
+ */
+export function highlightUiElement(path: string, duration?: number) {
+    CustomGameEventManager.Send_ServerToAllClients("highlight_element", {path, duration});
+}
+
+/**
+ * Manually removes a highlighted panel, along the path, if it exists
+ * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
+ */
+export function removeHighlight(path: string) {
+    CustomGameEventManager.Send_ServerToAllClients("remove_highlight", {path});
+}
         
 /**
  * Checks if a point is inside an array of points
