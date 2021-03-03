@@ -100,6 +100,10 @@ function onStart(complete: () => void) {
                 riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
                 goalHoldAlt.start();
             }),
+
+            tg.waitForModifierKey(ModifierKey.Alt),
+
+            tg.immediate(context => goalHoldAlt.complete()),
             tg.wait(5),
             tg.immediate(() => disposeHeroes()),
         ])
