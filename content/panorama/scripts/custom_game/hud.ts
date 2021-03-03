@@ -42,7 +42,7 @@ function except<T>(a: Set<T>, b: Set<T>): Set<T> {
 /** UI Highlighting */
 
 const hudRoot = $.GetContextPanel().GetParent()!.GetParent()!.GetParent()!;
-let highlightedPanels: {[key:string]:Panel} = {};
+let highlightedPanels: { [key: string]: Panel } = {};
 
 function findPanelAtPath(path: string): Panel | undefined {
     const splitPath = path.split("/");
@@ -73,8 +73,8 @@ function highlightUiElement(event: HighlightElementEvent) {
     // Panel is already highlighted
     if (highlightedPanels[path]) {
         $.Msg("Element is already highlighted");
-        return; 
-    } 
+        return;
+    }
 
     const element = findPanelAtPath(path);
     // Can't highlight if the scale is too small/large/uninitialized
@@ -94,7 +94,7 @@ function highlightUiElement(event: HighlightElementEvent) {
         highlightedPanels[path] = highlightPanel;
 
         if (duration) {
-            $.Schedule(duration, () => removeHighlight({path}));
+            $.Schedule(duration, () => removeHighlight({ path }));
         }
     }
 }
@@ -117,8 +117,16 @@ function ChaptersClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
-function Chapter1PlayButton() {
-    $.Msg("Chapter1PlayButton");
+const chapterSections = [
+    SectionName.Chapter1_Opening,
+    SectionName.Chapter2_Opening,
+    SectionName.Chapter3_Opening,
+];
+
+function playChapter(chapterNumber: number) {
+    if (chapterSections[chapterNumber]) {
+        GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
+    }
 }
 
 function Chapter2PlayButton() {
