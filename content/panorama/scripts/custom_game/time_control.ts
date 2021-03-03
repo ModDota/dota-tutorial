@@ -2,8 +2,6 @@ function setTimerValue(event:ClockTimeEvent) {
     var mainPanel = $.GetContextPanel().GetParent()!.GetParent()!;
     var gameTime = mainPanel.FindChildTraverse("GameTime") as LabelPanel;
 
-    $.Msg(  event.seconds,event.minutes)
-    
     let s = event.seconds.toString();
     if (event.seconds < 10) {
         s = "0" + event.seconds;
