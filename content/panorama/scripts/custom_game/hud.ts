@@ -68,6 +68,8 @@ function removeHighlight(event: RemoveHighlightEvent) {
     delete highlightedPanels[path];
 }
 
+//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
+//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
 function highlightUiElement(event: HighlightElementEvent) {
     const { path, duration } = event;
     // Panel is already highlighted
@@ -128,26 +130,3 @@ function playChapter(chapterNumber: number) {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
     }
 }
-
-function Chapter2PlayButton() {
-    $.Msg("Chapter2PlayButton");
-}
-
-function Chapter3PlayButton() {
-    $.Msg("Chapter3PlayButton");
-}
-
-function Chapter4PlayButton() {
-    $.Msg("Chapter4PlayButton");
-}
-
-function Chapter5PlayButton() {
-    $.Msg("Chapter5PlayButton");
-}
-
-function Chapter6PlayButton() {
-    $.Msg("Chapter6PlayButton");
-}
-
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
