@@ -1,4 +1,4 @@
-const localizationRegex = /#\S+/g; // '#' followed by one or more non-whitespaces
+const localizationRegex = /#[a-zA-Z0-9_-]+/g; // '#' followed by one or more non-whitespaces
 
 const localizeInline = (text: string): string => text.includes("#") ? text.replace(localizationRegex, match => $.Localize(match)) : $.Localize(text)
 
