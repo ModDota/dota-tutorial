@@ -3,6 +3,7 @@ import * as tut from "../../Tutorial/Core"
 import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, setUnitVisibilityThroughFogOfWar } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { moveCameraToPosition, TutorialContext } from "../../TutorialGraph/index"
+import { GoalTracker } from "../../Goals"
 
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = false;
@@ -29,34 +30,16 @@ const onStart = (complete: () => void) => {
         section: SectionName.Chapter1_Movement,
     });
 
-    const getGoals = (context: TutorialContext) => {
-        const isGoalStarted = (key: NeutralGoalKeys) =>
-            context[key] === GoalState.Started ||
-            context[key] === GoalState.Completed;
-        const isGoalCompleted = (key: NeutralGoalKeys) =>
-            context[key] === GoalState.Completed;
-
-        const goals: Goal[] = [];
-        const addGoal = (key: NeutralGoalKeys, text: string) => {
-            if (isGoalStarted(key)) {
-                goals.push({ text: text, completed: isGoalCompleted(key) });
-            }
-        };
-
-        addGoal(NeutralGoalKeys.MoveToFirstWaypoint, "Move to the marked waypoint.");
-        addGoal(NeutralGoalKeys.MoveToSecondWaypoint, "Move to the second waypoint.");
-
-        return goals;
-    };
+    const goalTracker = new GoalTracker()
+    const goalMoveToFirstMarker = goalTracker.addBoolean("Move to the marked waypoint.")
+    const goalMoveToSecondMarker = goalTracker.addBoolean("Move to the second waypoint.")
 
     const playerHero = getOrError(getPlayerHero())
     const topLeftMarkerLocation = Vector(-7300, -6100, 384)
     const botRightMarkerLocation = Vector(-6500, -6900, 384)
     const miranaSpawnLocation = Vector(-6225, -5600, 256)
 
-    graph = tg.forkAny([
-        tg.trackGoals(getGoals),
-        tg.seq([
+    graph = tg.withGoals(ctx => goalTracker.getGoals(), tg.seq([
             tg.immediate(
                 (ctx) => canPlayerIssueOrders = false
             ),
@@ -67,7 +50,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
                     tg.immediate(
                         (ctx) => {
-                            (ctx[NeutralGoalKeys.MoveToFirstWaypoint] = GoalState.Started)
+                            goalMoveToFirstMarker.start()
                             canPlayerIssueOrders = true
                         }
                     ),
@@ -77,7 +60,7 @@ const onStart = (complete: () => void) => {
                 ]),
             ]),
             tg.immediate((ctx) => {
-                ctx[NeutralGoalKeys.MoveToFirstWaypoint] = GoalState.Completed;
+                goalMoveToFirstMarker.complete()
                 canPlayerIssueOrders = false
             }),
             tg.textDialog(LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
@@ -89,9 +72,12 @@ const onStart = (complete: () => void) => {
             tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
             tg.immediate(
                 (ctx) =>
-                    (ctx[NeutralGoalKeys.MoveToSecondWaypoint] = GoalState.Started)
+                    goalMoveToSecondMarker.start()
             ),
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
+            tg.textDialog(LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             // Make sure player hero is not in the arrow firing area
             tg.immediate(() => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
             tg.wait(0.5),
@@ -101,7 +87,6 @@ const onStart = (complete: () => void) => {
             tg.forkAny([
                 tg.fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
                 tg.seq([
-                    tg.textDialog("Watch out for the arrows!", ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
                     tg.fork([
                         tg.seq([
                             tg.immediate(() => moveCameraToPosition(botRightMarkerLocation, 1)),
@@ -114,13 +99,15 @@ const onStart = (complete: () => void) => {
                 ])
             ]),
             tg.immediate((ctx) => {
-                ctx[NeutralGoalKeys.MoveToSecondWaypoint] = GoalState.Completed;
+                goalMoveToSecondMarker.complete()
                 if (ctx[CustomNpcKeys.Mirana] && IsValidEntity(ctx[CustomNpcKeys.Mirana]))
                     ctx[CustomNpcKeys.Mirana].RemoveSelf()
             }),
+            // Should be different personalities for these lines, until determined, using Slacks and SUNSfan
+            tg.textDialog(LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
         ])
-    ])
+    )
 
     graph.start(GameRules.Addon.context, () => {
         print("Completed", "Section Movement")

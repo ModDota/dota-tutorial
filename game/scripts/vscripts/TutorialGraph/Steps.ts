@@ -329,9 +329,6 @@ export const moveCameraToPosition = (position: Vector, lerp: number) => {
 
     playerIds.forEach(playerId => {
         let player = PlayerResource.GetPlayer(playerId);
-        print('Moving camera to position:')
-        print(position)
-        print(position.x)
         if (player) {
             CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
                 cameraTargetX: position.x,

@@ -17,6 +17,7 @@ export class custom_mirana_arrow extends BaseAbility
         const distance = this.GetSpecialValueFor("arrow_range")
 
         this.caster.EmitSound(this.sound_cast);
+        this.caster.StartGesture(GameActivity.DOTA_CAST_ABILITY_2)
         ProjectileManager.CreateLinearProjectile(
         {
             Ability: this,
