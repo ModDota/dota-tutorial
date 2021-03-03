@@ -1,5 +1,6 @@
 <root>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/localization.js" />
         <include src="file://{resources}/scripts/custom_game/section-selector.js" />
         <include src="file://{resources}/scripts/custom_game/move-camera.js" />
         <include src="file://{resources}/scripts/custom_game/command-detection.js" />

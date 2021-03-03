@@ -6,6 +6,7 @@ declare const enum SectionName {
     Chapter1_ShopUI = "Chapter1_ShopUI",
     Chapter2_Opening = "Chapter2_Opening",
     Chapter3_Opening = "Chapter3_Opening",
+    Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
 }
 
