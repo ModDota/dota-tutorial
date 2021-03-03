@@ -138,7 +138,7 @@ function sectionOneMovementOrderFilter(event: ExecuteOrderFilterEvent): boolean 
  * @param endPoint Ending point of the line.
  * @param playerHero Optional parameter used to reset the player hero's position if hit by an arrow.
  */
-export const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, startPoint: tg.StepArgument<Vector>, endPoint: tg.StepArgument<Vector>, playerHero?: tg.StepArgument<CDOTA_BaseNPC_Hero>) => {
+const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, startPoint: tg.StepArgument<Vector>, endPoint: tg.StepArgument<Vector>, playerHero?: tg.StepArgument<CDOTA_BaseNPC_Hero>) => {
     let checkTimer: string | undefined = undefined
 
     return tg.step((context, complete) => {
