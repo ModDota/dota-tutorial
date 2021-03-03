@@ -1,8 +1,8 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, setUnitVisibilityThroughFogOfWar } from "../../util"
+import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
-import { moveCameraToPosition, TutorialContext } from "../../TutorialGraph/index"
+import { moveCameraToPosition } from "../../TutorialGraph/index"
 import { GoalTracker } from "../../Goals"
 
 let graph: tg.TutorialStep | undefined = undefined
@@ -13,16 +13,6 @@ const requiredState: RequiredState = {
     requireSlacksGolem: true,
     sunsFanLocation: Vector(-6400, -5900, 256),
     slacksLocation: Vector(-6250, -6050, 256),
-}
-
-enum NeutralGoalKeys {
-    MoveToFirstWaypoint,
-    MoveToSecondWaypoint
-}
-
-enum GoalState {
-    Started,
-    Completed,
 }
 
 const onStart = (complete: () => void) => {
@@ -85,7 +75,7 @@ const onStart = (complete: () => void) => {
             tg.playGlobalSound("mirana_mir_attack_10"),
             tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
             tg.forkAny([
-                tg.fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
+                fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
                 tg.seq([
                     tg.fork([
                         tg.seq([
@@ -139,4 +129,54 @@ function sectionOneMovementOrderFilter(event: ExecuteOrderFilterEvent): boolean 
     if (!canPlayerIssueOrders) return false;
 
     return true;
+}
+
+/**
+ * Creates a tutorial step that orders mirana to fire arrows at points on a line connecting two end points. Runs forever.
+ * @param miranaUnit Mirana unit that will shoot arrows.
+ * @param startPoint Starting point of the line.
+ * @param endPoint Ending point of the line.
+ * @param playerHero Optional parameter used to reset the player hero's position if hit by an arrow.
+ */
+export const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, startPoint: tg.StepArgument<Vector>, endPoint: tg.StepArgument<Vector>, playerHero?: tg.StepArgument<CDOTA_BaseNPC_Hero>) => {
+    let checkTimer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualMiranaUnit = tg.getArg(miranaUnit, context)
+        const actualStartPoint = tg.getArg(startPoint, context)
+        const actualEndPoint = tg.getArg(endPoint, context)
+        const customArrow = actualMiranaUnit.FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow) as CDOTABaseAbility
+
+        const directionBetweenPoints = ((actualEndPoint - actualStartPoint) as Vector).Normalized()
+        const distance = ((actualStartPoint - actualEndPoint) as Vector).Length2D()
+
+        let order: ExecuteOrderOptions = {
+            UnitIndex: actualMiranaUnit.GetEntityIndex(),
+            OrderType: UnitOrder.CAST_POSITION,
+            AbilityIndex: customArrow.GetEntityIndex(),
+            Queue: true
+        };
+
+        let positionOffset = [2,1,3,4]
+        let i = 0
+
+        const checkDkReachedDestination = () => {
+            order.Position = actualStartPoint.__add(directionBetweenPoints * distance * 0.2 * positionOffset[i] as Vector),
+            ExecuteOrderFromTable(order)
+
+            if (i == positionOffset.length - 1)
+                i = 0 // Reset arrow firing sequence
+            else
+                i += 1
+
+            checkTimer = Timers.CreateTimer(0.4, () => checkDkReachedDestination())
+        }
+
+        checkDkReachedDestination()
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    })
 }

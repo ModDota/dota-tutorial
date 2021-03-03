@@ -167,3 +167,33 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     }
     return inside
 }
+
+/**
+ * Orders a unit to use an ability.
+ * @param caster Unit that will use the ability.
+ * @param target Target of the ability.
+ * @param abilityName Name of the ability.
+ * @param orderType Type of unit order used for casting the ability with ExecuteOrderFromTable.
+ */
+export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector, abilityName: string, orderType: UnitOrder) => {
+        const ability = caster.FindAbilityByName(abilityName) as CDOTABaseAbility
+
+        let order: ExecuteOrderOptions = {
+            UnitIndex: caster.GetEntityIndex(),
+            OrderType: orderType,
+            AbilityIndex: ability.GetEntityIndex(),
+            Queue: true
+        };
+
+        if (typeof target === typeof CDOTA_BaseNPC) {
+            if (orderType === UnitOrder.CAST_TARGET)
+                order.TargetIndex = (target as CDOTA_BaseNPC).GetEntityIndex()
+            else
+                order.Position = (target as CDOTA_BaseNPC).GetAbsOrigin()
+        }
+        else {
+            order.Position = (target as Vector)
+        }
+
+        ExecuteOrderFromTable(order)
+}
