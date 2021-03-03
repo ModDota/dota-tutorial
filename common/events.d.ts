@@ -70,6 +70,15 @@ interface ModifierKeyDetectedEvent {
     key: ModifierKey
 }
 
+interface HighlightElementEvent {
+    path: string;
+    duration?: number;
+}
+
+interface RemoveHighlightEvent {
+    path: string;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -87,4 +96,6 @@ interface CustomGameEventDeclarations {
     command_detected: CommandDetectedEvent;
     detect_modifier_key: DetectModifierKeyEvent;
     modifier_key_detected: ModifierKeyDetectedEvent;
+    highlight_element: HighlightElementEvent;
+    remove_highlight: RemoveHighlightEvent;
 }
