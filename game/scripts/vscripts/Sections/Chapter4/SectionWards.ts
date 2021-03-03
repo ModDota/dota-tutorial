@@ -141,6 +141,8 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry") {
             if (targetZ === 512 && distance < 500) {
                 displayDotaErrorMessage("Place the ward on the highground.")
+                return true;
+            } else {
                 return false;
             }
         }
