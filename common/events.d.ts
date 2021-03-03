@@ -70,6 +70,11 @@ interface ModifierKeyDetectedEvent {
     key: ModifierKey
 }
 
+interface ClockTimeEvent {
+    seconds:number;
+    minutes?:number;
+}
+
 interface HighlightElementEvent {
     path: string;
     duration?: number;
@@ -96,6 +101,8 @@ interface CustomGameEventDeclarations {
     command_detected: CommandDetectedEvent;
     detect_modifier_key: DetectModifierKeyEvent;
     modifier_key_detected: ModifierKeyDetectedEvent;
+    set_client_clock:ClockTimeEvent
     highlight_element: HighlightElementEvent;
     remove_highlight: RemoveHighlightEvent;
+
 }
