@@ -1,5 +1,6 @@
 import { reloadable } from "./lib/tstl-utils";
 import * as chapters from "./Sections/index";
+import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
@@ -13,7 +14,9 @@ declare global {
 @reloadable
 export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
+    public customTimeManager: CustomTimeManager = new CustomTimeManager()
     canPlayerHeroEarnXP = false;
+
 
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
