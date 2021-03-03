@@ -33,7 +33,6 @@ export class CustomTimeManager {
     }
 
     SetClockValue(seconds: number, minutes?: number) {
-        print(seconds, minutes);
         CustomGameEventManager.Send_ServerToAllClients("set_client_clock", {
             seconds,
             minutes,
@@ -41,7 +40,7 @@ export class CustomTimeManager {
     }
 
     registerCallBackOnTime(seconds: number, fn: () => void) {
-        this.callbacks.push({ seconds, fn });
+        return this.callbacks.push({ seconds, fn });
     }
     unRegisterCallBackOnTime(index: number) {
         this.callbacks.splice(index, 1);

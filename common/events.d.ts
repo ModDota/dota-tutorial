@@ -75,6 +75,15 @@ interface ClockTimeEvent {
     minutes?:number;
 }
 
+interface HighlightElementEvent {
+    path: string;
+    duration?: number;
+}
+
+interface RemoveHighlightEvent {
+    path: string;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -93,4 +102,7 @@ interface CustomGameEventDeclarations {
     detect_modifier_key: DetectModifierKeyEvent;
     modifier_key_detected: ModifierKeyDetectedEvent;
     set_client_clock:ClockTimeEvent
+    highlight_element: HighlightElementEvent;
+    remove_highlight: RemoveHighlightEvent;
+
 }
