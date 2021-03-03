@@ -297,7 +297,7 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
         playerIds = findAllPlayersID()
         playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
 
-        // Order the dummy to mvoe to the target location. Periodically update the speed using the passed function.
+        // Order the dummy to move to the target location. Periodically update the speed using the passed function.
         const updateDummy = () => {
             if (!cameraDummy || !IsValidEntity(cameraDummy)) {
                 error("Camera dummy was invalid")
