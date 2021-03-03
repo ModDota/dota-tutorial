@@ -26,10 +26,6 @@ declare const enum CustomAbilityKeys {
     CustomMiranaArrow = "custom_mirana_arrow",
 }
 
-declare const enum ContextKeys {
-    PlayerDodgedArrow = "player_dodged_arrow"
-}
-
 type Goal = {
     text: string;
     completed: boolean;

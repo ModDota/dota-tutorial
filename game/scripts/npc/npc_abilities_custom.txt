@@ -26,6 +26,16 @@
 				"var_type"			"FIELD_FLOAT"
 				"arrow_speed"		"800.0"
 			}
+			"02"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"arrow_width"		"115"
+			}
+			"03"
+			{
+				"var_type"			"FIELD_INTEGER"
+				"arrow_range"		"3000"
+			}
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
 	}

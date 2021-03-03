@@ -1,10 +1,12 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { getOrError, getPlayerHero, setUnitPacifist, setUnitVisibilityThroughFogOfWar } from "../../util"
+import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, setUnitVisibilityThroughFogOfWar } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
-import { TutorialContext } from "../../TutorialGraph/index"
+import { moveCameraToPosition, TutorialContext } from "../../TutorialGraph/index"
 
 let graph: tg.TutorialStep | undefined = undefined
+let canPlayerIssueOrders = false;
+
 const requiredState: RequiredState = {
     requireSunsfanGolem: true,
     requireSlacksGolem: true,
@@ -13,8 +15,8 @@ const requiredState: RequiredState = {
 }
 
 enum NeutralGoalKeys {
-    MoveToWaypoint,
-    DodgeArrow
+    MoveToFirstWaypoint,
+    MoveToSecondWaypoint
 }
 
 enum GoalState {
@@ -41,65 +43,80 @@ const onStart = (complete: () => void) => {
             }
         };
 
-        addGoal(NeutralGoalKeys.MoveToWaypoint, "Move to the marked waypoint.");
-        addGoal(NeutralGoalKeys.DodgeArrow, "Dodge the incoming arrow from Mirana!");
+        addGoal(NeutralGoalKeys.MoveToFirstWaypoint, "Move to the marked waypoint.");
+        addGoal(NeutralGoalKeys.MoveToSecondWaypoint, "Move to the second waypoint.");
 
         return goals;
     };
 
-    const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
-    const playerHero = getOrError(getPlayerHero());
-    const markerLocation = Vector(-7000, -6200);
-    const miranaSpawnOffset = Vector(3000, 400, 0)
+    const playerHero = getOrError(getPlayerHero())
+    const topLeftMarkerLocation = Vector(-7300, -6100, 384)
+    const botRightMarkerLocation = Vector(-6500, -6900, 384)
+    const miranaSpawnLocation = Vector(-6225, -5600, 256)
 
     graph = tg.forkAny([
         tg.trackGoals(getGoals),
         tg.seq([
+            tg.immediate(
+                (ctx) => canPlayerIssueOrders = false
+            ),
             tg.fork([
-                tg.goToLocation(markerLocation),
+                tg.goToLocation(topLeftMarkerLocation),
                 tg.seq([
                     tg.textDialog(LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4),
                     tg.textDialog(LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
                     tg.immediate(
-                        (context) =>
-                            (context[NeutralGoalKeys.MoveToWaypoint] = GoalState.Started)
+                        (ctx) => {
+                            (ctx[NeutralGoalKeys.MoveToFirstWaypoint] = GoalState.Started)
+                            canPlayerIssueOrders = true
+                        }
                     ),
+                    tg.completeOnCheck(() => playerHero.IsMoving(), 0.5),
+                    tg.textDialog(LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                    tg.textDialog(LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
                 ]),
             ]),
-            tg.immediate((context) => {
-                context[NeutralGoalKeys.MoveToWaypoint] = GoalState.Completed;
+            tg.immediate((ctx) => {
+                ctx[NeutralGoalKeys.MoveToFirstWaypoint] = GoalState.Completed;
+                canPlayerIssueOrders = false
             }),
-            tg.textDialog(LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.spawnUnit(CustomNpcKeys.Mirana,
-                radiantFountain.GetAbsOrigin().__add(miranaSpawnOffset),
+                miranaSpawnLocation,
                 DotaTeam.BADGUYS,
                 CustomNpcKeys.Mirana),
-            tg.immediate((context) => setUnitPacifist(context[CustomNpcKeys.Mirana], true)),
-            tg.faceTowards(context => context[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
-            tg.wait(0.5),
+            tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
             tg.immediate(
-                (context) =>
-                    (context[NeutralGoalKeys.DodgeArrow] = GoalState.Started)
+                (ctx) =>
+                    (ctx[NeutralGoalKeys.MoveToSecondWaypoint] = GoalState.Started)
             ),
-            tg.setCameraTarget(context => context[CustomNpcKeys.Mirana]),
+            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
+            // Make sure player hero is not in the arrow firing area
+            tg.immediate(() => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
+            tg.wait(0.5),
+            tg.setCameraTarget(undefined),
             tg.playGlobalSound("mirana_mir_attack_10"),
-            tg.immediate((context) => context[CustomNpcKeys.Mirana].FindAbilityByName("mirana_leap").SetLevel(1)),
-            tg.useAbility((context) => context[CustomNpcKeys.Mirana], playerHero, "mirana_leap", UnitOrder.CAST_NO_TARGET),
-            tg.immediate((context) => context[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
-            tg.useAbility((context) => context[CustomNpcKeys.Mirana], playerHero, CustomAbilityKeys.CustomMiranaArrow, UnitOrder.CAST_POSITION),
-            tg.wait(1),
-            tg.setCameraTarget(playerHero),
-            tg.textDialog("Watch out for the arrow!", ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.completeOnCheck((context) => {
-                return context[ContextKeys.PlayerDodgedArrow]
-            }, 0.2),
-            tg.immediate((context) => {
-                context[ContextKeys.PlayerDodgedArrow] = false
-            }),
-            tg.immediate((context) => {
-                context[NeutralGoalKeys.DodgeArrow] = GoalState.Completed;
+            tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
+            tg.forkAny([
+                tg.fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
+                tg.seq([
+                    tg.textDialog("Watch out for the arrows!", ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                    tg.fork([
+                        tg.seq([
+                            tg.immediate(() => moveCameraToPosition(botRightMarkerLocation, 1)),
+                            tg.wait(2),
+                            tg.setCameraTarget(playerHero),
+                            tg.immediate(() => canPlayerIssueOrders = true),
+                        ]),
+                        tg.goToLocation(botRightMarkerLocation),
+                    ]),
+                ])
+            ]),
+            tg.immediate((ctx) => {
+                ctx[NeutralGoalKeys.MoveToSecondWaypoint] = GoalState.Completed;
+                if (ctx[CustomNpcKeys.Mirana] && IsValidEntity(ctx[CustomNpcKeys.Mirana]))
+                    ctx[CustomNpcKeys.Mirana].RemoveSelf()
             }),
             tg.textDialog(LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
         ])
@@ -124,5 +141,15 @@ export const sectionMovement = new tut.FunctionalSection(
     SectionName.Chapter1_Movement,
     requiredState,
     onStart,
-    onStop
+    onStop,
+    sectionOneMovementOrderFilter
 )
+
+function sectionOneMovementOrderFilter(event: ExecuteOrderFilterEvent): boolean {
+    // Allow all orders that aren't done by the player
+    if (event.issuer_player_id_const != findRealPlayerID()) return true;
+
+    if (!canPlayerIssueOrders) return false;
+
+    return true;
+}

@@ -120,24 +120,81 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
  * @param abilityName Name of the ability.
  * @param orderType Type of unit order used for casting the ability with ExecuteOrderFromTable.
  */
-export const useAbility = (caster: tg.StepArgument<CDOTA_BaseNPC>, target: tg.StepArgument<CDOTA_BaseNPC>, abilityName: tg.StepArgument<string>, orderType: UnitOrder) => {
+export const useAbility = (caster: tg.StepArgument<CDOTA_BaseNPC>, target: tg.StepArgument<CDOTA_BaseNPC> | tg.StepArgument<Vector>, abilityName: tg.StepArgument<string>, orderType: UnitOrder) => {
     return tg.step((context, complete) => {
         const actualCaster = tg.getArg(caster, context)
-        const actualTarget = tg.getArg(target, context)
         const ability = actualCaster.FindAbilityByName(tg.getArg(abilityName, context)) as CDOTABaseAbility
 
         let order: ExecuteOrderOptions = {
             UnitIndex: actualCaster.GetEntityIndex(),
             OrderType: orderType,
-            Position: actualTarget.GetAbsOrigin(),
-            TargetIndex: actualTarget.GetEntityIndex(),
             AbilityIndex: ability.GetEntityIndex(),
             Queue: true
         };
-        
+
+        if (typeof tg.getArg(target, context) === typeof CDOTA_BaseNPC) {
+            if (orderType === UnitOrder.CAST_TARGET)
+                order.TargetIndex = (tg.getArg(target, context) as CDOTA_BaseNPC).GetEntityIndex()
+            else
+                order.Position = (tg.getArg(target, context) as CDOTA_BaseNPC).GetAbsOrigin()
+        }
+        else {
+            order.Position = (tg.getArg(target, context) as Vector)
+        }
+
         ExecuteOrderFromTable(order)
 
         complete()
+    })
+}
+
+/**
+ * Creates a tutorial step that orders mirana to fire arrows at points on a line connecting two end points. Runs forever.
+ * @param miranaUnit Mirana unit that will shoot arrows.
+ * @param startPoint Starting point of the line.
+ * @param endPoint Ending point of the line.
+ * @param playerHero Optional parameter used to reset the player hero's position if hit by an arrow.
+ */
+export const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, startPoint: tg.StepArgument<Vector>, endPoint: tg.StepArgument<Vector>, playerHero?: tg.StepArgument<CDOTA_BaseNPC_Hero>) => {
+    let checkTimer: string | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualMiranaUnit = tg.getArg(miranaUnit, context)
+        const actualStartPoint = tg.getArg(startPoint, context)
+        const actualEndPoint = tg.getArg(endPoint, context)
+        const customArrow = actualMiranaUnit.FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow) as CDOTABaseAbility
+
+        const directionBetweenPoints = ((actualEndPoint - actualStartPoint) as Vector).Normalized()
+        const distance = ((actualStartPoint - actualEndPoint) as Vector).Length2D()
+
+        let order: ExecuteOrderOptions = {
+            UnitIndex: actualMiranaUnit.GetEntityIndex(),
+            OrderType: UnitOrder.CAST_POSITION,
+            AbilityIndex: customArrow.GetEntityIndex(),
+            Queue: true
+        };
+
+        let positionOffset = [2,1,3,4]
+        let i = 0
+
+        const checkDkReachedDestination = () => {
+            order.Position = actualStartPoint.__add(directionBetweenPoints * distance * 0.2 * positionOffset[i] as Vector),
+            ExecuteOrderFromTable(order)
+
+            if (i == positionOffset.length - 1)
+                i = 0 // Reset arrow firing sequence
+            else
+                i += 1
+
+            checkTimer = Timers.CreateTimer(0.4, () => checkDkReachedDestination())
+        }
+
+        checkDkReachedDestination()
+    }, context => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
     })
 }
 
@@ -226,7 +283,6 @@ export const wait = (waitSeconds: tg.StepArgument<number>) => {
  */
 export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>) => {
     let playerIds: PlayerID[] | undefined = undefined
-
     return tg.step((context, complete) => {
         const actualTarget = tg.getArg(target, context)
 
@@ -273,7 +329,9 @@ export const moveCameraToPosition = (position: Vector, lerp: number) => {
 
     playerIds.forEach(playerId => {
         let player = PlayerResource.GetPlayer(playerId);
-
+        print('Moving camera to position:')
+        print(position)
+        print(position.x)
         if (player) {
             CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
                 cameraTargetX: position.x,
