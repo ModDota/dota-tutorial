@@ -67,7 +67,7 @@ function onStart(complete: () => void) {
             tg.immediate(context => {
                 goalFetchWard.complete();
                 goalPlaceObserverWard.start();
-                Tutorial.CreateLocationTask(markerLocation);
+                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.completeOnCheck(() => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
@@ -81,6 +81,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 goalPlaceSentryWard.complete();
+                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     if (hero.GetName() !== "npc_dota_hero_riki") {
