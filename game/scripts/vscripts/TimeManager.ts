@@ -33,7 +33,6 @@ export class CustomTimeManager {
     }
 
     SetClockValue(seconds: number, minutes?: number) {
-        print(seconds, minutes);
         CustomGameEventManager.Send_ServerToAllClients("set_client_clock", {
             seconds,
             minutes,
