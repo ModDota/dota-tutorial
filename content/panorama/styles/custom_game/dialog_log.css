@@ -93,6 +93,8 @@
     transform: scale3d(0, 0, 1);
     transition-property: opacity, transform;
     transition-duration: 0.3s;
+
+    z-index: 5;
 }
 
 #DialogLog.Visible {
@@ -105,8 +107,8 @@
     horizontal-align: center;
 
     text-transform: uppercase;
-    color: gradient(linear, 0% 0%, 0% 100%, from(#e7d291), to(#965d01));
-    text-shadow: 0px 1px 1px 2 black;
+    color: #ffffffdd;
+    text-shadow: 0px 0px 20px 1.0 #3382ff44;
     font-weight: bold;
     font-size: 22px;
     letter-spacing: 2px;
@@ -137,12 +139,11 @@
 
 #DialogPortrait {
     width: 128px;
-    border-radius: 100%;
+    height: 128px;
+    border-radius: 50%;
     box-shadow: fill #000000af -6px -6px 12px 12px;
     border: 2px solid black;
-
-    margin-right: 10px;
-    margin-top: 20px;
+    z-index: 1;
 }
 
 .DialogLineText {

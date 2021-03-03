@@ -54,6 +54,22 @@ interface DialogConfirmExpireEvent {
     DialogLine: number;
 }
 
+interface DetectCommandEvent {
+    command: number //DOTAKeybindCommand_t
+}
+
+interface CommandDetectedEvent {
+    command: number //DOTAKeybindCommand_t
+}
+
+interface DetectModifierKeyEvent {
+    key: ModifierKey
+}
+
+interface ModifierKeyDetectedEvent {
+    key: ModifierKey
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -67,4 +83,8 @@ interface CustomGameEventDeclarations {
     detect_camera_movement: {};
     camera_movement_detected: {};
     set_goals: SetGoalsEvent;
+    detect_command: DetectCommandEvent;
+    command_detected: CommandDetectedEvent;
+    detect_modifier_key: DetectModifierKeyEvent;
+    modifier_key_detected: ModifierKeyDetectedEvent;
 }

@@ -14,7 +14,7 @@
   </scripts>
 
   <Panel class="DialogLine">
-    <DOTAHeroImage id="DialogPortrait" hittest="false"/>
+    <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" hittest="false"/>
     <Panel class="SpeechBubble" hittest="false">
       <Panel class="SpeechBubbleContainer" hittest="false">
         <Panel class="SpeechBubbleBackgroundOutline" hittest="false"/>

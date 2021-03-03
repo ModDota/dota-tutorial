@@ -6,7 +6,7 @@ collapseButton.SetPanelEvent("onactivate", () => {
     expanded = !expanded;
 
     collapseButton.text = expanded ? "X  DEV  X" : "^  DEV  ^";
-    Game.EmitSound("ui_chat_slide_out");
+    Game.EmitSound("ui_chat_slide_in");
 });
 
 /* Skip to section buttons */
