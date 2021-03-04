@@ -28,6 +28,7 @@ export class GameMode {
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
+        chapters.chapter4.sectionOutpost,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;

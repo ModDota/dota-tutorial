@@ -8,6 +8,7 @@ declare const enum SectionName {
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
+    Chapter4_Outpost = "Chapter4_Outpost",
 }
 
 declare const enum CustomNpcKeys {
@@ -18,6 +19,7 @@ declare const enum CustomNpcKeys {
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     TargetDummy = "npc_target_dummy",
+    Riki = "npc_dota_hero_riki",
 }
 
 type Goal = {
