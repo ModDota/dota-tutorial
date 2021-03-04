@@ -82,12 +82,11 @@ function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, fa
     }
 
     if (!context[unitName] || !IsValidEntity(context[unitName]) || !context[unitName].IsAlive()) {
-        CreateUnitByNameAsync(unitName, location, true, undefined, undefined, team, unit => {
-            if (onCreated) {
-                onCreated(unit)
-            }
-            postCreate(unit)
-        })
+        const unit = CreateUnitByName(unitName, location, true, undefined, undefined, team)
+        if (onCreated) {
+            onCreated(unit)
+        }
+        postCreate(unit)
     } else {
         postCreate(context[unitName])
     }
