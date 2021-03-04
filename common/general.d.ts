@@ -5,6 +5,7 @@ declare const enum SectionName {
     Chapter1_Casting = "Chapter1_Casting",
     Chapter1_ShopUI = "Chapter1_ShopUI",
     Chapter2_Opening = "Chapter2_Opening",
+    Chapter2_Creeps = "Chapter2_Creeps",
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
@@ -13,11 +14,24 @@ declare const enum SectionName {
 declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
+    GodzMudGolem = "npc_mud_golem_godz",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     TargetDummy = "npc_target_dummy",
+}
+
+declare const enum chapter2SpecificKeys {
+    RadiantCreeps = "radiantCreepsGroupChapter2",
+    DireCreeps = "direCreepsGroupChapter2",
+    sniperEnemyHero = "sniperEnemyHeroDenyChapter2"
+}
+
+declare const enum LastHitStages {
+    LAST_HIT = 1,
+    LAST_HIT_BREATHE_FIRE = 2,
+    LAST_HIT_DENY = 3,
 }
 
 type Goal = {

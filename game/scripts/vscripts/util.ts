@@ -151,7 +151,7 @@ export function displayDotaErrorMessage(message: string) {
  * @param duration Optional time in seconds after which to remove the highlight
  */
 export function highlightUiElement(path: string, duration?: number) {
-    CustomGameEventManager.Send_ServerToAllClients("highlight_element", {path, duration});
+    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration });
 }
 
 /**
@@ -159,14 +159,14 @@ export function highlightUiElement(path: string, duration?: number) {
  * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
  */
 export function removeHighlight(path: string) {
-    CustomGameEventManager.Send_ServerToAllClients("remove_highlight", {path});
+    CustomGameEventManager.Send_ServerToAllClients("remove_highlight", { path });
 }
-        
+
 /**
  * Checks if a point is inside an array of points
  * @param point The point to check
  * @param polygon The array of points to check against
- */        
+ */
 export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     let inside = false;
     let j = polygon.length - 1;
@@ -175,12 +175,23 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
         if (
             polygon[i].y > point.y != polygon[j].y > point.y &&
             point.x <
-                ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
-                    (polygon[j].y - polygon[i].y) +
-                    polygon[i].x
+            ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
+            (polygon[j].y - polygon[i].y) +
+            polygon[i].x
         ) {
             inside = !inside;
         }
     }
     return inside
+}
+
+export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC) {
+    if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
+        unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
+        unit.GetUnitName() === CustomNpcKeys.DireMeleeCreep ||
+        unit.GetUnitName() === CustomNpcKeys.DireRangedCreep)
+
+        return true
+
+    else return false
 }
