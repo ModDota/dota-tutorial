@@ -56,19 +56,19 @@ const onStart = (complete: () => void) => {
                 playerHero.Stop(),
                     canPlayerIssueOrders = false
             }),
-            tg.textDialog(LocalizationKey.Script_2_Opening_1, context => playerHero, 10), // should be said by Slacks's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_2, context => playerHero, 3), // should be said by Sunsfan's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_3, context => playerHero, 5), // should be said by Slacks's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_4, context => playerHero, 8), // should be said by Sunsfan's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_5, context => playerHero, 6), // should be said by Slacks's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_6, context => playerHero, 14), // should be said by Sunsfan's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_7, context => playerHero, 8), // should be said by Slacks's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_8, context => playerHero, 12), // should be said by Sunsfan's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_9, context => playerHero, 12), // should be said by Slacks's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_10, context => playerHero, 18), // should be said by Sunsfan's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_11, context => playerHero, 5), // should be said by Slacks's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_12, context => playerHero, 3), // should be said by Sunsfan's Golem
-            tg.textDialog(LocalizationKey.Script_2_Opening_13, context => playerHero, 6), // should be said by Slacks's Golem
+            tg.textDialog(LocalizationKey.Script_2_Opening_1, context => context[CustomNpcKeys.SlacksMudGolem], 10),
+            tg.textDialog(LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem], 5),
+            tg.textDialog(LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SlacksMudGolem], 8),
+            tg.textDialog(LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem], 6),
+            tg.textDialog(LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SlacksMudGolem], 14),
+            tg.textDialog(LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem], 8),
+            tg.textDialog(LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SlacksMudGolem], 12),
+            tg.textDialog(LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem], 12),
+            tg.textDialog(LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SlacksMudGolem], 18),
+            tg.textDialog(LocalizationKey.Script_2_Opening_11, context => context[CustomNpcKeys.SlacksMudGolem], 5),
+            tg.textDialog(LocalizationKey.Script_2_Opening_12, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_2_Opening_13, context => context[CustomNpcKeys.SlacksMudGolem], 6),
             tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, undefined))),
             tg.fork(_ => direCreepNames.map(unit => tg.spawnUnit(unit, direCreepsSpawnLocation, DotaTeam.BADGUYS, undefined))),
             tg.immediate(context => {

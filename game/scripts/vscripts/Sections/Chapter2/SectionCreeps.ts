@@ -104,9 +104,9 @@ const onStart = (complete: () => void) => {
                 tg.seq([
                     tg.setCameraTarget(radiantCreeps[0]),
                     tg.wait(3.5),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_1, context => context[CustomNpcKeys.SlacksMudGolem], 15), // should be said by Slack's Golem
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_2, context => context[CustomNpcKeys.SunsFanMudGolem], 10), // should be said by Sunsfan's Golem
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem], 8), // should be said by Slack's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_1, context => context[CustomNpcKeys.SlacksMudGolem], 15),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_2, context => context[CustomNpcKeys.SunsFanMudGolem], 10),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem], 8),
                     tg.immediate(_ => GridNav.DestroyTreesAroundPoint(godzSpawnLocation, 300, true)),
                     tg.wait(1),
                     tg.immediate(context => {
@@ -115,7 +115,7 @@ const onStart = (complete: () => void) => {
                         setUnitPacifist(godzMudGolem, true);
                     }),
                     tg.setCameraTarget(context => context[CustomNpcKeys.GodzMudGolem]),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 5), // // should be said by Godz's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 5),
                     tg.setCameraTarget(playerHero),
                     tg.setCameraTarget(undefined),
                     tg.immediate(() => canPlayerIssueOrders = true),
@@ -142,7 +142,7 @@ const onStart = (complete: () => void) => {
                             }
                         }
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_5, context => context[CustomNpcKeys.SunsFanMudGolem], 12), // should be said by Sunsfan's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_5, context => context[CustomNpcKeys.SunsFanMudGolem], 12),
                     tg.completeOnCheck(_ => {
                         const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
                         goalLastHitCreepsWithBreatheFire.setValue(currentLastHitWithFire)
@@ -153,7 +153,7 @@ const onStart = (complete: () => void) => {
                         setUnitPacifist(playerHero, true);
                         canPlayerIssueOrders = false;
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_6, context => context[CustomNpcKeys.GodzMudGolem], 3), // should be said by Godz's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_6, context => context[CustomNpcKeys.GodzMudGolem], 3),
                     tg.immediate(context => {
                         const godzMudGolem = (context[CustomNpcKeys.GodzMudGolem] as CDOTA_BaseNPC);
                         godzMudGolem.ForceKill(false)
@@ -167,7 +167,7 @@ const onStart = (complete: () => void) => {
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                     }),
                     tg.setCameraTarget(context => context[chapter2SpecificKeys.sniperEnemyHero]),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_7, context => context[CustomNpcKeys.SlacksMudGolem], 4), // should be said by Slack's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_7, context => context[CustomNpcKeys.SlacksMudGolem], 4),
                     tg.immediate(context => {
                         const sniper: CDOTA_BaseNPC = context[chapter2SpecificKeys.sniperEnemyHero];
                         sniper.FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
@@ -177,13 +177,13 @@ const onStart = (complete: () => void) => {
                             modifier.sniperDenyingOwnCreeps = true
                         }
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_8, context => context[CustomNpcKeys.SunsFanMudGolem], 6), // should be said by Sunsfan's Golem
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_9, context => context[CustomNpcKeys.SlacksMudGolem], 12), // should be said by Slack's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_8, context => context[CustomNpcKeys.SunsFanMudGolem], 6),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_9, context => context[CustomNpcKeys.SlacksMudGolem], 12),
                     tg.playGlobalSound("sniperTalkingShit.wav", false),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_10, context => context[CustomNpcKeys.SunsFanMudGolem], 8), // should be said by Sunsfan's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_10, context => context[CustomNpcKeys.SunsFanMudGolem], 8),
                     tg.setCameraTarget(undefined),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_11, context => context[CustomNpcKeys.SlacksMudGolem], 15), // should be said by Slack's Golem
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.SunsFanMudGolem], 4), // should be said by Sunsfan's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_11, context => context[CustomNpcKeys.SlacksMudGolem], 15),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
                     tg.immediate(() => {
                         goalDenyOwnCreeps.start()
 
@@ -207,8 +207,8 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalDenyOwnCreeps.complete()
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem], 8), // should be said by Slack's Golem
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem], 4), // should be said by Sunsfan's Golem
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem], 8),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
                     tg.immediate(context => {
                         goalKillSniper.start()
                         const sniper: CDOTA_BaseNPC = context[chapter2SpecificKeys.sniperEnemyHero]
