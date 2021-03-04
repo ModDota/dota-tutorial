@@ -213,8 +213,7 @@ export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector
             order.TargetIndex = (target as CDOTA_BaseNPC).GetEntityIndex()
         else
             order.Position = (target as CDOTA_BaseNPC).GetAbsOrigin()
-    }
-    else {
+    } else {
         order.Position = (target as Vector)
     }
 
