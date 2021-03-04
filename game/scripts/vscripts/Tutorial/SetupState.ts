@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, getOrError, getPlayerHero } from "../util"
+import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero } from "../util"
 
 /**
  * Sets up the state to match the passed state requirement.
@@ -16,6 +16,9 @@ export const setupState = (stateReq: RequiredState): void => {
 
     if (hero.GetCurrentXP() !== state.heroXP || hero.GetUnitName() !== state.heroUnitName) {
         hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, state.heroXP)
+    } else {
+        // Make sure the hero is not frozen
+        freezePlayerHero(false)
     }
 
     // Focus all cameras on the hero

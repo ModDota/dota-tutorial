@@ -494,7 +494,7 @@
 		//Inventory
 	}
 
-    "npc_target_dummy"
+    "npc_dota_tutorial_target_dummy"
     {
         // General
         //----------------------------------------------------------------

@@ -20,7 +20,7 @@ declare const enum CustomNpcKeys {
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     GodzMudGolem = "npc_mud_golem_godz",
-    TargetDummy = "npc_target_dummy",
+    TargetDummy = "npc_dota_tutorial_target_dummy",
 }
 
 declare const enum CustomAbilityKeys {
