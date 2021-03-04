@@ -70,6 +70,16 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
 }
 
 /**
+ * Makes the player hero (un-)able to attack and move.
+ * @param frozen Whether or not to freeze the hero.
+ */
+export function freezePlayerHero(frozen: boolean) {
+    const hero = getOrError(getPlayerHero(), "Could not find player hero")
+    setUnitPacifist(hero, frozen)
+    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND)
+}
+
+/**
  * Freezes time and puts all units into the idle animation. This doesn't literally
  * pause the game, but it effectively does.
  */
