@@ -41,7 +41,7 @@ export const setupState = (stateReq: RequiredState): void => {
         clearUnit(CustomNpcKeys.SlacksMudGolem)
     }
 
-    if (state.sunsFanLocation) {
+    if (state.requireSunsfanGolem) {
         createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation)
     } else {
         clearUnit(CustomNpcKeys.SunsFanMudGolem)
