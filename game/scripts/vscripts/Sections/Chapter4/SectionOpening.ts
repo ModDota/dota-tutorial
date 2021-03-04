@@ -9,7 +9,9 @@ const sectionName: SectionName = SectionName.Chapter4_Opening;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
-    heroLocation: GetGroundPosition(Vector(-3000, 3800), undefined)
+    heroLocation: GetGroundPosition(Vector(-3000, 3800), undefined),
+    heroLevel: 6,
+    heroAbilityMinLevels: [1, 1, 1, 1],
 };
 
 let canPlayerIssueOrders = true;

@@ -30,6 +30,8 @@ enum GoalState {
 }
 
 const requiredState: RequiredState = {
+    heroLevel: 6,
+    heroAbilityMinLevels: [1, 1, 1, 1],
 }
 
 const onStart = (complete: () => void) => {
