@@ -1,5 +1,6 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
+import "./modifiers/modifier_dummy"
 
 /**
  * Get a list of all valid players currently in the game.
@@ -67,6 +68,16 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
     else {
         unit.RemoveModifierByName("modifier_tutorial_pacifist");
     }
+}
+
+/**
+ * Makes the player hero (un-)able to attack and move.
+ * @param frozen Whether or not to freeze the hero.
+ */
+export function freezePlayerHero(frozen: boolean) {
+    const hero = getOrError(getPlayerHero(), "Could not find player hero")
+    setUnitPacifist(hero, frozen)
+    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND)
 }
 
 /**
@@ -151,7 +162,7 @@ export function displayDotaErrorMessage(message: string) {
  * @param duration Optional time in seconds after which to remove the highlight
  */
 export function highlightUiElement(path: string, duration?: number) {
-    CustomGameEventManager.Send_ServerToAllClients("highlight_element", {path, duration});
+    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration });
 }
 
 /**
@@ -159,30 +170,35 @@ export function highlightUiElement(path: string, duration?: number) {
  * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
  */
 export function removeHighlight(path: string) {
-    CustomGameEventManager.Send_ServerToAllClients("remove_highlight", {path});
+    CustomGameEventManager.Send_ServerToAllClients("remove_highlight", { path });
 }
-        
+
 /**
  * Checks if a point is inside an array of points
  * @param point The point to check
  * @param polygon The array of points to check against
- */        
+ */
 export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     let inside = false;
     let j = polygon.length - 1;
 
     for (let i = 0; i < polygon.length; j = i++) {
-        if (
-            polygon[i].y > point.y != polygon[j].y > point.y &&
-            point.x <
-                ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
-                    (polygon[j].y - polygon[i].y) +
-                    polygon[i].x
-        ) {
+        if (polygon[i].y > point.y != polygon[j].y > point.y &&
+            point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x) {
             inside = !inside;
         }
     }
     return inside
+}
+
+/**
+ * Spawns an untargetable, invisible dummy unit.
+ * @param location Location to spawn the dummy at.
+ */
+export function createDummy(location: Vector) {
+    const dummy = CreateUnitByName("npc_dummy_unit", location, true, undefined, undefined, DotaTeam.GOODGUYS)
+    dummy.AddNewModifier(dummy, undefined, "modifier_dummy", {})
+    return dummy
 }
 
 /**
@@ -193,24 +209,23 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
  * @param orderType Type of unit order used for casting the ability with ExecuteOrderFromTable.
  */
 export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector, abilityName: string, orderType: UnitOrder) => {
-        const ability = caster.FindAbilityByName(abilityName) as CDOTABaseAbility
+    const ability = caster.FindAbilityByName(abilityName) as CDOTABaseAbility
 
-        let order: ExecuteOrderOptions = {
-            UnitIndex: caster.GetEntityIndex(),
-            OrderType: orderType,
-            AbilityIndex: ability.GetEntityIndex(),
-            Queue: true
-        };
+    let order: ExecuteOrderOptions = {
+        UnitIndex: caster.GetEntityIndex(),
+        OrderType: orderType,
+        AbilityIndex: ability.GetEntityIndex(),
+        Queue: true
+    };
 
-        if (typeof target === typeof CDOTA_BaseNPC) {
-            if (orderType === UnitOrder.CAST_TARGET)
-                order.TargetIndex = (target as CDOTA_BaseNPC).GetEntityIndex()
-            else
-                order.Position = (target as CDOTA_BaseNPC).GetAbsOrigin()
-        }
-        else {
-            order.Position = (target as Vector)
-        }
+    if (typeof target === typeof CDOTA_BaseNPC) {
+        if (orderType === UnitOrder.CAST_TARGET)
+            order.TargetIndex = (target as CDOTA_BaseNPC).GetEntityIndex()
+        else
+            order.Position = (target as CDOTA_BaseNPC).GetAbsOrigin()
+    } else {
+        order.Position = (target as Vector)
+    }
 
-        ExecuteOrderFromTable(order)
+    ExecuteOrderFromTable(order)
 }

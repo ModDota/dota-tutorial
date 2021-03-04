@@ -1,4 +1,4 @@
-import { findAllPlayersID, getPlayerHero, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { createDummy, findAllPlayersID, getPlayerHero, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 
@@ -48,24 +48,41 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
  * @param spawnLocation Location to spawn the unit at.
  * @param team Team the unit belongs to.
  * @param entityKey Entity key for storing CBaseEntity member in the context.
+ * @param removeOnStop Whether to remove the unit when stop is called on this step. Also removes the key from context if the entry is still the unit.
  */
-export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>) => {
+export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>, removeOnStop?: boolean) => {
+    let unit: CDOTA_BaseNPC | undefined = undefined
+    let actualEntityKey: string | undefined = undefined
+
     return tg.step((context, complete) => {
         const actualUnitName = tg.getArg(unitName, context)
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualTeam = tg.getArg(team, context)
-        const actualEntityKey = tg.getOptionalArg(entityKey, context)
+        actualEntityKey = tg.getOptionalArg(entityKey, context)
 
         CreateUnitByNameAsync(actualUnitName, actualSpawnLocation, true, undefined, undefined, actualTeam,
             createdUnit => {
-
                 if (actualEntityKey) {
                     context[actualEntityKey] = createdUnit
                 }
 
+                unit = createdUnit
+
                 complete()
             }
         )
+    }, context => {
+        if (removeOnStop && unit) {
+            if (actualEntityKey && context[actualEntityKey] === unit) {
+                context[actualEntityKey] = undefined
+            }
+
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
+            unit = undefined
+        }
     })
 }
 
@@ -252,6 +269,105 @@ export const moveCameraToPosition = (position: Vector, lerp: number) => {
                 lerp: lerp
             })
         }
+    })
+}
+
+/**
+ * Pans the camera from the start location to the end location with the speed at each timestep calculated using a given function.
+ * @param startLocation Start location for the pan.
+ * @param endLocation End location for the pan.
+ * @param getSpeed Function that returns the speed in units per second to move given the start, end and current location.
+ */
+export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, getSpeed: (startLocation: Vector, endLocation: Vector, location: Vector) => number) => {
+    let cameraTimer: string | undefined = undefined
+    let playerIds: PlayerID[] | undefined = undefined
+    let cameraDummy: CDOTA_BaseNPC | undefined = undefined
+
+    const cleanup = () => {
+        if (cameraTimer) {
+            Timers.RemoveTimer(cameraTimer)
+            cameraTimer = undefined
+        }
+
+        if (playerIds) {
+            playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, undefined))
+            playerIds = undefined
+        }
+
+        if (cameraDummy) {
+            if (IsValidEntity(cameraDummy)) {
+                cameraDummy.RemoveSelf()
+            }
+            cameraDummy = undefined
+        }
+    }
+
+    return tg.step((context, complete) => {
+        const updateInterval = FrameTime()
+        const actualStartLocation = tg.getArg(startLocation, context)
+        const actualEndLocation = tg.getArg(endLocation, context)
+        cameraDummy = createDummy(actualStartLocation)
+
+        // Focus all cameras on the dummy
+        playerIds = findAllPlayersID()
+        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+
+        // Order the dummy to move to the target location. Periodically update the speed using the passed function.
+        const updateDummy = () => {
+            if (!cameraDummy || !IsValidEntity(cameraDummy)) {
+                error("Camera dummy was invalid")
+            }
+
+            const currentLocation = cameraDummy.GetAbsOrigin()
+            const distance = actualEndLocation.__sub(currentLocation).Length2D()
+
+            // Stop when we are close enough.
+            if (distance > 10) {
+                // Query the speed for the current location.
+                const speed = getSpeed(actualStartLocation, actualEndLocation, currentLocation)
+
+                // Order the dummy to move to the target location and update its speed.
+                cameraDummy.SetBaseMoveSpeed(speed)
+                cameraDummy.MoveToPosition(actualEndLocation)
+
+                cameraTimer = Timers.CreateTimer(updateInterval, () => updateDummy())
+            } else {
+                cameraDummy.SetAbsOrigin(actualEndLocation)
+                cleanup()
+                complete()
+            }
+        }
+
+        updateDummy()
+    }, context => {
+        cleanup()
+    })
+}
+
+/**
+ * Pans the camera from the start location to the end location exponentially (ie. starting out faster and getting slower the closer we are to the target).
+ * @param startLocation Start location for the pan.
+ * @param endLocation End location for the pan.
+ * @param alpha Value that should be between 0 and 1. Values towards 0 are slower and towards 1 are faster.
+ */
+export const panCameraExponential = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, alpha: number) => {
+    return panCamera(startLocation, endLocation, (startLoc, endLoc, loc) => {
+        // Speed proportional to the remaining distance.
+        const remainingDistance = endLoc.__sub(loc).Length2D()
+        return alpha * remainingDistance
+    })
+}
+
+/**
+ * Pans the camera from the start location to the end location linearly (ie. with constant speed) over a given duration.
+ * @param startLocation Start location for the pan.
+ * @param endLocation End location for the pan.
+ * @param duration How long the pan should last.
+ */
+export const panCameraLinear = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, duration: number) => {
+    return panCamera(startLocation, endLocation, (startLoc, endLoc, loc) => {
+        // Constant speed (speed = distance / duration).
+        return endLoc.__sub(startLoc).Length2D() / duration
     })
 }
 
