@@ -7,7 +7,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
     IsPurgable() { return false }
     IsDebuff() { return false }
 
-    sniperDenyingOwnCreeps: boolean = false;
+    sniperDenyingOwnCreeps: boolean = true;
     isSniperActive = false
 
     OnCreated() {
@@ -34,16 +34,28 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
             alliedCreeps = alliedCreeps.filter(creep => creep.GetHealthPercent() <= 50);
 
             if (alliedCreeps.length <= 0) {
-                this.GetParent().SetForceAttackTarget(undefined);
+                if (this.GetParent().IsMoving()) {
+                    this.GetParent().Stop()
+                }
             }
             else {
                 const closestCreep = alliedCreeps[0];
-                ExecuteOrderFromTable(
-                    {
-                        OrderType: UnitOrder.ATTACK_TARGET,
-                        UnitIndex: this.GetParent().entindex(),
-                        TargetIndex: closestCreep.entindex(),
-                    })
+                const distance = ((closestCreep.GetAbsOrigin() - this.GetParent().GetAbsOrigin()) as Vector).Length2D()
+                if (distance > this.GetParent().Script_GetAttackRange())
+                    ExecuteOrderFromTable(
+                        {
+                            OrderType: UnitOrder.MOVE_TO_TARGET,
+                            UnitIndex: this.GetParent().entindex(),
+                            TargetIndex: closestCreep.entindex(),
+                        })
+                else {
+                    ExecuteOrderFromTable(
+                        {
+                            OrderType: UnitOrder.ATTACK_TARGET,
+                            UnitIndex: this.GetParent().entindex(),
+                            TargetIndex: closestCreep.entindex(),
+                        })
+                }
             }
         }
         else {
@@ -64,7 +76,6 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
         return {
             [ModifierState.INVULNERABLE]: this.sniperDenyingOwnCreeps,
             [ModifierState.PROVIDES_VISION]: true,
-            [ModifierState.ROOTED]: true,
             [ModifierState.DISARMED]: !this.isSniperActive
         }
     }
