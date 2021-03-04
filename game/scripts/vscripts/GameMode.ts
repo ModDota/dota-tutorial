@@ -20,6 +20,7 @@ export class GameMode {
 
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
+        chapters.chapter1.sectionMovement,
         chapters.chapter1.sectionCameraUnlock,
         chapters.chapter1.sectionLeveling,
         chapters.chapter1.sectionCasting,

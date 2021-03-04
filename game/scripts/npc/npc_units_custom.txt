@@ -494,7 +494,7 @@
 		//Inventory
 	}
 
-    "npc_target_dummy"
+    "npc_dota_tutorial_target_dummy"
     {
         // General
         //----------------------------------------------------------------
@@ -554,4 +554,15 @@
         "CombatClassDefend"			"DOTA_COMBAT_CLASS_DEFEND_BASIC"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
     }
+
+    "npc_dummy_unit"
+	{
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "VisionDaytimeRange"		"0"
+        "VisionNighttimeRange"		"0"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_WARD"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_FLY"
+        "AbilityLayout"				"4"
+	}
 }
