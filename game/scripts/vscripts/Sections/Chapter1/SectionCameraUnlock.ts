@@ -38,7 +38,7 @@ const onStart = (complete: () => void) => {
         // Spawn dummy and play some dialog about it. Freeze the hero during this and focus camera on the dummy.
         tg.immediate(_ => freezePlayerHero(true)),
         tg.textDialog(LocalizationKey.Script_1_Camera_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DotaTeam.NEUTRALS, CustomNpcKeys.TargetDummy),
+        tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DotaTeam.NEUTRALS, CustomNpcKeys.TargetDummy, true),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.TargetDummy]),
         tg.textDialog(LocalizationKey.Script_1_Camera_4, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
         tg.textDialog(LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),

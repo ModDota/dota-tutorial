@@ -48,24 +48,41 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
  * @param spawnLocation Location to spawn the unit at.
  * @param team Team the unit belongs to.
  * @param entityKey Entity key for storing CBaseEntity member in the context.
+ * @param removeOnStop Whether to remove the unit when stop is called on this step. Also removes the key from context if the entry is still the unit.
  */
-export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>) => {
+export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>, removeOnStop?: boolean) => {
+    let unit: CDOTA_BaseNPC | undefined = undefined
+    let actualEntityKey: string | undefined = undefined
+
     return tg.step((context, complete) => {
         const actualUnitName = tg.getArg(unitName, context)
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualTeam = tg.getArg(team, context)
-        const actualEntityKey = tg.getOptionalArg(entityKey, context)
+        actualEntityKey = tg.getOptionalArg(entityKey, context)
 
         CreateUnitByNameAsync(actualUnitName, actualSpawnLocation, true, undefined, undefined, actualTeam,
             createdUnit => {
-
                 if (actualEntityKey) {
                     context[actualEntityKey] = createdUnit
                 }
 
+                unit = createdUnit
+
                 complete()
             }
         )
+    }, context => {
+        if (removeOnStop && unit) {
+            if (actualEntityKey && context[actualEntityKey] === unit) {
+                context[actualEntityKey] = undefined
+            }
+
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
+            unit = undefined
+        }
     })
 }
 
