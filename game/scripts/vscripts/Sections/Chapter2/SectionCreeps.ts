@@ -168,7 +168,6 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.setCameraTarget(context => context[chapter2SpecificKeys.sniperEnemyHero]),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_7, context => context[CustomNpcKeys.SlacksMudGolem], 4), // should be said by Slack's Golem
-                    tg.setCameraTarget(undefined),
                     tg.immediate(context => {
                         const sniper: CDOTA_BaseNPC = context[chapter2SpecificKeys.sniperEnemyHero];
                         sniper.FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
