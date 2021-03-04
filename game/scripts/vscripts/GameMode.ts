@@ -20,6 +20,7 @@ export class GameMode {
 
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
+        chapters.chapter1.sectionMovement,
         chapters.chapter1.sectionCameraUnlock,
         chapters.chapter1.sectionLeveling,
         chapters.chapter1.sectionCasting,
@@ -29,6 +30,7 @@ export class GameMode {
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
+        chapters.chapter4.sectionOutpost,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;

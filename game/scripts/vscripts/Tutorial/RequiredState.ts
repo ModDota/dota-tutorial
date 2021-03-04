@@ -16,6 +16,10 @@ export type RequiredState = {
     sunsFanLocation?: Vector
     requireSlacksGolem?: boolean
     slacksLocation?: Vector
+
+    // Riki
+    requireRiki?: boolean
+    rikiLocation?: Vector
 }
 
 /**
@@ -40,4 +44,8 @@ export const defaultRequiredState: FilledRequiredState = {
     sunsFanLocation: Vector(0, 0, 256),
     requireSlacksGolem: false,
     slacksLocation: Vector(0, 0, 256),
+
+    // Riki
+    requireRiki: false,
+    rikiLocation: GetGroundPosition(Vector(-1500, 4300), undefined),
 }

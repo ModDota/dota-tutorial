@@ -1,5 +1,6 @@
 declare const enum SectionName {
     Chapter1_Opening = "Chapter1_Opening",
+    Chapter1_Movement = "Chapter1_Movement",
     Chapter1_CameraUnlock = "Chapter1_CameraUnlock",
     Chapter1_Leveling = "Chapter1_Leveling",
     Chapter1_Casting = "Chapter1_Casting",
@@ -9,17 +10,24 @@ declare const enum SectionName {
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
+    Chapter4_Outpost = "Chapter4_Outpost",
 }
 
 declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
     GodzMudGolem = "npc_mud_golem_godz",
+    Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
-    TargetDummy = "npc_target_dummy",
+    Riki = "npc_dota_hero_riki",
+    TargetDummy = "npc_dota_tutorial_target_dummy",
+}
+
+declare const enum CustomAbilityKeys {
+    CustomMiranaArrow = "custom_mirana_arrow",
 }
 
 declare const enum chapter2SpecificKeys {

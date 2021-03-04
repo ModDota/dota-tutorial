@@ -1,5 +1,6 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
+import "./modifiers/modifier_dummy"
 
 /**
  * Get a list of all valid players currently in the game.
@@ -67,6 +68,16 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
     else {
         unit.RemoveModifierByName("modifier_tutorial_pacifist");
     }
+}
+
+/**
+ * Makes the player hero (un-)able to attack and move.
+ * @param frozen Whether or not to freeze the hero.
+ */
+export function freezePlayerHero(frozen: boolean) {
+    const hero = getOrError(getPlayerHero(), "Could not find player hero")
+    setUnitPacifist(hero, frozen)
+    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND)
 }
 
 /**
@@ -172,13 +183,8 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     let j = polygon.length - 1;
 
     for (let i = 0; i < polygon.length; j = i++) {
-        if (
-            polygon[i].y > point.y != polygon[j].y > point.y &&
-            point.x <
-            ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
-            (polygon[j].y - polygon[i].y) +
-            polygon[i].x
-        ) {
+        if (polygon[i].y > point.y != polygon[j].y > point.y &&
+            point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x) {
             inside = !inside;
         }
     }
@@ -194,4 +200,43 @@ export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC) {
         return true
 
     else return false
+}
+
+/**
+ * Spawns an untargetable, invisible dummy unit.
+ * @param location Location to spawn the dummy at.
+ */
+export function createDummy(location: Vector) {
+    const dummy = CreateUnitByName("npc_dummy_unit", location, true, undefined, undefined, DotaTeam.GOODGUYS)
+    dummy.AddNewModifier(dummy, undefined, "modifier_dummy", {})
+    return dummy
+}
+
+/**
+ * Orders a unit to use an ability.
+ * @param caster Unit that will use the ability.
+ * @param target Target of the ability.
+ * @param abilityName Name of the ability.
+ * @param orderType Type of unit order used for casting the ability with ExecuteOrderFromTable.
+ */
+export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector, abilityName: string, orderType: UnitOrder) => {
+    const ability = caster.FindAbilityByName(abilityName) as CDOTABaseAbility
+
+    let order: ExecuteOrderOptions = {
+        UnitIndex: caster.GetEntityIndex(),
+        OrderType: orderType,
+        AbilityIndex: ability.GetEntityIndex(),
+        Queue: true
+    };
+
+    if (typeof target === typeof CDOTA_BaseNPC) {
+        if (orderType === UnitOrder.CAST_TARGET)
+            order.TargetIndex = (target as CDOTA_BaseNPC).GetEntityIndex()
+        else
+            order.Position = (target as CDOTA_BaseNPC).GetAbsOrigin()
+    } else {
+        order.Position = (target as Vector)
+    }
+
+    ExecuteOrderFromTable(order)
 }
