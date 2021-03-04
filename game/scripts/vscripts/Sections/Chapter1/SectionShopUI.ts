@@ -35,9 +35,11 @@ const onStart = (complete: () => void) => {
                 waitingForPlayerToPurchaseTango = true;
             }),
             tg.wait(10),
-            tg.completeOnCheck(context => {
+            tg.immediate(_ => {
                 goalOpenShop.complete();
                 goalBuyTango.start();
+            }),
+            tg.completeOnCheck(context => {
                 return playerBoughtTango;
             }, 0.2),
             tg.immediate((context) => {

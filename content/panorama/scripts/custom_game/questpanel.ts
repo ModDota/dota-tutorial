@@ -14,9 +14,11 @@ function parseServerArray<T>(array: { [key: string]: T }): T[] {
 }
 
 GameEvents.Subscribe("set_goals", event => {
+    const localizeInline = GameUI.CustomUIConfig().localizeInline;
+
     // Clear the goals list and add each goal to the list.
     const questPanel = $("#QuestsPanelContainer");
-    questPanel.RemoveAndDeleteChildren()
+    questPanel.RemoveAndDeleteChildren();
 
     // TODO: Should we make sure that the goals are sorted by index?
     for (const goal of parseServerArray(event.goals)) {
@@ -28,6 +30,6 @@ GameEvents.Subscribe("set_goals", event => {
 
         const label = $.CreatePanel("Label", rowPanel, "");
         label.AddClass(goal.completed ? "QuestCompletedText" : "QuestUncompletedText");
-        label.text = goal.text;
+        label.text = localizeInline(goal.text);
     }
 });

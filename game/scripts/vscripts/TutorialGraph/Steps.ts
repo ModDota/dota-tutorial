@@ -95,7 +95,7 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             if (actualUnit && actualUnit.IsIdle()) {
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(1, () => checkIsIdle())
+                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
             }
         }
 
@@ -198,7 +198,6 @@ export const wait = (waitSeconds: tg.StepArgument<number>) => {
  */
 export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>) => {
     let playerIds: PlayerID[] | undefined = undefined
-
     return tg.step((context, complete) => {
         const actualTarget = tg.getArg(target, context)
 
@@ -245,7 +244,6 @@ export const moveCameraToPosition = (position: Vector, lerp: number) => {
 
     playerIds.forEach(playerId => {
         let player = PlayerResource.GetPlayer(playerId);
-
         if (player) {
             CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
                 cameraTargetX: position.x,

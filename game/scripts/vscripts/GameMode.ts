@@ -1,5 +1,6 @@
 import { reloadable } from "./lib/tstl-utils";
 import * as chapters from "./Sections/index";
+import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
@@ -13,16 +14,20 @@ declare global {
 @reloadable
 export class GameMode {
     Game: CDOTABaseGameMode = GameRules.GetGameModeEntity();
+    public customTimeManager: CustomTimeManager = new CustomTimeManager()
     canPlayerHeroEarnXP = false;
+
 
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
+        chapters.chapter1.sectionMovement,
         chapters.chapter1.sectionCameraUnlock,
         chapters.chapter1.sectionLeveling,
         chapters.chapter1.sectionCasting,
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
         chapters.chapter3.sectionOpening,
+        chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
     ]);
 
@@ -86,7 +91,7 @@ export class GameMode {
         // Game in progress rules
         GameRules.SetCreepSpawningEnabled(false);
         GameRules.SetAllowOutpostBonuses(false);
-        this.Game.SetCustomScanCooldown(99999);
+        this.Game.SetCustomScanCooldown(9);
         this.Game.SetCustomGlyphCooldown(99999);
         this.Game.DisableClumpingBehaviorByDefault(true);
         this.Game.SetBuybackEnabled(false);

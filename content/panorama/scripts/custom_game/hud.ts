@@ -42,6 +42,7 @@ function except<T>(a: Set<T>, b: Set<T>): Set<T> {
 /** UI Highlighting */
 
 const hudRoot = $.GetContextPanel().GetParent()!.GetParent()!.GetParent()!;
+let highlightedPanels: {[key:string]:Panel} = {};
 
 function findPanelAtPath(path: string): Panel | undefined {
     const splitPath = path.split("/");
@@ -57,7 +58,24 @@ function findPanelAtPath(path: string): Panel | undefined {
     return panel;
 }
 
-function highlightUiElement(path: string) {
+function removeHighlight(event: RemoveHighlightEvent) {
+    const { path } = event;
+    if (!highlightedPanels[path]) {
+        $.Msg("Panel is not currently highlighted");
+    }
+
+    highlightedPanels[path].DeleteAsync(0);
+    delete highlightedPanels[path];
+}
+
+function highlightUiElement(event: HighlightElementEvent) {
+    const { path, duration } = event;
+    // Panel is already highlighted
+    if (highlightedPanels[path]) {
+        $.Msg("Element is already highlighted");
+        return; 
+    } 
+
     const element = findPanelAtPath(path);
     // Can't highlight if the scale is too small/large/uninitialized
     if (element && element.actualuiscale_x > 0.01) {
@@ -72,8 +90,17 @@ function highlightUiElement(path: string) {
         highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
         highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
         highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
+
+        highlightedPanels[path] = highlightPanel;
+
+        if (duration) {
+            $.Schedule(duration, () => removeHighlight({path}));
+        }
     }
 }
+
+GameEvents.Subscribe("highlight_element", highlightUiElement);
+GameEvents.Subscribe("remove_highlight", removeHighlight);
 
 //** Chapters Panel */
 function ToggleChaptersMenu() {
