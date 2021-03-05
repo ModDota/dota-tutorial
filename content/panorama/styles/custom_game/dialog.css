@@ -391,13 +391,12 @@
 }
 
 .DialogPanelText {
-    //color: gradient( linear, 0% 0%, 0% 100%, from( #fff ), to( #ea7 ) );
-    //text-shadow: 2px 2px 0px 1 black;
     color: black;
-    font-style: italics;
-    font-weight: bold;
-    font-size: 18px;
+    font-style: normal;
+    font-weight: semi-bold;
+    font-size: 20px;
     text-overflow: shrink;
+    font-family: defaultFont;
     max-width: 500px;
     max-height: 200px;
     margin: 26px 36px;
@@ -1182,6 +1181,8 @@
 .DialogButtonContainer {
     horizontal-align: right;
     vertical-align: bottom;
+    margin-right: 0px;
+    margin-bottom: -20px;
 }
 
 .WardenNote .DialogButtonContainer,
@@ -1206,9 +1207,9 @@
 
 #ContinueDialogButton,
 #ContinueFloatingDialogButton {
-    background-image: url("s2r://panorama/images/control_icons/double_arrow_right_png.vtex");
-    background-position: 60% 50%;
-    background-size: 20px 20px;
+    background-image: url("file://{images}/custom_game/text_bubble/fast_forward.png");
+    background-position: 65% 50%;
+    background-size: 22px 20px;
 }
 
 #ContinueFloatingDialogButton,

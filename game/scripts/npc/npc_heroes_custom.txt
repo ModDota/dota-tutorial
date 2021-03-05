@@ -6,7 +6,17 @@
 	// Mirana with custom sacred arrow
 	//=================================================================================
 	"npc_dota_hero_mirana"
-		{
-			"Ability2"		"custom_mirana_arrow"
-		}
+    {
+        "Ability2"		"custom_mirana_arrow"
+    }
+
+    //=================================================================================
+    // Sniper changes
+    //=================================================================================
+    "npc_dota_hero_sniper"
+    {
+        "AttackAcquisitionRange"		"1800"
+        "AttributeBaseStrength"		"5"
+        "StatusHealth"		"100"
+    }
 }

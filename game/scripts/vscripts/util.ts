@@ -1,6 +1,7 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
+import { TutorialContext } from "./TutorialGraph/Core";
 
 /**
  * Get a list of all valid players currently in the game.
@@ -191,6 +192,17 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     return inside
 }
 
+export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
+    if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
+        unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
+        unit.GetUnitName() === CustomNpcKeys.DireMeleeCreep ||
+        unit.GetUnitName() === CustomNpcKeys.DireRangedCreep)
+
+        return true
+
+    else return false
+}
+
 /**
  * Spawns an untargetable, invisible dummy unit.
  * @param location Location to spawn the dummy at.
@@ -228,4 +240,32 @@ export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector
     }
 
     ExecuteOrderFromTable(order)
+}
+
+export function removeContextEntityIfExists(context: TutorialContext, entityKey: keyof TutorialContext) {
+    const entity = context[entityKey];
+
+    if (entity) {
+        if (Array.isArray(entity)) {
+            for (const entityInstance of entity) {
+                if (IsValidEntity(entityInstance)) {
+                    UTIL_Remove(entityInstance)
+                }
+            }
+        }
+        else {
+            if (IsValidEntity(entity)) {
+                UTIL_Remove(entity);
+            }
+        }
+        context[entityKey] = undefined;
+    }
+}
+      
+/**
+ * Returns whether a passed unit is a valid entity and alive.
+ * @param unit Unit to check.
+ */
+export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
+    return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
 }

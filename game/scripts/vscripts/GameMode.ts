@@ -17,7 +17,6 @@ export class GameMode {
     public customTimeManager: CustomTimeManager = new CustomTimeManager()
     canPlayerHeroEarnXP = false;
 
-
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
         chapters.chapter1.sectionMovement,
@@ -26,10 +25,12 @@ export class GameMode {
         chapters.chapter1.sectionCasting,
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
+        chapters.chapter2.SectionCreeps,
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
-        chapters.chapter5.sectionOpening
+        chapters.chapter4.sectionOutpost,
+        chapters.chapter5.sectionOpening,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -110,16 +111,15 @@ export class GameMode {
         this.Game.SetRuneEnabled(RuneType.XP, false);
 
         // Leveling rules
-        // Max level of 3
-        this.Game.SetCustomXPRequiredToReachNextLevel(
-            {
-                [0]: 0,
-                [1]: 10, // total XP to level up to level 2
-                [2]: 60,  // total XP to level up to level 3, etc...
-            }
-        );
-
+        // +1 exp = 1 level, to make it easy to level up our hero in code later.
+        // No natural experience gain.
+        const expTable: Record<number, number> = {};
+        for (let i = 0; i < 30; i++) {
+            expTable[i] = i;
+        }
+        this.Game.SetCustomXPRequiredToReachNextLevel(expTable);
         this.Game.SetUseCustomHeroLevels(true);
+
         this.Game.SetAllowNeutralItemDrops(false);
 
         // Make the fountain unable to attack
@@ -149,17 +149,16 @@ export class GameMode {
 
     ModifyExperienceFilter(event: ModifyExperienceFilterEvent): boolean {
         const hero = EntIndexToHScript(event.hero_entindex_const);
-        const playerID = event.player_id_const;
 
         if (hero === getPlayerHero()) {
-            if (!this.canPlayerHeroEarnXP) return false;
+            return this.canPlayerHeroEarnXP;
         }
 
-        return true;
+        return false;
     }
 
     ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean {
-        return true;
+        return false;
     }
 
     ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {

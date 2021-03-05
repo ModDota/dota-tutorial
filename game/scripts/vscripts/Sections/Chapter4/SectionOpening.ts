@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -9,7 +9,11 @@ const sectionName: SectionName = SectionName.Chapter4_Opening;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
-    heroLocation: GetGroundPosition(Vector(-3000, 3800), undefined)
+    heroLocation: Vector(-3000, 3800, 128),
+    heroLevel: 6,
+    heroAbilityMinLevels: [1, 1, 1, 1],
+    requireRiki: true,
+    rikiLocation: Vector(-1800, 4000, 256),
 };
 
 let canPlayerIssueOrders = true;
@@ -20,7 +24,7 @@ const slarkName = "npc_dota_hero_slark";
 const jukeDuo = [miranaName, slarkName];
 const firstScanLocation = Vector(2000, 3800);
 const secondScanLocation = Vector(-2000, 3800);
-const rikiName = "npc_dota_hero_riki";
+let currentRequiredScanLocation = firstScanLocation;
 const scanDuration = 8;
 
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
@@ -30,8 +34,9 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalListenDialog = goalTracker.addBoolean("Listen to the dialog.");
-    const goalScanFailed = goalTracker.addBoolean("Click on scan with leftmouse button, then click on the target place to scan.");
+    const goalListenDialog = goalTracker.addBoolean("Listen to the dialog explaining vision provided by friendly units.");
+    const goalWatchJuke = goalTracker.addBoolean("Watch this EPIC JUKE!");
+    const goalScanFailed = goalTracker.addBoolean("Click on scan with leftmouse button, then click on the target place.");
     const goalScanSucceed = goalTracker.addBoolean("Scan on the next target position.");
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
@@ -40,26 +45,29 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.immediate(() => playerHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
             tg.setCameraTarget(playerHero),
             tg.wait(2),
             //Part0: The camera pans to an empty part of the map
 
             //Part1: Creep wave explains vision
             tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),
-            tg.immediate(() => {
+            tg.immediate(_ => {
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
                 for (const creep of creeps) {
-                    if (creep.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep || creep.GetUnitName() === CustomNpcKeys.RadiantRangedCreep) {
+                    if (unitIsValidAndAlive(creep) && (creep.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep || creep.GetUnitName() === CustomNpcKeys.RadiantRangedCreep)) {
                         radiantCreeps.push(creep);
                     }
                 }
             }),
-            tg.immediate(() => canPlayerIssueOrders = false),
-            tg.setCameraTarget(context => radiantCreeps[0]),
-            tg.fork(context => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
+            tg.immediate(_ => canPlayerIssueOrders = false),
+            tg.setCameraTarget(_ => radiantCreeps[0]),
+            tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
             tg.setCameraTarget(playerHero),
-            tg.immediate(() => disposeCreeps()),
+            tg.immediate(_ => {
+                disposeCreeps();
+                goalListenDialog.complete();
+                goalWatchJuke.start();
+            }),
 
             //Part2: Juke
             tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
@@ -83,44 +91,41 @@ function onStart(complete: () => void) {
                 ])
             ]),
             tg.setCameraTarget(playerHero),
-            tg.immediate(() => disposeHeroes()),
-            tg.immediate(() => canPlayerIssueOrders = true),
+            tg.immediate(_ => disposeHeroes()),
+            tg.immediate(_ => canPlayerIssueOrders = true),
             tg.wait(2),
 
             //Part3: 1st scan, failed
-            tg.setCameraTarget(undefined),
-            tg.immediate(context => {
+            tg.immediate(_ => {
                 scanLocation = undefined;
-                goalListenDialog.complete();
+                goalWatchJuke.complete();
                 goalScanFailed.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.completeOnCheck(_ => checkIfScanCoversTheLocation(firstScanLocation), 1),
 
-            tg.immediate(context => {
+            tg.immediate(_ => {
                 goalScanFailed.complete();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
             tg.wait(scanDuration),
 
             //Part4: 2nd scan, succeed
-            tg.spawnUnit(rikiName, secondScanLocation, DotaTeam.BADGUYS, rikiName),
-            tg.immediate(context => {
-                context[rikiName].SetAttackCapability(UnitAttackCapability.NO_ATTACK);
+            tg.immediate(_ => {
                 scanLocation = undefined;
+                currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.completeOnCheck(_ => checkIfScanCoversTheLocation(secondScanLocation), 1),
 
-            tg.immediate(context => {
+            tg.immediate(_ => {
                 goalScanSucceed.complete();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
             tg.wait(scanDuration),
-            tg.wait(5),
         ])
     );
 
@@ -134,13 +139,16 @@ function onStop() {
     print("Stopping", sectionName);
     if (graph) {
         graph.stop(GameRules.Addon.context);
+        disposeCreeps();
+        disposeHeroes();
         graph = undefined;
     }
 }
 
+// Scan radius is 900, but check within 500 to avoid the case of not covering target heroes
 function checkIfScanCoversTheLocation(targetScanLocation: Vector): boolean {
     if (scanLocation) {
-        if (scanLocation.__sub(targetScanLocation).Length2D() < 900) {
+        if (scanLocation.__sub(targetScanLocation).Length2D() < 500) {
             return true;
         }
         displayDotaErrorMessage("Scan the required location");
@@ -181,7 +189,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 
     if (event.order_type === UnitOrder.RADAR) {
         scanLocation = Vector(event.position_x, event.position_y);
-        return true;
+        return checkIfScanCoversTheLocation(currentRequiredScanLocation);
     }
 
     return canPlayerIssueOrders;

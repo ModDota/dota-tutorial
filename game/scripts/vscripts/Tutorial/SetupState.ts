@@ -14,12 +14,56 @@ export const setupState = (stateReq: RequiredState): void => {
     // Player / hero
     let hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
-    if (hero.GetCurrentXP() !== state.heroXP || hero.GetUnitName() !== state.heroUnitName) {
-        hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, state.heroXP)
+    // Recreate the hero if we want a lower level than the current one (because you can't downlevel a hero)
+    if (hero.GetLevel() > state.heroLevel || hero.GetUnitName() !== state.heroUnitName) {
+        hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, 0)
     } else {
         // Make sure the hero is not frozen
         freezePlayerHero(false)
     }
+
+    // Level the hero to the desired level. 1 experience per level as defined in GameMode.
+    hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
+
+    // Ability levels and points
+
+    const abilityIndices = [0, 1, 2, 3]
+    const abilities = [0, 1, 2, 5].map(abilityIndex => getOrError(hero.GetAbilityByIndex(abilityIndex)))
+
+    // Function for calculating how many ability points we have left based on the current ability levels and hero level.
+    const getRemainingAbilityPoints = () => {
+        let abilPoints = hero.GetLevel()
+        for (const ability of abilities) {
+            abilPoints -= ability.GetLevel()
+        }
+        return abilPoints
+    }
+
+    // Check whether we have to reset the ability points because we can not reach our minimum with the current ability levels.
+    let remainingAbilityPoints = getRemainingAbilityPoints()
+    for (const abilityIndex of abilityIndices) {
+        remainingAbilityPoints -= Math.max(0, state.heroAbilityMinLevels[abilityIndex] - abilities[abilityIndex].GetLevel())
+    }
+
+    // Reset to the passed minimum levels if we can't reach it with the current ability levels and remaining points.
+    if (remainingAbilityPoints < 0) {
+        for (const abilityIndex of abilityIndices) {
+            abilities[abilityIndex].SetLevel(state.heroAbilityMinLevels[abilityIndex])
+        }
+    }
+
+    // Set the ability levels to the higher of the minimum or the current level.
+    for (const abilityIndex of abilityIndices) {
+        const abil = abilities[abilityIndex]
+        abil.SetLevel(Math.max(state.heroAbilityMinLevels[abilityIndex], abil.GetLevel()))
+    }
+
+    // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
+    remainingAbilityPoints = getRemainingAbilityPoints()
+    if (remainingAbilityPoints < 0) {
+        Warning("Remaining ability points are negative. Should be greater or equal to zero.")
+    }
+    hero.SetAbilityPoints(Math.max(0, remainingAbilityPoints))
 
     // Focus all cameras on the hero
     const playerIds = findAllPlayersID()
@@ -31,24 +75,38 @@ export const setupState = (stateReq: RequiredState): void => {
         hero.SetAbsOrigin(state.heroLocation)
     }
 
-    hero.SetAbilityPoints(state.heroAbilityPoints)
     hero.SetGold(state.heroGold, false)
 
     // Golems
     if (state.requireSlacksGolem) {
-        createOrMoveGolem(CustomNpcKeys.SlacksMudGolem, state.slacksLocation, state.heroLocation)
+        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation)
     } else {
-        clearGolem(CustomNpcKeys.SlacksMudGolem)
+        clearUnit(CustomNpcKeys.SlacksMudGolem)
     }
 
-    if (state.sunsFanLocation) {
-        createOrMoveGolem(CustomNpcKeys.SunsFanMudGolem, state.sunsFanLocation, state.heroLocation)
+    if (state.requireSunsfanGolem) {
+        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation)
     } else {
-        clearGolem(CustomNpcKeys.SunsFanMudGolem)
+        clearUnit(CustomNpcKeys.SunsFanMudGolem)
+    }
+
+    // Riki
+    if (state.requireRiki) {
+        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, riki => {
+            const rikiHero = riki as CDOTA_BaseNPC_Hero
+            rikiHero.SetAbilityPoints(3)
+            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
+            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
+            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
+            rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+            rikiHero.AddItemByName("item_lotus_orb")
+        })
+    } else {
+        clearUnit(CustomNpcKeys.Riki)
     }
 }
 
-function createOrMoveGolem(unitName: string, location: Vector, faceTo?: Vector) {
+function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onCreated?: (unit: CDOTA_BaseNPC) => void) {
     const context = GameRules.Addon.context
 
     const postCreate = (unit: CDOTA_BaseNPC) => {
@@ -65,13 +123,17 @@ function createOrMoveGolem(unitName: string, location: Vector, faceTo?: Vector) 
     }
 
     if (!context[unitName] || !IsValidEntity(context[unitName]) || !context[unitName].IsAlive()) {
-        CreateUnitByNameAsync(unitName, location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => postCreate(unit))
+        const unit = CreateUnitByName(unitName, location, true, undefined, undefined, team)
+        if (onCreated) {
+            onCreated(unit)
+        }
+        postCreate(unit)
     } else {
         postCreate(context[unitName])
     }
 }
 
-function clearGolem(unitName: string) {
+function clearUnit(unitName: string) {
     const context = GameRules.Addon.context
 
     if (context[unitName]) {
