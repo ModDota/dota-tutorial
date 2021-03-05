@@ -23,6 +23,7 @@ declare const enum CustomNpcKeys {
     Riki = "npc_dota_hero_riki",
     GodzMudGolem = "npc_mud_golem_godz",
     TargetDummy = "npc_dota_tutorial_target_dummy",
+    PurgePugna = "npc_dota_hero_pugna",
 }
 
 declare const enum CustomAbilityKeys {

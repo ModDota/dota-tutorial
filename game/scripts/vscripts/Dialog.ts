@@ -199,3 +199,11 @@ export function playAudio(soundName: string, text: string, unit: CDOTA_BaseNPC, 
 export function playText(text: string, unit: CDOTA_BaseNPC, duration: number) {
     playCommon(text, unit, duration)
 }
+
+/**
+ * Stops the unit's dialog.
+ * @param unit Unit whose dialog to stop.
+ */
+export function stop(unit: CDOTA_BaseNPC) {
+    dialogController.onDialogStart(getOrError(getPlayerHero()), unit)
+}

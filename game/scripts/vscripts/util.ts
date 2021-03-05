@@ -229,3 +229,11 @@ export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector
 
     ExecuteOrderFromTable(order)
 }
+
+/**
+ * Returns whether a passed unit is a valid entity and alive.
+ * @param unit Unit to check.
+ */
+export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
+    return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
+}

@@ -653,19 +653,29 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
     let waitTimer: string | undefined = undefined
+    let actualUnit: CDOTA_BaseNPC | undefined = undefined
 
     return tg.step((context, complete) => {
-        const actualUnit = tg.getArg(unit, context)
+        actualUnit = tg.getArg(unit, context)
         const actualText = tg.getArg(text, context)
         const actualWaitSeconds = tg.getArg(waitSeconds, context)
 
         dg.playText(actualText, actualUnit, actualWaitSeconds)
 
-        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => complete())
+        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => {
+            waitTimer = undefined
+            actualUnit = undefined
+            complete()
+        })
     }, context => {
         if (waitTimer) {
             Timers.RemoveTimer(waitTimer)
             waitTimer = undefined
+        }
+
+        if (actualUnit) {
+            dg.stop(actualUnit)
+            actualUnit = undefined
         }
     })
 }
