@@ -17,7 +17,6 @@ export class GameMode {
     public customTimeManager: CustomTimeManager = new CustomTimeManager()
     canPlayerHeroEarnXP = false;
 
-
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
         chapters.chapter1.sectionMovement,

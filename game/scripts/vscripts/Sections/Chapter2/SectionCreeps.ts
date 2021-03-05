@@ -4,7 +4,8 @@ import { modifier_sniper_deny_chapter2_creeps } from "../../modifiers/modifier_s
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { findRealPlayerID, getPlayerHero, setUnitPacifist } from "../../util";
+import { findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { Chapter2SpecificKeys, LastHitStages } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
 let graph: tg.TutorialStep | undefined = undefined
@@ -15,7 +16,8 @@ const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     slacksLocation: Vector(-5495, 2930, 128),
-    sunsFanLocation: Vector(-5515, 2700, 128)
+    sunsFanLocation: Vector(-5515, 2700, 128),
+    heroAbilityMinLevels: [1, 1, 1, 0],
 }
 
 let canPlayerIssueOrders = true;
@@ -31,8 +33,8 @@ const onStart = (complete: () => void) => {
     const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
     const direCreepNames = [CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireRangedCreep];
 
-    let radiantCreeps: CDOTA_BaseNPC[] | undefined = GameRules.Addon.context[chapter2SpecificKeys.RadiantCreeps];
-    let direCreeps: CDOTA_BaseNPC[] | undefined = GameRules.Addon.context[chapter2SpecificKeys.DireCreeps];
+    let radiantCreeps: CDOTA_BaseNPC[] | undefined = GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps];
+    let direCreeps: CDOTA_BaseNPC[] | undefined = GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps];
 
     const radiantCreepsSpawnLocation = Vector(-6288, 3280, 128)
     const direCreepsSpawnLocation = Vector(-5911, 5187, 128)
@@ -50,13 +52,13 @@ const onStart = (complete: () => void) => {
     const goalKillSniper = goalTracker.addBoolean("Kill Sniper.");
 
     if (!radiantCreeps) {
-        radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, false, radiantCreeps);
-        GameRules.Addon.context[chapter2SpecificKeys.RadiantCreeps] = radiantCreeps;
+        radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, false);
+        GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] = radiantCreeps;
     }
 
     if (!direCreeps) {
-        direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, false, direCreeps);
-        GameRules.Addon.context[chapter2SpecificKeys.DireCreeps] = direCreeps;
+        direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, false);
+        GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] = direCreeps;
     }
 
     let godzMudGolem: CDOTA_BaseNPC;
@@ -88,11 +90,11 @@ const onStart = (complete: () => void) => {
                                 direCreeps = direCreeps.filter(direCreep => IsValidEntity(direCreep) && direCreep.IsAlive())
 
                                 if (radiantCreeps.length == 0) {
-                                    createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, true, radiantCreeps)
+                                    radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, true)
                                 }
 
                                 if (direCreeps.length == 0) {
-                                    createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, true, direCreeps)
+                                    direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, true)
                                 }
 
                                 return 1;
@@ -161,15 +163,15 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.immediate(context => {
                         const sniper = CreateUnitByName("npc_dota_hero_sniper", sniperSpawnLocation, true, undefined, undefined, DotaTeam.BADGUYS)
-                        context[chapter2SpecificKeys.sniperEnemyHero] = sniper
+                        context[Chapter2SpecificKeys.sniperEnemyHero] = sniper
                         sniper.AddNewModifier(sniper, undefined, modifier_sniper_deny_chapter2_creeps.name, {})
                         sniper.FaceTowards(playerHero.GetAbsOrigin())
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                     }),
-                    tg.setCameraTarget(context => context[chapter2SpecificKeys.sniperEnemyHero]),
+                    tg.setCameraTarget(context => context[Chapter2SpecificKeys.sniperEnemyHero]),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_7, context => context[CustomNpcKeys.SlacksMudGolem], 4),
                     tg.immediate(context => {
-                        const sniper: CDOTA_BaseNPC = context[chapter2SpecificKeys.sniperEnemyHero];
+                        const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero];
                         sniper.FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                         const modifier = sniper.FindModifierByName(modifier_sniper_deny_chapter2_creeps.name) as modifier_sniper_deny_chapter2_creeps
                         if (modifier) {
@@ -211,7 +213,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
                     tg.immediate(context => {
                         goalKillSniper.start()
-                        const sniper: CDOTA_BaseNPC = context[chapter2SpecificKeys.sniperEnemyHero]
+                        const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero]
                         if (sniper) {
                             if (sniper.HasModifier(modifier_sniper_deny_chapter2_creeps.name)) {
                                 const modifier = sniper.FindModifierByName(modifier_sniper_deny_chapter2_creeps.name) as modifier_sniper_deny_chapter2_creeps;
@@ -222,7 +224,7 @@ const onStart = (complete: () => void) => {
                         }
                     }),
                     tg.completeOnCheck(context => {
-                        const sniper = context[chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
+                        const sniper = context[Chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
                         return !sniper.IsAlive()
                     }, 0.5),
                     tg.playGlobalSound("SniperDiesLamely.mp3", true),
@@ -257,35 +259,9 @@ const onStop = () => {
     }
 
     const context = GameRules.Addon.context;
-    const radiantCreeps = context[chapter2SpecificKeys.RadiantCreeps]
-    if (radiantCreeps) {
-        if (Array.isArray(radiantCreeps)) {
-            for (const radiantCreep of radiantCreeps) {
-                if (IsValidEntity(radiantCreep)) {
-                    UTIL_Remove(radiantCreep)
-                }
-            }
-        }
-    }
-
-    const direCreeps = context[chapter2SpecificKeys.DireCreeps]
-    if (direCreeps) {
-        if (Array.isArray(direCreeps)) {
-            for (const direCreep of direCreeps) {
-                if (IsValidEntity(direCreep)) {
-                    UTIL_Remove(direCreep)
-                }
-            }
-        }
-    }
-
-    const sniper = context[chapter2SpecificKeys.sniperEnemyHero]
-    if (sniper) {
-        if (IsValidEntity(sniper)) {
-            UTIL_Remove(sniper);
-        }
-        context[chapter2SpecificKeys.sniperEnemyHero] = undefined;
-    }
+    removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
+    removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
+    removeContextEntityIfExists(context, Chapter2SpecificKeys.sniperEnemyHero)
 
     if (graph) {
         graph.stop(GameRules.Addon.context);
@@ -323,8 +299,8 @@ function SendCreepToFight(unit: CDOTA_BaseNPC) {
     })
 }
 
-function createLaneCreeps(creepNames: string[], location: Vector, team: DotaTeam, sendCreepToFight: boolean, arrayToPush: CDOTA_BaseNPC[] | undefined): CDOTA_BaseNPC[] {
-    if (!arrayToPush) arrayToPush = [];
+function createLaneCreeps(creepNames: string[], location: Vector, team: DotaTeam, sendCreepToFight: boolean): CDOTA_BaseNPC[] {
+    const arrayToPush = [];
 
     for (const creepName of creepNames) {
         const creep = CreateUnitByName(creepName, location, true, undefined, undefined, team)

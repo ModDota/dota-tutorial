@@ -2,7 +2,8 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { findRealPlayerID, getPlayerHero } from "../../util";
+import { findRealPlayerID, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import { Chapter2SpecificKeys } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Opening
 let graph: tg.TutorialStep | undefined = undefined
@@ -16,21 +17,6 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5906, -3892, 256),
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroAbilityMinLevels: [1, 1, 1, 0],
-}
-
-enum ChapterTwoOpeningGoalKeys {
-    MoveNextToBarracks,
-    ListenToSunsfanAndSlacks,
-    WaitForCreepsToPrepareToMove,
-    PrepareToMove,
-    WaitForCreepsToPrepareToAttack,
-    PrepareToAttack,
-    LastHitCreeps
-}
-
-enum GoalState {
-    Started,
-    Completed,
 }
 
 const onStart = (complete: () => void) => {
@@ -105,8 +91,8 @@ const onStart = (complete: () => void) => {
                     }
                 }
 
-                context[chapter2SpecificKeys.RadiantCreeps] = radiantCreeps;
-                context[chapter2SpecificKeys.DireCreeps] = direCreeps;
+                context[Chapter2SpecificKeys.RadiantCreeps] = radiantCreeps;
+                context[Chapter2SpecificKeys.DireCreeps] = direCreeps;
             }),
             tg.immediate(context => {
                 goalListenToSunsfanAndSlacks.complete()
@@ -146,24 +132,8 @@ const onStop = () => {
     print("Stopping", sectionName);
 
     const context = GameRules.Addon.context
-    let radiantCreeps: CDOTA_BaseNPC[] = context[chapter2SpecificKeys.RadiantCreeps]
-    let direCreeps: CDOTA_BaseNPC[] = context[chapter2SpecificKeys.DireCreeps]
-
-    if (radiantCreeps) {
-        for (const creep of radiantCreeps) {
-            UTIL_Remove(creep)
-        }
-        radiantCreeps = [];
-        context[chapter2SpecificKeys.RadiantCreeps] = undefined
-    }
-
-    if (direCreeps) {
-        for (const creep of direCreeps) {
-            UTIL_Remove(creep)
-        }
-        direCreeps = [];
-        context[chapter2SpecificKeys.DireCreeps] = undefined
-    }
+    removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
+    removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
 
     if (graph) {
         graph.stop(GameRules.Addon.context);

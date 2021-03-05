@@ -1,4 +1,5 @@
 import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
+import { LastHitStages } from "../Sections/Chapter2/shared";
 import { isCustomLaneCreepUnit } from "../util";
 
 @registerModifier()

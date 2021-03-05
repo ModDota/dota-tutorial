@@ -30,18 +30,6 @@ declare const enum CustomAbilityKeys {
     CustomMiranaArrow = "custom_mirana_arrow",
 }
 
-declare const enum chapter2SpecificKeys {
-    RadiantCreeps = "radiantCreepsGroupChapter2",
-    DireCreeps = "direCreepsGroupChapter2",
-    sniperEnemyHero = "sniperEnemyHeroDenyChapter2"
-}
-
-declare const enum LastHitStages {
-    LAST_HIT = 1,
-    LAST_HIT_BREATHE_FIRE = 2,
-    LAST_HIT_DENY = 3,
-}
-
 type Goal = {
     text: string;
     completed: boolean;
