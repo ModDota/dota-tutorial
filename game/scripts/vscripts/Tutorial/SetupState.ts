@@ -100,8 +100,6 @@ export const setupState = (stateReq: RequiredState): void => {
             rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
             rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
             rikiHero.AddItemByName("item_lotus_orb")
-            rikiHero.SetHealth(1)
-            rikiHero.SetBaseHealthRegen(0)
         })
     } else {
         clearUnit(CustomNpcKeys.Riki)
