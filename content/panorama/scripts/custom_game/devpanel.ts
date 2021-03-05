@@ -18,6 +18,7 @@ const sections = {
     "CH1 - Casting": SectionName.Chapter1_Casting,
     "CH1 - Shop UI": SectionName.Chapter1_ShopUI,
     "CH2 - Opening": SectionName.Chapter2_Opening,
+    "CH2 - Creeps": SectionName.Chapter2_Creeps,
     "CH3": SectionName.Chapter3_Opening,
     "CH4 - Opening": SectionName.Chapter4_Opening,
     "CH4 - Wards": SectionName.Chapter4_Wards,

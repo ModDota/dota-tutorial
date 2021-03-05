@@ -17,7 +17,6 @@ export class GameMode {
     public customTimeManager: CustomTimeManager = new CustomTimeManager()
     canPlayerHeroEarnXP = false;
 
-
     private tutorial = new tut.Tutorial([
         chapters.chapter1.sectionOpening,
         chapters.chapter1.sectionMovement,
@@ -26,6 +25,7 @@ export class GameMode {
         chapters.chapter1.sectionCasting,
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
+        chapters.chapter2.SectionCreeps,
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
@@ -148,17 +148,16 @@ export class GameMode {
 
     ModifyExperienceFilter(event: ModifyExperienceFilterEvent): boolean {
         const hero = EntIndexToHScript(event.hero_entindex_const);
-        const playerID = event.player_id_const;
 
         if (hero === getPlayerHero()) {
-            if (!this.canPlayerHeroEarnXP) return false;
+            return this.canPlayerHeroEarnXP;
         }
 
-        return true;
+        return false;
     }
 
     ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean {
-        return true;
+        return false;
     }
 
     ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {
