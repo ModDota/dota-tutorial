@@ -13,8 +13,24 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 600,
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-5984, -3800, 256),
-    sunsFanLocation: Vector(-5580, -4160, 256)
+    slacksLocation: Vector(-5906, -3892, 256),
+    sunsFanLocation: Vector(-5500, -4170, 256),
+    heroAbilityMinLevels: [1, 1, 1, 0],
+}
+
+enum ChapterTwoOpeningGoalKeys {
+    MoveNextToBarracks,
+    ListenToSunsfanAndSlacks,
+    WaitForCreepsToPrepareToMove,
+    PrepareToMove,
+    WaitForCreepsToPrepareToAttack,
+    PrepareToAttack,
+    LastHitCreeps
+}
+
+enum GoalState {
+    Started,
+    Completed,
 }
 
 const onStart = (complete: () => void) => {

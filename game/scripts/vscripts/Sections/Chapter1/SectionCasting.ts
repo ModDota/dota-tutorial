@@ -8,6 +8,8 @@ let graph: tg.TutorialStep | undefined = undefined;
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     slacksLocation: Vector(-6250, -6050, 256),
+    heroLevel: 3,
+    heroAbilityMinLevels: [0, 1, 1, 0],
 };
 
 const start = (complete: () => void) => {
@@ -29,20 +31,7 @@ const start = (complete: () => void) => {
         error("No hero found");
     }
 
-    for (let i = 0; i < DOTA_MAX_ABILITIES - 1; i++) {
-        const a = hero.GetAbilityByIndex(i);
-        if (a) {
-            hero.RemoveAbility(a.GetAbilityName());
-        }
-    }
-
-    if (!hero.HasAbility(abilityName)) {
-        hero.AddAbility(abilityName);
-    }
     const ability = hero.FindAbilityByName(abilityName)!;
-    ability.UpgradeAbility(true);
-
-    ability.SetUpgradeRecommended(false);
     ability.SetUpgradeRecommended(true);
 
     // TODO FIX location

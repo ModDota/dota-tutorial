@@ -8,6 +8,7 @@ let graph: tg.TutorialStep | undefined = undefined
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     slacksLocation: Vector(-6250, -6050, 256),
+    heroLevel: 2,
 }
 
 const start = (complete: () => void) => {
@@ -22,22 +23,11 @@ const start = (complete: () => void) => {
 
     const hero = getPlayerHero();
     if (!hero) error("Could not find the player's hero.");
-    const abilityName = "dragon_knight_breathe_fire";
+    const abilityName = "dragon_knight_dragon_tail";
 
-    for (let i = 0; i < DOTA_MAX_ABILITIES - 1; i++) {
-        const a = hero.GetAbilityByIndex(i);
-        if (a) {
-            hero.RemoveAbilityByHandle(a);
-        }
-    }
-
-    if (!hero.HasAbility(abilityName)) {
-        hero.AddAbility(abilityName);
-    }
     const ability = hero.FindAbilityByName(abilityName);
     if (!ability) error("Dragon Knight's Breath Fire ability was not found.");
 
-    hero.SetAbilityPoints(1);
     ability.SetUpgradeRecommended(true);
 
     graph = tg.seq([
