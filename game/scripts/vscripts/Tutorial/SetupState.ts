@@ -110,9 +110,6 @@ export const setupState = (stateReq: RequiredState): void => {
     const treeLocationEnd = Vector(-6300, -6300, 256)
     const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
 
-    // Destroy all trees around the tree-line center point.
-    GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
-
     // Spawn trees in a line between start and end if we want them.
     if (state.requireTrees) {
         const numTrees = 6
@@ -123,6 +120,9 @@ export const setupState = (stateReq: RequiredState): void => {
                 CreateTempTree(treeLocation, 100000)
             }
         }
+    } else {
+        // Destroy all trees around the tree-line center point.
+        GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
     }
 }
 
