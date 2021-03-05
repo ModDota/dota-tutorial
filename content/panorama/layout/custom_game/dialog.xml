@@ -32,7 +32,10 @@
             <Panel id="JournalPageBackground"/>
             <Label id="DialogLabelSizer" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
             <Label id="DialogLabel" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
-      
+             <Panel class="DialogButtonContainer LeftRightFlow">
+                <Button id="ContinueDialogButton" class="ButtonBevel CloseButton"  onactivate="OnAdvanceDialogButtonPressed()" hittest="true"/>
+                <Button id="CloseDialogButton" class="ButtonBevel CloseButton" onactivate="OnCloseDialogButtonPressed()" hittest="true"/>   
+              </Panel>  
           </Panel>
           <Panel id="DialogPlayerConfirm">
             <Panel id="Player0Confirm" class="PlayerConfirm"><Label text="{g:dota_player_name:nc:nh:player_id_0}" html="true"/><DOTAHeroImage id="Player0ConfirmIcon" class="ConfirmHeroIcon" heroid="1" hittest="false" scaling="stretch-to-fit-y-preserve-aspect"/></Panel>
@@ -41,10 +44,6 @@
             <Panel id="Player3Confirm" class="PlayerConfirm"><Label text="{g:dota_player_name:nc:nh:player_id_3}" html="true"/><DOTAHeroImage id="Player3ConfirmIcon" class="ConfirmHeroIcon" heroid="4" hittest="false" scaling="stretch-to-fit-y-preserve-aspect"/></Panel>
           </Panel>
           <Button id="ConfirmButton" class="ButtonBevel" onactivate="OnConfirmButtonPressed()"><Panel class="CheckMark"/><Label text="#DOTA_Siltbreaker_ContinueSpeechText"/></Button>      
-          <Panel class="DialogButtonContainer LeftRightFlow">
-            <Button id="ContinueDialogButton" class="ButtonBevel CloseButton"  onactivate="OnAdvanceDialogButtonPressed()" hittest="true"/>
-            <Button id="CloseDialogButton" class="ButtonBevel CloseButton" onactivate="OnCloseDialogButtonPressed()" hittest="true"/>   
-          </Panel>  
         </Panel>
       </Panel>
     </Panel>

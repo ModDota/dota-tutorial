@@ -261,3 +261,11 @@ export function removeContextEntityIfExists(context: TutorialContext, entityKey:
         context[entityKey] = undefined;
     }
 }
+      
+/**
+ * Returns whether a passed unit is a valid entity and alive.
+ * @param unit Unit to check.
+ */
+export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
+    return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
+}
