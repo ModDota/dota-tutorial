@@ -9,6 +9,7 @@ declare const enum SectionName {
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
+    Chapter5_Opening ="Chapter5_Opening"
 }
 
 declare const enum CustomNpcKeys {
@@ -21,6 +22,13 @@ declare const enum CustomNpcKeys {
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     GodzMudGolem = "npc_mud_golem_godz",
     TargetDummy = "npc_dota_tutorial_target_dummy",
+}
+
+declare const enum CustomEntityKeys {
+    RadiantTopBountyFOWViewer = "radiant_top_bounty_fow_viewer",
+    RadiantAncientsBountyFOWViewer = "radiant_ancients_bounty_fow_viewer",
+    DireBotBountyFOWViewer = "dire_bot_bounty_fow_viewer",
+    DireAncientsBountyFOWViewer = "dire_ancients_bounty_fow_viewer"
 }
 
 declare const enum CustomAbilityKeys {

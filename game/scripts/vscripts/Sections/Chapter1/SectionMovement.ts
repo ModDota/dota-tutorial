@@ -2,7 +2,6 @@ import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
 import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
-import { moveCameraToPosition } from "../../TutorialGraph/index"
 import { GoalTracker } from "../../Goals"
 
 let graph: tg.TutorialStep | undefined = undefined
@@ -71,22 +70,19 @@ const onStart = (complete: () => void) => {
             // Make sure player hero is not in the arrow firing area
             tg.immediate(() => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
             tg.wait(0.5),
-            tg.setCameraTarget(undefined),
             tg.playGlobalSound("mirana_mir_attack_10"),
             tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
             tg.forkAny([
                 fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
-                tg.seq([
-                    tg.fork([
-                        tg.seq([
-                            tg.immediate(() => moveCameraToPosition(botRightMarkerLocation, 1)),
-                            tg.wait(2),
-                            tg.setCameraTarget(playerHero),
-                            tg.immediate(() => canPlayerIssueOrders = true),
-                        ]),
-                        tg.goToLocation(botRightMarkerLocation),
+                tg.fork([
+                    tg.seq([
+                        tg.panCameraLinear(miranaSpawnLocation, botRightMarkerLocation, 2),
+                        tg.wait(1),
+                        tg.setCameraTarget(playerHero),
+                        tg.immediate(() => canPlayerIssueOrders = true),
                     ]),
-                ])
+                    tg.goToLocation(botRightMarkerLocation),
+                ]),
             ]),
             tg.immediate((ctx) => {
                 goalMoveToSecondMarker.complete()
