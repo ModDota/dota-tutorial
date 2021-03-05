@@ -191,7 +191,7 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     return inside
 }
 
-export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC) {
+export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
     if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
         unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
         unit.GetUnitName() === CustomNpcKeys.DireMeleeCreep ||
