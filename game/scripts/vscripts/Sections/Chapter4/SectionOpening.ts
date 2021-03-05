@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -54,7 +54,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
                 for (const creep of creeps) {
-                    if (creep.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep || creep.GetUnitName() === CustomNpcKeys.RadiantRangedCreep) {
+                    if (unitIsValidAndAlive(creep) && (creep.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep || creep.GetUnitName() === CustomNpcKeys.RadiantRangedCreep)) {
                         radiantCreeps.push(creep);
                     }
                 }
