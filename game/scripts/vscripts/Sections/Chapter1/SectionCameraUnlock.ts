@@ -11,7 +11,7 @@ const requiredState: RequiredState = {
     requireSlacksGolem: true,
     sunsFanLocation: Vector(-6400, -5900, 256),
     slacksLocation: Vector(-6250, -6050, 256),
-    requireTrees: true,
+    requireFountainTrees: true,
 }
 
 const targetDummySpawnOffset = Vector(500, 500, 0)

@@ -111,7 +111,7 @@ export const setupState = (stateReq: RequiredState): void => {
     const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
 
     // Spawn trees in a line between start and end if we want them.
-    if (state.requireTrees) {
+    if (state.requireFountainTrees) {
         const numTrees = 6
         for (let i = 0; i < numTrees; i++) {
             // Only create a tree if there is not already one at the desired location.
