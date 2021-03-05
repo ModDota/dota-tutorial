@@ -23,7 +23,7 @@
         "Chapter_6_BriefInformation" "Chapter 6 Brief Information"
         "SkipChapter" "Skip to Chapter"
 
-        "npc_mud_golem_sunsfan" "Sunsfan"
+        "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
         "npc_mud_golem_godz"    "Godz"
         "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
@@ -54,6 +54,7 @@
         "Script_1_Movement_8" "Anyway, she’s very protective of us for some reason. Watch out for her arrows. Simply dodge them when she fires at you."
         "Script_1_Movement_9" "Generic Greeting"
         "Script_1_Movement_10" "Nice Dodging"
+        "Script_1_Movement_11" "that's a good effort! Very good you are a real walking pro. Now, let's get to the hard stuff. I am going to unlock your camera now. If at any point you get lost, the F1 key will bring you back to your hero."
         "Script_1_Camera_1" "woah woah where are you goin?! This guys out of his mind! Reel it back in kiddo"
         "Script_1_Camera_2" "in the game of dota, you will need to move your camera while simultaneously moving your hero to a selected spot. This is difficult to master but is step one. We will help you, but first we need to get you ready to fight if you want to survive outside of the safety of your fountain."
         "Script_1_Camera_3" "here is a target dummy"

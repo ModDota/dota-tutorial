@@ -18,7 +18,7 @@ const start = (complete: () => void) => {
     print("Started section casting");
 
     const goalTracker = new GoalTracker();
-    const goalKillSlacks = goalTracker.addBoolean("Kill slacks using your Breathe Fire ability.");
+    const goalKillSlacks = goalTracker.addBoolean("Kill Slacks using your Breathe Fire ability.");
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(ctx => {
