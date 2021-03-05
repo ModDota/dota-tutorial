@@ -9,14 +9,15 @@ const sectionName: SectionName = SectionName.Chapter4_Outpost;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
-    heroLocation: Vector(-3000, 3800, 128),
+    heroLocation: Vector(-2000, 3800, 128),
     requireRiki: true,
-    rikiLocation: Vector(-1500, 4400, 256),
+    rikiLocation: Vector(-1000, 4400, 256),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
 };
 
 const dustName = "item_dust";
+const dustLocation = Vector(-1500, 4000, 256);
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -29,17 +30,21 @@ function onStart(complete: () => void) {
     const goalKillRiki = goalTracker.addBoolean("Take down Riki.");
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
-    playerHero.SetMoveCapability(UnitMoveCapability.GROUND);
+    // TODO: Give ranged in dragon form
+    playerHero.SetAttackCapability(UnitAttackCapability.MELEE_ATTACK);
+
+    const direOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"));
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.setCameraTarget(playerHero),
             tg.wait(1),
 
             // Part 0: Pick up and use dust
             // TODO: lock hero position to ensure dust affect on Riki
             tg.immediate(_ => {
-                CreateItemOnPositionSync(Vector(-2800, 3800), CreateItem(dustName, undefined, undefined)),
-                    goalPickupDust.start()
+                goalPickupDust.start();
+                CreateItemOnPositionSync(dustLocation, CreateItem(dustName, undefined, undefined));
             }),
             tg.completeOnCheck(_ => playerHero.HasItemInInventory(dustName), 1),
 
@@ -47,8 +52,8 @@ function onStart(complete: () => void) {
                 goalPickupDust.complete();
                 goalGoToLastLocationSawRiki.start();
             }),
-
-            tg.goToLocation(Vector(-2000, 3800)),
+            // TODO: save last position saw riki
+            tg.goToLocation(Vector(-1500, 4000)),
 
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
@@ -56,10 +61,11 @@ function onStart(complete: () => void) {
             }),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),
+            tg.immediate(_ => goalUseDust.complete()),
+            tg.wait(1),
 
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
-                goalUseDust.complete();
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 const smokeScreen = riki.GetAbilityByIndex(0);
                 if (smokeScreen) {
@@ -75,13 +81,13 @@ function onStart(complete: () => void) {
                     riki.CastAbilityOnTarget(riki, lotusOrb, 0);
                 }
             }),
-            tg.wait(1),
+            tg.wait(0.5),
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 const tricksOfTheTrade = riki.GetAbilityByIndex(2);
                 if (tricksOfTheTrade) {
-                    riki.CastAbilityOnPosition(riki.GetAbsOrigin().__add(Vector(200, 200)), tricksOfTheTrade, 0);
+                    riki.CastAbilityOnPosition(riki.GetAbsOrigin().__add(Vector(-200, 100)), tricksOfTheTrade, 0);
                 }
             }),
             tg.wait(3),
@@ -105,7 +111,6 @@ function onStart(complete: () => void) {
             }),
 
             tg.completeOnCheck(_ => {
-                const direOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"));
                 return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
             }, 1),
 
