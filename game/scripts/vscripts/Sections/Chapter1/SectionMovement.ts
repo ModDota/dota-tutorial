@@ -93,9 +93,11 @@ const onStart = (complete: () => void) => {
                 if (ctx[CustomNpcKeys.Mirana] && IsValidEntity(ctx[CustomNpcKeys.Mirana]))
                     ctx[CustomNpcKeys.Mirana].RemoveSelf()
             }),
-            // Should be different personalities for these lines, until determined, using Slacks and SUNSfan
+            // Should be different personalities for the following two lines, until determined, using Slacks and SUNSfan
             tg.textDialog(LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+
+            tg.textDialog(LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
         ])
     )
 

@@ -43,7 +43,7 @@ const onStart = (complete: () => void) => {
 
     const goalTracker = new GoalTracker()
     const goalMoveNextToBarracks = goalTracker.addBoolean("Move to the marked location next to the top barracks.")
-    const goalListenToSunsfanAndSlacks = goalTracker.addBoolean("Listen to Sunsfan and Slack")
+    const goalListenToSunsfanAndSlacks = goalTracker.addBoolean("Listen to SUNSfan and Slacks.")
     const goalWaitForCreepsToPrepareToMove = goalTracker.addBoolean("Wait for the creeps to prepare for the assault.")
     const goalPrepareToMove = goalTracker.addBoolean("Move behind the creeps and prepare to move.")
     const goalWaitForCreepsToPrepareToAttack = goalTracker.addBoolean("Wait for the creeps to reach combat positions.")
