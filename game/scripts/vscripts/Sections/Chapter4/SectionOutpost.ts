@@ -12,6 +12,8 @@ const requiredState: RequiredState = {
     heroLocation: Vector(-3000, 3800, 128),
     requireRiki: true,
     rikiLocation: Vector(-1500, 4400, 256),
+    heroLevel: 6,
+    heroAbilityMinLevels: [1, 1, 1, 1],
 };
 
 const dustName = "item_dust";

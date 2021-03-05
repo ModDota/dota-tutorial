@@ -13,7 +13,9 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5906, -3892, 256),
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroLocation: Vector(-6800, -6372, 384),
-    heroLocationTolerance: 800
+    heroLocationTolerance: 800,
+    heroLevel: 3,
+    heroAbilityMinLevels: [1, 1, 1, 0],
 }
 
 enum ChapterTwoOpeningGoalKeys {

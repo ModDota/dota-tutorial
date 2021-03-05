@@ -9,7 +9,9 @@ const sectionName: SectionName = SectionName.Chapter4_Wards;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
-    heroLocation: Vector(1900, -3500, 256)
+    heroLocation: Vector(1900, -3500, 256),
+    heroLevel: 6,
+    heroAbilityMinLevels: [1, 1, 1, 1],
 };
 const markerLocation = Vector(1000, -4100);
 const rikiPosition2D = Vector(200, -4200);

@@ -14,12 +14,56 @@ export const setupState = (stateReq: RequiredState): void => {
     // Player / hero
     let hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
-    if (hero.GetCurrentXP() !== state.heroXP || hero.GetUnitName() !== state.heroUnitName) {
-        hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, state.heroXP)
+    // Recreate the hero if we want a lower level than the current one (because you can't downlevel a hero)
+    if (hero.GetLevel() > state.heroLevel || hero.GetUnitName() !== state.heroUnitName) {
+        hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, 0)
     } else {
         // Make sure the hero is not frozen
         freezePlayerHero(false)
     }
+
+    // Level the hero to the desired level. 1 experience per level as defined in GameMode.
+    hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
+
+    // Ability levels and points
+
+    const abilityIndices = [0, 1, 2, 3]
+    const abilities = [0, 1, 2, 5].map(abilityIndex => getOrError(hero.GetAbilityByIndex(abilityIndex)))
+
+    // Function for calculating how many ability points we have left based on the current ability levels and hero level.
+    const getRemainingAbilityPoints = () => {
+        let abilPoints = hero.GetLevel()
+        for (const ability of abilities) {
+            abilPoints -= ability.GetLevel()
+        }
+        return abilPoints
+    }
+
+    // Check whether we have to reset the ability points because we can not reach our minimum with the current ability levels.
+    let remainingAbilityPoints = getRemainingAbilityPoints()
+    for (const abilityIndex of abilityIndices) {
+        remainingAbilityPoints -= Math.max(0, state.heroAbilityMinLevels[abilityIndex] - abilities[abilityIndex].GetLevel())
+    }
+
+    // Reset to the passed minimum levels if we can't reach it with the current ability levels and remaining points.
+    if (remainingAbilityPoints < 0) {
+        for (const abilityIndex of abilityIndices) {
+            abilities[abilityIndex].SetLevel(state.heroAbilityMinLevels[abilityIndex])
+        }
+    }
+
+    // Set the ability levels to the higher of the minimum or the current level.
+    for (const abilityIndex of abilityIndices) {
+        const abil = abilities[abilityIndex]
+        abil.SetLevel(Math.max(state.heroAbilityMinLevels[abilityIndex], abil.GetLevel()))
+    }
+
+    // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
+    remainingAbilityPoints = getRemainingAbilityPoints()
+    if (remainingAbilityPoints < 0) {
+        Warning("Remaining ability points are negative. Should be greater or equal to zero.")
+    }
+    hero.SetAbilityPoints(Math.max(0, remainingAbilityPoints))
 
     // Focus all cameras on the hero
     const playerIds = findAllPlayersID()
@@ -31,7 +75,6 @@ export const setupState = (stateReq: RequiredState): void => {
         hero.SetAbsOrigin(state.heroLocation)
     }
 
-    hero.SetAbilityPoints(state.heroAbilityPoints)
     hero.SetGold(state.heroGold, false)
 
     // Golems

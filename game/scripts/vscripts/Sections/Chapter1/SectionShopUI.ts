@@ -13,7 +13,9 @@ let playerBoughtTango = false;
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    heroGold: 0
+    heroGold: 0,
+    heroLevel: 3,
+    heroAbilityMinLevels: [1, 1, 1, 0],
 };
 
 const onStart = (complete: () => void) => {
