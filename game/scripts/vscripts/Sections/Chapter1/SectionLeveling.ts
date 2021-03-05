@@ -24,7 +24,7 @@ const start = (complete: () => void) => {
     const goalLevelBreatheFire = goalTracker.addBoolean("Level up your Breathe Fire ability.")
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        tg.textDialog(LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 6), // take W
+        tg.textDialog(LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 9), // take W
         tg.immediate(_ => goalLevelDragonTail.start()),
         tg.upgradeAbility(getOrError(hero.FindAbilityByName("dragon_knight_dragon_tail"), "Dragon Tail was not found.")),
         tg.immediate(_ => goalLevelDragonTail.complete()),
@@ -88,14 +88,14 @@ const start = (complete: () => void) => {
         }),
 
         // Excellent work, skill Q
-        tg.textDialog(LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 4),
+        tg.textDialog(LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
         tg.immediate(_ => hero.HeroLevelUp(true)),
         tg.immediate(_ => goalLevelBreatheFire.start()),
         tg.upgradeAbility(getOrError(hero.GetAbilityByIndex(0), "Breathe Fire was not found.")),
         tg.immediate(_ => goalLevelBreatheFire.complete()),
 
         // Explain Q and W
-        tg.textDialog(LocalizationKey.Script_1_Leveling_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+        tg.textDialog(LocalizationKey.Script_1_Leveling_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 6),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
