@@ -50,9 +50,10 @@ const onStart = (complete: () => void) => {
         tg.textDialog(LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
         tg.textDialog(LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
         tg.textDialog(LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.setCameraTarget(() => Entities.FindAllByName("dota_badguys_fort")[0]),
+        tg.panCameraLinear(ctx => ctx[CustomNpcKeys.SunsFanMudGolem].GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 4),
         tg.textDialog(LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
         tg.textDialog(LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.panCameraExponential(Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.8),
         tg.setCameraTarget(() => playerHero),
     ])
 

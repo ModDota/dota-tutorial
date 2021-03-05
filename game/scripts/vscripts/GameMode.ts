@@ -29,6 +29,7 @@ export class GameMode {
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
+        chapters.chapter4.sectionOutpost,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -109,16 +110,15 @@ export class GameMode {
         this.Game.SetRuneEnabled(RuneType.XP, false);
 
         // Leveling rules
-        // Max level of 3
-        this.Game.SetCustomXPRequiredToReachNextLevel(
-            {
-                [0]: 0,
-                [1]: 10, // total XP to level up to level 2
-                [2]: 60,  // total XP to level up to level 3, etc...
-            }
-        );
-
+        // +1 exp = 1 level, to make it easy to level up our hero in code later.
+        // No natural experience gain.
+        const expTable: Record<number, number> = {};
+        for (let i = 0; i < 30; i++) {
+            expTable[i] = i;
+        }
+        this.Game.SetCustomXPRequiredToReachNextLevel(expTable);
         this.Game.SetUseCustomHeroLevels(true);
+
         this.Game.SetAllowNeutralItemDrops(false);
 
         // Make the fountain unable to attack

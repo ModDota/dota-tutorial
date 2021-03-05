@@ -29,6 +29,7 @@
         "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
         "npc_dota_tutorial_dire_melee_creep" "Melee Creep"
         "npc_dota_tutorial_dire_ranged_creep" "Ranged Creep"
+        "npc_dota_tutorial_target_dummy" "Target Dummy"
         "dota_item_build_title_default" "Items for future victim"
 
         "Script_1_Opening_1" "Oh look at this! New blood! The dragon knight himself!"

@@ -1,3 +1,5 @@
+import { completeOnCheck } from "./Steps"
+
 /**
  * Shared context in a tutorial graph.
  */
@@ -139,6 +141,35 @@ export const seq = (steps: StepArgument<TutorialStep[]>): TutorialStep => {
         if (actualSteps) {
             actualSteps.forEach(step => step.stop(context))
             actualSteps = undefined
+        }
+    })
+}
+
+/**
+ * Creates a while loop that executes the step while a condition is true. Completes when the condition evaluates to false during a loop.
+ * @param condition Condition to check before executing the step or completing.
+ * @param loopStep Step to execute in a loop while condition is true.
+ */
+export const loop = (condition: StepArgument<boolean>, loopStep: StepArgument<TutorialStep>): TutorialStep => {
+    let actualLoopStep: TutorialStep | undefined = undefined
+
+    return step((context, onComplete) => {
+        const loopStart = () => {
+            const actualCondition = getArg(condition, context)
+            if (actualCondition) {
+                actualLoopStep = getArg(loopStep, context)
+                actualLoopStep.start(context, () => loopStart())
+            } else {
+                actualLoopStep = undefined
+                onComplete()
+            }
+        }
+
+        loopStart()
+    }, context => {
+        if (actualLoopStep) {
+            actualLoopStep.stop(context)
+            actualLoopStep = undefined
         }
     })
 }
