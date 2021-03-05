@@ -11,6 +11,7 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-6250, -6050, 256),
     requireSunsfanGolem: true,
     heroLevel: 2,
+    requireTrees: true,
 }
 
 const start = (complete: () => void) => {

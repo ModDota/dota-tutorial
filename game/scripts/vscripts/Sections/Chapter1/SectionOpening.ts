@@ -6,6 +6,7 @@ import { RequiredState } from "../../Tutorial/RequiredState"
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = true;
 const requiredState: RequiredState = {
+    requireTrees: true,
 }
 
 const onStart = (complete: () => void) => {

@@ -12,6 +12,7 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-6250, -6050, 256),
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
+    requireTrees: true,
 };
 
 const start = (complete: () => void) => {
