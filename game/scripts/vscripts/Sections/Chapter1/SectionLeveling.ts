@@ -36,6 +36,7 @@ const start = (complete: () => void) => {
         tg.textDialog(LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // here comes pugna
 
         tg.spawnUnit(CustomNpcKeys.PurgePugna, _ => hero.GetAbsOrigin().__add(RandomVector(500)), DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
+        tg.immediate(ctx => getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC | undefined).SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
 
         tg.textDialog(LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna], 4), // yellow everybody
         tg.textDialog(LocalizationKey.Script_1_Leveling_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // make him stop, press W

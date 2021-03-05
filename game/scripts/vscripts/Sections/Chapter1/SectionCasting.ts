@@ -31,7 +31,7 @@ const start = (complete: () => void) => {
         }),
 
         tg.textDialog(LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
         tg.immediate(_ => goalKillSlacks.start()),
         tg.textDialog(LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
@@ -41,7 +41,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => goalKillSlacks.complete()),
 
         tg.textDialog(LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_1_BreatheFire_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_BreatheFire_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
     ]));
 
     graph.start(GameRules.Addon.context, () => {
