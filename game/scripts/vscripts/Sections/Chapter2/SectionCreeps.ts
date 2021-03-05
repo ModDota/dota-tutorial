@@ -18,6 +18,7 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5495, 2930, 128),
     sunsFanLocation: Vector(-5515, 2700, 128),
     heroAbilityMinLevels: [1, 1, 1, 0],
+    heroLevel: 3
 }
 
 let canPlayerIssueOrders = true;
