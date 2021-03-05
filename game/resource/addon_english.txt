@@ -25,7 +25,7 @@
 
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
-        "npc_mud_golem_godz"    "Godz"
+        "npc_mud_golem_godz"    "GoDz"
         "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
         "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
         "npc_dota_tutorial_dire_melee_creep" "Melee Creep"
