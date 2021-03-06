@@ -189,6 +189,11 @@ function playCommon(
 ) {
     const hero = getOrError(getPlayerHero(), "Can't find player hero");
 
+    // Overriding sounds with placeholders
+    const speakerName = unit.GetUnitName().toLowerCase()
+    if (speakerName.includes("slacks")) soundName = "Placeholders.Slacks";
+    else if (speakerName.includes("sunsfan")) soundName = "Placeholders.Sunsfan";
+
     dialogController.addDialogToQueue({
         speaker: unit,
         text: line,
