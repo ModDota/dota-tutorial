@@ -10,6 +10,8 @@ function ToggleDialogLog() {
 
     $("#DialogLog").ToggleClass("Visible");
     Game.EmitSound("ui_chat_slide_in");
+
+    $.Schedule(0.1, () => $("#DialogLineContainer").ScrollToBottom());
 }
 
 function Close() {
@@ -44,7 +46,7 @@ function AddLine(data: NetworkedData<DialogReceivedEvent>) {
         lines[lineToHide].DeleteAsync(0);
     }
 
-    $("#DialogLineContainer").ScrollToBottom();
+    $.Schedule(0.1, () => $("#DialogLineContainer").ScrollToBottom());
 }
 
 GameEvents.Subscribe("dialog", AddLine);
