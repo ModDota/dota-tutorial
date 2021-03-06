@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero } from "../util"
+import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
 
 /**
  * Sets up the state to match the passed state requirement.
@@ -78,28 +78,37 @@ export const setupState = (stateReq: RequiredState): void => {
     hero.SetGold(state.heroGold, false)
 
     // Golems
+    const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
+        if (!created) {
+            setUnitPacifist(unit, false);
+            unit.SetTeam(DotaTeam.GOODGUYS);
+        }
+    }
+
     if (state.requireSlacksGolem) {
-        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation)
+        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
     } else {
         clearUnit(CustomNpcKeys.SlacksMudGolem)
     }
 
     if (state.requireSunsfanGolem) {
-        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation)
+        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation, golemPostCreate)
     } else {
         clearUnit(CustomNpcKeys.SunsFanMudGolem)
     }
 
     // Riki
     if (state.requireRiki) {
-        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, riki => {
-            const rikiHero = riki as CDOTA_BaseNPC_Hero
-            rikiHero.SetAbilityPoints(3)
-            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
-            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
-            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
-            rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
-            rikiHero.AddItemByName("item_lotus_orb")
+        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {
+            if (created) {
+                const rikiHero = riki as CDOTA_BaseNPC_Hero
+                rikiHero.SetAbilityPoints(3)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
+                rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+                rikiHero.AddItemByName("item_lotus_orb")
+            }
         })
     } else {
         clearUnit(CustomNpcKeys.Riki)
@@ -126,7 +135,7 @@ export const setupState = (stateReq: RequiredState): void => {
     }
 }
 
-function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onCreated?: (unit: CDOTA_BaseNPC) => void) {
+function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {
     const context = GameRules.Addon.context
 
     const postCreate = (unit: CDOTA_BaseNPC) => {
@@ -144,12 +153,15 @@ function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, fa
 
     if (!context[unitName] || !IsValidEntity(context[unitName]) || !context[unitName].IsAlive()) {
         const unit = CreateUnitByName(unitName, location, true, undefined, undefined, team)
-        if (onCreated) {
-            onCreated(unit)
-        }
         postCreate(unit)
+        if (onPostCreate) {
+            onPostCreate(unit, true)
+        }
     } else {
         postCreate(context[unitName])
+        if (onPostCreate) {
+            onPostCreate(context[unitName], false)
+        }
     }
 }
 
