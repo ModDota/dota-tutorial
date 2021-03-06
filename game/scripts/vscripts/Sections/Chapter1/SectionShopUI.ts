@@ -2,13 +2,10 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero } from "../../util";
-import { TutorialContext } from "../../TutorialGraph/index";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
 let graph: tg.TutorialStep | undefined = undefined
-let waitingForPlayerToPurchaseTango = false;
-let playerBoughtTango = false;
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
@@ -18,6 +15,9 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
 };
+
+let waitingForPlayerToPurchaseTango = false;
+let playerBoughtTango = false;
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -29,10 +29,15 @@ const onStart = (complete: () => void) => {
     const goalTracker = new GoalTracker();
     const goalOpenShop = goalTracker.addBoolean("Open the shop.");
     const goalBuyTango = goalTracker.addBoolean("Use the gold provided to purchase a Tango.");
+    const goalEatTree = goalTracker.addBoolean("Use tango to eat a tree and escape.");
+    const goalMoveOut = goalTracker.addBoolean("Move to the target location.");
+
+    waitingForPlayerToPurchaseTango = false;
+    playerBoughtTango = false;
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.immediate((context) => {
+            tg.immediate(_ => {
                 goalOpenShop.start();
                 playerHero.SetGold(90, true);
                 waitingForPlayerToPurchaseTango = true;
@@ -42,12 +47,25 @@ const onStart = (complete: () => void) => {
                 goalOpenShop.complete();
                 goalBuyTango.start();
             }),
-            tg.completeOnCheck(context => {
+            tg.completeOnCheck(_ => {
                 return playerBoughtTango;
             }, 0.2),
-            tg.immediate((context) => {
-                goalBuyTango.complete()
-            })
+            tg.immediate(_ => {
+                goalBuyTango.complete();
+                goalEatTree.start();
+            }),
+            tg.completeOnCheck(_ => {
+                return playerHero.HasModifier("modifier_tango_heal");
+            }, 0.2),
+            tg.immediate(_ => {
+                goalEatTree.complete();
+                goalMoveOut.start();
+            }),
+            tg.goToLocation(GetGroundPosition(Vector(-6700, -4800), undefined)),
+            tg.immediate(_ => {
+                goalMoveOut.complete();
+            }),
+            tg.wait(1),
         ])
     )
 
@@ -84,8 +102,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
             if (boughtTango) {
                 playerBoughtTango = true;
                 waitingForPlayerToPurchaseTango = false;
-            }
-            else {
+            } else {
                 displayDotaErrorMessage("Use your gold to buy a Tango.");
                 return false;
             }
