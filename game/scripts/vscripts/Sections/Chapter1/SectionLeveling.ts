@@ -3,16 +3,19 @@ import * as tut from "../../Tutorial/Core"
 import { freezePlayerHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
+import { slacksFountainLocation } from "./Shared"
 
 let graph: tg.TutorialStep | undefined = undefined
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
-    slacksLocation: Vector(-6250, -6050, 256),
     requireSunsfanGolem: true,
+    slacksLocation: slacksFountainLocation,
     heroLevel: 2,
     requireFountainTrees: true,
 }
+
+const pugnaLocation = Vector(-6700, -6300, 384)
 
 const start = (complete: () => void) => {
     print("Started section leveling")
@@ -36,7 +39,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => freezePlayerHero(true)),
         tg.textDialog(LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // here comes pugna
 
-        tg.spawnUnit(CustomNpcKeys.PurgePugna, _ => hero.GetAbsOrigin().__add(RandomVector(500)), DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
+        tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
         tg.immediate(ctx => getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC | undefined).SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
 
         tg.textDialog(LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna], 4), // yellow everybody

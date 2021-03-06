@@ -9,9 +9,17 @@ const sectionName: SectionName = SectionName.Chapter2_Opening
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = true;
 
+const moveNextToBarracksLocation = Vector(-6574, -3742, 256)
+const radiantCreepsSpawnLocation = Vector(-6795, -3474, 256)
+const direCreepsSpawnLocation = Vector(-5911, 5187, 128)
+const radiantCreepsMoveToPrepareLaunchAssaultLocation = Vector(-6600, -2425, 128)
+const moveToPrepareToLaunchAssaultLocation = Vector(-6600, -2745, 128)
+const radiantCreepsPrepareToAttackLocation = Vector(-6288, 3280, 128)
+const moveToPrepareToAttackLocation = Vector(-6288, 3000, 128)
+
 const requiredState: RequiredState = {
-    heroLocation: Vector(-6800, -6372, 384),
-    heroLocationTolerance: 600,
+    heroLocation: moveNextToBarracksLocation,
+    heroLocationTolerance: 1500,
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     slacksLocation: Vector(-5906, -3892, 256),
@@ -32,14 +40,6 @@ const onStart = (complete: () => void) => {
 
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
-
-    const moveNextToBarracksLocation = Vector(-6574, -3742, 256)
-    const radiantCreepsSpawnLocation = Vector(-6795, -3474, 256)
-    const direCreepsSpawnLocation = Vector(-5911, 5187, 128)
-    const radiantCreepsMoveToPrepareLaunchAssaultLocation = Vector(-6600, -2425, 128)
-    const moveToPrepareToLaunchAssaultLocation = Vector(-6600, -2745, 128)
-    const radiantCreepsPrepareToAttackLocation = Vector(-6288, 3280, 128)
-    const moveToPrepareToAttackLocation = Vector(-6288, 3000, 128)
 
     const goalTracker = new GoalTracker()
     const goalMoveNextToBarracks = goalTracker.addBoolean("Move to the marked location next to the top barracks.")

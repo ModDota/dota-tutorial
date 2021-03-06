@@ -348,7 +348,7 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
  * Pans the camera from the start location to the end location exponentially (ie. starting out faster and getting slower the closer we are to the target).
  * @param startLocation Start location for the pan.
  * @param endLocation End location for the pan.
- * @param alpha Value that should be between 0 and 1. Values towards 0 are slower and towards 1 are faster.
+ * @param alpha Speed is proportional to the remaining distance and multiplied by alpha, so higher means faster.
  */
 export const panCameraExponential = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, alpha: number) => {
     return panCamera(startLocation, endLocation, (startLoc, endLoc, loc) => {
