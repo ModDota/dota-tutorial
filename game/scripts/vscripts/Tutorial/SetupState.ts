@@ -132,7 +132,7 @@ export const setupState = (stateReq: RequiredState): void => {
     // Blockades
 
     // Destroy old blockades
-    for (const spawnedBlockade of spawnedBlockades.values()) {
+    for (const spawnedBlockade of spawnedBlockades) {
         if (!state.blockades.includes(spawnedBlockade)) {
             spawnedBlockade.destroy()
             spawnedBlockades.delete(spawnedBlockade)
