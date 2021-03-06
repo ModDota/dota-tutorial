@@ -19,14 +19,4 @@ export class modifier_blocker extends BaseModifier {
             [ModifierState.NO_HEALTH_BAR]: true,
         }
     }
-
-    DeclareFunctions() {
-        return [
-            ModifierFunction.IGNORE_MOVESPEED_LIMIT
-        ];
-    }
-
-    GetModifierIgnoreMovespeedLimit(): 0 | 1 {
-        return 1
-    }
 }
