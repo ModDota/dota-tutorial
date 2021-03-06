@@ -2,7 +2,7 @@ import { defaultRequiredState, FilledRequiredState, RequiredState } from "./Requ
 import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero } from "../util"
 import { Blockade } from "../Blockade"
 
-// Keep track of spawned bloakdes so we can remove them again.
+// Keep track of spawned blockades so we can remove them again.
 const spawnedBlockades = new Set<Blockade>()
 
 /**
