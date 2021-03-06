@@ -372,30 +372,33 @@ export const panCameraLinear = (startLocation: tg.StepArgument<Vector>, endLocat
 }
 
 /**
- * Creates a tutorial step that waits for the hero to upgrade an ability
- * @param ability the ability that needs to be upgraded.
+ * Creates a tutorial step that waits for an ability to be upgraded to a minimum level (defaults to 1).
+ * @param ability The ability that needs to be upgraded.
+ * @param minimumLevel Optional minimum level the ability needs to be upgraded to. Default to 1.
  */
-export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
+export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>, minimumLevel?: tg.StepArgument<number>) => {
     let checkTimer: string | undefined = undefined
 
     return tg.step((context, complete) => {
-        const actualAbility = tg.getArg(ability, context);
-        const desiredLevel = actualAbility.GetLevel() + 1;
-        actualAbility.SetUpgradeRecommended(true);
+        const actualAbility = tg.getArg(ability, context)
+        const actualMinimumLevel = tg.getOptionalArg(minimumLevel, context) ?? 1
+
+        actualAbility.SetUpgradeRecommended(true)
+
         const checkAbilityLevel = () => {
-            if (desiredLevel == actualAbility.GetLevel()) {
-                actualAbility.SetUpgradeRecommended(false);
-                complete();
+            if (actualAbility.GetLevel() >= actualMinimumLevel) {
+                actualAbility.SetUpgradeRecommended(false)
+                complete()
             } else {
-                checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
+                checkTimer = Timers.CreateTimer(0.1, () => checkAbilityLevel())
             }
         }
-        checkAbilityLevel();
+        checkAbilityLevel()
     }, context => {
         if (checkTimer) {
-            const actualAbility = tg.getArg(ability, context);
+            const actualAbility = tg.getArg(ability, context)
             Timers.RemoveTimer(checkTimer)
-            actualAbility.SetUpgradeRecommended(false);
+            actualAbility.SetUpgradeRecommended(false)
             checkTimer = undefined
         }
     })

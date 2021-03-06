@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { freezePlayerHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 
@@ -14,6 +14,11 @@ const requiredState: RequiredState = {
     requireFountainTrees: true,
 }
 
+const abilNameDragonTail = "dragon_knight_dragon_tail"
+const abilNameBreatheFire = "dragon_knight_breathe_fire"
+
+let learnAbilityAllowedName: string | undefined = undefined
+
 const start = (complete: () => void) => {
     print("Started section leveling")
 
@@ -25,9 +30,10 @@ const start = (complete: () => void) => {
     const goalLevelBreatheFire = goalTracker.addBoolean("Level up your Breathe Fire ability.")
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
+        tg.immediate(_ => learnAbilityAllowedName = abilNameDragonTail),
         tg.textDialog(LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 9), // take W
         tg.immediate(_ => goalLevelDragonTail.start()),
-        tg.upgradeAbility(getOrError(hero.FindAbilityByName("dragon_knight_dragon_tail"), "Dragon Tail was not found.")),
+        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), "Dragon Tail was not found.")),
         tg.immediate(_ => goalLevelDragonTail.complete()),
 
         tg.textDialog(LocalizationKey.Script_1_Leveling_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // hover over abil
@@ -91,9 +97,10 @@ const start = (complete: () => void) => {
 
         // Excellent work, skill Q
         tg.textDialog(LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+        tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
         tg.immediate(_ => hero.HeroLevelUp(true)),
         tg.immediate(_ => goalLevelBreatheFire.start()),
-        tg.upgradeAbility(getOrError(hero.GetAbilityByIndex(0), "Breathe Fire was not found.")),
+        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
         tg.immediate(_ => goalLevelBreatheFire.complete()),
 
         // Explain Q and W
@@ -106,6 +113,19 @@ const start = (complete: () => void) => {
     })
 }
 
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
+    // Only allow to train the allowed ability if set.
+    if (learnAbilityAllowedName && event.order_type === UnitOrder.TRAIN_ABILITY) {
+        const ability = getOrError(EntIndexToHScript(event.entindex_ability), "Could not find ability being trained") as CDOTABaseAbility
+        if (ability.GetAbilityName() !== learnAbilityAllowedName) {
+            displayDotaErrorMessage("Train the ability you are instructed to.")
+            return false
+        }
+    }
+
+    return true
+}
+
 const stop = () => {
     if (graph) {
         graph.stop(GameRules.Addon.context)
@@ -113,4 +133,4 @@ const stop = () => {
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, requiredState, start, stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, requiredState, start, stop, orderFilter)
