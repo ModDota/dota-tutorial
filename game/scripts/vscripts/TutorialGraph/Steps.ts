@@ -674,7 +674,7 @@ export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<
         }
 
         if (actualUnit) {
-            dg.stop(actualUnit)
+            dg.stop()
             actualUnit = undefined
         }
     })

@@ -41,21 +41,27 @@ class DialogController {
         );
     }
 
-    public addDialogToQueue(dialog: DialogData) {
-        this.dialogQueue.push(dialog);
-    }
-
-    public clear() {
-        this.dialogQueue = [];
-        CustomGameEventManager.Send_ServerToAllClients("dialog_clear", {});
-
-        // stop the current voice line
+    public stopCurrentSound() {
         if (this.currentLine) {
             const { speaker, sound } = this.currentLine;
             if (sound && speaker) {
                 speaker.StopSound(sound);
             }
         }
+    }
+
+    public stopCurrentDialog() {
+        CustomGameEventManager.Send_ServerToAllClients("dialog_clear", {});
+        this.stopCurrentSound();
+    }
+
+    public addDialogToQueue(dialog: DialogData) {
+        this.dialogQueue.push(dialog);
+    }
+
+    public clear() {
+        this.dialogQueue = [];
+        this.stopCurrentDialog();
     }
 
     public onDialogStart(hero: CDOTA_BaseNPC_Hero) {
@@ -126,6 +132,8 @@ class DialogController {
 
     public onDialogEnded(source: EntityIndex, data: DialogCompleteEvent) {
         if (!data.DialogEntIndex) return;
+
+        this.stopCurrentSound();
 
         let dialogUnit = EntIndexToHScript(
             data.DialogEntIndex
@@ -229,8 +237,8 @@ export function playText(text: string, unit: CDOTA_BaseNPC, duration: number) {
  * Stops the unit's dialog.
  * @param unit Unit whose dialog to stop.
  */
-export function stop(unit: CDOTA_BaseNPC) {
-    dialogController.onDialogStart(getOrError(getPlayerHero()));
+export function stop() {
+    dialogController.stopCurrentDialog();
 }
 
 /**
