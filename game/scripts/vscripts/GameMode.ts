@@ -132,6 +132,7 @@ export class GameMode {
         this.Game.SetModifyExperienceFilter(event => this.ModifyExperienceFilter(event), this);
         this.Game.SetModifyGoldFilter(event => this.ModifyGoldFilter(event), this);
         this.Game.SetItemAddedToInventoryFilter(event => this.ItemAddedToInventoryFilter(event), this);
+        this.Game.SetModifierGainedFilter(event => this.ModifierGainedFilter(event), this)
     }
 
     DamageFilter(event: DamageFilterEvent): boolean {
@@ -163,6 +164,13 @@ export class GameMode {
 
     ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {
         return true;
+    }
+
+    ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
+        if (event.name_const = "modifier_rune_doubledamage")
+            event.duration = -1
+        
+        return true 
     }
 
     public OnStateChange(): void {

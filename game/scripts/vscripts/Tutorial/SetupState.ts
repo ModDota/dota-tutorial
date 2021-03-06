@@ -1,5 +1,6 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
 import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero } from "../util"
+import { BaseModifier } from "../lib/dota_ts_adapter"
 
 /**
  * Sets up the state to match the passed state requirement.
@@ -103,6 +104,17 @@ export const setupState = (stateReq: RequiredState): void => {
         })
     } else {
         clearUnit(CustomNpcKeys.Riki)
+    }
+
+    // Set or remove DD modifier as needed
+    if (state.heroHasDoubleDamage) {
+        if (!hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", undefined)
+        }
+    } else {
+        if (hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.RemoveModifierByName("modifier_rune_doubledamage")
+        }
     }
 }
 
