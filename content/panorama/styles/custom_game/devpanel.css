@@ -38,8 +38,8 @@
 #ButtonContainer {
     position: 30px 0px 0px;
     height: 400px;
-    width: 370px;
-    flow-children: down;
+    width: 100%;
+    flow-children: right-wrap;
 }
 
 .SkipButton {

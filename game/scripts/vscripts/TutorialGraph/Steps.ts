@@ -482,6 +482,33 @@ export const waitForModifierKey = (key: ModifierKey) => {
 }
 
 /**
+ * Waits for the player to choose a chat wheel phrase.
+ * @param phraseIndex Optional chat wheel phrase index from 0 to 7 starting at the top going clockwise. If not passed will complete on any index.
+ */
+export const waitForChatWheel = (phraseIndex?: number) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("chat_wheel_phrase_selected", (source, event) => {
+            print("Got chat wheel selected", event.phraseIndex)
+            if (phraseIndex === undefined || event.phraseIndex === phraseIndex) {
+                if (listenerId) {
+                    CustomGameEventManager.UnregisterListener(listenerId)
+                    listenerId = undefined
+                }
+
+                complete()
+            }
+        })
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
  * Calls a function and completes immediately.
  * @param fn Function to call. Gets passed the context.
  * @param stopFn Optional function to call on stop. Gets passed the context.

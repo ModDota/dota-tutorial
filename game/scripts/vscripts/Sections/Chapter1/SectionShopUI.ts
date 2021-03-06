@@ -16,6 +16,7 @@ const requiredState: RequiredState = {
     heroGold: 0,
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
+    requireFountainTrees: true,
 };
 
 const onStart = (complete: () => void) => {
