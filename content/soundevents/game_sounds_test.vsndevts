@@ -1,0 +1,35 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+
+{
+    "Placeholders.Slacks" = {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files =
+        [
+            "sounds/placeholder/slacks/pc_ability_q_6.vsnd",
+            "sounds/placeholder/slacks/pc_ability_q_7.vsnd",
+            "sounds/placeholder/slacks/pc_ability_r_7.vsnd",
+            "sounds/placeholder/slacks/pc_attack_7.vsnd",
+            "sounds/placeholder/slacks/pc_attack_8.vsnd",
+            "sounds/placeholder/slacks/pc_death_7.vsnd",
+            "sounds/placeholder/slacks/pc_death_8.vsnd",
+            "sounds/placeholder/slacks/pc_kill_11.vsnd",
+            "sounds/placeholder/slacks/pc_lasthit_9.vsnd",
+            "sounds/placeholder/slacks/pc_move_6.vsnd",
+            "sounds/placeholder/slacks/pc_move_8.vsnd",
+            "sounds/placeholder/slacks/pc_pain 1.vsnd",
+            "sounds/placeholder/slacks/pc_pain 2.vsnd",
+            "sounds/placeholder/slacks/pc_pain 6.vsnd",
+            "sounds/placeholder/slacks/pc_win_3.vsnd"
+        ]
+    }
+
+    "Placeholders.Sunsfan" = {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files =
+        [
+            "sounds/placeholder/sunsfan/OldMan_begin_3.vsnd"
+        ]
+    }
+}
