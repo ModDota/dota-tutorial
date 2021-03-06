@@ -19,6 +19,7 @@ class DialogController {
     private currentLine: DialogData | undefined;
     private originalDirectionMap = new Map<EntityIndex, Vector>();
     private dialogQueue: DialogData[] = [];
+    private onDialogEndedCallback: (() => void) | undefined = undefined;
 
     constructor() {
         CustomGameEventManager.RegisterListener(
@@ -64,15 +65,27 @@ class DialogController {
         this.stopCurrentDialog();
     }
 
-    public onDialogStart(hero: CDOTA_BaseNPC_Hero) {
-        let dialog = this.dialogQueue.shift();
+    public onDialogStart(hero: CDOTA_BaseNPC_Hero, onEnded?: () => void) {
+        const dialog = this.dialogQueue.shift();
+
+        // Set end callback if passed. This function is also called without the callback when
+        // a dialog line ended where we don't want to overwrite the callback.
+        if (onEnded) {
+            this.onDialogEndedCallback = onEnded;
+        }
 
         if (!dialog) {
-            print(`Dialog Queue is empty!`);
+            // Call on end callback if any
+            const onEnded = this.onDialogEndedCallback
+            if (onEnded) {
+                this.onDialogEndedCallback = undefined;
+                onEnded();
+            }
+
             return;
         }
 
-        let dialogUnit = dialog.speaker;
+        const dialogUnit = dialog.speaker;
 
         if (!dialogUnit) {
             print("Dialog speaker doesn't exist!");
@@ -81,13 +94,13 @@ class DialogController {
 
         this.currentLine = dialog;
         let showAdvanceDialogButton = true;
-        let nextDialog = this.dialogQueue[0];
+        const nextDialog = this.dialogQueue[0];
 
         if (nextDialog == null || dialog.forceBreak) {
             showAdvanceDialogButton = false;
         }
 
-        let netTable = {
+        const netTable = {
             DialogEntIndex: dialogUnit.entindex(),
             PlayerHeroEntIndex: hero.entindex(),
             DialogText: dialog.text,
@@ -170,13 +183,13 @@ class DialogController {
     }
 
     // Unused
-    public onDialogConfirm(source: EntityIndex, data: DialogConfirmEvent) {}
+    public onDialogConfirm(source: EntityIndex, data: DialogConfirmEvent) { }
 
     // Unused
     public onDialogConfirmExpired(
         source: EntityIndex,
         data: DialogConfirmExpireEvent
-    ) {}
+    ) { }
 }
 
 const dialogController = new DialogController();
@@ -185,7 +198,8 @@ function playCommon(
     line: string,
     unit: CDOTA_BaseNPC,
     duration: number,
-    soundName?: string
+    onEnded?: () => void,
+    soundName?: string,
 ) {
     const hero = getOrError(getPlayerHero(), "Can't find player hero");
 
@@ -200,7 +214,7 @@ function playCommon(
         sound: soundName,
     });
 
-    dialogController.onDialogStart(hero);
+    dialogController.onDialogStart(hero, onEnded);
 }
 
 /**
@@ -214,13 +228,13 @@ export function playAudio(
     soundName: string,
     text: string,
     unit: CDOTA_BaseNPC,
-    extraDuration?: number
+    extraDuration?: number,
+    onEnded?: () => void,
 ) {
     const duration =
         getSoundDuration(soundName) +
         (extraDuration === undefined ? 0 : extraDuration);
-    playCommon(text, unit, duration, soundName);
-    return duration;
+    playCommon(text, unit, duration, onEnded, soundName);
 }
 
 /**
@@ -229,21 +243,13 @@ export function playAudio(
  * @param unit Unit that is speaking.
  * @param duration Time to show the dialog for.
  */
-export function playText(text: string, unit: CDOTA_BaseNPC, duration: number) {
-    playCommon(text, unit, duration);
+export function playText(text: string, unit: CDOTA_BaseNPC, duration: number, onEnded?: () => void) {
+    playCommon(text, unit, duration, onEnded);
 }
 
 /**
- * Stops the unit's dialog.
- * @param unit Unit whose dialog to stop.
+ * Clears the dialog queue and stops all current dialog.
  */
 export function stop() {
-    dialogController.stopCurrentDialog();
-}
-
-/**
- * Clears the dialog queue and stops all current dialog
- */
-export function clearDialog() {
     dialogController.clear();
 }
