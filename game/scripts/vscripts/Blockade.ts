@@ -1,3 +1,5 @@
+import "./modifiers/modifier_blocker"
+
 /**
  * Line-segment blockade with particles.
  */

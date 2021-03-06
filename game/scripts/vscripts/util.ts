@@ -1,7 +1,6 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
-import "./modifiers/modifier_blocker"
 import { TutorialContext } from "./TutorialGraph/Core";
 
 /**
