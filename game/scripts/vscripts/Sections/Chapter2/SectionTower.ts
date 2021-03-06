@@ -44,7 +44,6 @@ const onStart = (complete: () => void) => {
     const thirdTowerSneakLocation = Vector(-3975, 5887, 128)
     const finalTowerSneakLocation = Vector(-3353, 6014, 128)
 
-    let firstLoop: boolean = true
     const items: CDOTA_Item[] = []
 
     // Get or create the Dire T1 tower
@@ -72,8 +71,7 @@ const onStart = (complete: () => void) => {
             tg.setCameraTarget(playerHero),
             tg.wait(FrameTime()),
             tg.setCameraTarget(undefined),
-            tg.immediate(context =>
-            {
+            tg.immediate(context => {
                 canPlayerIssueOrders = false;
                 playerMustOrderTrainUltimate = false;
                 playerMustOrderTrainAbilities = false;
@@ -87,21 +85,18 @@ const onStart = (complete: () => void) => {
             }),
             tg.textDialog(LocalizationKey.Script_2_Tower_1, context => context[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.immediate(() =>
-            {
+            tg.immediate(() => {
                 canPlayerIssueOrders = true
                 goalAttemptToAttackTower.start()
                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
                 direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
             }),
-            tg.completeOnCheck(() =>
-            {
+            tg.completeOnCheck(() => {
                 const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
                 if (!modifier) error("Dragon Knight death modifier does not exists")
                 return modifier.dkDiedToTower
             }, 0.5),
-            tg.immediate(() =>
-            {
+            tg.immediate(() => {
                 goalAttemptToAttackTower.complete()
                 goalwaitToRespawn.start()
                 canPlayerIssueOrders = false
@@ -110,16 +105,14 @@ const onStart = (complete: () => void) => {
             tg.textDialog(LocalizationKey.Script_2_Tower_4, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_2_Tower_5, context => context[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_2_Tower_6, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.completeOnCheck(() =>
-            {
+            tg.completeOnCheck(() => {
                 const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
                 if (!modifier) error("The modifier does not exists")
                 return modifier.dkRespawned
             }, 0.5),
             tg.immediate(() => goalwaitToRespawn.complete()),
             tg.textDialog(LocalizationKey.Script_2_Tower_7, context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.immediate(() =>
-            {
+            tg.immediate(() => {
                 playerHero.RemoveModifierByName(modifier_dk_death_chapter2_tower.name)
                 goalGetBackToTopTowerPosition.start()
                 playerHero.SetAbsOrigin(teleportAfterRespawnLocation)
@@ -127,8 +120,7 @@ const onStart = (complete: () => void) => {
             }),
             tg.panCameraExponential(fountainLocation, teleportAfterRespawnLocation, 0.9),
             tg.goToLocation(moveAfterTeleportCloseToTowerLocation),
-            tg.immediate(() =>
-            {
+            tg.immediate(() => {
                 goalGetBackToTopTowerPosition.complete()
                 playerHero.Stop()
                 canPlayerIssueOrders = false
@@ -136,23 +128,19 @@ const onStart = (complete: () => void) => {
             tg.textDialog(LocalizationKey.Script_2_Tower_8, context => context[CustomNpcKeys.SlacksMudGolem], 3),
             tg.immediate(() => goalHoldAltToSeeTowerRadius.start()),
             tg.waitForModifierKey(ModifierKey.Alt),
-            tg.immediate(() =>
-            {
+            tg.immediate(() => {
                 goalHoldAltToSeeTowerRadius.complete()
                 radiantCreeps = createRadiantLaneCreeps();
             }),
             tg.setCameraTarget(direTopTower),
             tg.forkAny([
                 tg.seq([
-                    tg.immediate(context =>
-                    {
-                        radiantCreepTimer = Timers.CreateTimer(() =>
-                        {
+                    tg.immediate(context => {
+                        radiantCreepTimer = Timers.CreateTimer(() => {
                             radiantCreeps = radiantCreeps.filter(creep => IsValidEntity(creep) && creep.IsAlive())
                             context[Chapter2SpecificKeys.RadiantCreeps] = radiantCreeps
 
-                            if (radiantCreeps.length === 0)
-                            {
+                            if (radiantCreeps.length === 0) {
                                 radiantCreeps = createRadiantLaneCreeps()
                             }
 
@@ -164,8 +152,7 @@ const onStart = (complete: () => void) => {
                 tg.seq([
                     tg.textDialog(LocalizationKey.Script_2_Tower_9, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
                     tg.setCameraTarget(undefined),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalSneakThroughTower.start()
                         canPlayerIssueOrders = true
                     }),
@@ -195,33 +182,29 @@ const onStart = (complete: () => void) => {
                         goalSneakBackAgain.complete()
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_11, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalAttackTowerWeak.start()
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                         playerHero.AddNewModifier(playerHero, undefined, modifier_dk_attack_tower_chapter2.name, {})
                     }),
-                    tg.completeOnCheck(() =>
-                    {
+                    tg.completeOnCheck(() => {
                         const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
                         if (!modifier) error("Could not find the modifier for attacking the tower")
                         return modifier.dkAttackedTower
                     }, 0.5),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalAttackTowerWeak.complete()
                         setUnitPacifist(playerHero, true)
                         ExecuteOrderFromTable(
-                        {
-                            OrderType: UnitOrder.MOVE_TO_POSITION,
-                            Position: moveAfterTeleportCloseToTowerLocation,
-                            UnitIndex: playerHero.entindex()
-                        })
+                            {
+                                OrderType: UnitOrder.MOVE_TO_POSITION,
+                                Position: moveAfterTeleportCloseToTowerLocation,
+                                UnitIndex: playerHero.entindex()
+                            })
                         canPlayerIssueOrders = false
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_12, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         const currentHeroLevel = playerHero.GetLevel()
                         const ultimateLevel = 6
                         const levelsToGrant = ultimateLevel - currentHeroLevel
@@ -235,12 +218,10 @@ const onStart = (complete: () => void) => {
                         goalTrainUltimate.start()
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
                     }),
-                    tg.completeOnCheck(() =>
-                    {
+                    tg.completeOnCheck(() => {
                         const dragonFormAbilityHandle = playerHero.FindAbilityByName("dragon_knight_elder_dragon_form")
                         if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
-                        if (dragonFormAbilityHandle.GetLevel() > 0)
-                        {
+                        if (dragonFormAbilityHandle.GetLevel() > 0) {
                             dragonFormAbilityHandle.SetUpgradeRecommended(false)
                             playerMustOrderTrainUltimate = false
                             return true
@@ -251,18 +232,15 @@ const onStart = (complete: () => void) => {
                         goalTrainUltimate.complete()
                         goalTrainAbilities.start()
                     }),
-                    tg.completeOnCheck(() =>
-                    {
-                        if (playerHero.GetAbilityPoints() === 0)
-                        {
+                    tg.completeOnCheck(() => {
+                        if (playerHero.GetAbilityPoints() === 0) {
                             playerMustOrderTrainAbilities = false
                             return true
                         }
 
                         return false
                     }, 0.2),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalTrainAbilities.complete()
                         items.push(playerHero.AddItemByName("item_heart"))
                         items.push(playerHero.AddItemByName("item_power_treads"))
@@ -276,12 +254,10 @@ const onStart = (complete: () => void) => {
                         goalUseUltimate.start()
                         playerOrderMustCastUltimate = true
                     }),
-                    tg.completeOnCheck(() =>
-                    {
+                    tg.completeOnCheck(() => {
                         return playerHero.HasModifier("modifier_dragon_knight_dragon_form")
                     }, 0.2),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalUseUltimate.complete()
                         setUnitPacifist(playerHero, false)
                         playerOrderMustCastUltimate = false
@@ -291,37 +267,32 @@ const onStart = (complete: () => void) => {
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_15, context => context[CustomNpcKeys.SlacksMudGolem], 3),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalAttackTowerStrong.start()
                     }),
-                    tg.completeOnCheck(() =>
-                    {
+                    tg.completeOnCheck(() => {
                         const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
                         if (!modifier) error("Could not find Dragon Knight's tower attack modifier")
                         return modifier.dkAttackedTowerAgainBeforeGlyph
                     }, 0.1),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalAttackTowerStrong.complete()
                         ExecuteOrderFromTable(
-                        {
-                            OrderType: UnitOrder.GLYPH,
-                            UnitIndex: direTopTower.entindex(),
-                        })
+                            {
+                                OrderType: UnitOrder.GLYPH,
+                                UnitIndex: direTopTower.entindex(),
+                            })
 
                         canPlayerIssueOrders = false
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem], 3),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalUseGlyph.start()
                         canPlayerIssueOrders = true
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
                     }),
-                    tg.completeOnCheck(() =>
-                    {
+                    tg.completeOnCheck(() => {
                         return hasPlayerOrderedGlyphWhenMust
                     }, 0.1),
                     tg.immediate(() => {
@@ -330,15 +301,12 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
                     tg.immediate(() => goalDestroyTower.start()),
-                    tg.completeOnCheck(() =>
-                    {
+                    tg.completeOnCheck(() => {
                         return !IsValidEntity(direTopTower) || !direTopTower.IsAlive()
                     }, 0.1),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalDestroyTower.complete()
-                        for (const item of items)
-                        {
+                        for (const item of items) {
                             playerHero.RemoveItem(item);
                         }
                         playerHero.RemoveModifierByName("modifier_dragon_knight_dragon_form")
@@ -346,8 +314,7 @@ const onStart = (complete: () => void) => {
                         playerHero.RemoveModifierByName(modifier_dk_attack_tower_chapter2.name)
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_18, context => context[CustomNpcKeys.SlacksMudGolem], 3),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         if (radiantCreepTimer) Timers.RemoveTimer(radiantCreepTimer)
                         removeContextEntityIfExists(GameRules.Addon.context, Chapter2SpecificKeys.RadiantCreeps)
                     })
@@ -368,22 +335,19 @@ const onStop = () => {
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
 
     const direTopTower = getDireTopTower()
-    if (direTopTower)
-    {
+    if (direTopTower) {
         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
     }
 
     const playerHero = getPlayerHero()
-    if (playerHero)
-    {
+    if (playerHero) {
         playerHero.RemoveModifierByName("modifier_dragon_knight_dragon_form")
         playerHero.RemoveModifierByName("modifier_dragon_knight_corrosive_breath")
         playerHero.RemoveModifierByName(modifier_dk_death_chapter2_tower.name)
         playerHero.RemoveModifierByName(modifier_dk_attack_tower_chapter2.name)
     }
 
-    if (radiantCreepTimer)
-    {
+    if (radiantCreepTimer) {
         Timers.RemoveTimer(radiantCreepTimer)
         radiantCreepTimer = undefined;
     }
@@ -408,22 +372,17 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (!canPlayerIssueOrders) return false;
 
-    if (playerMustOrderTrainUltimate)
-    {
-        if (event.order_type != UnitOrder.TRAIN_ABILITY)
-        {
+    if (playerMustOrderTrainUltimate) {
+        if (event.order_type != UnitOrder.TRAIN_ABILITY) {
             displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
             return false
         }
 
-        if (event.entindex_ability)
-        {
+        if (event.entindex_ability) {
             const ability = EntIndexToHScript(event.entindex_ability)
-            if (ability)
-            {
+            if (ability) {
                 if (ability.GetName() === "dragon_knight_elder_dragon_form") return true
-                else
-                {
+                else {
                     displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
                     return false
                 }
@@ -431,20 +390,16 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
         }
     }
 
-    if (playerMustOrderTrainAbilities)
-    {
-        if (event.order_type != UnitOrder.TRAIN_ABILITY)
-        {
+    if (playerMustOrderTrainAbilities) {
+        if (event.order_type != UnitOrder.TRAIN_ABILITY) {
             displayDotaErrorMessage("Upgrade the rest of your abilities to continue.")
             return false
         }
         return true
     }
 
-    if (playerMustOrderGlyph)
-    {
-        if (event.order_type != UnitOrder.GLYPH)
-        {
+    if (playerMustOrderGlyph) {
+        if (event.order_type != UnitOrder.GLYPH) {
             displayDotaErrorMessage("Please use Glyph next to the minimap.")
             return false
         }
@@ -454,10 +409,8 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
         return true
     }
 
-    if (playerOrderMustCastUltimate)
-    {
-        if (event.order_type != UnitOrder.CAST_NO_TARGET)
-        {
+    if (playerOrderMustCastUltimate) {
+        if (event.order_type != UnitOrder.CAST_NO_TARGET) {
             displayDotaErrorMessage("Cast your Ultimate first!")
             return false
         }
@@ -466,13 +419,11 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     return true;
 }
 
-function getDireTopTower(): CDOTA_BaseNPC_Building
-{
+function getDireTopTower(): CDOTA_BaseNPC_Building {
     const direTopTowerLocation = Vector(-4672, 6016, 128)
 
     let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
-    if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive())
-    {
+    if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive()) {
         print("Creating new tower")
         direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
         direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
