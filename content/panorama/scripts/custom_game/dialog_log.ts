@@ -10,6 +10,8 @@ function ToggleDialogLog() {
 
     $("#DialogLog").ToggleClass("Visible");
     Game.EmitSound("ui_chat_slide_in");
+
+    $.Schedule(0.1, () => $("#DialogLineContainer").ScrollToBottom());
 }
 
 function Close() {
