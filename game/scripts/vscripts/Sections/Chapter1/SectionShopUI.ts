@@ -6,8 +6,6 @@ import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
 let graph: tg.TutorialStep | undefined = undefined
-let waitingForPlayerToPurchaseTango = false;
-let playerBoughtTango = false;
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
@@ -17,6 +15,9 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
 };
+
+let waitingForPlayerToPurchaseTango = false;
+let playerBoughtTango = false;
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -30,6 +31,9 @@ const onStart = (complete: () => void) => {
     const goalBuyTango = goalTracker.addBoolean("Use the gold provided to purchase a Tango.");
     const goalEatTree = goalTracker.addBoolean("Use tango to eat a tree and escape.");
     const goalMoveOut = goalTracker.addBoolean("Move to the target location.");
+
+    waitingForPlayerToPurchaseTango = false;
+    playerBoughtTango = false;
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
