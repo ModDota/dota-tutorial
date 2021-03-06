@@ -1,74 +1,96 @@
-import { getOrError, getPlayerHero, getSoundDuration } from "./util"
+import { getOrError, getPlayerHero, getSoundDuration } from "./util";
+
+// move this here because CDOTA_BaseNPC wasn't found in general.d.ts
+interface DialogData {
+    speaker: CDOTA_BaseNPC;
+    text: string;
+    advanceTime: number;
+    sendToAll: boolean;
+    advance: boolean;
+    gesture: GameActivity;
+    forceBreak?: boolean;
+    skipFacePlayer?: boolean;
+    dialogStopsMovement?: boolean;
+    sound?: string;
+}
 
 class DialogController {
     private voiceVolume = 1.2;
-    private dialogMap = new Map<EntityIndex, UnitDialog>();
+    private currentLine: DialogData | undefined;
     private originalDirectionMap = new Map<EntityIndex, Vector>();
+    private dialogQueue: DialogData[] = [];
 
     constructor() {
-        CustomGameEventManager.RegisterListener("dialog_complete", (source, data: DialogCompleteEvent) => {
-            this.onDialogEnded(source, data)
-        })
-        CustomGameEventManager.RegisterListener("dialog_confirm", (source, event: DialogConfirmEvent) => {
-            this.onDialogConfirm(source, event)
-        })
-        CustomGameEventManager.RegisterListener("dialog_confirm_expire", (source, event: DialogConfirmExpireEvent) => {
-            this.onDialogConfirmExpired(source, event)
-        })
+        CustomGameEventManager.RegisterListener(
+            "dialog_complete",
+            (source, data: DialogCompleteEvent) => {
+                this.onDialogEnded(source, data);
+            }
+        );
+        CustomGameEventManager.RegisterListener(
+            "dialog_confirm",
+            (source, event: DialogConfirmEvent) => {
+                this.onDialogConfirm(source, event);
+            }
+        );
+        CustomGameEventManager.RegisterListener(
+            "dialog_confirm_expire",
+            (source, event: DialogConfirmExpireEvent) => {
+                this.onDialogConfirmExpired(source, event);
+            }
+        );
     }
 
-    public giveUnitDialog(dialogUnit: CDOTA_BaseNPC, dialog: DialogData[]) {
-        let entIndex = dialogUnit.GetEntityIndex();
-        let unitDialog = {
-            currentLine: 0,
-            lines: dialog,
-        };
-
-        this.dialogMap.set(entIndex, unitDialog);
+    public addDialogToQueue(dialog: DialogData) {
+        this.dialogQueue.push(dialog);
     }
 
-    public getDialogLine(dialogUnit: CDOTA_BaseNPC, lineNumber: number) {
-        const dialogData = this.dialogMap.get(dialogUnit.GetEntityIndex());
-        if (dialogData) {
-            const { lines, currentLine } = dialogData;
-            return lines[currentLine];
+    public clear() {
+        this.dialogQueue = [];
+        CustomGameEventManager.Send_ServerToAllClients("dialog_clear", {});
+
+        // stop the current voice line
+        if (this.currentLine) {
+            const { speaker, sound } = this.currentLine;
+            if (sound && speaker) {
+                speaker.StopSound(sound);
+            }
         }
-        return null;
     }
 
-    public onDialogStart(hero: CDOTA_BaseNPC_Hero, dialogUnit: CDOTA_BaseNPC) {
-        let unitDialog = this.dialogMap.get(dialogUnit.GetEntityIndex());
+    public onDialogStart(hero: CDOTA_BaseNPC_Hero) {
+        let dialog = this.dialogQueue.shift();
 
-        if (!unitDialog) {
-            print(`No Dialog found for ${dialogUnit.GetUnitName()}`);
+        if (!dialog) {
+            print(`Dialog Queue is empty!`);
             return;
         }
 
+        let dialogUnit = dialog.speaker;
+
+        if (!dialogUnit) {
+            print("Dialog speaker doesn't exist!");
+            return;
+        }
+
+        this.currentLine = dialog;
         let showAdvanceDialogButton = true;
-        let currentLine = unitDialog.currentLine;
-        let currentDialog = this.getDialogLine(dialogUnit, currentLine);
-        let nextDialog = this.getDialogLine(dialogUnit, currentLine + 1);
+        let nextDialog = this.dialogQueue[0];
 
-        if (!currentDialog) {
-            print(`Dialog exhausted for ${dialogUnit.GetUnitName()}`);
-            return;
-        }
-
-        if (nextDialog == null || currentDialog.forceBreak) {
+        if (nextDialog == null || dialog.forceBreak) {
             showAdvanceDialogButton = false;
         }
 
         let netTable = {
             DialogEntIndex: dialogUnit.entindex(),
             PlayerHeroEntIndex: hero.entindex(),
-            DialogText: currentDialog.text,
-            DialogAdvanceTime: currentDialog.advanceTime,
-            DialogLine: currentLine,
+            DialogText: dialog.text,
+            DialogAdvanceTime: dialog.advanceTime,
             ShowAdvanceButton: showAdvanceDialogButton,
-            SendToAll: currentDialog.sendToAll,
+            SendToAll: dialog.sendToAll,
         };
 
-        if (!currentDialog.skipFacePlayer) {
+        if (!dialog.skipFacePlayer) {
             dialogUnit.FaceTowards(hero.GetOrigin());
             const originalDirection = dialogUnit
                 .GetOrigin()
@@ -79,28 +101,19 @@ class DialogController {
             );
         }
 
-        if (currentDialog.gesture) {
-            dialogUnit.StartGesture(currentDialog.gesture);
+        if (dialog.gesture) {
+            dialogUnit.StartGesture(dialog.gesture);
         }
 
-        if (currentDialog.sound) {
-            dialogUnit.EmitSoundParams(
-                currentDialog.sound,
-                0,
-                this.voiceVolume,
-                0
-            );
+        if (dialog.sound) {
+            dialogUnit.EmitSoundParams(dialog.sound, 0, this.voiceVolume, 0);
         }
 
-        if (currentDialog.advance) {
-            unitDialog.currentLine++;
-        }
-
-        if (currentDialog.dialogStopsMovement) {
+        if (dialog.dialogStopsMovement) {
             dialogUnit.SetMoveCapability(UnitMoveCapability.NONE);
         }
 
-        if (currentDialog.sendToAll) {
+        if (dialog.sendToAll) {
             CustomGameEventManager.Send_ServerToAllClients("dialog", netTable);
         } else {
             CustomGameEventManager.Send_ServerToPlayer(
@@ -120,11 +133,10 @@ class DialogController {
         let hero = EntIndexToHScript(
             data.PlayerHeroEntIndex
         ) as CDOTA_BaseNPC_Hero;
-        let lineNumber = data.DialogLine;
         let showNextLine = data.ShowNextLine;
 
         if (dialogUnit) {
-            let currentDialog = this.getDialogLine(dialogUnit, lineNumber);
+            let currentDialog = this.dialogQueue[0];
             if (currentDialog) {
                 const { skipFacePlayer, gesture } = currentDialog;
 
@@ -144,37 +156,43 @@ class DialogController {
             }
 
             if (showNextLine && hero) {
-                this.onDialogStart(hero, dialogUnit);
+                this.onDialogStart(hero);
             }
         }
     }
 
     // Unused
-    public onDialogConfirm(source: EntityIndex, data: DialogConfirmEvent) { }
+    public onDialogConfirm(source: EntityIndex, data: DialogConfirmEvent) {}
 
     // Unused
     public onDialogConfirmExpired(
         source: EntityIndex,
         data: DialogConfirmExpireEvent
-    ) { }
+    ) {}
 }
 
-const dialogController = new DialogController()
+const dialogController = new DialogController();
 
-function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, soundName?: string) {
-    const hero = getOrError(getPlayerHero(), "Can't find player hero")
+function playCommon(
+    line: string,
+    unit: CDOTA_BaseNPC,
+    duration: number,
+    soundName?: string
+) {
+    const hero = getOrError(getPlayerHero(), "Can't find player hero");
 
-    dialogController.giveUnitDialog(unit, [{
+    dialogController.addDialogToQueue({
+        speaker: unit,
         text: line,
         advance: true,
         advanceTime: duration,
         gesture: GameActivity.DOTA_ATTACK,
         sendToAll: true,
         dialogStopsMovement: false,
-        sound: soundName
-    }])
+        sound: soundName,
+    });
 
-    dialogController.onDialogStart(hero, unit)
+    dialogController.onDialogStart(hero);
 }
 
 /**
@@ -184,10 +202,17 @@ function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, soundNa
  * @param unit Unit that is speaking.
  * @param extraDuration Extra time to add on top of the sound duration.
  */
-export function playAudio(soundName: string, text: string, unit: CDOTA_BaseNPC, extraDuration?: number) {
-    const duration = getSoundDuration(soundName) + (extraDuration === undefined ? 0 : extraDuration)
-    playCommon(text, unit, duration, soundName)
-    return duration
+export function playAudio(
+    soundName: string,
+    text: string,
+    unit: CDOTA_BaseNPC,
+    extraDuration?: number
+) {
+    const duration =
+        getSoundDuration(soundName) +
+        (extraDuration === undefined ? 0 : extraDuration);
+    playCommon(text, unit, duration, soundName);
+    return duration;
 }
 
 /**
@@ -197,7 +222,7 @@ export function playAudio(soundName: string, text: string, unit: CDOTA_BaseNPC, 
  * @param duration Time to show the dialog for.
  */
 export function playText(text: string, unit: CDOTA_BaseNPC, duration: number) {
-    playCommon(text, unit, duration)
+    playCommon(text, unit, duration);
 }
 
 /**
@@ -205,5 +230,12 @@ export function playText(text: string, unit: CDOTA_BaseNPC, duration: number) {
  * @param unit Unit whose dialog to stop.
  */
 export function stop(unit: CDOTA_BaseNPC) {
-    dialogController.onDialogStart(getOrError(getPlayerHero()), unit)
+    dialogController.onDialogStart(getOrError(getPlayerHero()));
+}
+
+/**
+ * Clears the dialog queue and stops all current dialog
+ */
+export function clearDialog() {
+    dialogController.clear();
 }

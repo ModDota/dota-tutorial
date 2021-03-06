@@ -47,7 +47,6 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     g_bShowAdvanceButton = data["ShowAdvanceButton"];
     g_nCurrentCharacter = 0;
     g_nCurrentDialogEnt = data["DialogEntIndex"];
-    g_nCurrentDialogLine = data["DialogLine"];
     g_szPendingDialog = $.Localize(data["DialogText"]);
     g_szConfirmToken = data["ConfirmToken"];
     if (!g_bSentToAll) {
@@ -94,11 +93,9 @@ function AdvanceDialogThink() {
             GameEvents.SendCustomGameEventToServer("dialog_confirm_expire", {
                 ConfirmToken: g_szConfirmToken,
                 DialogEntIndex: g_nCurrentDialogEnt,
-                DialogLine: g_nCurrentDialogLine,
             });
             GameEvents.SendCustomGameEventToServer("dialog_complete", {
                 DialogEntIndex: g_nCurrentDialogEnt,
-                DialogLine: g_nCurrentDialogLine,
                 ShowNextLine: 0,
                 PlayerHeroEntIndex: Players.GetPlayerHeroEntityIndex(
                     Players.GetLocalPlayer()
@@ -109,7 +106,6 @@ function AdvanceDialogThink() {
             $("#FloatingDialogPanel").SetHasClass("Visible", false);
             GameEvents.SendCustomGameEventToServer("dialog_complete", {
                 DialogEntIndex: g_nCurrentDialogEnt,
-                DialogLine: g_nCurrentDialogLine,
                 ShowNextLine: 0,
                 PlayerHeroEntIndex: Players.GetPlayerHeroEntityIndex(
                     Players.GetLocalPlayer()
@@ -167,7 +163,6 @@ function OnAdvanceDialogButtonPressed() {
         }
         GameEvents.SendCustomGameEventToServer("dialog_complete", {
             DialogEntIndex: g_nCurrentDialogEnt,
-            DialogLine: g_nCurrentDialogLine,
             ShowNextLine: g_bShowAdvanceButton,
             PlayerHeroEntIndex: Players.GetPlayerHeroEntityIndex(
                 Players.GetLocalPlayer()
@@ -176,12 +171,16 @@ function OnAdvanceDialogButtonPressed() {
     }
 }
 
+function HideDialog() {
+    $("#DialogPanel").SetHasClass("Visible", false);
+    $("#FloatingDialogPanel").SetHasClass("Visible", false);
+}
+
 function OnConfirmButtonPressed() {
     GameEvents.SendCustomGameEventToServer("dialog_confirm", {
         nPlayerID: Players.GetLocalPlayer(),
         ConfirmToken: g_szConfirmToken,
         DialogEntIndex: g_nCurrentDialogEnt,
-        DialogLine: g_nCurrentDialogLine,
     });
     $("#ConfirmButton").AddClass("Confirmed");
 }
@@ -194,7 +193,6 @@ function OnDialogPlayerAllConfirmed() {
     $("#DialogPanel").SetHasClass("Visible", false);
     GameEvents.SendCustomGameEventToServer("dialog_complete", {
         DialogEntIndex: g_nCurrentDialogEnt,
-        DialogLine: g_nCurrentDialogLine,
         ShowNextLine: 0,
         PlayerHeroEntIndex: Players.GetPlayerHeroEntityIndex(
             Players.GetLocalPlayer()
@@ -214,7 +212,6 @@ function OnCloseDialogButtonPressed() {
     $("#FloatingDialogPanel").SetHasClass("Visible", false);
     GameEvents.SendCustomGameEventToServer("dialog_complete", {
         DialogEntIndex: g_nCurrentDialogEnt,
-        DialogLine: g_nCurrentDialogLine,
         ShowNextLine: 0,
         PlayerHeroEntIndex: Players.GetPlayerHeroEntityIndex(
             Players.GetLocalPlayer()
@@ -248,5 +245,6 @@ function OnCloseDialogButtonPressed() {
 })();
 
 GameEvents.Subscribe("dialog", OnDialogReceived);
+GameEvents.Subscribe("dialog_clear", HideDialog);
 GameEvents.Subscribe("dialog_player_confirm", OnDialogPlayerConfirm);
 GameEvents.Subscribe("dialog_player_all_confirmed", OnDialogPlayerAllConfirmed);
