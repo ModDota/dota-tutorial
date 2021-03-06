@@ -36,9 +36,32 @@ for (const [sectionName, sectionCode] of Object.entries(sections)) {
 
 // Create a section button
 function addSkipToSectionButton(sectionName: string): Panel {
-    const button = $.CreatePanel("Label", $("#ButtonContainer"), "");
+    const button = $.CreatePanel("Label", $("#SectionButtons"), "");
     button.AddClass("SkipButton");
     button.text = sectionName;
 
     return button;
 }
+
+function TogglePlaceholderVoices() {
+    const toggleState = ($("#PlaceholderVoicesToggle") as ToggleButton).checked;
+    GameEvents.SendCustomGameEventToServer("toggle_placeholder_voices", 
+        {
+            usePlaceholders: toggleState ? 1 : 0,
+        }
+    );
+}
+
+(function HUDThink() {
+    const queryUnit = Players.GetLocalPlayerPortraitUnit();
+
+    if (queryUnit != -1) {
+        const name = Entities.GetUnitName(queryUnit);
+        const position = Entities.GetAbsOrigin(queryUnit);
+        const positionString = `Vector(${position[0]}, ${position[1]}, ${position[2]})`;
+        ($("#CurrentSelectedUnit") as LabelPanel).text = $.Localize(name);
+        ($("#CurrentSelectedPosition") as TextEntry).text = positionString;
+    }
+
+    $.Schedule(1/10, HUDThink);
+})();

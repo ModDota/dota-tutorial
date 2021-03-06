@@ -35,9 +35,27 @@
     position: 470px 0px 0px;
 }
 
+.CurrentSelectedPosition {
+    width: 100%;
+}
+
 #ButtonContainer {
     position: 30px 0px 0px;
     height: 400px;
+    width: 100%;
+    flow-children: right-wrap;
+}
+
+.DevRow {
+    flow-children: right;
+    margin: 3px;
+}
+
+#CurrentSelectedUnit {
+    width: 100%;
+}
+
+#SectionButtons {
     width: 100%;
     flow-children: right-wrap;
 }

@@ -3,6 +3,10 @@
         <include src="file://{resources}/scripts/custom_game/devpanel.js" />
     </scripts>
     <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
+        <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+
         <include src="file://{resources}/styles/custom_game/devpanel.css" />
     </styles>
     <snippets>
@@ -13,6 +17,17 @@
         <Label id="CollapseButton" text="^  DEV  ^" />
 
         <!-- Container to hold section jumping buttons -->
-        <Panel id="ButtonContainer" />
+        <Panel id="ButtonContainer">
+            <Panel id="SectionButtons" />
+
+            <Label id="CurrentSelectedUnit" />
+            <Panel>
+                <TextEntry id="CurrentSelectedPosition" multiline="false" textmode="normal" />
+            </Panel>
+
+            <Panel class="DevRow">
+                <Label text="Placeholder Voices" /> <ToggleButton id="PlaceholderVoicesToggle" onactivate="TogglePlaceholderVoices()" />
+            </Panel>
+        </Panel>
     </Panel>
 </root>

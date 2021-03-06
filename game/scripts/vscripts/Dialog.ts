@@ -16,6 +16,8 @@ interface DialogData {
 
 class DialogController {
     private voiceVolume = 1.2;
+    private usePlaceholderVoices = false;
+
     private currentLine: DialogData | undefined;
     private originalDirectionMap = new Map<EntityIndex, Vector>();
     private dialogQueue: DialogData[] = [];
@@ -40,6 +42,12 @@ class DialogController {
                 this.onDialogConfirmExpired(source, event);
             }
         );
+        CustomGameEventManager.RegisterListener(
+            "toggle_placeholder_voices",
+            (source, event: PlaceholderVoicesToggleEvent) => {
+                this.usePlaceholderVoices = event.usePlaceholders == 1;
+            }
+        );
     }
 
     public stopCurrentSound() {
@@ -57,6 +65,14 @@ class DialogController {
     }
 
     public addDialogToQueue(dialog: DialogData) {
+        if (this.usePlaceholderVoices) {
+            // Overriding sounds with placeholders
+            const speaker = dialog.speaker;
+            const speakerName = speaker.GetUnitName().toLowerCase()
+            if (speakerName.includes("slacks")) dialog.sound = "Placeholders.Slacks";
+            else if (speakerName.includes("sunsfan")) dialog.sound = "Placeholders.Sunsfan";
+        }
+
         this.dialogQueue.push(dialog);
     }
 
@@ -202,11 +218,6 @@ function playCommon(
     soundName?: string,
 ) {
     const hero = getOrError(getPlayerHero(), "Can't find player hero");
-
-    // Overriding sounds with placeholders
-    const speakerName = unit.GetUnitName().toLowerCase()
-    if (speakerName.includes("slacks")) soundName = "Placeholders.Slacks";
-    else if (speakerName.includes("sunsfan")) soundName = "Placeholders.Sunsfan";
 
     dialogController.addDialogToQueue({
         speaker: unit,

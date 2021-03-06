@@ -84,6 +84,10 @@ interface ChatWheelPhraseSelectedEvent {
     phraseIndex: number;
 }
 
+interface PlaceholderVoicesToggleEvent {
+    usePlaceholders: number;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -94,6 +98,7 @@ interface CustomGameEventDeclarations {
     dialog: DialogReceivedEvent;
     dialog_player_confirm: DialogConfirmedEvent;
     dialog_clear: {};
+    toggle_placeholder_voices: PlaceholderVoicesToggleEvent;
     ui_loaded: {};
     detect_camera_movement: {};
     camera_movement_detected: {};
