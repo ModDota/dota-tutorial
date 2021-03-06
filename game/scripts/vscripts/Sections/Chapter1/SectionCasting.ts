@@ -3,15 +3,17 @@ import * as tut from "../../Tutorial/Core";
 import { freezePlayerHero, getOrError, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
+import { slacksFountainLocation } from "./Shared";
 
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-6250, -6050, 256),
+    slacksLocation: slacksFountainLocation,
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
+    requireFountainTrees: true,
 };
 
 const start = (complete: () => void) => {

@@ -4,6 +4,7 @@ import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "..
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { moveCameraToPosition } from "../../TutorialGraph/index"
 import { GoalTracker } from "../../Goals"
+import { slacksFountainLocation, sunsfanFountainLocation } from "./Shared"
 
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = false;
@@ -11,8 +12,9 @@ let canPlayerIssueOrders = false;
 const requiredState: RequiredState = {
     requireSunsfanGolem: true,
     requireSlacksGolem: true,
-    sunsFanLocation: Vector(-6400, -5900, 256),
-    slacksLocation: Vector(-6250, -6050, 256),
+    sunsFanLocation: sunsfanFountainLocation,
+    slacksLocation: slacksFountainLocation,
+    requireFountainTrees: true,
 }
 
 const onStart = (complete: () => void) => {
@@ -29,76 +31,73 @@ const onStart = (complete: () => void) => {
     const botRightMarkerLocation = Vector(-6500, -6900, 384)
     const miranaSpawnLocation = Vector(-6225, -5600, 256)
 
-    graph = tg.withGoals(ctx => goalTracker.getGoals(), tg.seq([
-            tg.immediate(
-                (ctx) => canPlayerIssueOrders = false
-            ),
-            tg.fork([
+    graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
+        tg.immediate(_ => canPlayerIssueOrders = false),
+        tg.fork([
+            tg.seq([
                 tg.goToLocation(topLeftMarkerLocation),
-                tg.seq([
-                    tg.textDialog(LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4),
-                    tg.textDialog(LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
-                    tg.immediate(
-                        (ctx) => {
-                            goalMoveToFirstMarker.start()
-                            canPlayerIssueOrders = true
-                        }
-                    ),
-                    tg.completeOnCheck(() => playerHero.IsMoving(), 0.5),
-                    tg.textDialog(LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-                    tg.textDialog(LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-                ]),
+                tg.immediate(_ => {
+                    goalMoveToFirstMarker.complete()
+                    canPlayerIssueOrders = false
+                }),
             ]),
-            tg.immediate((ctx) => {
-                goalMoveToFirstMarker.complete()
-                canPlayerIssueOrders = false
-            }),
-            tg.textDialog(LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.spawnUnit(CustomNpcKeys.Mirana,
-                miranaSpawnLocation,
-                DotaTeam.BADGUYS,
-                CustomNpcKeys.Mirana),
-            tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
-            tg.immediate(
-                (ctx) =>
-                    goalMoveToSecondMarker.start()
-            ),
-            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
-            tg.textDialog(LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            // Make sure player hero is not in the arrow firing area
-            tg.immediate(() => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
-            tg.wait(0.5),
-            tg.setCameraTarget(undefined),
-            tg.playGlobalSound("mirana_mir_attack_10"),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
-            tg.forkAny([
-                fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
-                tg.seq([
-                    tg.fork([
-                        tg.seq([
-                            tg.immediate(() => moveCameraToPosition(botRightMarkerLocation, 1)),
-                            tg.wait(2),
-                            tg.setCameraTarget(playerHero),
-                            tg.immediate(() => canPlayerIssueOrders = true),
-                        ]),
-                        tg.goToLocation(botRightMarkerLocation),
+            tg.seq([
+                tg.textDialog(LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4),
+                tg.textDialog(LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
+                tg.immediate(_ => {
+                    goalMoveToFirstMarker.start()
+                    canPlayerIssueOrders = true
+                }),
+                tg.completeOnCheck(_ => playerHero.IsMoving(), 0.5),
+                tg.textDialog(LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                tg.textDialog(LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            ]),
+        ]),
+        tg.textDialog(LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.spawnUnit(CustomNpcKeys.Mirana, miranaSpawnLocation, DotaTeam.BADGUYS, CustomNpcKeys.Mirana, true),
+        tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
+        tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
+        tg.immediate(_ => goalMoveToSecondMarker.start()),
+        tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), miranaSpawnLocation, 4),
+        tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
+        tg.textDialog(LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        // Make sure player hero is not in the arrow firing area
+        tg.immediate(_ => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
+        tg.wait(0.5),
+        tg.playGlobalSound("mirana_mir_attack_10"),
+        tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
+        tg.forkAny([
+            fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
+            tg.seq([
+                tg.fork([
+                    tg.seq([
+                        tg.immediate(_ => moveCameraToPosition(botRightMarkerLocation, 1)),
+                        tg.panCameraExponential(miranaSpawnLocation, botRightMarkerLocation, 4),
+                        tg.wait(1),
+                        tg.panCameraExponential(botRightMarkerLocation, _ => playerHero.GetAbsOrigin(), 4),
+                        tg.setCameraTarget(playerHero),
+                        tg.immediate(_ => canPlayerIssueOrders = true),
                     ]),
-                ])
-            ]),
-            tg.immediate((ctx) => {
-                goalMoveToSecondMarker.complete()
-                if (ctx[CustomNpcKeys.Mirana] && IsValidEntity(ctx[CustomNpcKeys.Mirana]))
-                    ctx[CustomNpcKeys.Mirana].RemoveSelf()
-            }),
-            // Should be different personalities for the following two lines, until determined, using Slacks and SUNSfan
-            tg.textDialog(LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                    tg.goToLocation(botRightMarkerLocation),
+                ]),
+            ])
+        ]),
+        tg.immediate((ctx) => {
+            goalMoveToSecondMarker.complete()
+            const mirana = ctx[CustomNpcKeys.Mirana] as CDOTA_BaseNPC_Hero
+            if (IsUnitInValidPosition(mirana)) {
+                mirana.RemoveSelf()
+                ctx[CustomNpcKeys.Mirana] = undefined
+            }
+        }),
+        // Should be different personalities for the following two lines, until determined, using Slacks and SUNSfan
+        tg.textDialog(LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
-            tg.textDialog(LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        ])
+        tg.textDialog(LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+    ])
     )
 
     graph.start(GameRules.Addon.context, () => {
@@ -159,12 +158,12 @@ const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, start
             Queue: true
         };
 
-        let positionOffset = [2,1,3,4]
+        let positionOffset = [2, 1, 3, 4]
         let i = 0
 
         const checkDkReachedDestination = () => {
             order.Position = actualStartPoint.__add(directionBetweenPoints * distance * 0.2 * positionOffset[i] as Vector),
-            ExecuteOrderFromTable(order)
+                ExecuteOrderFromTable(order)
 
             if (i == positionOffset.length - 1)
                 i = 0 // Reset arrow firing sequence

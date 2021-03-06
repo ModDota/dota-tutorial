@@ -1,17 +1,25 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { freezePlayerHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
+import { slacksFountainLocation } from "./Shared"
 
 let graph: tg.TutorialStep | undefined = undefined
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
-    slacksLocation: Vector(-6250, -6050, 256),
     requireSunsfanGolem: true,
+    slacksLocation: slacksFountainLocation,
     heroLevel: 2,
+    requireFountainTrees: true,
 }
+
+const pugnaLocation = Vector(-6700, -6300, 384)
+const abilNameDragonTail = "dragon_knight_dragon_tail"
+const abilNameBreatheFire = "dragon_knight_breathe_fire"
+
+let learnAbilityAllowedName: string | undefined = undefined
 
 const start = (complete: () => void) => {
     print("Started section leveling")
@@ -24,18 +32,19 @@ const start = (complete: () => void) => {
     const goalLevelBreatheFire = goalTracker.addBoolean("Level up your Breathe Fire ability.")
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
+        tg.immediate(_ => learnAbilityAllowedName = abilNameDragonTail),
         tg.textDialog(LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 9), // take W
         tg.immediate(_ => goalLevelDragonTail.start()),
-        tg.upgradeAbility(getOrError(hero.FindAbilityByName("dragon_knight_dragon_tail"), "Dragon Tail was not found.")),
+        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), "Dragon Tail was not found.")),
         tg.immediate(_ => goalLevelDragonTail.complete()),
 
         tg.textDialog(LocalizationKey.Script_1_Leveling_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // hover over abil
 
-        // Spawn purge and freeze player d uring initial dialog
+        // Spawn purge and freeze player during initial dialog
         tg.immediate(_ => freezePlayerHero(true)),
         tg.textDialog(LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // here comes pugna
 
-        tg.spawnUnit(CustomNpcKeys.PurgePugna, _ => hero.GetAbsOrigin().__add(RandomVector(500)), DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
+        tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
         tg.immediate(ctx => getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC | undefined).SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
 
         tg.textDialog(LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna], 4), // yellow everybody
@@ -90,9 +99,10 @@ const start = (complete: () => void) => {
 
         // Excellent work, skill Q
         tg.textDialog(LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+        tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
         tg.immediate(_ => hero.HeroLevelUp(true)),
         tg.immediate(_ => goalLevelBreatheFire.start()),
-        tg.upgradeAbility(getOrError(hero.GetAbilityByIndex(0), "Breathe Fire was not found.")),
+        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
         tg.immediate(_ => goalLevelBreatheFire.complete()),
 
         // Explain Q and W
@@ -105,6 +115,19 @@ const start = (complete: () => void) => {
     })
 }
 
+function orderFilter(event: ExecuteOrderFilterEvent): boolean {
+    // Only allow to train the allowed ability if set.
+    if (learnAbilityAllowedName && event.order_type === UnitOrder.TRAIN_ABILITY) {
+        const ability = getOrError(EntIndexToHScript(event.entindex_ability), "Could not find ability being trained") as CDOTABaseAbility
+        if (ability.GetAbilityName() !== learnAbilityAllowedName) {
+            displayDotaErrorMessage("Train the ability you are instructed to.")
+            return false
+        }
+    }
+
+    return true
+}
+
 const stop = () => {
     if (graph) {
         graph.stop(GameRules.Addon.context)
@@ -112,4 +135,4 @@ const stop = () => {
     }
 }
 
-export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, requiredState, start, stop)
+export const sectionLeveling = new tut.FunctionalSection(SectionName.Chapter1_Leveling, requiredState, start, stop, orderFilter)

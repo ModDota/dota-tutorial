@@ -1,3 +1,5 @@
+import { Blockade } from "../Blockade"
+
 /**
  * Descriptor for the state. Used together with setupState() to make sure all requirements are fullfilled.
  * If a field is left out a default value is assumed.
@@ -20,6 +22,12 @@ export type RequiredState = {
     // Riki
     requireRiki?: boolean
     rikiLocation?: Vector
+
+    // Chapter 1 trees
+    requireFountainTrees?: boolean
+
+    // Blockades
+    blockades?: Blockade[]
 }
 
 /**
@@ -48,4 +56,10 @@ export const defaultRequiredState: FilledRequiredState = {
     // Riki
     requireRiki: false,
     rikiLocation: GetGroundPosition(Vector(-1500, 4300), undefined),
+
+    // Chapter 1 trees
+    requireFountainTrees: false,
+
+    // Blockades
+    blockades: [],
 }
