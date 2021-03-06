@@ -40,7 +40,7 @@ const start = (complete: () => void) => {
 
         tg.textDialog(LocalizationKey.Script_1_Leveling_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // hover over abil
 
-        // Spawn purge and freeze player d uring initial dialog
+        // Spawn purge and freeze player during initial dialog
         tg.immediate(_ => freezePlayerHero(true)),
         tg.textDialog(LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // here comes pugna
 
