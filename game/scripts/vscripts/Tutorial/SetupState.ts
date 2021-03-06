@@ -1,5 +1,9 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
 import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
+import { Blockade } from "../Blockade"
+
+// Keep track of spawned blockades so we can remove them again.
+const spawnedBlockades = new Set<Blockade>()
 
 /**
  * Sets up the state to match the passed state requirement.
@@ -132,6 +136,22 @@ export const setupState = (stateReq: RequiredState): void => {
     } else {
         // Destroy all trees around the tree-line center point.
         GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
+    }
+
+    // Blockades
+
+    // Destroy old blockades
+    for (const spawnedBlockade of spawnedBlockades) {
+        if (!state.blockades.includes(spawnedBlockade)) {
+            spawnedBlockade.destroy()
+            spawnedBlockades.delete(spawnedBlockade)
+        }
+    }
+
+    // Spawn required blockades (calling spawn and add a second time will do nothing if they are already spawned)
+    for (const blockade of state.blockades) {
+        blockade.spawn()
+        spawnedBlockades.add(blockade)
     }
 }
 

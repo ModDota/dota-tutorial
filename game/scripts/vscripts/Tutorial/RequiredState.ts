@@ -1,3 +1,5 @@
+import { Blockade } from "../Blockade"
+
 /**
  * Descriptor for the state. Used together with setupState() to make sure all requirements are fullfilled.
  * If a field is left out a default value is assumed.
@@ -23,6 +25,9 @@ export type RequiredState = {
 
     // Chapter 1 trees
     requireFountainTrees?: boolean
+
+    // Blockades
+    blockades?: Blockade[]
 }
 
 /**
@@ -54,4 +59,7 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Chapter 1 trees
     requireFountainTrees: false,
+
+    // Blockades
+    blockades: [],
 }
