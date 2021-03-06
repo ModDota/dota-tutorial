@@ -84,6 +84,10 @@ interface RemoveHighlightEvent {
     path: string;
 }
 
+interface ChatWheelPhraseSelectedEvent {
+    phraseIndex: number;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -104,5 +108,5 @@ interface CustomGameEventDeclarations {
     set_client_clock:ClockTimeEvent
     highlight_element: HighlightElementEvent;
     remove_highlight: RemoveHighlightEvent;
-
+    chat_wheel_phrase_selected: ChatWheelPhraseSelectedEvent;
 }
