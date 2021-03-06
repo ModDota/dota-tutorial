@@ -50,7 +50,6 @@ class DialogController {
         let nextDialog = this.getDialogLine(dialogUnit, currentLine + 1);
 
         if (!currentDialog) {
-            print(`Dialog exhausted for ${dialogUnit.GetUnitName()}`);
             return;
         }
 
