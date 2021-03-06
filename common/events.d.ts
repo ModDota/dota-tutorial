@@ -28,7 +28,6 @@ interface DialogReceivedEvent {
     DialogEntIndex: EntityIndex;
     PlayerHeroEntIndex: EntityIndex;
     ShowAdvanceButton: boolean;
-    DialogLine: number;
     ConfirmToken?: string;
     DialogPlayerConfirm?: boolean;
     DialogAdvanceTime: number;
@@ -36,7 +35,6 @@ interface DialogReceivedEvent {
 
 interface DialogCompleteEvent {
     DialogEntIndex: EntityIndex | null;
-    DialogLine: number;
     ShowNextLine: number;
     PlayerHeroEntIndex: EntityIndex;
 }
@@ -45,34 +43,32 @@ interface DialogConfirmEvent {
     nPlayerID: PlayerID;
     ConfirmToken?: string;
     DialogEntIndex: EntityIndex | null;
-    DialogLine: number;
 }
 
 interface DialogConfirmExpireEvent {
     ConfirmToken?: string;
     DialogEntIndex: EntityIndex | null;
-    DialogLine: number;
 }
 
 interface DetectCommandEvent {
-    command: number //DOTAKeybindCommand_t
+    command: number; //DOTAKeybindCommand_t
 }
 
 interface CommandDetectedEvent {
-    command: number //DOTAKeybindCommand_t
+    command: number; //DOTAKeybindCommand_t
 }
 
 interface DetectModifierKeyEvent {
-    key: ModifierKey
+    key: ModifierKey;
 }
 
 interface ModifierKeyDetectedEvent {
-    key: ModifierKey
+    key: ModifierKey;
 }
 
 interface ClockTimeEvent {
-    seconds:number;
-    minutes?:number;
+    seconds: number;
+    minutes?: number;
 }
 
 interface HighlightElementEvent {
@@ -97,6 +93,7 @@ interface CustomGameEventDeclarations {
     dialog_complete: DialogCompleteEvent;
     dialog: DialogReceivedEvent;
     dialog_player_confirm: DialogConfirmedEvent;
+    dialog_clear: {};
     ui_loaded: {};
     detect_camera_movement: {};
     camera_movement_detected: {};
@@ -105,7 +102,7 @@ interface CustomGameEventDeclarations {
     command_detected: CommandDetectedEvent;
     detect_modifier_key: DetectModifierKeyEvent;
     modifier_key_detected: ModifierKeyDetectedEvent;
-    set_client_clock:ClockTimeEvent
+    set_client_clock: ClockTimeEvent;
     highlight_element: HighlightElementEvent;
     remove_highlight: RemoveHighlightEvent;
     chat_wheel_phrase_selected: ChatWheelPhraseSelectedEvent;

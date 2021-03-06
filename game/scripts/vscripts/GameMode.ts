@@ -180,7 +180,7 @@ export class GameMode {
 
         // Start game once pregame hits
         if (state === GameState.PRE_GAME) {
-            Timers.CreateTimer(3, () => this.StartGame());
+            Timers.CreateTimer(1, () => this.StartGame());
         }
 
         if (state === GameState.GAME_IN_PROGRESS) {

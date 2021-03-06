@@ -53,8 +53,26 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
 export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>, removeOnStop?: boolean) => {
     let unit: CDOTA_BaseNPC | undefined = undefined
     let actualEntityKey: string | undefined = undefined
+    let shouldGetRemoved = false // Used if the unit spawns, the step is stopped and the async callback for the unit spawn is only called afterwards to remove the unit.
+
+    const cleanupUnit = (context: tg.TutorialContext) => {
+        if (removeOnStop && unit) {
+            if (actualEntityKey && context[actualEntityKey] === unit) {
+                context[actualEntityKey] = undefined
+            }
+
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
+            unit = undefined
+            shouldGetRemoved = false
+        }
+    }
 
     return tg.step((context, complete) => {
+        shouldGetRemoved = false
+
         const actualUnitName = tg.getArg(unitName, context)
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualTeam = tg.getArg(team, context)
@@ -68,21 +86,16 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
 
                 unit = createdUnit
 
-                complete()
+                if (shouldGetRemoved) {
+                    cleanupUnit(context)
+                } else {
+                    complete()
+                }
             }
         )
     }, context => {
-        if (removeOnStop && unit) {
-            if (actualEntityKey && context[actualEntityKey] === unit) {
-                context[actualEntityKey] = undefined
-            }
-
-            if (IsValidEntity(unit)) {
-                unit.RemoveSelf()
-            }
-
-            unit = undefined
-        }
+        shouldGetRemoved = true
+        cleanupUnit(context)
     })
 }
 
@@ -656,7 +669,6 @@ export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep)
  */
 export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
     const defaultExtraDelaySeconds = 0.5
-    let waitTimer: string | undefined = undefined
 
     return tg.step((context, complete) => {
         const actualSoundName = tg.getArg(soundName, context)
@@ -664,15 +676,8 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        const duration = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5)
-
-        waitTimer = Timers.CreateTimer(duration, () => complete())
-    }, context => {
-        if (waitTimer) {
-            Timers.RemoveTimer(waitTimer)
-            waitTimer = undefined
-        }
-    })
+        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5, complete)
+    }, _ => dg.stop())
 }
 
 /**
@@ -682,32 +687,13 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  * @param waitSeconds Time to wait for in seconds.
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
-    let waitTimer: string | undefined = undefined
-    let actualUnit: CDOTA_BaseNPC | undefined = undefined
-
     return tg.step((context, complete) => {
-        actualUnit = tg.getArg(unit, context)
         const actualText = tg.getArg(text, context)
+        const actualUnit = tg.getArg(unit, context)
         const actualWaitSeconds = tg.getArg(waitSeconds, context)
 
-        dg.playText(actualText, actualUnit, actualWaitSeconds)
-
-        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => {
-            waitTimer = undefined
-            actualUnit = undefined
-            complete()
-        })
-    }, context => {
-        if (waitTimer) {
-            Timers.RemoveTimer(waitTimer)
-            waitTimer = undefined
-        }
-
-        if (actualUnit) {
-            dg.stop(actualUnit)
-            actualUnit = undefined
-        }
-    })
+        dg.playText(actualText, actualUnit, actualWaitSeconds, complete)
+    }, _ => dg.stop())
 }
 
 /**
