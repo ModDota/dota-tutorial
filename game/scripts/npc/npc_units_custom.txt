@@ -628,16 +628,4 @@
         "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_FLY"
         "AbilityLayout"				"4"
 	}
-
-    "npc_dota_tutorial_blocker"
-	{
-        "BaseClass"					"npc_dota_creature"
-        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
-        "VisionDaytimeRange"		"0"
-        "VisionNighttimeRange"		"0"
-        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_WARD"
-        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_NONE"
-        "BoundsHullName"            "DOTA_HULL_SIZE_FILLER"
-        "AbilityLayout"				"4"
-	}
 }

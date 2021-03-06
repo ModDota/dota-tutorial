@@ -1,24 +1,19 @@
-import "./modifiers/modifier_blocker"
-
 /**
  * Line-segment blockade with particles.
  */
 export class Blockade {
-    private static readonly blockerUnitName = "npc_dota_tutorial_blocker"
-    private static readonly blockerModifierName = "modifier_blocker"
-    private static readonly blockerSpacing = 128 // can use "dota_unit_show_collision_radius 1" in console to visualize this
+    private static readonly blockerSpacing = 100 // can use "dota_unit_show_collision_radius 1" in console to visualize this
     private static readonly blockerParticleName = "particles/tree_barrier.vpcf"
 
     private numBlockers: number
 
-    private blockers: CDOTA_BaseNPC[] | undefined = undefined
+    private blockers: CBaseEntity[] | undefined = undefined
     private particle: ParticleID | undefined = undefined
 
     /**
      * Creates a line-segment blockade.
      * @param startLocation Start location of the blockade.
      * @param endLocation End location of the blockade.
-     * @returns Dummy-units contained in the blockade.
      */
     constructor(public readonly startLocation: Vector, public readonly endLocation: Vector) {
         // Spawn as many blockers as we need to cover the line-segment using the above spacing.
@@ -43,9 +38,9 @@ export class Blockade {
         if (this.blockers === undefined) {
             this.blockers = []
             for (let i = 0; i < this.numBlockers; i++) {
-                const blocker = CreateUnitByName(Blockade.blockerUnitName, this.getBlockerLocation(i / (this.numBlockers - 1)), false, undefined, undefined, DotaTeam.NOTEAM)
-                blocker.AddNewModifier(blocker, undefined, Blockade.blockerModifierName, {})
-                this.blockers.push(blocker)
+                this.blockers.push(SpawnEntityFromTableSynchronous("point_simple_obstruction", {
+                    origin: this.getBlockerLocation(i / (this.numBlockers - 1))
+                }))
             }
         }
 
