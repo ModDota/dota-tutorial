@@ -46,7 +46,7 @@ function AddLine(data: NetworkedData<DialogReceivedEvent>) {
         lines[lineToHide].DeleteAsync(0);
     }
 
-    $("#DialogLineContainer").ScrollToBottom();
+    $.Schedule(0.1, () => $("#DialogLineContainer").ScrollToBottom());
 }
 
 GameEvents.Subscribe("dialog", AddLine);
