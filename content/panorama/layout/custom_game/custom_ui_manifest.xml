@@ -6,6 +6,7 @@
         <include src="file://{resources}/scripts/custom_game/command-detection.js" />
         <include src="file://{resources}/scripts/custom_game/modifier-key-detection.js" />
         <include src="file://{resources}/scripts/custom_game/time_control.js" />
+        <include src="file://{resources}/scripts/custom_game/chatwheel-detection.js" />
         <!-- <include src="file://{resources}/scripts/custom_game/manifest.js" /> -->
     </scripts>
     <Panel>
