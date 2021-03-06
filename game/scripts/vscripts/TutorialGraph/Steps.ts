@@ -53,8 +53,26 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
 export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>, removeOnStop?: boolean) => {
     let unit: CDOTA_BaseNPC | undefined = undefined
     let actualEntityKey: string | undefined = undefined
+    let shouldGetRemoved = false // Used if the unit spawns, the step is stopped and the async callback for the unit spawn is only called afterwards to remove the unit.
+
+    const cleanupUnit = (context: tg.TutorialContext) => {
+        if (removeOnStop && unit) {
+            if (actualEntityKey && context[actualEntityKey] === unit) {
+                context[actualEntityKey] = undefined
+            }
+
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
+            unit = undefined
+            shouldGetRemoved = false
+        }
+    }
 
     return tg.step((context, complete) => {
+        shouldGetRemoved = false
+
         const actualUnitName = tg.getArg(unitName, context)
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualTeam = tg.getArg(team, context)
@@ -68,21 +86,16 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
 
                 unit = createdUnit
 
-                complete()
+                if (shouldGetRemoved) {
+                    cleanupUnit(context)
+                } else {
+                    complete()
+                }
             }
         )
     }, context => {
-        if (removeOnStop && unit) {
-            if (actualEntityKey && context[actualEntityKey] === unit) {
-                context[actualEntityKey] = undefined
-            }
-
-            if (IsValidEntity(unit)) {
-                unit.RemoveSelf()
-            }
-
-            unit = undefined
-        }
+        shouldGetRemoved = true
+        cleanupUnit(context)
     })
 }
 
