@@ -1,7 +1,10 @@
 export class CustomTimeManager {
     time = 0;
     customTimeEnabled = false;
-    callbacks: { seconds: number; fn: () => void }[] = [];
+    index = 0;
+
+    //callbacks: {index:number, callBackRow:CallBackIndex }
+    callbacks: Map<number, CallBackRow> = new Map();
 
     constructor() {
         Timers.CreateTimer(() => {
@@ -40,9 +43,20 @@ export class CustomTimeManager {
     }
 
     registerCallBackOnTime(seconds: number, fn: () => void) {
-        return this.callbacks.push({ seconds, fn });
+        this.callbacks.set(this.index, { seconds, fn });
+        this.index++;
+        return this.index - 1;
     }
+
     unRegisterCallBackOnTime(index: number) {
-        this.callbacks.splice(index, 1);
+        if (this.callbacks.has(index)) {
+            this.callbacks.delete(index);
+        }
+        
     }
+}
+
+interface CallBackRow {
+    seconds: number;
+    fn: () => void;
 }
