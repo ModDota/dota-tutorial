@@ -116,8 +116,10 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     // Only allow to train the allowed ability if set.
     if (learnAbilityAllowedName && event.order_type === UnitOrder.TRAIN_ABILITY) {
         const ability = getOrError(EntIndexToHScript(event.entindex_ability), "Could not find ability being trained") as CDOTABaseAbility
-        displayDotaErrorMessage("Train the ability you are instructed to.")
-        return ability.GetAbilityName() === learnAbilityAllowedName
+        if (ability.GetAbilityName() !== learnAbilityAllowedName) {
+            displayDotaErrorMessage("Train the ability you are instructed to.")
+            return false
+        }
     }
 
     return true
