@@ -20,6 +20,9 @@ export type RequiredState = {
     // Riki
     requireRiki?: boolean
     rikiLocation?: Vector
+
+    // Chapter 1 trees
+    requireFountainTrees?: boolean
 }
 
 /**
@@ -48,4 +51,7 @@ export const defaultRequiredState: FilledRequiredState = {
     // Riki
     requireRiki: false,
     rikiLocation: GetGroundPosition(Vector(-1500, 4300), undefined),
+
+    // Chapter 1 trees
+    requireFountainTrees: false,
 }

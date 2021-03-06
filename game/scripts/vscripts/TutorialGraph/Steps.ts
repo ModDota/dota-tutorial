@@ -348,7 +348,7 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
  * Pans the camera from the start location to the end location exponentially (ie. starting out faster and getting slower the closer we are to the target).
  * @param startLocation Start location for the pan.
  * @param endLocation End location for the pan.
- * @param alpha Value that should be between 0 and 1. Values towards 0 are slower and towards 1 are faster.
+ * @param alpha Speed is proportional to the remaining distance and multiplied by alpha, so higher means faster.
  */
 export const panCameraExponential = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, alpha: number) => {
     return panCamera(startLocation, endLocation, (startLoc, endLoc, loc) => {
@@ -372,30 +372,33 @@ export const panCameraLinear = (startLocation: tg.StepArgument<Vector>, endLocat
 }
 
 /**
- * Creates a tutorial step that waits for the hero to upgrade an ability
- * @param ability the ability that needs to be upgraded.
+ * Creates a tutorial step that waits for an ability to be upgraded to a minimum level (defaults to 1).
+ * @param ability The ability that needs to be upgraded.
+ * @param minimumLevel Optional minimum level the ability needs to be upgraded to. Default to 1.
  */
-export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>) => {
+export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>, minimumLevel?: tg.StepArgument<number>) => {
     let checkTimer: string | undefined = undefined
 
     return tg.step((context, complete) => {
-        const actualAbility = tg.getArg(ability, context);
-        const desiredLevel = actualAbility.GetLevel() + 1;
-        actualAbility.SetUpgradeRecommended(true);
+        const actualAbility = tg.getArg(ability, context)
+        const actualMinimumLevel = tg.getOptionalArg(minimumLevel, context) ?? 1
+
+        actualAbility.SetUpgradeRecommended(true)
+
         const checkAbilityLevel = () => {
-            if (desiredLevel == actualAbility.GetLevel()) {
-                actualAbility.SetUpgradeRecommended(false);
-                complete();
+            if (actualAbility.GetLevel() >= actualMinimumLevel) {
+                actualAbility.SetUpgradeRecommended(false)
+                complete()
             } else {
-                checkTimer = Timers.CreateTimer(.1, () => checkAbilityLevel())
+                checkTimer = Timers.CreateTimer(0.1, () => checkAbilityLevel())
             }
         }
-        checkAbilityLevel();
+        checkAbilityLevel()
     }, context => {
         if (checkTimer) {
-            const actualAbility = tg.getArg(ability, context);
+            const actualAbility = tg.getArg(ability, context)
             Timers.RemoveTimer(checkTimer)
-            actualAbility.SetUpgradeRecommended(false);
+            actualAbility.SetUpgradeRecommended(false)
             checkTimer = undefined
         }
     })
@@ -473,6 +476,33 @@ export const waitForModifierKey = (key: ModifierKey) => {
         })
 
         CustomGameEventManager.Send_ServerToAllClients("detect_modifier_key", { key });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+        }
+    })
+}
+
+/**
+ * Waits for the player to choose a chat wheel phrase.
+ * @param phraseIndex Optional chat wheel phrase index from 0 to 7 starting at the top going clockwise. If not passed will complete on any index.
+ */
+export const waitForChatWheel = (phraseIndex?: number) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("chat_wheel_phrase_selected", (source, event) => {
+            print("Got chat wheel selected", event.phraseIndex)
+            if (phraseIndex === undefined || event.phraseIndex === phraseIndex) {
+                if (listenerId) {
+                    CustomGameEventManager.UnregisterListener(listenerId)
+                    listenerId = undefined
+                }
+
+                complete()
+            }
+        })
     }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
@@ -626,7 +656,6 @@ export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep)
  */
 export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
     const defaultExtraDelaySeconds = 0.5
-    let waitTimer: string | undefined = undefined
 
     return tg.step((context, complete) => {
         const actualSoundName = tg.getArg(soundName, context)
@@ -634,15 +663,8 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        const duration = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5)
-
-        waitTimer = Timers.CreateTimer(duration, () => complete())
-    }, context => {
-        if (waitTimer) {
-            Timers.RemoveTimer(waitTimer)
-            waitTimer = undefined
-        }
-    })
+        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5, complete)
+    }, _ => dg.stop())
 }
 
 /**
@@ -652,32 +674,13 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  * @param waitSeconds Time to wait for in seconds.
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
-    let waitTimer: string | undefined = undefined
-    let actualUnit: CDOTA_BaseNPC | undefined = undefined
-
     return tg.step((context, complete) => {
-        actualUnit = tg.getArg(unit, context)
         const actualText = tg.getArg(text, context)
+        const actualUnit = tg.getArg(unit, context)
         const actualWaitSeconds = tg.getArg(waitSeconds, context)
 
-        dg.playText(actualText, actualUnit, actualWaitSeconds)
-
-        waitTimer = Timers.CreateTimer(actualWaitSeconds, () => {
-            waitTimer = undefined
-            actualUnit = undefined
-            complete()
-        })
-    }, context => {
-        if (waitTimer) {
-            Timers.RemoveTimer(waitTimer)
-            waitTimer = undefined
-        }
-
-        if (actualUnit) {
-            dg.stop(actualUnit)
-            actualUnit = undefined
-        }
-    })
+        dg.playText(actualText, actualUnit, actualWaitSeconds, complete)
+    }, _ => dg.stop())
 }
 
 /**

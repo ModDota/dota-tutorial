@@ -3,7 +3,6 @@ export class CustomTimeManager {
     customTimeEnabled = false;
     index = 0;
 
-    //callbacks: {index:number, callBackRow:CallBackIndex }
     callbacks: Map<number, CallBackRow> = new Map();
 
     constructor() {

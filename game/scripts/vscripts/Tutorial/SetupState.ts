@@ -104,6 +104,26 @@ export const setupState = (stateReq: RequiredState): void => {
     } else {
         clearUnit(CustomNpcKeys.Riki)
     }
+
+    // Chapter 1 tree wall at the fountain
+    const treeLocationStart = Vector(-6800, -5800, 256)
+    const treeLocationEnd = Vector(-6300, -6300, 256)
+    const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
+
+    // Spawn trees in a line between start and end if we want them.
+    if (state.requireFountainTrees) {
+        const numTrees = 6
+        for (let i = 0; i < numTrees; i++) {
+            // Only create a tree if there is not already one at the desired location.
+            const treeLocation = getTreeLocation(i / (numTrees - 1))
+            if (GridNav.GetAllTreesAroundPoint(treeLocation, 10, true).length === 0) {
+                CreateTempTree(treeLocation, 100000)
+            }
+        }
+    } else {
+        // Destroy all trees around the tree-line center point.
+        GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
+    }
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onCreated?: (unit: CDOTA_BaseNPC) => void) {
