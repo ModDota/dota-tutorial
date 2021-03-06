@@ -152,7 +152,6 @@ function AdvanceDialogThink() {
 }
 
 function OnAdvanceDialogButtonPressed() {
-    $.Msg("AdvanceDialogButtonPressed");
     if (
         g_szPendingDialog != null &&
         g_nCurrentCharacter < g_szPendingDialog.length

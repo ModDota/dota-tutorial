@@ -3,12 +3,12 @@
   <include src="s2r://panorama/styles/dotastyles.vcss_c" />
 
   <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
-  <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" /> 
-    
+  <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+
   <include src="s2r://panorama/styles/custom_game/dialog_log.vcss_c" />
 
   </styles>
-  
+
   <scripts>
   <include src="s2r://panorama/scripts/custom_game/dialog_line.vjs_c" />
   </scripts>
@@ -23,7 +23,7 @@
         </Panel>
         <Panel class="SpeechBubbleBackground" hittest="false"/>
       </Panel>
-      <Label id="DialogText" html="true" class="DialogPanelText" text="#Dialog_test_1" hittest="false" />
+      <Label id="DialogText" html="true" class="DialogPanelText" hittest="false" />
 
     </Panel>
   </Panel>
