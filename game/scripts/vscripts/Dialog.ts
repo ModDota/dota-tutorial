@@ -252,4 +252,8 @@ export function playText(text: string, unit: CDOTA_BaseNPC, duration: number, on
  */
 export function stop() {
     dialogController.clear();
+    const hero = getPlayerHero();
+    if (hero) {
+        dialogController.onDialogStart(hero);
+    }
 }
