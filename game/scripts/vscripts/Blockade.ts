@@ -18,7 +18,7 @@ export class Blockade {
     constructor(public readonly startLocation: Vector, public readonly endLocation: Vector) {
         // Spawn as many blockers as we need to cover the line-segment using the above spacing.
         const distance = this.endLocation.__sub(this.startLocation).Length2D()
-        this.numBlockers = Math.ceil(distance / Blockade.blockerSpacing) ?? 1
+        this.numBlockers = Math.max(1, Math.ceil(distance / Blockade.blockerSpacing))
     }
 
     /**
