@@ -1,6 +1,7 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
+import "./modifiers/modifier_blocker"
 import { TutorialContext } from "./TutorialGraph/Core";
 
 /**
@@ -261,7 +262,7 @@ export function removeContextEntityIfExists(context: TutorialContext, entityKey:
         context[entityKey] = undefined;
     }
 }
-      
+
 /**
  * Returns whether a passed unit is a valid entity and alive.
  * @param unit Unit to check.
