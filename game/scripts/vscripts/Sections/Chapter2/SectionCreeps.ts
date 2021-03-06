@@ -5,7 +5,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import { findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
-import { Chapter2SpecificKeys, LastHitStages } from "./shared";
+import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
 let graph: tg.TutorialStep | undefined = undefined
@@ -30,9 +30,6 @@ const onStart = (complete: () => void) => {
 
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
-
-    const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
-    const direCreepNames = [CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireRangedCreep];
 
     let radiantCreeps: CDOTA_BaseNPC[] | undefined = GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps];
     let direCreeps: CDOTA_BaseNPC[] | undefined = GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps];
@@ -61,8 +58,6 @@ const onStart = (complete: () => void) => {
         direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, false);
         GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] = direCreeps;
     }
-
-    let godzMudGolem: CDOTA_BaseNPC;
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
@@ -112,9 +107,9 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem], 8),
                     tg.immediate(_ => GridNav.DestroyTreesAroundPoint(godzSpawnLocation, 300, true)),
                     tg.wait(1),
+                    tg.spawnUnit(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, DotaTeam.GOODGUYS, context => context[CustomNpcKeys.GodzMudGolem], true),
                     tg.immediate(context => {
-                        godzMudGolem = CreateUnitByName(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, true, undefined, undefined, DotaTeam.GOODGUYS)
-                        context[CustomNpcKeys.GodzMudGolem] = godzMudGolem;
+                        const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
                         setUnitPacifist(godzMudGolem, true);
                     }),
                     tg.setCameraTarget(context => context[CustomNpcKeys.GodzMudGolem]),
@@ -162,9 +157,9 @@ const onStart = (complete: () => void) => {
                         godzMudGolem.ForceKill(false)
                         context[CustomNpcKeys.GodzMudGolem] = undefined;
                     }),
+                    tg.spawnUnit(CustomNpcKeys.Sniper, sniperSpawnLocation, DotaTeam.BADGUYS, context => context[Chapter2SpecificKeys.sniperEnemyHero], true),
                     tg.immediate(context => {
-                        const sniper = CreateUnitByName("npc_dota_hero_sniper", sniperSpawnLocation, true, undefined, undefined, DotaTeam.BADGUYS)
-                        context[Chapter2SpecificKeys.sniperEnemyHero] = sniper
+                        const sniper = context[Chapter2SpecificKeys.sniperEnemyHero]
                         sniper.AddNewModifier(sniper, undefined, modifier_sniper_deny_chapter2_creeps.name, {})
                         sniper.FaceTowards(playerHero.GetAbsOrigin())
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)

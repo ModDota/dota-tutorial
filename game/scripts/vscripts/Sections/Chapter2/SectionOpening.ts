@@ -3,7 +3,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import { findRealPlayerID, getPlayerHero, removeContextEntityIfExists } from "../../util";
-import { Chapter2SpecificKeys } from "./shared";
+import { Chapter2SpecificKeys, radiantCreepsNames, direCreepNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Opening
 let graph: tg.TutorialStep | undefined = undefined
@@ -23,9 +23,6 @@ const requiredState: RequiredState = {
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
-
-    const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
-    const direCreepNames = [CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireRangedCreep];
 
     const radiantCreeps: CDOTA_BaseNPC[] = [];
     const direCreeps: CDOTA_BaseNPC[] = [];
@@ -76,8 +73,8 @@ const onStart = (complete: () => void) => {
             tg.textDialog(LocalizationKey.Script_2_Opening_11, context => context[CustomNpcKeys.SlacksMudGolem], 5),
             tg.textDialog(LocalizationKey.Script_2_Opening_12, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_2_Opening_13, context => context[CustomNpcKeys.SlacksMudGolem], 6),
-            tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, undefined))),
-            tg.fork(_ => direCreepNames.map(unit => tg.spawnUnit(unit, direCreepsSpawnLocation, DotaTeam.BADGUYS, undefined))),
+            tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, undefined, true))),
+            tg.fork(_ => direCreepNames.map(unit => tg.spawnUnit(unit, direCreepsSpawnLocation, DotaTeam.BADGUYS, undefined, true))),
             tg.immediate(context => {
                 // Group radiant creeps
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
