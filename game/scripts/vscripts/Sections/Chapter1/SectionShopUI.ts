@@ -102,8 +102,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
             if (boughtTango) {
                 playerBoughtTango = true;
                 waitingForPlayerToPurchaseTango = false;
-            }
-            else {
+            } else {
                 displayDotaErrorMessage("Use your gold to buy a Tango.");
                 return false;
             }
