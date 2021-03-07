@@ -107,7 +107,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem], 8),
                     tg.immediate(_ => GridNav.DestroyTreesAroundPoint(godzSpawnLocation, 300, true)),
                     tg.wait(1),
-                    tg.spawnUnit(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, DotaTeam.GOODGUYS, context => context[CustomNpcKeys.GodzMudGolem], true),
+                    tg.spawnUnit(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.GodzMudGolem, true),
                     tg.immediate(context => {
                         const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
                         setUnitPacifist(godzMudGolem, true);
@@ -115,7 +115,6 @@ const onStart = (complete: () => void) => {
                     tg.setCameraTarget(context => context[CustomNpcKeys.GodzMudGolem]),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 5),
                     tg.setCameraTarget(playerHero),
-                    tg.setCameraTarget(undefined),
                     tg.immediate(() => canPlayerIssueOrders = true),
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
