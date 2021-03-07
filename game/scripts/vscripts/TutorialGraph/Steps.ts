@@ -298,7 +298,8 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
         Timers.CreateTimer(updateInterval, () => {
             // Make sure the camera timer still exists. We might have stopped the panning before this is called.
             if (cameraTimer) {
-                findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+                playerIds = findAllPlayersID()
+                playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
             }
         })
 
