@@ -42,7 +42,7 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_1_Camera_3, LocalizationKey.Script_1_Camera_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
         tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DotaTeam.NEUTRALS, CustomNpcKeys.TargetDummy, true),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.TargetDummy]),
-        tg.audioDialog(LocalizationKey.Script_1_Camera_4, LocalizationKey.Script_1_Camera_4, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
+        tg.textDialog(LocalizationKey.Script_1_Camera_4, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
         tg.audioDialog(LocalizationKey.Script_1_Camera_5, LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
         // Unfreeze the hero and focus the camera on it again.
@@ -55,7 +55,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => goalKillDummy.complete()),
 
         // Target dummy died dialog
-        tg.audioDialog(LocalizationKey.Script_1_Camera_6, LocalizationKey.Script_1_Camera_6, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
+        tg.textDialog(LocalizationKey.Script_1_Camera_6, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
         tg.audioDialog(LocalizationKey.Script_1_Camera_7, LocalizationKey.Script_1_Camera_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
         // MAke SUNSfan attackable

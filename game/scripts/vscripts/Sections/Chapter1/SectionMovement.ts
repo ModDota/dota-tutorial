@@ -2,7 +2,6 @@ import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
 import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
-import { moveCameraToPosition } from "../../TutorialGraph/index"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation, sunsfanFountainLocation } from "./Shared"
 
@@ -73,7 +72,6 @@ const onStart = (complete: () => void) => {
             tg.seq([
                 tg.fork([
                     tg.seq([
-                        tg.immediate(_ => moveCameraToPosition(botRightMarkerLocation, 1)),
                         tg.panCameraExponential(miranaSpawnLocation, botRightMarkerLocation, 4),
                         tg.wait(1),
                         tg.panCameraExponential(botRightMarkerLocation, _ => playerHero.GetAbsOrigin(), 4),

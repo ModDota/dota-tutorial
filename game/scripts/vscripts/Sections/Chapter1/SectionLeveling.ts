@@ -47,9 +47,9 @@ const start = (complete: () => void) => {
         tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
         tg.immediate(ctx => getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC | undefined).SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
 
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_4, LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna], 4), // yellow everybody
+        tg.textDialog(LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna], 4), // yellow everybody
         tg.audioDialog(LocalizationKey.Script_1_Leveling_5, LocalizationKey.Script_1_Leveling_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // make him stop, press W
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_6, LocalizationKey.Script_1_Leveling_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // use W
+        tg.textDialog(LocalizationKey.Script_1_Leveling_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // use W
 
         // Unfreeze player and wait for them to stun purge while he performs his monologue.
         tg.immediate(_ => goalKillPurge.start()),
@@ -71,7 +71,7 @@ const start = (complete: () => void) => {
                     ])
                 ]),
                 // We escaped the above loop by attacking pugna, please dont interrupt purge!
-                tg.audioDialog(LocalizationKey.Script_1_Leveling_7, LocalizationKey.Script_1_Leveling_7, ctx => ctx[CustomNpcKeys.PurgePugna], 2),
+                tg.textDialog(LocalizationKey.Script_1_Leveling_7, ctx => ctx[CustomNpcKeys.PurgePugna], 2),
                 tg.immediate(ctx => {
                     const purge = ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC
                     if (unitIsValidAndAlive(purge)) {
@@ -91,7 +91,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => goalKillPurge.complete()),
 
         // Play death dialog and kill purge
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_8, LocalizationKey.Script_1_Leveling_8, ctx => ctx[CustomNpcKeys.PurgePugna], 2),
+        tg.textDialog(LocalizationKey.Script_1_Leveling_8, ctx => ctx[CustomNpcKeys.PurgePugna], 2),
         tg.immediate(ctx => {
             const purge = ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC_Hero
             purge.ForceKill(false)
