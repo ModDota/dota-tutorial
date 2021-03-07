@@ -225,15 +225,8 @@ function playCommon(
  * @param unit Unit that is speaking.
  * @param extraDuration Extra time to add on top of the sound duration.
  */
-export function playAudio(
-    soundName: string,
-    text: string,
-    unit: CDOTA_BaseNPC,
-    extraDuration?: number,
-    onEnded?: () => void,
-) {
+export function playAudio(soundName: string, text: string, unit: CDOTA_BaseNPC, extraDuration?: number, onEnded?: () => void) {
     const duration = getSoundDuration(soundName) + (extraDuration === undefined ? 0 : extraDuration);
-    print("Play audio", soundName, "duration:", getSoundDuration(soundName), "total-duration:", duration)
     playCommon(text, unit, duration, onEnded, soundName);
 }
 
