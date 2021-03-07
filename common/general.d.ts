@@ -7,6 +7,7 @@ declare const enum SectionName {
     Chapter1_ShopUI = "Chapter1_ShopUI",
     Chapter2_Opening = "Chapter2_Opening",
     Chapter2_Creeps = "Chapter2_Creeps",
+    Chapter2_Tower = "Chapter2_Tower",
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
@@ -26,6 +27,8 @@ declare const enum CustomNpcKeys {
     Riki = "npc_dota_hero_riki",
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
+    DireTopT1Tower = "npc_dota_badguys_tower1_top",
+    Sniper = "npc_dota_hero_sniper"
 }
 
 declare const enum CustomEntityKeys {
