@@ -46,7 +46,7 @@ class DialogController {
     public stopCurrentSound() {
         if (this.currentLine) {
             const { speaker, sound } = this.currentLine;
-            if (sound && speaker) {
+            if (sound && speaker && IsValidEntity(speaker)) {
                 speaker.StopSound(sound);
             }
         }

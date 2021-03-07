@@ -288,17 +288,18 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
     }
 
     return tg.step((context, complete) => {
-        const updateInterval = FrameTime()
+        const updateInterval = 2 * FrameTime()
         const actualStartLocation = tg.getArg(startLocation, context)
         const actualEndLocation = tg.getArg(endLocation, context)
         const cameraDummy = getCameraDummy(actualStartLocation)
 
         // Focus all cameras on the dummy. Wait one frame for the dummy to have its location set correctly, otherwise
         // we'd see the camera jumping.
-        Timers.CreateTimer(FrameTime(), () => {
+        Timers.CreateTimer(updateInterval, () => {
             // Make sure the camera timer still exists. We might have stopped the panning before this is called.
             if (cameraTimer) {
-                findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+                playerIds = findAllPlayersID()
+                playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
             }
         })
 
