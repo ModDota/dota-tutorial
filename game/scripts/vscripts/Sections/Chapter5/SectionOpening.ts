@@ -44,6 +44,7 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.immediate(ctx => canPlayerIssueOrders = false),
             tg.wait(1),
             tg.textDialog(LocalizationKey.Script_5_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_5_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
