@@ -156,7 +156,7 @@ const onStart = (complete: () => void) => {
                         godzMudGolem.ForceKill(false)
                         context[CustomNpcKeys.GodzMudGolem] = undefined;
                     }),
-                    tg.spawnUnit(CustomNpcKeys.Sniper, sniperSpawnLocation, DotaTeam.BADGUYS, context => context[Chapter2SpecificKeys.sniperEnemyHero], true),
+                    tg.spawnUnit(CustomNpcKeys.Sniper, sniperSpawnLocation, DotaTeam.BADGUYS, Chapter2SpecificKeys.sniperEnemyHero, true),
                     tg.immediate(context => {
                         const sniper = context[Chapter2SpecificKeys.sniperEnemyHero]
                         sniper.AddNewModifier(sniper, undefined, modifier_sniper_deny_chapter2_creeps.name, {})
