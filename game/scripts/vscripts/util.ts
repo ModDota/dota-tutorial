@@ -198,7 +198,7 @@ export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
  * @param location Location to spawn the dummy at.
  */
 export function createDummy(location: Vector) {
-    const dummy = CreateUnitByName("npc_dummy_unit", location, true, undefined, undefined, DotaTeam.GOODGUYS)
+    const dummy = CreateUnitByName("npc_dummy_unit", location, false, undefined, undefined, DotaTeam.GOODGUYS)
     dummy.AddNewModifier(dummy, undefined, "modifier_dummy", {})
     return dummy
 }
