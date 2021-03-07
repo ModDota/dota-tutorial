@@ -1,6 +1,7 @@
-import { createDummy, findAllPlayersID, getPlayerHero, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { createDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
+import { getSoundDuration } from "../Sounds"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -265,27 +266,6 @@ export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
 }
 
 /**
- * Moves the camera to a position, with lerp
- * @param position Point to move the camera to.
- * @param lerp Speed at which the camera moves
- */
-export const moveCameraToPosition = (position: Vector, lerp: number) => {
-    let playerIds = findAllPlayersID();
-
-    playerIds.forEach(playerId => {
-        let player = PlayerResource.GetPlayer(playerId);
-        if (player) {
-            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-                cameraTargetX: position.x,
-                cameraTargetY: position.y,
-                cameraTargetZ: position.z,
-                lerp: lerp
-            })
-        }
-    })
-}
-
-/**
  * Pans the camera from the start location to the end location with the speed at each timestep calculated using a given function.
  * @param startLocation Start location for the pan.
  * @param endLocation End location for the pan.
@@ -365,9 +345,10 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
  */
 export const panCameraExponential = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, alpha: number) => {
     return panCamera(startLocation, endLocation, (startLoc, endLoc, loc) => {
-        // Speed proportional to the remaining distance.
+        // Speed proportional to the remaining distance but capped at a minimum.
+        const minSpeed = 400
         const remainingDistance = endLoc.__sub(loc).Length2D()
-        return alpha * remainingDistance
+        return Math.max(minSpeed, alpha * remainingDistance)
     })
 }
 
