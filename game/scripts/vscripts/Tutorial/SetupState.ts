@@ -1,6 +1,9 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero } from "../util"
-import { BaseModifier } from "../lib/dota_ts_adapter"
+import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
+import { Blockade } from "../Blockade"
+
+// Keep track of spawned blockades so we can remove them again.
+const spawnedBlockades = new Set<Blockade>()
 
 /**
  * Sets up the state to match the passed state requirement.
@@ -79,31 +82,76 @@ export const setupState = (stateReq: RequiredState): void => {
     hero.SetGold(state.heroGold, false)
 
     // Golems
+    const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
+        if (!created) {
+            setUnitPacifist(unit, false);
+            unit.SetTeam(DotaTeam.GOODGUYS);
+        }
+    }
+
     if (state.requireSlacksGolem) {
-        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation)
+        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
     } else {
         clearUnit(CustomNpcKeys.SlacksMudGolem)
     }
 
     if (state.requireSunsfanGolem) {
-        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation)
+        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation, golemPostCreate)
     } else {
         clearUnit(CustomNpcKeys.SunsFanMudGolem)
     }
 
     // Riki
     if (state.requireRiki) {
-        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, riki => {
-            const rikiHero = riki as CDOTA_BaseNPC_Hero
-            rikiHero.SetAbilityPoints(3)
-            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
-            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
-            rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
-            rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
-            rikiHero.AddItemByName("item_lotus_orb")
+        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {
+            if (created) {
+                const rikiHero = riki as CDOTA_BaseNPC_Hero
+                rikiHero.SetAbilityPoints(3)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
+                rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+                rikiHero.AddItemByName("item_lotus_orb")
+            }
         })
     } else {
         clearUnit(CustomNpcKeys.Riki)
+    }
+
+    // Chapter 1 tree wall at the fountain
+    const treeLocationStart = Vector(-6800, -5800, 256)
+    const treeLocationEnd = Vector(-6300, -6300, 256)
+    const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
+
+    // Spawn trees in a line between start and end if we want them.
+    if (state.requireFountainTrees) {
+        const numTrees = 6
+        for (let i = 0; i < numTrees; i++) {
+            // Only create a tree if there is not already one at the desired location.
+            const treeLocation = getTreeLocation(i / (numTrees - 1))
+            if (GridNav.GetAllTreesAroundPoint(treeLocation, 10, true).length === 0) {
+                CreateTempTree(treeLocation, 100000)
+            }
+        }
+    } else {
+        // Destroy all trees around the tree-line center point.
+        GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
+    }
+
+    // Blockades
+
+    // Destroy old blockades
+    for (const spawnedBlockade of spawnedBlockades) {
+        if (!state.blockades.includes(spawnedBlockade)) {
+            spawnedBlockade.destroy()
+            spawnedBlockades.delete(spawnedBlockade)
+        }
+    }
+
+    // Spawn required blockades (calling spawn and add a second time will do nothing if they are already spawned)
+    for (const blockade of state.blockades) {
+        blockade.spawn()
+        spawnedBlockades.add(blockade)
     }
 
     // Set or remove DD modifier as needed
@@ -118,7 +166,7 @@ export const setupState = (stateReq: RequiredState): void => {
     }
 }
 
-function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onCreated?: (unit: CDOTA_BaseNPC) => void) {
+function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {
     const context = GameRules.Addon.context
 
     const postCreate = (unit: CDOTA_BaseNPC) => {
@@ -136,12 +184,15 @@ function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, fa
 
     if (!context[unitName] || !IsValidEntity(context[unitName]) || !context[unitName].IsAlive()) {
         const unit = CreateUnitByName(unitName, location, true, undefined, undefined, team)
-        if (onCreated) {
-            onCreated(unit)
-        }
         postCreate(unit)
+        if (onPostCreate) {
+            onPostCreate(unit, true)
+        }
     } else {
         postCreate(context[unitName])
+        if (onPostCreate) {
+            onPostCreate(context[unitName], false)
+        }
     }
 }
 
