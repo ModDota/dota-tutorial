@@ -241,17 +241,21 @@ function removeBountyRunes() {
 
     if (context[CustomEntityKeys.RadiantTopBountyRune]) {
         context[CustomEntityKeys.RadiantTopBountyRune].Destroy()
+        context[CustomEntityKeys.RadiantTopBountyRune] = undefined
     }
 
     if (context[CustomEntityKeys.RadiantAncientsBountyRune]) {
         context[CustomEntityKeys.RadiantAncientsBountyRune].Destroy()
+        context[CustomEntityKeys.RadiantAncientsBountyRune] = undefined
     }
 
     if (context[CustomEntityKeys.DireBotBountyRune]) {
         context[CustomEntityKeys.DireBotBountyRune].Destroy()
+        context[CustomEntityKeys.DireBotBountyRune] = undefined
     }
 
     if (context[CustomEntityKeys.DireAncientsBountyRune]) {
         context[CustomEntityKeys.DireAncientsBountyRune].Destroy()
+        context[CustomEntityKeys.DireAncientsBountyRune] = undefined
     }
 }
