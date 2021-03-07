@@ -219,19 +219,19 @@ function clearUnit(unitName: string) {
 function createBountyRunes() {
     const context = GameRules.Addon.context
 
-    if (!context[CustomEntityKeys.RadiantTopBountyRune]) {
+    if (!IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
         context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, RuneType.BOUNTY)
     }
 
-    if (!context[CustomEntityKeys.RadiantAncientsBountyRune]) {
+    if (!IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
         context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, RuneType.BOUNTY)
     }
 
-    if (!context[CustomEntityKeys.DireBotBountyRune]) {
+    if (!IsValidEntity(context[CustomEntityKeys.DireBotBountyRune])) {
         context[CustomEntityKeys.DireBotBountyRune] = CreateRune(runeSpawnsLocations.direBotBountyPos, RuneType.BOUNTY)
     }
 
-    if (!context[CustomEntityKeys.DireAncientsBountyRune]) {
+    if (!IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
         context[CustomEntityKeys.DireAncientsBountyRune] = CreateRune(runeSpawnsLocations.direAncientsBountyPos, RuneType.BOUNTY)
     }
 }
@@ -239,22 +239,22 @@ function createBountyRunes() {
 function removeBountyRunes() {
     const context = GameRules.Addon.context
 
-    if (context[CustomEntityKeys.RadiantTopBountyRune]) {
+    if (IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
         context[CustomEntityKeys.RadiantTopBountyRune].Destroy()
         context[CustomEntityKeys.RadiantTopBountyRune] = undefined
     }
 
-    if (context[CustomEntityKeys.RadiantAncientsBountyRune]) {
+    if (IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
         context[CustomEntityKeys.RadiantAncientsBountyRune].Destroy()
         context[CustomEntityKeys.RadiantAncientsBountyRune] = undefined
     }
 
-    if (context[CustomEntityKeys.DireBotBountyRune]) {
+    if (IsValidEntity(context[CustomEntityKeys.DireBotBountyRune])) {
         context[CustomEntityKeys.DireBotBountyRune].Destroy()
         context[CustomEntityKeys.DireBotBountyRune] = undefined
     }
 
-    if (context[CustomEntityKeys.DireAncientsBountyRune]) {
+    if (IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
         context[CustomEntityKeys.DireAncientsBountyRune].Destroy()
         context[CustomEntityKeys.DireAncientsBountyRune] = undefined
     }

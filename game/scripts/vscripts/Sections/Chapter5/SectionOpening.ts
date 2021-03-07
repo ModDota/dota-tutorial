@@ -95,8 +95,9 @@ function onStart(complete: () => void) {
                     tg.immediate((ctx) => {
                         canPlayerIssueOrders = true
                         goalMoveToRune.start()
-                        if (ctx[CustomEntityKeys.TopPowerRune]) {
+                        if (IsValidEntity(ctx[CustomEntityKeys.TopPowerRune])) {
                             ctx[CustomEntityKeys.TopPowerRune].Destroy()
+                            ctx[CustomEntityKeys.TopPowerRune] = undefined
                         }
                     }),
                 ]),
