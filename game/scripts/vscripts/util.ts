@@ -279,8 +279,7 @@ export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
 
 let shopOpen = false;
 CustomGameEventManager.RegisterListener("shop_open_changed", (source, event) => {
-    print("Shop open changed:", event.open)
-    shopOpen = event.open !== 0
+    shopOpen = event.open !== 0;
 })
 
 /**
@@ -288,5 +287,5 @@ CustomGameEventManager.RegisterListener("shop_open_changed", (source, event) => 
  * @returns Whether the shop ui is currently open.
  */
 export function isShopOpen() {
-    return shopOpen
+    return shopOpen;
 }
