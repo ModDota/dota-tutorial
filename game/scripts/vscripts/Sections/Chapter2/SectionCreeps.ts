@@ -114,7 +114,7 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.setCameraTarget(context => context[CustomNpcKeys.GodzMudGolem]),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 5),
-                    tg.setCameraTarget(playerHero),
+                    tg.panCameraLinear(context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), playerHero.GetAbsOrigin(), 1),
                     tg.immediate(() => canPlayerIssueOrders = true),
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
