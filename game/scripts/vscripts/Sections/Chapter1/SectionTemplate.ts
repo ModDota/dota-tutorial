@@ -21,7 +21,7 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalDummy = goalTracker.addBoolean("Do something.");
+    const goalDummy = goalTracker.addBoolean(LocalizationKey.GoalDummy);
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([

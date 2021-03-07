@@ -27,8 +27,8 @@ const onStart = (complete: () => void) => {
     if (!playerHero) error("Could not find the player's hero.");
 
     const goalTracker = new GoalTracker();
-    const goalOpenShop = goalTracker.addBoolean("Open the shop.");
-    const goalBuyTango = goalTracker.addBoolean("Use the gold provided to purchase a Tango.");
+    const goalOpenShop = goalTracker.addBoolean(LocalizationKey.GoalOpenShop);
+    const goalBuyTango = goalTracker.addBoolean(LocalizationKey.GoalBuyTango);
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([

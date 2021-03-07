@@ -22,8 +22,8 @@ const onStart = (complete: () => void) => {
     });
 
     const goalTracker = new GoalTracker()
-    const goalMoveToFirstMarker = goalTracker.addBoolean("Move to the marked waypoint.")
-    const goalMoveToSecondMarker = goalTracker.addBoolean("Move to the second waypoint.")
+    const goalMoveToFirstMarker = goalTracker.addBoolean(LocalizationKey.GoalMoveToFirstMarker);
+    const goalMoveToSecondMarker = goalTracker.addBoolean(LocalizationKey.GoalMoveToSecondMarker);
 
     const playerHero = getOrError(getPlayerHero())
     const topLeftMarkerLocation = Vector(-7300, -6100, 384)

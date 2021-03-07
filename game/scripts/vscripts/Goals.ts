@@ -92,7 +92,7 @@ export class GoalTracker {
      * Adds a boolean goal.
      * @param text Text for the goal.
      */
-    addBoolean(text: string): TrackableGoalBoolean {
+    addBoolean(text: LocalizationKey): TrackableGoalBoolean {
         const state = new TrackableGoalBoolean(text)
         this.states.push(state)
         return state
@@ -103,7 +103,7 @@ export class GoalTracker {
      * @param text Text for the goal.
      * @param maximum Maximum number for the goal.
      */
-    addNumeric(text: string, maximum: number): TrackableGoalNumeric {
+    addNumeric(text: LocalizationKey, maximum: number): TrackableGoalNumeric {
         const state = new TrackableGoalNumeric(text, maximum)
         this.states.push(state)
         return state
