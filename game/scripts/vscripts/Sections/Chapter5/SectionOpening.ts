@@ -48,6 +48,7 @@ function onStart(complete: () => void) {
             tg.textDialog(LocalizationKey.Script_5_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.fork([
                 tg.textDialog(LocalizationKey.Script_5_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 15),
+                // Pan camera over bounty rune spawns
                 tg.seq([
                     tg.setCameraTarget(radiantTopBounty),
                     tg.wait(1),
@@ -77,6 +78,7 @@ function onStart(complete: () => void) {
             tg.immediate(ctx => {
                 RemoveFOWViewer(DotaTeam.GOODGUYS, ctx[CustomEntityKeys.DireAncientsBountyFOWViewer])
             }),
+            // Return camera to player
             tg.fork([
                 tg.textDialog(LocalizationKey.Script_5_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 6),
                 tg.panCameraLinear(direAncientsBountyPos, playerHero.GetAbsOrigin(), 3),
