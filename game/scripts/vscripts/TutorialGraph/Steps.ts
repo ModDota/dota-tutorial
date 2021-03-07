@@ -798,7 +798,7 @@ export const withHighlightUnits = (step: tg.StepArgument<tg.TutorialStep>, units
  * @param step Step to execute while highlighting.
  * @param locations Locations to highlight.
  */
- export const withHighlightLocations = (step: tg.StepArgument<tg.TutorialStep>, locations: tg.StepArgument<Vector[]>) => {
+export const withHighlightLocations = (step: tg.StepArgument<tg.TutorialStep>, locations: tg.StepArgument<Vector[]>) => {
     let forkStep: tg.TutorialStep | undefined = undefined
 
     return tg.step((context, complete) => {
