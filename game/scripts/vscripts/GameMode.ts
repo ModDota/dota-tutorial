@@ -26,6 +26,7 @@ export class GameMode {
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
         chapters.chapter2.SectionCreeps,
+        chapters.chapter2.SectionTower,
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
@@ -93,7 +94,7 @@ export class GameMode {
         GameRules.SetCreepSpawningEnabled(false);
         GameRules.SetAllowOutpostBonuses(false);
         this.Game.SetCustomScanCooldown(9);
-        this.Game.SetCustomGlyphCooldown(99999);
+        this.Game.SetCustomGlyphCooldown(10);
         this.Game.DisableClumpingBehaviorByDefault(true);
         this.Game.SetBuybackEnabled(false);
         this.Game.SetCustomDireScore(0);
