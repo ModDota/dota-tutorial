@@ -139,5 +139,15 @@
         "Script_2_Tower_16"     "The enemy just activated his glyph. It will temporarily make all his towers and creeps invulnerable for a short amount of time. Go ahead and try clicking it yourself!"
         "Script_2_Tower_17"     "Nicely done. Now destroy the tower once and for all!"
         "Script_2_Tower_18"     "You’ll notice we have deleted your items. Don’t actually do this in a match or you might get reported!"
+        "Script_5_Opening_1" "welcome, to the bounty rune spawn! Yes there are more things that spawn!"
+        "Script_5_Opening_2" "bounty runes spawn every 5 minutes, including the beginning of the game at the 0 mark. Here are where they spawn"
+        "Script_5_Opening_3" "Here we are, then here (the radiant jungle). Your opponents also have 2 spawns, here (the dire jungle) and here (the dire ancients)."
+        "Script_5_Opening_4" "Bounty runes, when picked up, give your entire team a small amount of gold. But it adds up! As the game goes on, the runes are worth more and more. Making sure you are collecting your side’s bounty runes is a great way to make sure your team stays in the game."
+        "Script_5_Opening_5" "If you manage to steal the enemy’s runes, and get all 4, your entire team gets a much bigger advantage over the enemy, as you are all making more money while the enemy gets less."
+        "Script_5_Opening_6" "But believe it or not, this is not the only type of rune, dear student. Lets head over here!"
+        "Script_5_Opening_7" "This is called a POWER RUNE spawn. These are powerups that spawn every 2 minutes, starting at minute 4. These dramatically change your character to be more powerful for a short time. There are many types of these runes, and I don't feel like telling you about all of them. Just take them if they pop upso the enemy doesn't get them"
+        "Script_5_Opening_8" "Yes! Are you starting to see a pattern here? Creeps spawn every 30 seconds. Power runes every 2 minutes, Bounty runes every 5 minutes and Outposts every ten. There is a ton happening on the dota 2 map, and you as a team need to handle all of this as well as murdering your enemies. We have a saying in dota: if you are standing still, you are most likely doing something wrong. There is always something to do, so go forth and do it!"
+        "Script_5_Opening_9" "Now, lets give you my favorite rune, the double damage rune, and introduce you to someone very special."
+        "Script_5_Opening_10" "Click on it to pick it up, young one!"
     }
 }

@@ -12,6 +12,7 @@ export type RequiredState = {
     heroLocationTolerance?: number // How far the hero can be from heroLocation without getting teleported
     heroGold?: number
     heroAbilityMinLevels?: [number, number, number, number],
+    heroHasDoubleDamage?: boolean
 
     // Golems
     requireSunsfanGolem?: boolean
@@ -28,6 +29,9 @@ export type RequiredState = {
 
     // Blockades
     blockades?: Blockade[]
+
+    // Chapter 5 bounty runes
+    requireBountyRunes?: boolean
 }
 
 /**
@@ -46,6 +50,7 @@ export const defaultRequiredState: FilledRequiredState = {
     heroLocationTolerance: 1000,
     heroGold: 0,
     heroAbilityMinLevels: [0, 0, 1, 0],
+    heroHasDoubleDamage: false,
 
     // Golems
     requireSunsfanGolem: false,
@@ -62,4 +67,7 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Blockades
     blockades: [],
+
+    // Chapter 5 bounty runes
+    requireBountyRunes: false
 }

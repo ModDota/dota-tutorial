@@ -1,6 +1,7 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
 import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
 import { Blockade } from "../Blockade"
+import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 
 // Keep track of spawned blockades so we can remove them again.
 const spawnedBlockades = new Set<Blockade>()
@@ -153,6 +154,24 @@ export const setupState = (stateReq: RequiredState): void => {
         blockade.spawn()
         spawnedBlockades.add(blockade)
     }
+
+    // Set or remove DD modifier as needed
+    if (state.heroHasDoubleDamage) {
+        if (!hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", undefined)
+        }
+    } else {
+        if (hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.RemoveModifierByName("modifier_rune_doubledamage")
+        }
+    }
+
+    // Create/remake or remove bounty runes
+    if (state.requireBountyRunes) {
+        createBountyRunes()
+    } else {
+        removeBountyRunes()
+    }
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {
@@ -194,5 +213,45 @@ function clearUnit(unitName: string) {
         }
 
         context[unitName] = undefined
+    }
+}
+
+function createBountyRunes() {
+    const context = GameRules.Addon.context
+
+    if (!context[CustomEntityKeys.RadiantTopBountyRune]) {
+        context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, RuneType.BOUNTY)
+    }
+
+    if (!context[CustomEntityKeys.RadiantAncientsBountyRune]) {
+        context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, RuneType.BOUNTY)
+    }
+
+    if (!context[CustomEntityKeys.DireBotBountyRune]) {
+        context[CustomEntityKeys.DireBotBountyRune] = CreateRune(runeSpawnsLocations.direBotBountyPos, RuneType.BOUNTY)
+    }
+
+    if (!context[CustomEntityKeys.DireAncientsBountyRune]) {
+        context[CustomEntityKeys.DireAncientsBountyRune] = CreateRune(runeSpawnsLocations.direAncientsBountyPos, RuneType.BOUNTY)
+    }
+}
+
+function removeBountyRunes() {
+    const context = GameRules.Addon.context
+
+    if (context[CustomEntityKeys.RadiantTopBountyRune]) {
+        context[CustomEntityKeys.RadiantTopBountyRune].Destroy()
+    }
+
+    if (context[CustomEntityKeys.RadiantAncientsBountyRune]) {
+        context[CustomEntityKeys.RadiantAncientsBountyRune].Destroy()
+    }
+
+    if (context[CustomEntityKeys.DireBotBountyRune]) {
+        context[CustomEntityKeys.DireBotBountyRune].Destroy()
+    }
+
+    if (context[CustomEntityKeys.DireAncientsBountyRune]) {
+        context[CustomEntityKeys.DireAncientsBountyRune].Destroy()
     }
 }
