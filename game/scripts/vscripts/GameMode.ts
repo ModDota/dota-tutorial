@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, getCameraDummy, getOrError, getPlayerHero, setUnitPacifist } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -189,9 +189,11 @@ export class GameMode {
     private StartGame(): void {
         print("Game starting!");
 
-        print("Starting tutorial from scratch")
-        this.tutorial.start()
+        // Make sure the camera dummy is spawned
+        getCameraDummy(Vector(0, 0, 0));
 
+        print("Starting tutorial from scratch");
+        this.tutorial.start();
     }
 
     // Called on script_reload

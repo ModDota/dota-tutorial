@@ -203,6 +203,23 @@ export function createDummy(location: Vector) {
     return dummy
 }
 
+let cameraDummy: CDOTA_BaseNPC | undefined = undefined
+
+/**
+ * Gets the camera dummy and positions it at a given location. If the dummy doesn't already exist it will be created.
+ * @param location Location to position the camera dummy at.
+ * @returns Camera dummy
+ */
+export function getCameraDummy(location: Vector) {
+    if (cameraDummy && unitIsValidAndAlive(cameraDummy)) {
+        cameraDummy.SetAbsOrigin(location)
+    } else {
+        cameraDummy = createDummy(location)
+    }
+
+    return cameraDummy
+}
+
 /**
  * Orders a unit to use an ability.
  * @param caster Unit that will use the ability.
