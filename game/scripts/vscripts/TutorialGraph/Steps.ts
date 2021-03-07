@@ -1,4 +1,4 @@
-import { createDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
@@ -288,9 +288,6 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
         }
 
         if (cameraDummy) {
-            if (IsValidEntity(cameraDummy)) {
-                cameraDummy.RemoveSelf()
-            }
             cameraDummy = undefined
         }
     }
@@ -299,11 +296,16 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
         const updateInterval = FrameTime()
         const actualStartLocation = tg.getArg(startLocation, context)
         const actualEndLocation = tg.getArg(endLocation, context)
-        cameraDummy = createDummy(actualStartLocation)
+        cameraDummy = getCameraDummy(actualStartLocation)
 
-        // Focus all cameras on the dummy
-        playerIds = findAllPlayersID()
-        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+        // Focus all cameras on the dummy. Wait one frame for the dummy to have its location set correctly, otherwise
+        // we'd see the camera jumping.
+        Timers.CreateTimer(FrameTime(), () => {
+            // Make sure the camera timer still exists. We might have stopped the panning before this is called.
+            if (cameraTimer) {
+                findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+            }
+        })
 
         // Order the dummy to move to the target location. Periodically update the speed using the passed function.
         const updateDummy = () => {
