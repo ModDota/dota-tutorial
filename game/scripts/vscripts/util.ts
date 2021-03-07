@@ -130,16 +130,6 @@ export function DestroyNeutrals() {
 }
 
 /**
- * Returns the duration of the given sound in seconds.
- * @param soundName Name of the sound.
- */
-export function getSoundDuration(soundName: string) {
-    const anyEntity = getOrError(Entities.Next(undefined), "Could not find any entity")
-    return anyEntity.GetSoundDuration(soundName, "")
-}
-
-
-/**
  * Prints all key values of an event. (though it actually would work on any array, I guess)
  * @param event An event that should be printed.
  */
@@ -208,9 +198,26 @@ export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
  * @param location Location to spawn the dummy at.
  */
 export function createDummy(location: Vector) {
-    const dummy = CreateUnitByName("npc_dummy_unit", location, true, undefined, undefined, DotaTeam.GOODGUYS)
+    const dummy = CreateUnitByName("npc_dummy_unit", location, false, undefined, undefined, DotaTeam.GOODGUYS)
     dummy.AddNewModifier(dummy, undefined, "modifier_dummy", {})
     return dummy
+}
+
+let cameraDummy: CDOTA_BaseNPC | undefined = undefined
+
+/**
+ * Gets the camera dummy and positions it at a given location. If the dummy doesn't already exist it will be created.
+ * @param location Location to position the camera dummy at.
+ * @returns Camera dummy
+ */
+export function getCameraDummy(location: Vector) {
+    if (cameraDummy && unitIsValidAndAlive(cameraDummy)) {
+        cameraDummy.SetAbsOrigin(location)
+    } else {
+        cameraDummy = createDummy(location)
+    }
+
+    return cameraDummy
 }
 
 /**

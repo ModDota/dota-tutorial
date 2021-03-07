@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, getCameraDummy, getOrError, getPlayerHero, setUnitPacifist } from "./util";
 
 declare global {
     interface CDOTAGamerules {
@@ -38,8 +38,7 @@ export class GameMode {
     context: TutorialContext = {};
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
-        // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
-        // PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_meepo.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
     }
 
     public static Activate(this: void) {
@@ -199,9 +198,11 @@ export class GameMode {
     private StartGame(): void {
         print("Game starting!");
 
-        print("Starting tutorial from scratch")
-        this.tutorial.start()
+        // Make sure the camera dummy is spawned
+        getCameraDummy(Vector(0, 0, 0));
 
+        print("Starting tutorial from scratch");
+        this.tutorial.start();
     }
 
     // Called on script_reload
@@ -225,7 +226,7 @@ export class GameMode {
                 }
 
                 // Remove starting TP from player
-                Timers.CreateTimer(1/30, () => {
+                Timers.CreateTimer(1 / 30, () => {
                     if (unit && unit.HasItemInInventory("item_tpscroll")) {
                         const item = unit.FindItemInInventory("item_tpscroll");
                         if (item) {
