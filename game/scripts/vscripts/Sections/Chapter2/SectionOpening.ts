@@ -68,7 +68,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
                     tg.textDialog(LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem], 5),
                 ]),
-                Entities.FindAllByClassname("npc_dota_barracks") as CDOTA_BaseNPC[]
+                Entities.FindAllByClassname("npc_dota_filler") as CDOTA_BaseNPC[]
             ),
 
             // Talking about barracks
