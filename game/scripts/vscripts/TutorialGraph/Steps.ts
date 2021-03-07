@@ -274,7 +274,6 @@ export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
 export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, getSpeed: (startLocation: Vector, endLocation: Vector, location: Vector) => number) => {
     let cameraTimer: string | undefined = undefined
     let playerIds: PlayerID[] | undefined = undefined
-    let cameraDummy: CDOTA_BaseNPC | undefined = undefined
 
     const cleanup = () => {
         if (cameraTimer) {
@@ -286,17 +285,13 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
             playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, undefined))
             playerIds = undefined
         }
-
-        if (cameraDummy) {
-            cameraDummy = undefined
-        }
     }
 
     return tg.step((context, complete) => {
         const updateInterval = FrameTime()
         const actualStartLocation = tg.getArg(startLocation, context)
         const actualEndLocation = tg.getArg(endLocation, context)
-        cameraDummy = getCameraDummy(actualStartLocation)
+        const cameraDummy = getCameraDummy(actualStartLocation)
 
         // Focus all cameras on the dummy. Wait one frame for the dummy to have its location set correctly, otherwise
         // we'd see the camera jumping.
@@ -309,10 +304,6 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
 
         // Order the dummy to move to the target location. Periodically update the speed using the passed function.
         const updateDummy = () => {
-            if (!cameraDummy || !IsValidEntity(cameraDummy)) {
-                error("Camera dummy was invalid")
-            }
-
             const currentLocation = cameraDummy.GetAbsOrigin()
             const distance = actualEndLocation.__sub(currentLocation).Length2D()
 
