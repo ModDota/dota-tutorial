@@ -29,6 +29,9 @@ export type RequiredState = {
 
     // Blockades
     blockades?: Blockade[]
+
+    // Chapter 5 bounty runes
+    requireBountyRunes?: boolean
 }
 
 /**
@@ -64,4 +67,7 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Blockades
     blockades: [],
+
+    // Chapter 5 bounty runes
+    requireBountyRunes: false
 }
