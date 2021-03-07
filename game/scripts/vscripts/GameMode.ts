@@ -169,8 +169,8 @@ export class GameMode {
     ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
         if (event.name_const === "modifier_rune_doubledamage")
             event.duration = -1
-        
-        return true 
+
+        return true
     }
 
     public OnStateChange(): void {
@@ -227,7 +227,7 @@ export class GameMode {
 
                 // Remove starting TP from player
                 Timers.CreateTimer(1 / 30, () => {
-                    if (unit && unit.HasItemInInventory("item_tpscroll")) {
+                    if (unit && IsValidEntity(unit) && unit.HasItemInInventory("item_tpscroll")) {
                         const item = unit.FindItemInInventory("item_tpscroll");
                         if (item) {
                             unit.RemoveItem(item);
