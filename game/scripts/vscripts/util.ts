@@ -130,16 +130,6 @@ export function DestroyNeutrals() {
 }
 
 /**
- * Returns the duration of the given sound in seconds.
- * @param soundName Name of the sound.
- */
-export function getSoundDuration(soundName: string) {
-    const anyEntity = getOrError(Entities.Next(undefined), "Could not find any entity")
-    return anyEntity.GetSoundDuration(soundName, "")
-}
-
-
-/**
  * Prints all key values of an event. (though it actually would work on any array, I guess)
  * @param event An event that should be printed.
  */

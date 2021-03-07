@@ -1,4 +1,5 @@
-import { getOrError, getPlayerHero, getSoundDuration } from "./util";
+import { getSoundDuration } from "./Sounds";
+import { getOrError, getPlayerHero } from "./util";
 
 // move this here because CDOTA_BaseNPC wasn't found in general.d.ts
 interface DialogData {
@@ -231,9 +232,8 @@ export function playAudio(
     extraDuration?: number,
     onEnded?: () => void,
 ) {
-    const duration =
-        getSoundDuration(soundName) +
-        (extraDuration === undefined ? 0 : extraDuration);
+    const duration = getSoundDuration(soundName) + (extraDuration === undefined ? 0 : extraDuration);
+    print("Play audio", soundName, "duration:", getSoundDuration(soundName), "total-duration:", duration)
     playCommon(text, unit, duration, onEnded, soundName);
 }
 

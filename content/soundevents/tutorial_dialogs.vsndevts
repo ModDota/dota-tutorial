@@ -1,0 +1,363 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+    "Script_1_Opening_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_1.vsnd" ]
+    }
+    "Script_1_Opening_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_2.vsnd" ]
+    }
+    "Script_1_Opening_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_3.vsnd" ]
+    }
+    "Script_1_Opening_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_4.vsnd" ]
+    }
+    "Script_1_Opening_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_5.vsnd" ]
+    }
+    "Script_1_Opening_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_6.vsnd" ]
+    }
+    "Script_1_Opening_7" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_7.vsnd" ]
+    }
+    "Script_1_Opening_8" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_8.vsnd" ]
+    }
+    "Script_1_Opening_9" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_9.vsnd" ]
+    }
+    "Script_1_Opening_10" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_10.vsnd" ]
+    }
+    "Script_1_Opening_11" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_11.vsnd" ]
+    }
+    "Script_1_Movement_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_1.vsnd" ]
+    }
+    "Script_1_Movement_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_2.vsnd" ]
+    }
+    "Script_1_Movement_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_3.vsnd" ]
+    }
+    "Script_1_Movement_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_4.vsnd" ]
+    }
+    "Script_1_Movement_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_5.vsnd" ]
+    }
+    "Script_1_Movement_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_6.vsnd" ]
+    }
+    "Script_1_Movement_7" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_7.vsnd" ]
+    }
+    "Script_1_Movement_8" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_8.vsnd" ]
+    }
+    "Script_1_Movement_9" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_9.vsnd" ]
+    }
+    "Script_1_Movement_10" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_10.vsnd" ]
+    }
+    "Script_1_Movement_11" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_11.vsnd" ]
+    }
+    "Script_1_Camera_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_1.vsnd" ]
+    }
+    "Script_1_Camera_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_2.vsnd" ]
+    }
+    "Script_1_Camera_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_3.vsnd" ]
+    }
+    "Script_1_Camera_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_4.vsnd" ]
+    }
+    "Script_1_Camera_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_5.vsnd" ]
+    }
+    "Script_1_Camera_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_6.vsnd" ]
+    }
+    "Script_1_Camera_7" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_7.vsnd" ]
+    }
+    "Script_1_Camera_8" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_8.vsnd" ]
+    }
+    "Script_1_Camera_9" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_9.vsnd" ]
+    }
+    "Script_1_Camera_10" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Camera_10.vsnd" ]
+    }
+    "Script_1_Leveling_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_1.vsnd" ]
+    }
+    "Script_1_Leveling_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_2.vsnd" ]
+    }
+    "Script_1_Leveling_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_3.vsnd" ]
+    }
+    "Script_1_Leveling_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_4.vsnd" ]
+    }
+    "Script_1_Leveling_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_5.vsnd" ]
+    }
+    "Script_1_Leveling_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_6.vsnd" ]
+    }
+    "Script_1_Leveling_7" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_7.vsnd" ]
+    }
+    "Script_1_Leveling_8" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_8.vsnd" ]
+    }
+    "Script_1_Leveling_9" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_9.vsnd" ]
+    }
+    "Script_1_Leveling_10" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_10.vsnd" ]
+    }
+    "Script_1_BreatheFire_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_1.vsnd" ]
+    }
+    "Script_1_BreatheFire_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_2.vsnd" ]
+    }
+    "Script_1_BreatheFire_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_3.vsnd" ]
+    }
+    "Script_1_BreatheFire_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_4.vsnd" ]
+    }
+    "Script_1_BreatheFire_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_5.vsnd" ]
+    }
+    "Script_1_Shop_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_1.vsnd" ]
+    }
+    "Script_1_Shop_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_2.vsnd" ]
+    }
+    "Script_1_Shop_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_3.vsnd" ]
+    }
+    "Script_1_Shop_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_4.vsnd" ]
+    }
+    "Script_1_Shop_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_5.vsnd" ]
+    }
+    "Script_1_Shop_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_6.vsnd" ]
+    }
+    "Script_1_Shop_7" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Shop_7.vsnd" ]
+    }
+    "Script_1_Closing_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_1.vsnd" ]
+    }
+    "Script_1_Closing_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_2.vsnd" ]
+    }
+    "Script_1_Closing_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_3.vsnd" ]
+    }
+    "Script_1_Closing_4" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_4.vsnd" ]
+    }
+    "Script_1_Closing_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_5.vsnd" ]
+    }
+    "Script_1_Closing_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_6.vsnd" ]
+    }
+}

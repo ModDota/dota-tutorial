@@ -1,6 +1,7 @@
-import { createDummy, findAllPlayersID, getPlayerHero, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { createDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
+import { getSoundDuration } from "../Sounds"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,

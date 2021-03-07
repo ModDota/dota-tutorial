@@ -37,8 +37,7 @@ export class GameMode {
     context: TutorialContext = {};
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
-        // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
-        // PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_meepo.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
     }
 
     public static Activate(this: void) {
@@ -216,7 +215,7 @@ export class GameMode {
                 }
 
                 // Remove starting TP from player
-                Timers.CreateTimer(1/30, () => {
+                Timers.CreateTimer(1 / 30, () => {
                     if (unit && unit.HasItemInInventory("item_tpscroll")) {
                         const item = unit.FindItemInInventory("item_tpscroll");
                         if (item) {
