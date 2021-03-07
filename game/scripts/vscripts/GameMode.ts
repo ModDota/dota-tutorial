@@ -183,18 +183,7 @@ export class GameMode {
             Timers.CreateTimer(1, () => this.StartGame());
         }
 
-        if (state === GameState.GAME_IN_PROGRESS) {
-            // Remove starting TP from player
-            Timers.CreateTimer(1, () => {
-                const hero = getPlayerHero();
-                if (hero && hero.HasItemInInventory("item_tpscroll")) {
-                    const item = hero.FindItemInInventory("item_tpscroll");
-                    if (item) {
-                        hero.RemoveItem(item);
-                    }
-                }
-            });
-        }
+        if (state === GameState.GAME_IN_PROGRESS) { }
     }
 
     private StartGame(): void {
@@ -224,6 +213,16 @@ export class GameMode {
                         this.OnPlayerHeroAssigned(unit);
                     }
                 }
+
+                // Remove starting TP from player
+                Timers.CreateTimer(1/30, () => {
+                    if (unit && unit.HasItemInInventory("item_tpscroll")) {
+                        const item = unit.FindItemInInventory("item_tpscroll");
+                        if (item) {
+                            unit.RemoveItem(item);
+                        }
+                    }
+                });
             }
 
             // Couriers
