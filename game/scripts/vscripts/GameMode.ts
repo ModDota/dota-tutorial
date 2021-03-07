@@ -168,7 +168,7 @@ export class GameMode {
     }
 
     ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
-        if (event.name_const = "modifier_rune_doubledamage")
+        if (event.name_const === "modifier_rune_doubledamage")
             event.duration = -1
         
         return true 

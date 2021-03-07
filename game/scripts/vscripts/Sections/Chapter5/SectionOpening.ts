@@ -3,6 +3,7 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { findRealPlayerID, getOrError, getPlayerHero } from "../../util";
+import { Blockade } from "../../Blockade";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
 
@@ -16,6 +17,17 @@ const requiredState: RequiredState = {
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroLocation: Vector(-4150, 2568, 0),
     heroLocationTolerance: 800,
+    blockades: [
+        new Blockade(Vector(-4000, 3104, 0), Vector(-3545, 3062, 6)), // Dire jungle lowground river entry
+        new Blockade(Vector(-4832, 2592, 0), Vector(-4840, 2983, 6)), // Top lane river entry
+        new Blockade(Vector(-4327, 2370, 0), Vector(-4007, 2043, 0)), // Radiant secret shop river entry
+        new Blockade(Vector(-1753, 2944, 0), Vector(-1432, 2653, 6)), // Dire jungle outpost river entry
+        new Blockade(Vector(-2528, 1760, 7), Vector(-2235, 2215, 12)), // Roshan entry
+        new Blockade(Vector(-3175, 1203, 0), Vector(-2855, 873, 0)), // Radiant ancients river entry
+        new Blockade(Vector(-2144, 536, 0), Vector(-1698, 536, 0)), // Radiant top-mid river entry
+        new Blockade(Vector(-1056, 928, 0), Vector(-1050, 1319, 0)), // Dire mid-top river entry
+        new Blockade(Vector(-1440, 416, 0), Vector(-928, 800, 0)) // Mid river top side
+    ]
 };
 
 function onStart(complete: () => void) {
