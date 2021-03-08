@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, isShopOpen } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, highlightUiElement, isShopOpen, removeHighlight } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
@@ -26,6 +26,9 @@ const onStart = (complete: () => void) => {
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
 
+    const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
+    const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+
     const goalTracker = new GoalTracker();
     const goalOpenShop = goalTracker.addBoolean("Open the shop.");
     const goalBuyTango = goalTracker.addBoolean("Use the gold provided to purchase a Tango.");
@@ -37,20 +40,25 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.wait(FrameTime()),
             tg.immediate(_ => {
                 goalOpenShop.start();
                 playerHero.SetGold(90, true);
+                highlightUiElement(shopBtnUIPath)
                 waitingForPlayerToPurchaseTango = true;
             }),
             tg.completeOnCheck(_ => isShopOpen(), 0.1),
             tg.immediate(_ => {
                 goalOpenShop.complete();
                 goalBuyTango.start();
+                highlightUiElement(tangoInGuideUIPath, undefined, true);
             }),
             tg.completeOnCheck(_ => {
                 return playerBoughtTango;
             }, 0.2),
             tg.immediate(_ => {
+                removeHighlight(shopBtnUIPath);
+                removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
                 goalEatTree.start();
             }),

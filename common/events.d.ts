@@ -66,6 +66,7 @@ interface ClockTimeEvent {
 interface HighlightElementEvent {
     path: string;
     duration?: number;
+    setElementAsParent?: 0 | 1;
 }
 
 interface RemoveHighlightEvent {
