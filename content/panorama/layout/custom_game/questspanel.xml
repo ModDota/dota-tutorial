@@ -16,14 +16,6 @@
                 <Panel class="Divider" />
             </Panel>
             <Panel hittest="false" id="QuestsPanelContainer">
-                <Panel class="Row" id="PlaceholderQuest1">
-                    <Panel class="QuestsUncompleted" />
-                    <Label class="QuestUncompletedText" text="Find USB Flash drive that contains Half-life 3." />
-                </Panel>
-                <Panel class="Row" id="PlaceholderQuest2">
-                    <Panel class="QuestsCompleted" />
-                    <Label class="QuestCompletedText" text="Kill Omniknight with Techies three times. (3/3)" />
-                </Panel>
             </Panel>
         </Panel>
     </Panel>
