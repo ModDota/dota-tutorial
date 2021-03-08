@@ -12,7 +12,7 @@ declare const enum SectionName {
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
     Chapter4_Outpost = "Chapter4_Outpost",
-    Chapter5_Opening ="Chapter5_Opening",
+    Chapter5_Opening = "Chapter5_Opening",
 }
 
 declare const enum CustomNpcKeys {
@@ -56,4 +56,8 @@ declare const enum ModifierKey {
     Alt,
     Shift,
     Control,
+}
+
+declare const enum ParticleName {
+    HighlightBuilding = "particles/dev/curlnoise_test.vpcf",
 }

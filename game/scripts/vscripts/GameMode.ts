@@ -39,6 +39,7 @@ export class GameMode {
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
+        PrecacheResource("particle", ParticleName.HighlightBuilding, context);
     }
 
     public static Activate(this: void) {

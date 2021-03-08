@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, isShopOpen } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
@@ -42,7 +42,7 @@ const onStart = (complete: () => void) => {
                 playerHero.SetGold(90, true);
                 waitingForPlayerToPurchaseTango = true;
             }),
-            tg.wait(10),
+            tg.completeOnCheck(_ => isShopOpen(), 0.1),
             tg.immediate(_ => {
                 goalOpenShop.complete();
                 goalBuyTango.start();

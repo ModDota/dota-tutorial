@@ -246,26 +246,6 @@ export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>
 }
 
 /**
- * Moves the camera to a unit, with lerp
- * @param target Unit to move the camera to.
- * @param lerp Speed at which the camera moves
- */
-export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
-    let playerIds = findAllPlayersID();
-
-    playerIds.forEach(playerId => {
-        let player = PlayerResource.GetPlayer(playerId);
-
-        if (player) {
-            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-                unitTargetEntIndex: target.GetEntityIndex(),
-                lerp: lerp
-            })
-        }
-    })
-}
-
-/**
  * Pans the camera from the start location to the end location with the speed at each timestep calculated using a given function.
  * @param startLocation Start location for the pan.
  * @param endLocation End location for the pan.
@@ -698,7 +678,8 @@ export const createParticleAtLocation = (particleName: tg.StepArgument<string>, 
         }
 
         particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
-        ParticleManager.SetParticleControl(particle, 1, actualLocation)
+        ParticleManager.SetParticleControl(particle, 0, actualLocation)
+        ParticleManager.SetParticleFoWProperties(particle, 0, 0, 1000)
 
         if (actualDuration !== undefined) {
             timer = Timers.CreateTimer(actualDuration, () => {
@@ -743,6 +724,7 @@ export const createParticleAttachedToUnit = (particleName: tg.StepArgument<strin
         }
 
         particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
+        ParticleManager.SetParticleFoWProperties(particle, 0, 0, 1000)
 
         if (actualDuration !== undefined) {
             timer = Timers.CreateTimer(actualDuration, () => {
@@ -763,6 +745,54 @@ export const createParticleAttachedToUnit = (particleName: tg.StepArgument<strin
         if (particle) {
             ParticleManager.DestroyParticle(particle, false)
             particle = undefined
+        }
+    })
+}
+
+/**
+ * Executes a step while highlighting the passed units until the step completes.
+ * @param step Step to execute while highlighting.
+ * @param units Units to higlight.
+ */
+export const withHighlightUnits = (step: tg.StepArgument<tg.TutorialStep>, units: tg.StepArgument<CDOTA_BaseNPC[]>) => {
+    let forkStep: tg.TutorialStep | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualStep = tg.getArg(step, context)
+        const actualUnits = tg.getArg(units, context)
+
+        const particleSteps = actualUnits.map(unit => createParticleAttachedToUnit(ParticleName.HighlightBuilding, unit))
+
+        forkStep = tg.forkAny([actualStep, ...particleSteps])
+        forkStep.start(context, complete)
+    }, context => {
+        if (forkStep) {
+            forkStep.stop(context)
+            forkStep = undefined
+        }
+    })
+}
+
+/**
+ * Executes a step while highlighting the pased locations until the step completes.
+ * @param step Step to execute while highlighting.
+ * @param locations Locations to highlight.
+ */
+export const withHighlightLocations = (step: tg.StepArgument<tg.TutorialStep>, locations: tg.StepArgument<Vector[]>) => {
+    let forkStep: tg.TutorialStep | undefined = undefined
+
+    return tg.step((context, complete) => {
+        const actualStep = tg.getArg(step, context)
+        const actualLocations = tg.getArg(locations, context)
+
+        const particleSteps = actualLocations.map(location => createParticleAtLocation(ParticleName.HighlightBuilding, location))
+
+        forkStep = tg.forkAny([actualStep, ...particleSteps])
+        forkStep.start(context, complete)
+    }, context => {
+        if (forkStep) {
+            forkStep.stop(context)
+            forkStep = undefined
         }
     })
 }
