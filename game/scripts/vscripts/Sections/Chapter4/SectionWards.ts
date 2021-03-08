@@ -60,14 +60,17 @@ function onStart(complete: () => void) {
 
             tg.wait(1),
 
-            tg.immediate(_ => {
-                CreateItemOnPositionSync(wardLocation, observerWardItem);
-                CreateItemOnPositionSync(wardLocation.__add(Vector(0, 200)), sentryWardItem);
-            }),
+            // Spawn wards and wait for player to pick them up. Also highlight wards during this.
+            tg.withHighlightLocations(tg.seq([
+                tg.immediate(_ => {
+                    CreateItemOnPositionSync(wardLocation, observerWardItem);
+                    CreateItemOnPositionSync(wardLocation.__add(Vector(0, 200)), sentryWardItem);
+                }),
 
-            tg.immediate(_ => goalFetchWard.start()),
+                tg.immediate(_ => goalFetchWard.start()),
 
-            tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
+                tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
+            ]), [wardLocation]),
 
             tg.immediate(_ => {
                 goalFetchWard.complete();
