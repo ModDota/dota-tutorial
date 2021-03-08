@@ -393,7 +393,6 @@
 .DialogPanelText {
     color: black;
     font-style: normal;
-    font-weight: semi-bold;
     font-size: 20px;
     text-overflow: shrink;
     font-family: defaultFont;
