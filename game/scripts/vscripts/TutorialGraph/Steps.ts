@@ -679,7 +679,7 @@ export const createParticleAtLocation = (particleName: tg.StepArgument<string>, 
 
         particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
         ParticleManager.SetParticleControl(particle, 0, actualLocation)
-        ParticleManager.SetParticleFoWProperties(particle, 0, 0, 1000)
+        ParticleManager.SetParticleShouldCheckFoW(particle, false)
 
         if (actualDuration !== undefined) {
             timer = Timers.CreateTimer(actualDuration, () => {
@@ -724,7 +724,7 @@ export const createParticleAttachedToUnit = (particleName: tg.StepArgument<strin
         }
 
         particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
-        ParticleManager.SetParticleFoWProperties(particle, 0, 0, 1000)
+        ParticleManager.SetParticleShouldCheckFoW(particle, false)
 
         if (actualDuration !== undefined) {
             timer = Timers.CreateTimer(actualDuration, () => {

@@ -6,7 +6,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
-import { Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
+import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
 let graph: tg.TutorialStep | undefined = undefined
@@ -26,7 +26,17 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5906, -3892, 256),
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroAbilityMinLevels: [1, 1, 1, 0],
-    heroLevel: 3
+    heroLevel: 3,
+    blockades: [
+        chapter2Blockades.topToRiverStairs,
+        chapter2Blockades.secretShopToRiverStairs,
+        chapter2Blockades.radiantJungleStairs,
+        chapter2Blockades.radiantBaseT2Divider,
+        chapter2Blockades.radiantBaseMid,
+        chapter2Blockades.radiantBaseBottom,
+        chapter2Blockades.direTopDividerRiver,
+        chapter2Blockades.direTopDividerCliff
+    ]
 }
 
 const onStart = (complete: () => void) => {

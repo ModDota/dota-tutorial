@@ -49,7 +49,7 @@ export class Blockade {
             this.particle = ParticleManager.CreateParticle(Blockade.blockerParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
             ParticleManager.SetParticleControl(this.particle, 0, this.startLocation)
             ParticleManager.SetParticleControl(this.particle, 1, this.endLocation)
-            ParticleManager.SetParticleFoWProperties(this.particle, 0, 0, 1000)
+            ParticleManager.SetParticleShouldCheckFoW(this.particle, false)
         }
     }
 
