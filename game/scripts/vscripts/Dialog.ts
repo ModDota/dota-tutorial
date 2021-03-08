@@ -57,7 +57,7 @@ class DialogController {
         const hero = getOrError(getPlayerHero());
         speaker.FaceTowards(hero.GetOrigin());
 
-        if (gesture) {
+        if (gesture && speaker.IsAlive()) {
             speaker.StartGesture(gesture);
         }
 
