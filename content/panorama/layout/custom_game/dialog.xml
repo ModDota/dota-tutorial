@@ -1,71 +1,42 @@
 <root>
-  <styles>
-  <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
+        <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
 
-  <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
-  <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" /> 
-    
-  <include src="s2r://panorama/styles/custom_game/dialog.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/dialog.css" />
+    </styles>
 
-  </styles>
-  
-  <scripts>
-  <include src="s2r://panorama/scripts/custom_game/dialog.vjs_c" />
-  </scripts>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/dialog.js" />
+    </scripts>
 
-  <Panel hittest="false" class="CustomHudRoot">
-    <Panel id="DungeonHUDContents" hittest="false" class="CustomHudContents">    
-      <Panel id="DialogPanel" hittest="false">
-        <Panel id="DialogPanelBackground" hittest="false"/>
-        <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" hittest="false"/>
-        <Label id="DialogTitle" class="DialogPanelTitle TitleFont" text="" hittest="false"/>    
+    <Panel hittest="false" class="CustomHudRoot">
+        <Panel id="DungeonHUDContents" hittest="false" class="CustomHudContents">
+            <Panel id="DialogPanel" hittest="false">
+                <Panel id="DialogPanelBackground" hittest="false"/>
+                <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" hittest="false"/>
+                <Label id="DialogTitle" class="DialogPanelTitle TitleFont" text="" hittest="false"/>
 
-        <Panel id="DialogPanelContent" hittest="false">
-          <Panel class="SpeechBubble" hittest="false">
-            <Panel id="SpeechBubbleContainer" hittest="false">
-              <Panel class="SpeechBubbleBackgroundOutline" hittest="false"/>
-              <Panel class="SpeechBubbleCalloutSquash" hittest="false">
-                <Panel class="SpeechBubbleCallout" hittest="false"/>
-              </Panel>
-              <Panel class="SpeechBubbleBackground" hittest="false"/>
+                <Panel id="DialogPanelContent" hittest="false">
+                    <Panel class="SpeechBubble" hittest="false">
+                        <Panel id="SpeechBubbleContainer" hittest="false">
+                            <Panel class="SpeechBubbleBackgroundOutline" hittest="false"/>
+                            <Panel class="SpeechBubbleCalloutSquash" hittest="false">
+                                <Panel class="SpeechBubbleCallout" hittest="false"/>
+                            </Panel>
+                            <Panel class="SpeechBubbleBackground" hittest="false"/>
+                        </Panel>
+                        <Panel id="JournalPageBackground"/>
+                        <Label id="DialogLabelSizer" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
+                        <Label id="DialogLabel" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
+                        <Panel class="DialogButtonContainer LeftRightFlow">
+                            <Button id="ContinueDialogButton" class="ButtonBevel CloseButton" onactivate="OnAdvanceDialogButtonPressed()" hittest="true"/>
+                            <Button id="CloseDialogButton" class="ButtonBevel CloseButton" onactivate="OnCloseDialogButtonPressed()" hittest="true"/>
+                        </Panel>
+                    </Panel>
+                </Panel>
             </Panel>
-            <Panel id="JournalPageBackground"/>
-            <Label id="DialogLabelSizer" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
-            <Label id="DialogLabel" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
-             <Panel class="DialogButtonContainer LeftRightFlow">
-                <Button id="ContinueDialogButton" class="ButtonBevel CloseButton"  onactivate="OnAdvanceDialogButtonPressed()" hittest="true"/>
-                <Button id="CloseDialogButton" class="ButtonBevel CloseButton" onactivate="OnCloseDialogButtonPressed()" hittest="true"/>   
-              </Panel>  
-          </Panel>
-          <Panel id="DialogPlayerConfirm">
-            <Panel id="Player0Confirm" class="PlayerConfirm"><Label text="{g:dota_player_name:nc:nh:player_id_0}" html="true"/><DOTAHeroImage id="Player0ConfirmIcon" class="ConfirmHeroIcon" heroid="1" hittest="false" scaling="stretch-to-fit-y-preserve-aspect"/></Panel>
-            <Panel id="Player1Confirm" class="PlayerConfirm"><Label text="{g:dota_player_name:nc:nh:player_id_1}" html="true"/><DOTAHeroImage id="Player1ConfirmIcon" class="ConfirmHeroIcon" heroid="2" hittest="false" scaling="stretch-to-fit-y-preserve-aspect"/></Panel>
-            <Panel id="Player2Confirm" class="PlayerConfirm"><Label text="{g:dota_player_name:nc:nh:player_id_2}" html="true"/><DOTAHeroImage id="Player2ConfirmIcon" class="ConfirmHeroIcon" heroid="3" hittest="false" scaling="stretch-to-fit-y-preserve-aspect"/></Panel>
-            <Panel id="Player3Confirm" class="PlayerConfirm"><Label text="{g:dota_player_name:nc:nh:player_id_3}" html="true"/><DOTAHeroImage id="Player3ConfirmIcon" class="ConfirmHeroIcon" heroid="4" hittest="false" scaling="stretch-to-fit-y-preserve-aspect"/></Panel>
-          </Panel>
-          <Button id="ConfirmButton" class="ButtonBevel" onactivate="OnConfirmButtonPressed()"><Panel class="CheckMark"/><Label text="#DOTA_Siltbreaker_ContinueSpeechText"/></Button>      
         </Panel>
-      </Panel>
     </Panel>
-    <Panel id="FloatingDialogPanel" hittest="false">
-      <Panel id="Floating Background" hittest="false"/>
-      <Panel id="FloatingDialogPanelContent" hittest="false">
-        <Panel class="SpeechBubble" hittest="false">
-          <Panel id="SpeechBubbleContainer" hittest="false">
-            <Panel class="SpeechBubbleBackgroundOutline" hittest="false"/>
-            <Panel class="SpeechBubbleCalloutSquash" hittest="false">
-              <Panel class="SpeechBubbleCallout" hittest="false"/>
-            </Panel>
-            <Panel class="SpeechBubbleBackground" hittest="false"/>
-          </Panel>
-          <Label id="FloatingDialogLabelSizer" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
-          <Label id="FloatingDialogLabel" html="true" class="DialogPanelText" text="#DialogTest" hittest="false" />
-        </Panel>
-        <Panel class="DialogButtonContainer LeftRightFlow">
-          <Button id="ContinueFloatingDialogButton" class="ButtonBevel CloseButton" onactivate="OnAdvanceDialogButtonPressed()" hittest="true"/>
-          <Button id="CloseFloatingDialogButton" class="ButtonBevel CloseButton" onactivate="OnCloseDialogButtonPressed()" hittest="true"/> 
-        </Panel> 
-      </Panel>      
-    </Panel>
-  </Panel>
 </root>

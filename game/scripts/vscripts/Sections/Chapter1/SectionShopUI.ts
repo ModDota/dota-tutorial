@@ -1,7 +1,8 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, highlightUiElement, isShopOpen, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
