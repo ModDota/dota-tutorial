@@ -5,7 +5,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import { findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
-import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames } from "./shared";
+import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
 let graph: tg.TutorialStep | undefined = undefined
@@ -18,7 +18,18 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5495, 2930, 128),
     sunsFanLocation: Vector(-5515, 2700, 128),
     heroAbilityMinLevels: [1, 1, 1, 0],
-    heroLevel: 3
+    heroLevel: 3,
+    blockades:
+        [
+            chapter2Blockades.topToRiverStairs,
+            chapter2Blockades.secretShopToRiverStairs,
+            chapter2Blockades.radiantJungleStairs,
+            chapter2Blockades.radiantBaseT2Divider,
+            chapter2Blockades.radiantBaseMid,
+            chapter2Blockades.radiantBaseBottom,
+            chapter2Blockades.direTopDividerRiver,
+            chapter2Blockades.direTopDividerCliff
+        ]
 }
 
 let canPlayerIssueOrders = true;
