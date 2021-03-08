@@ -27,17 +27,16 @@ const requiredState: RequiredState = {
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroAbilityMinLevels: [1, 1, 1, 0],
     heroLevel: 3,
-    blockades:
-        [
-            chapter2Blockades.topToRiverStairs,
-            chapter2Blockades.secretShopToRiverStairs,
-            chapter2Blockades.radiantJungleStairs,
-            chapter2Blockades.radiantBaseT2Divider,
-            chapter2Blockades.radiantBaseMid,
-            chapter2Blockades.radiantBaseBottom,
-            chapter2Blockades.direTopDividerRiver,
-            chapter2Blockades.direTopDividerCliff
-        ]
+    blockades: [
+        chapter2Blockades.topToRiverStairs,
+        chapter2Blockades.secretShopToRiverStairs,
+        chapter2Blockades.radiantJungleStairs,
+        chapter2Blockades.radiantBaseT2Divider,
+        chapter2Blockades.radiantBaseMid,
+        chapter2Blockades.radiantBaseBottom,
+        chapter2Blockades.direTopDividerRiver,
+        chapter2Blockades.direTopDividerCliff
+    ]
 }
 
 const onStart = (complete: () => void) => {
