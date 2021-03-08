@@ -10,14 +10,6 @@ interface SetGoalsEvent {
     goals: Goal[];
 }
 
-interface MoveCameraEvent {
-    cameraTargetX?: number;
-    cameraTargetY?: number;
-    cameraTargetZ?: number;
-    unitTargetEntIndex?: EntityIndex;
-    lerp: number;
-}
-
 interface DialogConfirmedEvent {
     PlayerID: PlayerID;
 }
@@ -84,10 +76,13 @@ interface ChatWheelPhraseSelectedEvent {
     phraseIndex: number;
 }
 
+interface ShopOpenChangedEvent {
+    open: boolean;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
-    move_camera: MoveCameraEvent;
     dialog_confirm_expire: DialogConfirmExpireEvent;
     dialog_confirm: DialogConfirmEvent;
     dialog_complete: DialogCompleteEvent;
@@ -106,4 +101,5 @@ interface CustomGameEventDeclarations {
     highlight_element: HighlightElementEvent;
     remove_highlight: RemoveHighlightEvent;
     chat_wheel_phrase_selected: ChatWheelPhraseSelectedEvent;
+    shop_open_changed: ShopOpenChangedEvent;
 }

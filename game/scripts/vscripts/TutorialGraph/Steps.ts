@@ -246,26 +246,6 @@ export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>
 }
 
 /**
- * Moves the camera to a unit, with lerp
- * @param target Unit to move the camera to.
- * @param lerp Speed at which the camera moves
- */
-export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
-    let playerIds = findAllPlayersID();
-
-    playerIds.forEach(playerId => {
-        let player = PlayerResource.GetPlayer(playerId);
-
-        if (player) {
-            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-                unitTargetEntIndex: target.GetEntityIndex(),
-                lerp: lerp
-            })
-        }
-    })
-}
-
-/**
  * Pans the camera from the start location to the end location with the speed at each timestep calculated using a given function.
  * @param startLocation Start location for the pan.
  * @param endLocation End location for the pan.
