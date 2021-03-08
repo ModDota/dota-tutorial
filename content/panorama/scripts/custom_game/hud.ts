@@ -70,7 +70,7 @@ function removeHighlight(event: RemoveHighlightEvent) {
 
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
-function highlightUiElement(event: HighlightElementEvent) {
+function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
     const { path, duration, setElementAsParent } = event;
     // Panel is already highlighted
     if (highlightedPanels[path]) {

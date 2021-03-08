@@ -154,9 +154,7 @@ export function displayDotaErrorMessage(message: string) {
  * @param setElementAsParent Optional. Sets the element provided in the path as the parent, instead of as a sibling. Used for cases where the parent has the flow-children CSS property.
  */
 export function highlightUiElement(path: string, duration?: number, setElementAsParent?: boolean) {
-    let eventSetElementAsParent: 0 | 1
-    eventSetElementAsParent = setElementAsParent ? 1 : 0
-    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration, setElementAsParent: eventSetElementAsParent });
+    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration, setElementAsParent });
 }
 
 /**
