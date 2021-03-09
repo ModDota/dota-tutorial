@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util";
+import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
@@ -18,6 +18,9 @@ const requiredState: RequiredState = {
 
 const dustName = "item_dust";
 const dustLocation = Vector(-1500, 4000, 256);
+
+// UI Highlighting Paths
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -58,11 +61,15 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
+                highlightUiElement(inventorySlot0UIPath, undefined, true)
             }),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),
             tg.immediate(_ => goalUseDust.complete()),
             tg.wait(1),
+            tg.immediate(_ => {
+                removeHighlight(inventorySlot0UIPath);
+            }),
 
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
@@ -144,7 +151,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-
+    removeHighlight(inventorySlot0UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;

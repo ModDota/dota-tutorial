@@ -20,6 +20,11 @@ const requiredState: RequiredState = {
 let waitingForPlayerToPurchaseTango = false;
 let playerBoughtTango = false;
 
+// UI Highlighting Paths
+const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
+const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/"
+
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
@@ -62,12 +67,14 @@ const onStart = (complete: () => void) => {
                 removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
                 goalEatTree.start();
+                highlightUiElement(inventorySlot0UIPath, undefined, true);
             }),
             tg.completeOnCheck(_ => {
                 return playerHero.HasModifier("modifier_tango_heal");
             }, 0.2),
             tg.immediate(_ => {
                 goalEatTree.complete();
+                removeHighlight(inventorySlot0UIPath);
                 goalMoveOut.start();
             }),
             tg.goToLocation(GetGroundPosition(Vector(-6700, -4800), undefined)),
@@ -86,7 +93,9 @@ const onStart = (complete: () => void) => {
 
 function onStop() {
     print("Stopping", sectionName);
-
+    removeHighlight(shopBtnUIPath);
+    removeHighlight(tangoInGuideUIPath);
+    removeHighlight(inventorySlot0UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
