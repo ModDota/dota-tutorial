@@ -33,7 +33,6 @@ let radiantCreeps: CDOTA_BaseNPC[] = [];
 // UI Highlighting Paths
 const ScanUIPath = "HUDElements/minimap_container/GlyphScanContainer/RadarButton/NormalRoot/RadarIcon"
 const MinimapUIPath = "HUDElements/minimap_container/HUDSkinMinimap"
-const MinimapUIPath2 = "HUDElements/minimap_container/minimap_block/minimap"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -67,14 +66,10 @@ function onStart(complete: () => void) {
             }),
             tg.immediate(_ => canPlayerIssueOrders = false),
             tg.immediate(_ => {
-                highlightUiElement(MinimapUIPath, 5, true)
-                print("minimap highlighted");
+                // highlightUiElement(MinimapUIPath, 5, true)
+                // print("crappy minimap highlight on line 70");
             }),
             tg.setCameraTarget(_ => radiantCreeps[0]),
-
-
-
-
             tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
             tg.setCameraTarget(playerHero),
             tg.immediate(_ => {
