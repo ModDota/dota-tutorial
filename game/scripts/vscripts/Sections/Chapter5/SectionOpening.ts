@@ -101,7 +101,7 @@ function onStart(complete: () => void) {
                         }
                     }),
                 ]),
-                tg.goToLocation(runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0))),
+                tg.goToLocation(runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3250, 1600), undefined)]),
             ]),
             tg.immediate(ctx => {
                 canPlayerIssueOrders = false

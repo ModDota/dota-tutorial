@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero } from "../../util";
+import { getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
@@ -99,13 +99,13 @@ function onStart(complete: () => void) {
 
                 const dmgToDestroyTower = CreateDamageInfo(playerHero, playerHero, playerHero.GetAbsOrigin(), playerHero.GetAbsOrigin(), 9999, 9999);
 
-                const direTopTower1 = getOrError(Entities.FindByName(undefined, "dota_badguys_tower1_top"));
-                if (IsValidEntity(direTopTower1) && direTopTower1.IsAlive()) {
+                const direTopTower1 = Entities.FindByName(undefined, "dota_badguys_tower1_top") as CDOTA_BaseNPC_Building | undefined;
+                if (direTopTower1 && unitIsValidAndAlive(direTopTower1)) {
                     direTopTower1.TakeDamage(dmgToDestroyTower);
                 }
 
-                const direTopTower2 = getOrError(Entities.FindByName(undefined, "dota_badguys_tower2_top"));
-                if (IsValidEntity(direTopTower2) && direTopTower2.IsAlive()) {
+                const direTopTower2 = Entities.FindByName(undefined, "dota_badguys_tower2_top") as CDOTA_BaseNPC_Building | undefined;
+                if (direTopTower2 && unitIsValidAndAlive(direTopTower2)) {
                     direTopTower2.TakeDamage(dmgToDestroyTower);
                 }
             }),

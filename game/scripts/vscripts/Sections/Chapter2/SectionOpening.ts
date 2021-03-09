@@ -148,7 +148,7 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => goalWaitForCreepsToPrepareToAttack.complete())
                 ]),
                 tg.seq([
-                    tg.goToLocation(moveToPrepareToAttackLocation),
+                    tg.goToLocation(moveToPrepareToAttackLocation, [GetGroundPosition(Vector(-6400, -760), undefined), GetGroundPosition(Vector(-6450, 1650), undefined)]),
                     tg.immediate(() => goalMoveBehindCreepsToAttack.complete())
                 ])
             ]),
