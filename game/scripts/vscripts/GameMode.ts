@@ -160,7 +160,11 @@ export class GameMode {
     }
 
     ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean {
-        return false;
+        Timers.CreateTimer(() => {
+            PlayerResource.SetGold(event.player_id_const, 0, false),
+                FrameTime() * 1;
+        });
+        return true;
     }
 
     ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {
