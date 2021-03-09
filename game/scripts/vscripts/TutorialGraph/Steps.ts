@@ -1,4 +1,4 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
@@ -18,6 +18,7 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
 export const goToLocation = (location: tg.StepArgument<Vector>) => {
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
+    let actualLocation: Vector | undefined = undefined
 
     const cleanup = () => {
         if (pathParticle) {
@@ -29,10 +30,15 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
             Timers.RemoveTimer(checkTimer)
             checkTimer = undefined
         }
+
+        if (actualLocation) {
+            MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero()!, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+            actualLocation = undefined
+        }
     }
 
     return tg.step((context, complete) => {
-        const actualLocation = tg.getArg(location, context)
+        actualLocation = tg.getArg(location, context)
 
         const hero = getOrError(getPlayerHero())
 
@@ -42,8 +48,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-            if (isHeroNearby(actualLocation, 200)) {
-                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero()!, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+            if (isHeroNearby(actualLocation!, 200)) {
                 cleanup()
                 complete()
             } else {
@@ -671,158 +676,35 @@ export const neverComplete = () => {
 }
 
 /**
- * Creates a particle system at a location and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
- * @param particleName Name of the particle system.
- * @param location Location to spawn the particles at.
- * @param duration Optional duration after which to destroy the particles and complete.
+ * Executes a step and highlights during it.
+ * @param props Object containing the highlight data.
  */
-export const createParticleAtLocation = (particleName: tg.StepArgument<string>, location: tg.StepArgument<Vector>, duration?: tg.StepArgument<number>, initParticle?: (particle: ParticleID) => void) => {
-    let timer: string | undefined = undefined
-    let particle: ParticleID | undefined = undefined
+export const withHighlights = (step: tg.StepArgument<tg.TutorialStep>, props: tg.StepArgument<HighlightProps>) => {
+    let particles: ParticleID[] | undefined = undefined
+    let actualStep: tg.TutorialStep | undefined = undefined
+
+    const cleanup = () => {
+        if (particles) {
+            particles.forEach(particle => ParticleManager.DestroyParticle(particle, false))
+            particles = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
-        const actualParticleName = tg.getArg(particleName, context)
-        const actualLocation = tg.getArg(location, context)
-        const actualDuration = tg.getOptionalArg(duration, context)
+        actualStep = tg.getArg(step, context)
+        const actualProps = tg.getArg(props, context)
 
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, true)
-        }
+        particles = highlight(actualProps)
 
-        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
-        ParticleManager.SetParticleControl(particle, 0, actualLocation)
-        ParticleManager.SetParticleShouldCheckFoW(particle, false)
-
-        if (initParticle) {
-            initParticle(particle)
-        }
-
-        if (actualDuration !== undefined) {
-            timer = Timers.CreateTimer(actualDuration, () => {
-                if (particle) {
-                    ParticleManager.DestroyParticle(particle, false)
-                    particle = undefined
-                }
-
-                complete()
-            })
-        }
+        actualStep.start(context, () => {
+            cleanup()
+            complete()
+        })
     }, context => {
-        if (timer) {
-            Timers.RemoveTimer(timer)
-            timer = undefined
-        }
+        cleanup()
 
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, false)
-            particle = undefined
-        }
-    })
-}
-
-/**
- * Creates a particle system attached to a unit and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
- * @param particleName Name of the particle system.
- * @param unit Unit to attach the particles to.
- * @param duration Optional duration after which to destroy the particles and complete.
- */
-export const createParticleAttachedToUnit = (particleName: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, duration?: tg.StepArgument<number>, initParticle?: (particle: ParticleID) => void) => {
-    let timer: string | undefined = undefined
-    let particle: ParticleID | undefined = undefined
-
-    return tg.step((context, complete) => {
-        const actualParticleName = tg.getArg(particleName, context)
-        const actualUnit = tg.getArg(unit, context)
-        const actualDuration = tg.getOptionalArg(duration, context)
-
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, true)
-        }
-
-        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
-        ParticleManager.SetParticleShouldCheckFoW(particle, false)
-
-        if (initParticle) {
-            initParticle(particle)
-        }
-
-        if (actualDuration !== undefined) {
-            timer = Timers.CreateTimer(actualDuration, () => {
-                if (particle) {
-                    ParticleManager.DestroyParticle(particle, false)
-                    particle = undefined
-                }
-
-                complete()
-            })
-        }
-    }, context => {
-        if (timer) {
-            Timers.RemoveTimer(timer)
-            timer = undefined
-        }
-
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, false)
-            particle = undefined
-        }
-    })
-}
-
-/**
- * Executes a step while highlighting the passed units until the step completes.
- * @param step Step to execute while highlighting.
- * @param units Units to higlight.
- */
-export const withHighlightUnits = (step: tg.StepArgument<tg.TutorialStep>, units: tg.StepArgument<CDOTA_BaseNPC[]>, radius?: tg.StepArgument<number>, attach?: tg.StepArgument<boolean>) => {
-    let forkStep: tg.TutorialStep | undefined = undefined
-
-    return tg.step((context, complete) => {
-        const actualStep = tg.getArg(step, context)
-        const actualUnits = tg.getArg(units, context)
-        const actualRadius = tg.getOptionalArg(radius, context) ?? 200
-        const actualAttach = tg.getOptionalArg(attach, context)
-
-        const initParticle = (particle: ParticleID) => {
-            ParticleManager.SetParticleControl(particle, 1, Vector(actualRadius, 0, 0))
-        }
-
-        const particleSteps = actualUnits.map(unit => actualAttach !== false ?
-            createParticleAttachedToUnit(ParticleName.HighlightCircle, unit, undefined, initParticle) :
-            createParticleAtLocation(ParticleName.HighlightCircle, GetGroundPosition(unit.GetAbsOrigin(), undefined), undefined, initParticle)
-        )
-
-        forkStep = tg.forkAny([actualStep, ...particleSteps])
-        forkStep.start(context, complete)
-    }, context => {
-        if (forkStep) {
-            forkStep.stop(context)
-            forkStep = undefined
-        }
-    })
-}
-
-/**
- * Executes a step while highlighting the pased locations until the step completes.
- * @param step Step to execute while highlighting.
- * @param locations Locations to highlight.
- */
-export const withHighlightLocations = (step: tg.StepArgument<tg.TutorialStep>, locations: tg.StepArgument<Vector[]>, enemy?: tg.StepArgument<boolean>) => {
-    let forkStep: tg.TutorialStep | undefined = undefined
-
-    return tg.step((context, complete) => {
-        const actualStep = tg.getArg(step, context)
-        const actualLocations = tg.getArg(locations, context)
-        const actualEnemy = tg.getOptionalArg(enemy, context)
-
-        const particleSteps = actualLocations.map(location => createParticleAtLocation(actualEnemy ? ParticleName.HighlightArrowEnemy : ParticleName.HighlightArrow, location))
-
-        forkStep = tg.forkAny([actualStep, ...particleSteps])
-        forkStep.start(context, complete)
-    }, context => {
-        if (forkStep) {
-            forkStep.stop(context)
-            forkStep = undefined
+        if (actualStep) {
+            actualStep.stop(context)
         }
     })
 }

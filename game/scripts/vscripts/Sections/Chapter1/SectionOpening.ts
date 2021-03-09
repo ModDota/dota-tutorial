@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerHero } from "../../util"
+import { findRealPlayerID, getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
 
@@ -45,12 +45,16 @@ const onStart = (complete: () => void) => {
         tg.panCameraLinear(ctx => ctx[CustomNpcKeys.SlacksMudGolem].GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 8),
 
         // Highlight the enemy ancient while talking about it
-        tg.withHighlightUnits(
+        tg.withHighlights(
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
                 tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            ]),
-            Entities.FindAllByName("dota_badguys_fort") as CDOTA_BaseNPC[]
+            ]), {
+                type: "circle",
+                units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
+                radius: 400,
+                attach: false
+            }
         ),
         tg.panCameraExponential(Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(() => playerHero),
