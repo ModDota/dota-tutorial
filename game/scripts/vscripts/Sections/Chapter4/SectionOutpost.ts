@@ -68,7 +68,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalUseDust.complete()),
             tg.wait(1),
             tg.immediate(_ => {
-                removeHighlight(InventorySlot_0_UIPath)
+                removeHighlight(InventorySlot_0_UIPath);
             }),
             
             // Part 1: Find Riki with dust, watch Riki escape
@@ -151,7 +151,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-
+    removeHighlight(InventorySlot_0_UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;

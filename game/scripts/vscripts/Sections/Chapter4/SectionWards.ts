@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero, displayDotaErrorMessage } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -31,6 +31,9 @@ const invisHeroInfo = [
     { name: "npc_dota_hero_weaver", loc: Vector(-1600, 4100, 256) },
     { name: "npc_dota_hero_sand_king", loc: Vector(-1600, 3800, 256) },
 ];
+
+// UI Highlighting Paths
+const InventorySlot_0_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -76,6 +79,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 goalFetchWard.complete();
                 goalPlaceObserverWard.start();
+                highlightUiElement(InventorySlot_0_UIPath, undefined, true)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
@@ -85,6 +89,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(_ => {
                 goalPlaceObserverWard.complete();
+                removeHighlight(InventorySlot_0_UIPath)
                 goalPlaceSentryWard.start();
             }),
 
@@ -130,7 +135,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-
+    removeHighlight(InventorySlot_0_UIPath)
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeHeroes();
