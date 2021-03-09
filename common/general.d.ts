@@ -59,5 +59,6 @@ declare const enum ModifierKey {
 }
 
 declare const enum ParticleName {
-    HighlightBuilding = "particles/dev/curlnoise_test.vpcf",
+    HighlightBuilding = "particles/tutorial_highlight_ring.vpcf",
+    Path = "particles/tutorial_path.vpcf",
 }

@@ -277,3 +277,16 @@ export function removeContextEntityIfExists(context: TutorialContext, entityKey:
 export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
 }
+
+export function createPathParticle(locations: Vector[]): ParticleID {
+    const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
+
+    for (let i = 0; i < locations.length; i++) {
+        ParticleManager.SetParticleControl(particle, i, locations[i])
+    }
+    ParticleManager.SetParticleControl(particle, 61, Vector(locations.length, 0, 0))
+
+    ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+    return particle
+}

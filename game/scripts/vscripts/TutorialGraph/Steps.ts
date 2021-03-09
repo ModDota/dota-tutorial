@@ -1,4 +1,4 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
@@ -17,17 +17,34 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
  */
 export const goToLocation = (location: tg.StepArgument<Vector>) => {
     let checkTimer: string | undefined = undefined
+    let pathParticle: ParticleID | undefined = undefined
+
+    const cleanup = () => {
+        if (pathParticle) {
+            ParticleManager.DestroyParticle(pathParticle, false)
+            pathParticle = undefined
+        }
+
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
         const actualLocation = tg.getArg(location, context)
 
-        MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+        const hero = getOrError(getPlayerHero())
+
+        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+
+        pathParticle = createPathParticle([hero.GetAbsOrigin(), actualLocation])
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-
             if (isHeroNearby(actualLocation, 200)) {
-                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero()!, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                cleanup()
                 complete()
             } else {
                 checkTimer = Timers.CreateTimer(1, () => checkIsAtGoal())
@@ -35,12 +52,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
         }
 
         checkIsAtGoal()
-    }, context => {
-        if (checkTimer) {
-            Timers.RemoveTimer(checkTimer)
-            checkTimer = undefined
-        }
-    })
+    }, context => cleanup())
 }
 
 /**
