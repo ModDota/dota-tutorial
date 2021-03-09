@@ -49,9 +49,10 @@ export class CustomTimeManager {
 
     unRegisterCallBackOnTime(index: number) {
         if (this.callbacks.has(index)) {
-            this.callbacks.delete(index);
+            try {
+                this.callbacks.delete(index);
+            } catch (error) {}
         }
-        
     }
 }
 
