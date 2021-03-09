@@ -38,6 +38,8 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
     }, context => {
         if (checkTimer) {
             Timers.RemoveTimer(checkTimer)
+            const actualLocation = tg.getArg(location, context)
+            MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             checkTimer = undefined
         }
     })
