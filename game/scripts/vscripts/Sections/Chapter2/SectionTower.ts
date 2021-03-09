@@ -5,8 +5,8 @@ import { modifier_nodamage_chapter2_tower } from "../../modifiers/modifier_nodam
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
-import { Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
+import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist, highlightUiElement, removeHighlight } from "../../util";
+import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
 let graph: tg.TutorialStep | undefined = undefined
@@ -26,8 +26,21 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5906, -3892, 256),
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroAbilityMinLevels: [1, 1, 1, 0],
-    heroLevel: 3
+    heroLevel: 3,
+    blockades: [
+        chapter2Blockades.topToRiverStairs,
+        chapter2Blockades.secretShopToRiverStairs,
+        chapter2Blockades.radiantJungleStairs,
+        chapter2Blockades.radiantBaseT2Divider,
+        chapter2Blockades.radiantBaseMid,
+        chapter2Blockades.radiantBaseBottom,
+        chapter2Blockades.direTopDividerRiver,
+        chapter2Blockades.direTopDividerCliff
+    ]
 }
+
+// UI Highlighting Paths
+const glyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -288,6 +301,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem], 3),
                     tg.immediate(() => {
                         goalUseGlyph.start()
+                        highlightUiElement(glyphUIPath, undefined, true)
                         canPlayerIssueOrders = true
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
@@ -297,6 +311,7 @@ const onStart = (complete: () => void) => {
                     }, 0.1),
                     tg.immediate(() => {
                         goalUseGlyph.complete()
+                        removeHighlight(glyphUIPath)
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
@@ -330,7 +345,7 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
-
+    removeHighlight(glyphUIPath);
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
 
