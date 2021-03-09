@@ -14,8 +14,9 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
 /**
  * Creates a tutorial step that waits for a hero to go to a location.
  * @param location Target location
+ * @param visualIntermediateLocations Locations to use for the visual path between the current and end location.
  */
-export const goToLocation = (location: tg.StepArgument<Vector>) => {
+export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations?: tg.StepArgument<Vector[]>) => {
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
     let actualLocation: Vector | undefined = undefined
@@ -39,12 +40,13 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
 
     return tg.step((context, complete) => {
         actualLocation = tg.getArg(location, context)
+        const actualVisualIntermediateLocations = tg.getOptionalArg(visualIntermediateLocations, context) ?? []
 
         const hero = getOrError(getPlayerHero())
 
         MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
 
-        pathParticle = createPathParticle([hero.GetAbsOrigin(), actualLocation])
+        pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
