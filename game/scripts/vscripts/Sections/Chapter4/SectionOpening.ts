@@ -31,8 +31,7 @@ const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.Radia
 let radiantCreeps: CDOTA_BaseNPC[] = [];
 
 // UI Highlighting Paths
-const ScanUIPath = "HUDElements/minimap_container/GlyphScanContainer/RadarButton/NormalRoot/RadarIcon"
-const MinimapUIPath = "HUDElements/minimap_container/HUDSkinMinimap"
+const scanUIPath = "HUDElements/minimap_container/GlyphScanContainer/RadarButton/NormalRoot/RadarIcon"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -65,10 +64,6 @@ function onStart(complete: () => void) {
                 }
             }),
             tg.immediate(_ => canPlayerIssueOrders = false),
-            tg.immediate(_ => {
-                // highlightUiElement(MinimapUIPath, 5, true)
-                // print("crappy minimap highlight on line 70");
-            }),
             tg.setCameraTarget(_ => radiantCreeps[0]),
             tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
             tg.setCameraTarget(playerHero),
@@ -109,7 +104,7 @@ function onStart(complete: () => void) {
                 scanLocation = undefined;
                 goalWatchJuke.complete();
                 goalScanFailed.start();
-                highlightUiElement(ScanUIPath, undefined, false)
+                highlightUiElement(scanUIPath, undefined, false)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
@@ -117,7 +112,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(_ => {
                 goalScanFailed.complete();
-                removeHighlight(ScanUIPath)
+                removeHighlight(scanUIPath)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
             tg.wait(scanDuration),
@@ -127,7 +122,7 @@ function onStart(complete: () => void) {
                 scanLocation = undefined;
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
-                highlightUiElement(ScanUIPath, undefined, false)
+                highlightUiElement(scanUIPath, undefined, false)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
@@ -135,7 +130,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(_ => {
                 goalScanSucceed.complete();
-                removeHighlight(ScanUIPath)
+                removeHighlight(scanUIPath)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
             tg.wait(scanDuration),
@@ -150,7 +145,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-    removeHighlight(ScanUIPath)
+    removeHighlight(scanUIPath)
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeCreeps();

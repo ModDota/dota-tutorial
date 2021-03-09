@@ -20,7 +20,7 @@ const dustName = "item_dust";
 const dustLocation = Vector(-1500, 4000, 256);
 
 // UI Highlighting Paths
-const InventorySlot_0_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -61,14 +61,14 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
-                highlightUiElement(InventorySlot_0_UIPath, undefined, true)
+                highlightUiElement(inventorySlot0UIPath, undefined, true)
             }),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),
             tg.immediate(_ => goalUseDust.complete()),
             tg.wait(1),
             tg.immediate(_ => {
-                removeHighlight(InventorySlot_0_UIPath);
+                removeHighlight(inventorySlot0UIPath);
             }),
             
             // Part 1: Find Riki with dust, watch Riki escape
@@ -151,7 +151,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-    removeHighlight(InventorySlot_0_UIPath);
+    removeHighlight(inventorySlot0UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;

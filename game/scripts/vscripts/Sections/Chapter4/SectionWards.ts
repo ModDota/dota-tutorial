@@ -17,9 +17,9 @@ const requiredState: RequiredState = {
 };
 
 const markerLocation = Vector(-2200, 3800, 256);
-const wardLocation = Vector(-3400, 3800);
-const wardLocationSentry = Vector(-3400, 4000);
 const invisHeroesCenter = Vector(-1800, 4000);
+const wardLocationObs = Vector(-3400, 3800);
+const wardLocationSentry = Vector(-3400, 4000);
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
@@ -33,7 +33,7 @@ const invisHeroInfo = [
 ];
 
 // UI Highlighting Paths
-const InventorySlot_0_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -67,19 +67,19 @@ function onStart(complete: () => void) {
             // Spawn wards and wait for player to pick them up. Also highlight wards during this.
             tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
-                    CreateItemOnPositionSync(wardLocation, observerWardItem);
-                    CreateItemOnPositionSync(wardLocation.__add(Vector(0, 200)), sentryWardItem);
+                    CreateItemOnPositionSync(wardLocationObs, observerWardItem);
+                    CreateItemOnPositionSync(wardLocationSentry, sentryWardItem);
                 }),
 
                 tg.immediate(_ => goalFetchWard.start()),
 
                 tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
-            ]), { type: "arrow", locations: [wardLocation, wardLocationSentry] }),
+            ]), { type: "arrow", locations: [wardLocationObs, wardLocationSentry] }),
 
             tg.immediate(_ => {
                 goalFetchWard.complete();
                 goalPlaceObserverWard.start();
-                highlightUiElement(InventorySlot_0_UIPath, undefined, true)
+                highlightUiElement(inventorySlot0UIPath, undefined, true)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
@@ -89,7 +89,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(_ => {
                 goalPlaceObserverWard.complete();
-                removeHighlight(InventorySlot_0_UIPath)
+                removeHighlight(inventorySlot0UIPath)
                 goalPlaceSentryWard.start();
             }),
 
@@ -135,7 +135,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-    removeHighlight(InventorySlot_0_UIPath)
+    removeHighlight(inventorySlot0UIPath)
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeHeroes();
