@@ -21,8 +21,6 @@ const NeutralSlotUIPath = "HUDElements/lower_hud/center_with_stats/inventory_com
 const InventorySlot_6_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel"
 const InventorySlot_7_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_7/ButtonAndLevel"
 
-
-
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
         section: SectionName.Chapter3_Opening,

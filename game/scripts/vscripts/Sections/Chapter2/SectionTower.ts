@@ -62,7 +62,6 @@ const onStart = (complete: () => void) => {
     // UI Highlighting Paths
     const GlyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
 
-
     const goalTracker = new GoalTracker()
     const goalAttemptToAttackTower = goalTracker.addBoolean("Attack the enemy's top tower.")
     const goalwaitToRespawn = goalTracker.addBoolean("Wait to respawn.")
@@ -302,9 +301,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem], 3),
                     tg.immediate(() => {
                         goalUseGlyph.start()
-
                         highlightUiElement(GlyphUIPath, undefined, true)
-
                         canPlayerIssueOrders = true
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
@@ -314,9 +311,7 @@ const onStart = (complete: () => void) => {
                     }, 0.1),
                     tg.immediate(() => {
                         goalUseGlyph.complete()
-                        
                         removeHighlight(GlyphUIPath)
-
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
