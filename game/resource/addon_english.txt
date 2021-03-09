@@ -24,7 +24,9 @@
         "Chapter_6_BriefInformation" "Covers attributes. Also features many external resources."
         "SkipChapter" "Skip to Chapter"
         "Watch" "Watch the Video"
-        "Guide_1" "Dota Basics Episode 1"
+        "Go_To_Website" "Go to Website"
+        "Guide_1" "Purge's Dota Basics"
+        "Guide_2" "Tsunami's Dota Hero Tips"
 
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
