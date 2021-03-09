@@ -3,6 +3,7 @@ const characterAdvanceRate = 0.0075;
 const dialogPanel = $("#DialogPanel");
 const dialogTitle = $("#DialogTitle") as LabelPanel;
 const dialogPortrait = $("#DialogPortrait") as ScenePanel;
+const dialogImagePortrait = $("#DialogImagePortrait") as ImagePanel;
 const dialogLabelSizer = $("#DialogLabelSizer") as LabelPanel;
 const dialogLabel = $("#DialogLabel") as LabelPanel;
 
@@ -14,7 +15,12 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     dialogPanel.SetHasClass("Visible", true);
     dialogPanel.SetHasClass("ShowAdvanceButton", true);
 
-    dialogPortrait.SetUnit(Entities.GetUnitName(data.DialogEntIndex), "", true);
+    const unitName = Entities.GetUnitName(data.DialogEntIndex);
+    if (!handleSpecialUnitPortrait(unitName)) {
+        dialogImagePortrait.visible = false;
+        dialogPortrait.visible = true;
+        dialogPortrait.SetUnit(Entities.GetUnitName(data.DialogEntIndex), "", true);
+    }
     dialogTitle.text = $.Localize(Entities.GetUnitName(data.DialogEntIndex));
 
     currentCharacter = 0;
@@ -23,6 +29,23 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     dialogLabelSizer.text = pendingDialog;
 
     $.Schedule(characterAdvanceRate, AdvanceDialogThink);
+}
+
+function handleSpecialUnitPortrait(unitName: string): boolean {
+    const unitPortraits: Record<string, string> = {
+        npc_mud_golem_sunsfan: "file://{images}/custom_game/portraits/sunsfan_greevil.png",
+        npc_mud_golem_slacks: "file://{images}/custom_game/portraits/slacks_greevil.png",
+    };
+
+    if (unitPortraits[unitName] !== undefined) {
+        dialogPortrait.visible = false;
+        dialogImagePortrait.visible = true;
+        dialogImagePortrait.SetImage(unitPortraits[unitName]);
+
+        return true;
+    }
+
+    return false;
 }
 
 function AdvanceDialogThink() {

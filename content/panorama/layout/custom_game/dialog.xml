@@ -16,6 +16,7 @@
             <Panel id="DialogPanel" hittest="false">
                 <Panel id="DialogPanelBackground" hittest="false"/>
                 <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" hittest="false"/>
+                <Image id="DialogImagePortrait" />
                 <Label id="DialogTitle" class="DialogPanelTitle TitleFont" text="" hittest="false"/>
 
                 <Panel id="DialogPanelContent" hittest="false">
