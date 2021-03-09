@@ -39,6 +39,10 @@ const requiredState: RequiredState = {
     ]
 }
 
+
+// UI Highlighting Paths
+const GlyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
+
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
@@ -59,8 +63,6 @@ const onStart = (complete: () => void) => {
     // Get or create the Dire T1 tower
     const direTopTower = getDireTopTower();
 
-    // UI Highlighting Paths
-    const GlyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
 
     const goalTracker = new GoalTracker()
     const goalAttemptToAttackTower = goalTracker.addBoolean("Attack the enemy's top tower.")
@@ -345,7 +347,7 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
-
+    removeHighlight(GlyphUIPath);
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
 

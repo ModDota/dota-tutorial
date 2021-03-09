@@ -20,17 +20,17 @@ const requiredState: RequiredState = {
 let waitingForPlayerToPurchaseTango = false;
 let playerBoughtTango = false;
 
+// UI Highlighting Paths
+const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
+const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+const InventorySlot_0_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
+
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
 
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
-
-    // UI Highlighting Paths
-    const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
-    const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
-    const InventorySlot_0_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
     const goalTracker = new GoalTracker();
     const goalOpenShop = goalTracker.addBoolean("Open the shop.");
@@ -90,7 +90,9 @@ const onStart = (complete: () => void) => {
 
 function onStop() {
     print("Stopping", sectionName);
-
+    removeHighlight(shopBtnUIPath);
+    removeHighlight(tangoInGuideUIPath);
+    removeHighlight(InventorySlot_0_UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;

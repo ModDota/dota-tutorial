@@ -150,6 +150,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
+    removeHighlight(ScanUIPath)
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeCreeps();

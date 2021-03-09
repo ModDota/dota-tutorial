@@ -19,6 +19,7 @@ const requiredState: RequiredState = {
 const dustName = "item_dust";
 const dustLocation = Vector(-1500, 4000, 256);
 
+// UI Highlighting Paths
 const InventorySlot_0_UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {

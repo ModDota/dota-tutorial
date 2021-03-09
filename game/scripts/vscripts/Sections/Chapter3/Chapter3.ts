@@ -258,7 +258,9 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", "Section Opening");
-
+    removeHighlight(InventorySlot_6_UIPath)
+    removeHighlight(InventorySlot_7_UIPath)
+    removeHighlight(NeutralSlotUIPath)
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
