@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero, displayDotaErrorMessage } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -17,7 +17,8 @@ const requiredState: RequiredState = {
 };
 
 const markerLocation = Vector(-2200, 3800, 256);
-const wardLocation = Vector(-3400, 3800);
+const wardLocationObs = Vector(-3400, 3800);
+const wardLocationSentry = Vector(-3400, 4000);
 const invisHeroesCenter = Vector(-1800, 4000);
 const rikiName = "npc_dota_hero_riki";
 
@@ -31,6 +32,9 @@ const invisHeroInfo = [
     { name: "npc_dota_hero_weaver", loc: Vector(-1600, 4100, 256) },
     { name: "npc_dota_hero_sand_king", loc: Vector(-1600, 3800, 256) },
 ];
+
+// UI Highlighting Paths
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -64,14 +68,14 @@ function onStart(complete: () => void) {
             // Spawn wards and wait for player to pick them up. Also highlight wards during this.
             tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
-                    CreateItemOnPositionSync(wardLocation, observerWardItem);
-                    CreateItemOnPositionSync(wardLocation.__add(Vector(0, 200)), sentryWardItem);
+                    CreateItemOnPositionSync(wardLocationObs, observerWardItem);
+                    CreateItemOnPositionSync(wardLocationSentry, sentryWardItem);
                 }),
 
                 tg.immediate(_ => goalFetchWard.start()),
 
                 tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
-            ]), { type: "arrow", locations: [wardLocation] }),
+            ]), { type: "arrow", locations: [wardLocationObs, wardLocationSentry] }),
 
             tg.immediate(_ => {
                 goalFetchWard.complete();

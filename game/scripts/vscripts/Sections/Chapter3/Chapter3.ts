@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { DestroyNeutrals, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util";
+import { DestroyNeutrals, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -15,6 +15,11 @@ const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
 }
+
+// UI Highlighting Paths
+const neutralSlotUIPath = "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot"
+const inventorySlot6UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel"
+const inventorySlot7UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_7/ButtonAndLevel"
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
@@ -127,6 +132,7 @@ const onStart = (complete: () => void) => {
         // Tell the player that some neutral items have active abilities, tell them to use it.
         tg.immediate(_ => {
             goalPickupArcane.complete();
+            highlightUiElement(neutralSlotUIPath, undefined, false);
             goalUseArcane.start();
         }),
         tg.completeOnCheck(_ => {
@@ -136,6 +142,7 @@ const onStart = (complete: () => void) => {
 
         tg.immediate(_ => {
             goalUseArcane.complete();
+            removeHighlight(neutralSlotUIPath);
             goalMoveOutOfNeutralBox.start();
         }),
 
@@ -201,13 +208,17 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalPickupItems.complete();
             goalSwitchItems.start();
+            highlightUiElement(neutralSlotUIPath, undefined, false);
         }),
         tg.completeOnCheck((context) => {
             const item = playerHero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT);
             if (item && item.GetAbilityName() === keepItemName) {
                 movedToStash = false;
                 goalSwitchItems.complete();
+                removeHighlight(neutralSlotUIPath)
                 goalGiveArcane.start();
+                highlightUiElement(inventorySlot6UIPath, undefined, false);
+                highlightUiElement(inventorySlot7UIPath, undefined, false);
                 goalStash.start();
                 return true;
             }
@@ -230,6 +241,8 @@ const onStart = (complete: () => void) => {
             tg.completeOnCheck(_ => {
                 if (movedToStash) {
                     goalStash.complete();
+                    removeHighlight(inventorySlot6UIPath)
+                    removeHighlight(inventorySlot7UIPath)
                     return true;
                 }
                 return false;
@@ -245,7 +258,9 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", "Section Opening");
-
+    removeHighlight(inventorySlot6UIPath)
+    removeHighlight(inventorySlot7UIPath)
+    removeHighlight(neutralSlotUIPath)
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
