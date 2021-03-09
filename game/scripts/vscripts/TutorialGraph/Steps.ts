@@ -676,7 +676,7 @@ export const neverComplete = () => {
  * @param location Location to spawn the particles at.
  * @param duration Optional duration after which to destroy the particles and complete.
  */
-export const createParticleAtLocation = (particleName: tg.StepArgument<string>, location: tg.StepArgument<Vector>, duration?: tg.StepArgument<number>) => {
+export const createParticleAtLocation = (particleName: tg.StepArgument<string>, location: tg.StepArgument<Vector>, duration?: tg.StepArgument<number>, initParticle?: (particle: ParticleID) => void) => {
     let timer: string | undefined = undefined
     let particle: ParticleID | undefined = undefined
 
@@ -692,6 +692,10 @@ export const createParticleAtLocation = (particleName: tg.StepArgument<string>, 
         particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
         ParticleManager.SetParticleControl(particle, 0, actualLocation)
         ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+        if (initParticle) {
+            initParticle(particle)
+        }
 
         if (actualDuration !== undefined) {
             timer = Timers.CreateTimer(actualDuration, () => {
@@ -722,7 +726,7 @@ export const createParticleAtLocation = (particleName: tg.StepArgument<string>, 
  * @param unit Unit to attach the particles to.
  * @param duration Optional duration after which to destroy the particles and complete.
  */
-export const createParticleAttachedToUnit = (particleName: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, duration?: tg.StepArgument<number>) => {
+export const createParticleAttachedToUnit = (particleName: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, duration?: tg.StepArgument<number>, initParticle?: (particle: ParticleID) => void) => {
     let timer: string | undefined = undefined
     let particle: ParticleID | undefined = undefined
 
@@ -737,6 +741,10 @@ export const createParticleAttachedToUnit = (particleName: tg.StepArgument<strin
 
         particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
         ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+        if (initParticle) {
+            initParticle(particle)
+        }
 
         if (actualDuration !== undefined) {
             timer = Timers.CreateTimer(actualDuration, () => {
@@ -766,14 +774,23 @@ export const createParticleAttachedToUnit = (particleName: tg.StepArgument<strin
  * @param step Step to execute while highlighting.
  * @param units Units to higlight.
  */
-export const withHighlightUnits = (step: tg.StepArgument<tg.TutorialStep>, units: tg.StepArgument<CDOTA_BaseNPC[]>) => {
+export const withHighlightUnits = (step: tg.StepArgument<tg.TutorialStep>, units: tg.StepArgument<CDOTA_BaseNPC[]>, radius?: tg.StepArgument<number>, attach?: tg.StepArgument<boolean>) => {
     let forkStep: tg.TutorialStep | undefined = undefined
 
     return tg.step((context, complete) => {
         const actualStep = tg.getArg(step, context)
         const actualUnits = tg.getArg(units, context)
+        const actualRadius = tg.getOptionalArg(radius, context) ?? 200
+        const actualAttach = tg.getOptionalArg(attach, context)
 
-        const particleSteps = actualUnits.map(unit => createParticleAttachedToUnit(ParticleName.HighlightBuilding, unit))
+        const initParticle = (particle: ParticleID) => {
+            ParticleManager.SetParticleControl(particle, 1, Vector(actualRadius, 0, 0))
+        }
+
+        const particleSteps = actualUnits.map(unit => actualAttach !== false ?
+            createParticleAttachedToUnit(ParticleName.HighlightCircle, unit, undefined, initParticle) :
+            createParticleAtLocation(ParticleName.HighlightCircle, GetGroundPosition(unit.GetAbsOrigin(), undefined), undefined, initParticle)
+        )
 
         forkStep = tg.forkAny([actualStep, ...particleSteps])
         forkStep.start(context, complete)
@@ -790,14 +807,15 @@ export const withHighlightUnits = (step: tg.StepArgument<tg.TutorialStep>, units
  * @param step Step to execute while highlighting.
  * @param locations Locations to highlight.
  */
-export const withHighlightLocations = (step: tg.StepArgument<tg.TutorialStep>, locations: tg.StepArgument<Vector[]>) => {
+export const withHighlightLocations = (step: tg.StepArgument<tg.TutorialStep>, locations: tg.StepArgument<Vector[]>, enemy?: tg.StepArgument<boolean>) => {
     let forkStep: tg.TutorialStep | undefined = undefined
 
     return tg.step((context, complete) => {
         const actualStep = tg.getArg(step, context)
         const actualLocations = tg.getArg(locations, context)
+        const actualEnemy = tg.getOptionalArg(enemy, context)
 
-        const particleSteps = actualLocations.map(location => createParticleAtLocation(ParticleName.HighlightBuilding, location))
+        const particleSteps = actualLocations.map(location => createParticleAtLocation(actualEnemy ? ParticleName.HighlightArrowEnemy : ParticleName.HighlightArrow, location))
 
         forkStep = tg.forkAny([actualStep, ...particleSteps])
         forkStep.start(context, complete)

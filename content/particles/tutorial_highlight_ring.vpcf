@@ -2144,10 +2144,4 @@
 			}
 		},
 	]
-	m_Children = 
-	[
-		{
-			m_ChildRef = resource:"particles/tutorial_arrow_base.vpcf"
-		},
-	]
 }
