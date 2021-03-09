@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero, displayDotaErrorMessage } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -17,8 +17,10 @@ const requiredState: RequiredState = {
 };
 
 const markerLocation = Vector(-2200, 3800, 256);
-const wardLocation = Vector(-3400, 3800);
+const wardLocationObs = Vector(-3400, 3800);
+const wardLocationSentry = Vector(-3400, 4000);
 const invisHeroesCenter = Vector(-1800, 4000);
+const rikiName = "npc_dota_hero_riki";
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
@@ -30,6 +32,9 @@ const invisHeroInfo = [
     { name: "npc_dota_hero_weaver", loc: Vector(-1600, 4100, 256) },
     { name: "npc_dota_hero_sand_king", loc: Vector(-1600, 3800, 256) },
 ];
+
+// UI Highlighting Paths
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -61,16 +66,16 @@ function onStart(complete: () => void) {
             tg.wait(1),
 
             // Spawn wards and wait for player to pick them up. Also highlight wards during this.
-            tg.withHighlightLocations(tg.seq([
+            tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
-                    CreateItemOnPositionSync(wardLocation, observerWardItem);
-                    CreateItemOnPositionSync(wardLocation.__add(Vector(0, 200)), sentryWardItem);
+                    CreateItemOnPositionSync(wardLocationObs, observerWardItem);
+                    CreateItemOnPositionSync(wardLocationSentry, sentryWardItem);
                 }),
 
                 tg.immediate(_ => goalFetchWard.start()),
 
                 tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
-            ]), [wardLocation]),
+            ]), { type: "arrow", locations: [wardLocationObs, wardLocationSentry] }),
 
             tg.immediate(_ => {
                 goalFetchWard.complete();
@@ -100,18 +105,20 @@ function onStart(complete: () => void) {
 
                 }
                 goalAttackRiki.start();
+                context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
             }),
 
-            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context["npc_dota_hero_riki"].GetAbsOrigin()).Length2D() < 400, 0.1),
+            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 400, 0.1),
 
             tg.immediate(context => {
                 goalAttackRiki.complete();
-                const riki: CDOTA_BaseNPC_Hero = context["npc_dota_hero_riki"];
+                const riki: CDOTA_BaseNPC_Hero = context[rikiName];
                 const runDirection = riki.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                 riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
             }),
             tg.wait(3),
 
+            tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
             tg.waitForModifierKey(ModifierKey.Alt),
             tg.immediate(_ => {

@@ -120,6 +120,21 @@ function ChaptersClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
+//** Guides Panel */
+function ToggleGuidesMenu() {
+    $.Msg("ToggleGuidesMenu");
+
+    $("#GuidesMenu").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_in");
+}
+
+function GuidesClose() {
+    $.Msg("ToggleGuidesMenu");
+
+    $("#GuidesMenu").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,

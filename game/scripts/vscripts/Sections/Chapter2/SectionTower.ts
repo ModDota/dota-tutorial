@@ -5,7 +5,7 @@ import { modifier_nodamage_chapter2_tower } from "../../modifiers/modifier_nodam
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -38,6 +38,9 @@ const requiredState: RequiredState = {
         chapter2Blockades.direTopDividerCliff
     ],
 }
+
+// UI Highlighting Paths
+const glyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -298,6 +301,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem], 3),
                     tg.immediate(() => {
                         goalUseGlyph.start()
+                        highlightUiElement(glyphUIPath, undefined, true)
                         canPlayerIssueOrders = true
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
@@ -307,6 +311,7 @@ const onStart = (complete: () => void) => {
                     }, 0.1),
                     tg.immediate(() => {
                         goalUseGlyph.complete()
+                        removeHighlight(glyphUIPath)
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
@@ -340,7 +345,7 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
-
+    removeHighlight(glyphUIPath);
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
 
