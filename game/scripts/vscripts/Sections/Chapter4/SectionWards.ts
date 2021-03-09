@@ -18,6 +18,7 @@ const requiredState: RequiredState = {
 
 const markerLocation = Vector(-2200, 3800, 256);
 const wardLocation = Vector(-3400, 3800);
+const wardLocationSentry = Vector(-3400, 4000);
 const invisHeroesCenter = Vector(-1800, 4000);
 
 const invisHeroInfo = [
@@ -70,7 +71,7 @@ function onStart(complete: () => void) {
                 tg.immediate(_ => goalFetchWard.start()),
 
                 tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
-            ]), { type: "arrow", locations: [wardLocation] }),
+            ]), { type: "arrow", locations: [wardLocation, wardLocationSentry] }),
 
             tg.immediate(_ => {
                 goalFetchWard.complete();
