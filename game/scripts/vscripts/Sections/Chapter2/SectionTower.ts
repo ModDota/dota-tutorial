@@ -41,7 +41,7 @@ const requiredState: RequiredState = {
 
 
 // UI Highlighting Paths
-const GlyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
+const glyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -303,7 +303,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem], 3),
                     tg.immediate(() => {
                         goalUseGlyph.start()
-                        highlightUiElement(GlyphUIPath, undefined, true)
+                        highlightUiElement(glyphUIPath, undefined, true)
                         canPlayerIssueOrders = true
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
@@ -313,7 +313,7 @@ const onStart = (complete: () => void) => {
                     }, 0.1),
                     tg.immediate(() => {
                         goalUseGlyph.complete()
-                        removeHighlight(GlyphUIPath)
+                        removeHighlight(glyphUIPath)
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
@@ -347,7 +347,7 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
-    removeHighlight(GlyphUIPath);
+    removeHighlight(glyphUIPath);
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
 
