@@ -277,3 +277,11 @@ export function removeContextEntityIfExists(context: TutorialContext, entityKey:
 export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
 }
+
+/**
+ * Returns the path to an item located in the guide, to the left of the shop.
+ * @param itemID The ID of the item, as defined by Valve's items.txt, e.g. "ID" "44"
+ */
+export function getPathToItemInGuideByID(itemID: number): string {
+    return "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item" + itemID;
+}

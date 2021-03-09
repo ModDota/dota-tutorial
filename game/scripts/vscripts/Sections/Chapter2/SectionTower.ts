@@ -5,7 +5,7 @@ import { modifier_nodamage_chapter2_tower } from "../../modifiers/modifier_nodam
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -36,7 +36,7 @@ const requiredState: RequiredState = {
         chapter2Blockades.radiantBaseBottom,
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
-    ]
+    ],
 }
 
 const onStart = (complete: () => void) => {
@@ -57,7 +57,7 @@ const onStart = (complete: () => void) => {
     const items: CDOTA_Item[] = []
 
     // Get or create the Dire T1 tower
-    const direTopTower = getDireTopTower();
+    const direTopTower = getOrError(getDireTopTower());
 
     const goalTracker = new GoalTracker()
     const goalAttemptToAttackTower = goalTracker.addBoolean("Attack the enemy's top tower.")
@@ -429,19 +429,10 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     return true;
 }
 
-function getDireTopTower(): CDOTA_BaseNPC_Building {
+function getDireTopTower(): CDOTA_BaseNPC_Building | undefined {
     const direTopTowerLocation = Vector(-4672, 6016, 128)
 
     let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
-    if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive()) {
-        print("Creating new tower")
-        direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
-        direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
-        direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
-        direTop.RemoveModifierByName("modifier_invulnerable")
-    }
-    print("Tower name is", direTop.GetUnitName())
-
     return direTop
 }
 
@@ -463,7 +454,7 @@ function createRadiantLaneCreeps(): CDOTA_BaseNPC[] {
 
 function SendCreepToKillTower(unit: CDOTA_BaseNPC) {
 
-    const direTower = getDireTopTower();
+    const direTower = getOrError(getDireTopTower());
 
     ExecuteOrderFromTable({
         OrderType: UnitOrder.ATTACK_TARGET,

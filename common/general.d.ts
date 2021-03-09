@@ -8,6 +8,7 @@ declare const enum SectionName {
     Chapter2_Opening = "Chapter2_Opening",
     Chapter2_Creeps = "Chapter2_Creeps",
     Chapter2_Tower = "Chapter2_Tower",
+    Chapter2_Courier = "Chapter2_Courier",
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",

@@ -27,6 +27,7 @@ export class GameMode {
         chapters.chapter2.sectionOpening,
         chapters.chapter2.SectionCreeps,
         chapters.chapter2.SectionTower,
+        chapters.chapter2.SectionCourier,
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,

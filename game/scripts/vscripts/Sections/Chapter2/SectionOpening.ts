@@ -35,7 +35,8 @@ const requiredState: RequiredState = {
         chapter2Blockades.radiantBaseBottom,
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
-    ]
+    ],
+    topDireT1TowerStanding: true
 }
 
 const onStart = (complete: () => void) => {

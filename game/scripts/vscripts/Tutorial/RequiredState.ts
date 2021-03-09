@@ -20,6 +20,9 @@ export type RequiredState = {
     requireSlacksGolem?: boolean
     slacksLocation?: Vector
 
+    // Towers
+    topDireT1TowerStanding?: boolean
+
     // Riki
     requireRiki?: boolean
     rikiLocation?: Vector
@@ -57,6 +60,9 @@ export const defaultRequiredState: FilledRequiredState = {
     sunsFanLocation: Vector(0, 0, 256),
     requireSlacksGolem: false,
     slacksLocation: Vector(0, 0, 256),
+
+    // Towers
+    topDireT1TowerStanding: true,
 
     // Riki
     requireRiki: false,
