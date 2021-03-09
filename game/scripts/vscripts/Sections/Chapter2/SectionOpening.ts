@@ -67,22 +67,26 @@ const onStart = (complete: () => void) => {
                 goalListenToSunsfanAndSlacks.start()
             }),
             tg.immediate(() => {
-                playerHero.Stop(),
-                    canPlayerIssueOrders = false
+                playerHero.Stop()
+                canPlayerIssueOrders = false
             }),
             tg.textDialog(LocalizationKey.Script_2_Opening_1, context => context[CustomNpcKeys.SlacksMudGolem], 10),
 
             // Talking about moonwells
-            tg.withHighlightUnits(
+            tg.withHighlights(
                 tg.seq([
                     tg.textDialog(LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
                     tg.textDialog(LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem], 5),
-                ]),
-                Entities.FindAllByClassname("npc_dota_filler") as CDOTA_BaseNPC[]
+                ]), {
+                    type: "circle",
+                    units: Entities.FindAllByClassname("npc_dota_filler").concat(Entities.FindAllByClassname("npc_dota_effigy_statue")) as CDOTA_BaseNPC[],
+                    radius: 150,
+                    attach: false,
+                }
             ),
 
             // Talking about barracks
-            tg.withHighlightUnits(
+            tg.withHighlights(
                 tg.seq([
                     tg.textDialog(LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem], 8),
                     tg.textDialog(LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem], 6),
@@ -90,7 +94,12 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem], 8),
                     tg.textDialog(LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SunsFanMudGolem], 12),
                     tg.textDialog(LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem], 12),
-                ]), Entities.FindAllByClassname("npc_dota_barracks") as CDOTA_BaseNPC[]
+                ]),  {
+                    type: "circle",
+                    units: Entities.FindAllByClassname("npc_dota_barracks") as CDOTA_BaseNPC[],
+                    radius: 230,
+                    attach: false,
+                }
             ),
 
             tg.textDialog(LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SunsFanMudGolem], 18),
