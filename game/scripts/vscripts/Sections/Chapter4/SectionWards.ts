@@ -19,6 +19,7 @@ const requiredState: RequiredState = {
 const markerLocation = Vector(-2200, 3800, 256);
 const wardLocation = Vector(-3400, 3800);
 const invisHeroesCenter = Vector(-1800, 4000);
+const rikiName = "npc_dota_hero_riki";
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
@@ -100,18 +101,20 @@ function onStart(complete: () => void) {
 
                 }
                 goalAttackRiki.start();
+                context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
             }),
 
-            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context["npc_dota_hero_riki"].GetAbsOrigin()).Length2D() < 400, 0.1),
+            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 400, 0.1),
 
             tg.immediate(context => {
                 goalAttackRiki.complete();
-                const riki: CDOTA_BaseNPC_Hero = context["npc_dota_hero_riki"];
+                const riki: CDOTA_BaseNPC_Hero = context[rikiName];
                 const runDirection = riki.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                 riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
             }),
             tg.wait(3),
 
+            tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
             tg.waitForModifierKey(ModifierKey.Alt),
             tg.immediate(_ => {

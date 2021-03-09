@@ -31,6 +31,7 @@ export class GameMode {
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
         chapters.chapter4.sectionOutpost,
+        chapters.chapter4.sectionCommunication,
         chapters.chapter5.sectionOpening,
     ]);
 

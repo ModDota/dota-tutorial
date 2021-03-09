@@ -24,6 +24,7 @@ const sections = {
     "CH4 - Opening": SectionName.Chapter4_Opening,
     "CH4 - Wards": SectionName.Chapter4_Wards,
     "CH4 - Outpost": SectionName.Chapter4_Outpost,
+    "CH4 - Communication": SectionName.Chapter4_Communication,
     "CH5 - Opening": SectionName.Chapter5_Opening,
 };
 
