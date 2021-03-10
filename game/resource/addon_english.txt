@@ -149,5 +149,13 @@
         "Script_5_Opening_8" "Yes! Are you starting to see a pattern here? Creeps spawn every 30 seconds. Power runes every 2 minutes, Bounty runes every 5 minutes and Outposts every ten. There is a ton happening on the dota 2 map, and you as a team need to handle all of this as well as murdering your enemies. We have a saying in dota: if you are standing still, you are most likely doing something wrong. There is always something to do, so go forth and do it!"
         "Script_5_Opening_9" "Now, lets give you my favorite rune, the double damage rune, and introduce you to someone very special."
         "Script_5_Opening_10" "Click on it to pick it up, young one!"
+        "Script_5_Roshan_1" "See that terrifying foreboding cave? That is the home of a terrible beast, called roshan. Lets go inside"
+        "Script_5_Roshan_2" "Roshan is a big badass that will beat anyone who attacks him to death in his little nerd cave. To defeat him, most teams will need all five heroes in the area to attack him and take him down. But, we have been talking to you for so long, we thought we would let you fight him alone for fun"
+        "Script_5_Roshan_3" "Here are some hyper late game items for dragon knight, as well as a few level ups. Also, we will keep that double damage on you for the whole fight. Have fun!"
+        "Script_5_Roshan_4" "Oh dear that is a lot of levels. So many that now, you have been gifted talents! Remember when we said that each hero comes with innate skills, but items can change the hero dynamically to be something different? Well talents do the same! At levels 10, 15, 20 and 25 you are given a choice for an upgrade, and those choices let you make the hero fit your playstyle. Select some talents you think you would like!"
+        "Script_5_Roshan_5" "OK, that's all the talents, the items, and the confidence we can give you. DEFEAT ROSHAN!"
+        "Script_5_Roshan_6" "OH ITS YOUR FRIENDS, THEY HAVE COME TO DO BATTLE WITH YOU!"
+        "Script_5_Roshan_7" "Well done! Before you lies the aegis of immortality. Whoever picks it up is blessed with an extra life. This is very useful for doing things like winning team fights and doing that final push! Go ahead and take it"
+        "Script_5_Roshan_8" "Wonderful wonderful. If only there was a way we could test this out. Feel free to leave the pit"
     }
 }

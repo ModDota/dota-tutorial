@@ -158,7 +158,10 @@ export const setupState = (stateReq: RequiredState): void => {
     // Set or remove DD modifier as needed
     if (state.heroHasDoubleDamage) {
         if (!hero.HasModifier("modifier_rune_doubledamage")) {
-            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", undefined)
+            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", {
+                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c                
+                duration: 45
+            })
         }
     } else {
         if (hero.HasModifier("modifier_rune_doubledamage")) {

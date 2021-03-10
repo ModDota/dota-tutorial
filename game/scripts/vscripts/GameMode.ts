@@ -32,6 +32,7 @@ export class GameMode {
         chapters.chapter4.sectionWards,
         chapters.chapter4.sectionOutpost,
         chapters.chapter5.sectionOpening,
+        chapters.chapter5.sectionRoshan,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -167,9 +168,6 @@ export class GameMode {
     }
 
     ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
-        if (event.name_const === "modifier_rune_doubledamage")
-            event.duration = -1
-
         return true
     }
 
