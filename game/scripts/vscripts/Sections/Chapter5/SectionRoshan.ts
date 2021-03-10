@@ -66,7 +66,7 @@ function onStart(complete: () => void) {
     if (!roshan) {
         roshan = CreateUnitByName("npc_dota_roshan", Vector(-2919, 2315, 32), true, undefined, undefined, DotaTeam.NEUTRALS)
         roshan.FaceTowards(leaveRoshPitGoalPosition)
-        roshan.AddItemByName(itemAegis) // -2140, 1740
+        roshan.AddItemByName(itemAegis)
     }
 
     setupRoshanModifiers(roshan)
