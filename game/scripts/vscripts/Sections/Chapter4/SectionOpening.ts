@@ -9,6 +9,8 @@ const sectionName: SectionName = SectionName.Chapter4_Opening;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
+    requireSlacksGolem: true,
+    requireSunsfanGolem: true,
     heroLocation: Vector(-3000, 3800, 128),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
@@ -50,8 +52,12 @@ function onStart(complete: () => void) {
         tg.seq([
             tg.setCameraTarget(playerHero),
             tg.wait(2),
-            //Part0: The camera pans to an empty part of the map
 
+            tg.textDialog(LocalizationKey.Script_4_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            //TODO: Part0: The camera pans to an empty part of the map
+
+            tg.textDialog(LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             //Part1: Creep wave explains vision
             tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),
             tg.immediate(_ => {
@@ -64,7 +70,16 @@ function onStart(complete: () => void) {
             }),
             tg.immediate(_ => canPlayerIssueOrders = false),
             tg.setCameraTarget(_ => radiantCreeps[0]),
-            tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
+
+            tg.fork([
+                tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
+                tg.seq([
+                    tg.textDialog(LocalizationKey.Script_4_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
+                    tg.textDialog(LocalizationKey.Script_4_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+                    tg.textDialog(LocalizationKey.Script_4_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                ]),
+            ]),
+
             tg.setCameraTarget(playerHero),
             tg.immediate(_ => {
                 disposeCreeps();
@@ -73,6 +88,7 @@ function onStart(complete: () => void) {
             }),
 
             //Part2: Juke
+            tg.textDialog(LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
             tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
             tg.setCameraTarget(context => context[slarkName]),
@@ -93,30 +109,36 @@ function onStart(complete: () => void) {
                     tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3700), undefined)),
                 ])
             ]),
+
             tg.setCameraTarget(playerHero),
             tg.immediate(_ => disposeHeroes()),
+            tg.immediate(_ => goalWatchJuke.complete()),
+
+            tg.textDialog(LocalizationKey.Script_4_Opening_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 1),
+            tg.textDialog(LocalizationKey.Script_4_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 1),
             tg.immediate(_ => canPlayerIssueOrders = true),
-            tg.wait(2),
+            tg.textDialog(LocalizationKey.Script_4_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
             //Part3: 1st scan, failed
             tg.immediate(_ => {
                 scanLocation = undefined;
-                goalWatchJuke.complete();
                 goalScanFailed.start();
                 highlightUiElement(scanUIPath, undefined, false)
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
+            tg.textDialog(LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
             tg.completeOnCheck(_ => checkIfScanCoversTheLocation(firstScanLocation), 1),
-
             tg.immediate(_ => {
                 goalScanFailed.complete();
                 removeHighlight(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
-            tg.wait(scanDuration),
+            tg.textDialog(LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
+            tg.textDialog(LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
             tg.immediate(_ => {
                 scanLocation = undefined;
                 currentRequiredScanLocation = secondScanLocation;
@@ -132,7 +154,10 @@ function onStart(complete: () => void) {
                 removeHighlight(scanUIPath);
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
-            tg.wait(scanDuration),
+
+            tg.textDialog(LocalizationKey.Script_4_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
+            tg.textDialog(LocalizationKey.Script_4_Opening_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 2),
+            tg.textDialog(LocalizationKey.Script_4_Opening_18, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
         ])
     );
 
@@ -160,6 +185,7 @@ function checkIfScanCoversTheLocation(targetScanLocation: Vector): boolean {
             return true;
         }
         displayDotaErrorMessage("Scan the required location");
+        // TODO: Play opening_15 audio SL
         scanLocation = undefined;
     }
     return false;

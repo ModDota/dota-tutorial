@@ -9,6 +9,8 @@ const sectionName: SectionName = SectionName.Chapter4_Wards;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
+    requireSlacksGolem: true,
+    requireSunsfanGolem: true,
     heroLocation: Vector(-3000, 3800, 128),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
@@ -60,12 +62,10 @@ function onStart(complete: () => void) {
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
+                    hero.FaceTowards(playerHero.GetAbsOrigin());
                 }
             }),
 
-            tg.wait(1),
-
-            // Spawn wards and wait for player to pick them up. Also highlight wards during this.
             tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
                     CreateItemOnPositionSync(wardLocationObs, observerWardItem);
@@ -73,17 +73,29 @@ function onStart(complete: () => void) {
                 }),
 
                 tg.immediate(_ => goalFetchWard.start()),
+                tg.textDialog(LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
                 tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
             ]), { type: "arrow", locations: [wardLocationObs, wardLocationSentry] }),
 
+            tg.immediate(_ => goalFetchWard.complete()),
+            tg.textDialog(LocalizationKey.Script_4_Wards_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            
+            // TODO: Camera pan to cliffs
+
             tg.immediate(_ => {
-                goalFetchWard.complete();
                 goalPlaceObserverWard.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
-            tg.wait(2),
+            tg.textDialog(LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            // TODO: Camera pan back to hero
+
+            tg.textDialog(LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
 
@@ -92,9 +104,16 @@ function onStart(complete: () => void) {
                 goalPlaceSentryWard.start();
             }),
 
+            tg.textDialog(LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
             tg.immediate(_ => goalPlaceSentryWard.complete()),
+
+            tg.textDialog(LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 1),
 
             tg.immediate(context => {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
@@ -102,11 +121,11 @@ function onStart(complete: () => void) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     const runDirection = hero.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                     hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)));
-
                 }
                 goalAttackRiki.start();
                 context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
             }),
+            tg.textDialog(LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
             tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 400, 0.1),
 
@@ -117,9 +136,9 @@ function onStart(complete: () => void) {
                 riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
             }),
             tg.wait(3),
-
             tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
+            tg.textDialog(LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.waitForModifierKey(ModifierKey.Alt),
             tg.immediate(_ => {
                 goalHoldAlt.complete();

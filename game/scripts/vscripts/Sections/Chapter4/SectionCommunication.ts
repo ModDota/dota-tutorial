@@ -12,12 +12,16 @@ let graph: tg.TutorialStep | undefined = undefined
  * Describes the state we want the game to be in before this section is executed. The game will try to make the state match this required state.
  */
 const requiredState: RequiredState = {
+    requireSlacksGolem: true,
+    requireSunsfanGolem: true,
     heroLocation: Vector(-1500, 4000, 256),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
+const allyHeroEndLocation = Vector(-4000, 4800, 128);
+const bountyRuneLocation = Vector(-3850, 2570);
 const lunaName = "npc_dota_hero_luna";
 const kunkkaName = "npc_dota_hero_kunkka";
 
@@ -65,16 +69,39 @@ function onStart(complete: () => void) {
                 luna.FaceTowards(playerHero.GetAbsOrigin());
             }),
 
+            tg.textDialog(LocalizationKey.Script_4_Communication_1, ctx => ctx[lunaName], 3),
             tg.setCameraTarget(playerHero),
+            tg.textDialog(LocalizationKey.Script_4_Communication_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Communication_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
             tg.immediate(_ => goalPressVoiceChatButton.start()),
             tg.waitForCommand(37), // Team voice
             tg.immediate(_ => goalPressVoiceChatButton.complete()),
 
+            tg.textDialog(LocalizationKey.Script_4_Communication_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Communication_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Communication_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
             tg.immediate(_ => goalChatWheelWP.start()),
             tg.waitForChatWheel(),
             tg.immediate(_ => goalChatWheelWP.complete()),
-            tg.wait(2),
+            tg.wait(1),
+            tg.setCameraTarget(context => context[lunaName]),
+            tg.textDialog(LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName], 3),
+            tg.moveUnit(context => context[lunaName], allyHeroEndLocation),
+
+            tg.setCameraTarget(context => context[kunkkaName]),
+            tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
+            tg.textDialog(LocalizationKey.Script_4_Communication_8, ctx => ctx[kunkkaName], 8),
+            tg.textDialog(LocalizationKey.Script_4_Communication_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Communication_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 8),
+            tg.textDialog(LocalizationKey.Script_4_Communication_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
+            // TODO: Lightup scoreboard and mute screenshot
+            // TODO: Spam Whoops
+            tg.textDialog(LocalizationKey.Script_4_Communication_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+            tg.textDialog(LocalizationKey.Script_4_Communication_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
+            tg.textDialog(LocalizationKey.Script_4_Communication_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Communication_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
             // Kunkka destroy items
             tg.immediate(_ => freezePlayerHero(true)),
@@ -105,11 +132,16 @@ function onStart(complete: () => void) {
                 }),
                 tg.wait(1),
             ])),
+
+            tg.moveUnit(context => context[kunkkaName], allyHeroEndLocation),
             tg.immediate(_ => freezePlayerHero(false)),
             tg.setCameraTarget(playerHero),
 
+            tg.textDialog(LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+            tg.textDialog(LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
+
             tg.immediate(_ => goalGoToTopBountyRune.start()),
-            tg.goToLocation(Vector(-3850, 2570)),
+            tg.goToLocation(bountyRuneLocation),
             tg.immediate(_ => goalGoToTopBountyRune.complete()),
         ])
     )

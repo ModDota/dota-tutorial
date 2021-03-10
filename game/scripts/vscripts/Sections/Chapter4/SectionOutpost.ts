@@ -9,6 +9,8 @@ const sectionName: SectionName = SectionName.Chapter4_Outpost;
 let graph: tg.TutorialStep | undefined = undefined;
 
 const requiredState: RequiredState = {
+    requireSlacksGolem: true,
+    requireSunsfanGolem: true,
     heroLocation: Vector(-2000, 3800, 128),
     requireRiki: true,
     rikiLocation: Vector(-1000, 4400, 256),
@@ -17,7 +19,7 @@ const requiredState: RequiredState = {
 };
 
 const dustName = "item_dust";
-const dustLocation = Vector(-1500, 4000, 256);
+const dustLocation = Vector(-1700, 3800, 256);
 
 // UI Highlighting Paths
 const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
@@ -41,10 +43,12 @@ function onStart(complete: () => void) {
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.setCameraTarget(playerHero),
-            tg.wait(1),
 
             // Part 0: Pick up and use dust
             // TODO: lock hero position to ensure dust affect on Riki
+
+            tg.textDialog(LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
             tg.immediate(_ => {
                 goalPickupDust.start();
                 CreateItemOnPositionSync(dustLocation, CreateItem(dustName, undefined, undefined));
@@ -64,12 +68,16 @@ function onStart(complete: () => void) {
                 highlightUiElement(inventorySlot0UIPath, undefined, true)
             }),
 
+            tg.textDialog(LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),
             tg.immediate(_ => goalUseDust.complete()),
             tg.wait(1),
             tg.immediate(_ => {
                 removeHighlight(inventorySlot0UIPath);
             }),
+
+            tg.textDialog(LocalizationKey.Script_4_Outpost_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
 
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
@@ -99,6 +107,10 @@ function onStart(complete: () => void) {
             }),
             tg.wait(3),
 
+            tg.textDialog(LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Outpost_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
+            tg.textDialog(LocalizationKey.Script_4_Outpost_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
             // Part 2: Take outpost
             // TODO: Camera pan on outpost
             tg.immediate(_ => {
@@ -117,6 +129,8 @@ function onStart(complete: () => void) {
                 }
             }),
 
+            tg.textDialog(LocalizationKey.Script_4_Outpost_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+
             tg.completeOnCheck(_ => {
                 return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
             }, 1),
@@ -133,13 +147,17 @@ function onStart(complete: () => void) {
                 riki.MoveToTargetToAttack(playerHero);
             }),
 
+            tg.textDialog(LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
             tg.completeOnCheck(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 return !IsValidEntity(riki) || !riki.IsAlive();
             }, 1),
 
             tg.immediate(_ => goalKillRiki.complete()),
-            tg.wait(5),
+            
+            tg.textDialog(LocalizationKey.Script_4_Outpost_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_4_Outpost_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
         ])
     )
 
