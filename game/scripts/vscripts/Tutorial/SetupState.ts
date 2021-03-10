@@ -187,10 +187,8 @@ export const setupState = (stateReq: RequiredState): void => {
             direTop.SetRenderColor(65, 78, 63)
         }
     }
-    else {
-        if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
-            UTIL_Remove(direTop)
-        }
+    else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
+        UTIL_Remove(direTop)
     }
 }
 

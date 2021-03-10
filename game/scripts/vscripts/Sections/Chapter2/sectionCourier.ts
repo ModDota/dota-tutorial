@@ -33,7 +33,7 @@ const requiredState: RequiredState = {
 
 let canPlayerIssueOrders = true;
 let playerOrderMustBuyDemonEdge = false
-let playerOrderMustBuyRecipeAndCrysalis = false
+let playerOrderMustBuyRecipeAndCrystalis = false
 let playerOrderMustDeliverItemsFromCourier = false
 let hasPlayerRequestedToDeliverFromCourier = false
 
@@ -70,7 +70,7 @@ const onStart = (complete: () => void) => {
 
     canPlayerIssueOrders = true;
     playerOrderMustBuyDemonEdge = false
-    playerOrderMustBuyRecipeAndCrysalis = false
+    playerOrderMustBuyRecipeAndCrystalis = false
     playerOrderMustDeliverItemsFromCourier = false
     hasPlayerRequestedToDeliverFromCourier = false
 
@@ -88,119 +88,118 @@ const onStart = (complete: () => void) => {
     const goalWaitToCourierToDeliverItems = goalTracker.addBoolean("Wait for the courier to deliver the items to you.")
     const goalMoveToFinalPosition = goalTracker.addBoolean("Move into the Dire jungle.")
 
-    graph = tg.withGoals(context => goalTracker.getGoals(),
-        tg.seq([
-            tg.setCameraTarget(undefined),
-            tg.textDialog("Now that you’ve killed some creeps....", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog("As we mentioned previously....", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.immediate(context => {
-                MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
-                MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
-            }),
-            tg.textDialog("Your minimap will show the 2 locations of this shop...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.immediate(context => {
-                MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
-                MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
-            }),
-            tg.immediate(() => {
-                goalMoveToSecretShop.start()
-            }),
-            tg.goToLocation(inFrontOfRadiantSecretShopLocation),
-            tg.immediate(() => {
-                goalMoveToSecretShop.complete()
-            }),
-            tg.textDialog("There is a powerful damage item called...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.immediate(() => {
-                highlightUiElement(shopBtnUIPath)
-                goalOpenShop.start()
-            }),
-            tg.completeOnCheck(() => {
-                return isShopOpen()
-            }, 0.2),
-            tg.immediate(() => {
-                removeHighlight(shopBtnUIPath)
-                goalOpenShop.complete()
-                goalBuyDemonEdge.start()
-                playerHero.SetGold(2200, false)
-                playerOrderMustBuyDemonEdge = true
+    graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
+        tg.setCameraTarget(undefined),
+        tg.textDialog("Now that you’ve killed some creeps....", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog("As we mentioned previously....", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.immediate(context => {
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
+        }),
+        tg.textDialog("Your minimap will show the 2 locations of this shop...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.immediate(context => {
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
+        }),
+        tg.immediate(() => {
+            goalMoveToSecretShop.start()
+        }),
+        tg.goToLocation(inFrontOfRadiantSecretShopLocation),
+        tg.immediate(() => {
+            goalMoveToSecretShop.complete()
+        }),
+        tg.textDialog("There is a powerful damage item called...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.immediate(() => {
+            highlightUiElement(shopBtnUIPath)
+            goalOpenShop.start()
+        }),
+        tg.completeOnCheck(() => {
+            return isShopOpen()
+        }, 0.2),
+        tg.immediate(() => {
+            removeHighlight(shopBtnUIPath)
+            goalOpenShop.complete()
+            goalBuyDemonEdge.start()
+            playerHero.SetGold(2200, false)
+            playerOrderMustBuyDemonEdge = true
 
-                // For some reason the highlighting doesn't work, I have no idea why :/
-                // highlightUiElement(getPathToItemInGuideByID(44), undefined, true);
-                // highlightUiElement(demonEdgeGuideUIPath, undefined, true);
-                // highlightUiElement(crystalisGuideUIPath, undefined, true);
-                // highlightUiElement(daedalusGuideUIPath, undefined, true);
-            }),
-            tg.completeOnCheck(() => {
-                return playerHero.HasItemInInventory(demonEdgeName)
-            }, 0.2),
-            tg.immediate(() => {
-                playerOrderMustBuyDemonEdge = false
-                goalBuyDemonEdge.complete()
-            }),
-            tg.textDialog("In order to complete the daedalus...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.immediate(() => {
-                playerHero.SetGold(2950, false)
-                playerOrderMustBuyRecipeAndCrysalis = true
-                goalBuyCrystalisAndRecipe.start()
-                goalBuyCrystalisAndRecipe.setValue(0)
-            }),
-            tg.completeOnCheck(() => {
-                let requiredItemCount = 0;
-                for (let index = DOTA_ITEM_STASH_MIN; index < DOTA_ITEM_STASH_MAX; index++) {
-                    const item = playerHero.GetItemInSlot(index)
-                    if (item) {
-                        if (item.GetAbilityName() === recipeName) requiredItemCount++
-                        if (item.GetAbilityName() === crystalisName) requiredItemCount++
-                    }
+            // For some reason the highlighting doesn't work, I have no idea why :/
+            // highlightUiElement(getPathToItemInGuideByID(44), undefined, true);
+            // highlightUiElement(demonEdgeGuideUIPath, undefined, true);
+            // highlightUiElement(crystalisGuideUIPath, undefined, true);
+            // highlightUiElement(daedalusGuideUIPath, undefined, true);
+        }),
+        tg.completeOnCheck(() => {
+            return playerHero.HasItemInInventory(demonEdgeName)
+        }, 0.2),
+        tg.immediate(() => {
+            playerOrderMustBuyDemonEdge = false
+            goalBuyDemonEdge.complete()
+        }),
+        tg.textDialog("In order to complete the daedalus...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.immediate(() => {
+            playerHero.SetGold(2950, false)
+            playerOrderMustBuyRecipeAndCrystalis = true
+            goalBuyCrystalisAndRecipe.start()
+            goalBuyCrystalisAndRecipe.setValue(0)
+        }),
+        tg.completeOnCheck(() => {
+            let requiredItemCount = 0;
+            for (let index = DOTA_ITEM_STASH_MIN; index < DOTA_ITEM_STASH_MAX; index++) {
+                const item = playerHero.GetItemInSlot(index)
+                if (item) {
+                    if (item.GetAbilityName() === recipeName) requiredItemCount++
+                    if (item.GetAbilityName() === crystalisName) requiredItemCount++
                 }
-                goalBuyCrystalisAndRecipe.setValue(requiredItemCount)
+            }
+            goalBuyCrystalisAndRecipe.setValue(requiredItemCount)
 
-                return requiredItemCount === 2
-            }, 0.2),
-            tg.immediate(() => {
-                goalBuyCrystalisAndRecipe.complete()
-                playerOrderMustBuyRecipeAndCrysalis = false
-                canPlayerIssueOrders = false
-            }),
-            tg.textDialog("Keep in mind that for the regular shop...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog("Ok, now I don’t know about you...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog("Everyone starts with a cute little courier...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.immediate(() => {
-                highlightUiElement("HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton")
-            }),
-            tg.textDialog("Now just hit the deliver button on the courier and it will come...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.immediate(() => {
-                canPlayerIssueOrders = true
-                playerOrderMustDeliverItemsFromCourier = true
-                goalRequestItemsToBeDeliveredFromCourier.start()
-            }),
-            tg.completeOnCheck(() => {
-                return hasPlayerRequestedToDeliverFromCourier
-            }, 0.2),
-            tg.immediate(() => {
-                goalRequestItemsToBeDeliveredFromCourier.complete()
-                goalWaitToCourierToDeliverItems.start()
-                playerOrderMustDeliverItemsFromCourier = false
-                canPlayerIssueOrders = false
-            }),
-            tg.panCameraLinear(playerHero.GetAbsOrigin(), playerCourier.GetAbsOrigin(), 0.5),
-            tg.setCameraTarget(playerCourier),
-            tg.completeOnCheck(() => {
-                return playerHero.HasItemInInventory(daedalusName)
-            }, 0.2),
-            tg.immediate(() => goalWaitToCourierToDeliverItems.complete()),
-            tg.setCameraTarget(undefined),
-            tg.textDialog("Congratulations, you’ve successfully used...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog("these little critters can die, ....", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog("ok, you have some items...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog("use your minimap to...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.immediate(() => {
-                canPlayerIssueOrders = true
-                goalMoveToFinalPosition.start()
-            }),
-            tg.goToLocation(finalMovementPositionLocation),
-            tg.immediate(() => goalMoveToFinalPosition.complete())
-        ])
+            return requiredItemCount === 2
+        }, 0.2),
+        tg.immediate(() => {
+            goalBuyCrystalisAndRecipe.complete()
+            playerOrderMustBuyRecipeAndCrystalis = false
+            canPlayerIssueOrders = false
+        }),
+        tg.textDialog("Keep in mind that for the regular shop...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog("Ok, now I don’t know about you...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog("Everyone starts with a cute little courier...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.immediate(() => {
+            highlightUiElement("HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton")
+        }),
+        tg.textDialog("Now just hit the deliver button on the courier and it will come...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.immediate(() => {
+            canPlayerIssueOrders = true
+            playerOrderMustDeliverItemsFromCourier = true
+            goalRequestItemsToBeDeliveredFromCourier.start()
+        }),
+        tg.completeOnCheck(() => {
+            return hasPlayerRequestedToDeliverFromCourier
+        }, 0.2),
+        tg.immediate(() => {
+            goalRequestItemsToBeDeliveredFromCourier.complete()
+            goalWaitToCourierToDeliverItems.start()
+            playerOrderMustDeliverItemsFromCourier = false
+            canPlayerIssueOrders = false
+        }),
+        tg.panCameraLinear(playerHero.GetAbsOrigin(), playerCourier.GetAbsOrigin(), 0.5),
+        tg.setCameraTarget(playerCourier),
+        tg.completeOnCheck(() => {
+            return playerHero.HasItemInInventory(daedalusName)
+        }, 0.2),
+        tg.immediate(() => goalWaitToCourierToDeliverItems.complete()),
+        tg.setCameraTarget(undefined),
+        tg.textDialog("Congratulations, you’ve successfully used...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog("these little critters can die, ....", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog("ok, you have some items...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog("use your minimap to...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.immediate(() => {
+            canPlayerIssueOrders = true
+            goalMoveToFinalPosition.start()
+        }),
+        tg.goToLocation(finalMovementPositionLocation),
+        tg.immediate(() => goalMoveToFinalPosition.complete())
+    ])
     )
 
     graph.start(GameRules.Addon.context, () => {
@@ -242,7 +241,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
         return true
     }
 
-    if (playerOrderMustBuyRecipeAndCrysalis) {
+    if (playerOrderMustBuyRecipeAndCrystalis) {
         print(event.shop_item_name, event.order_type)
         if (event.order_type !== UnitOrder.PURCHASE_ITEM) {
             print("Not a purchase order")
