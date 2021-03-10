@@ -224,9 +224,9 @@
         "Script_4_Communication_10" "dota is a hard game. For some, they see the challenge and rise up to better themselves and learn that hard work and effort can make you a better person. For some, they become lost, shells of their former selves and drunk on the rage that fuels them"
         "Script_4_Communication_11" "dota should be a fun place, where you treat others how you want to be treated and work together. There is no surrender button in dota, because dota players never give up. But, that doesn't mean that we need to listen to the screeching of this petulant child. Click here to open up the scoreboard."
         "Script_4_Communication_12" "Now, see the hero that is being an annoying piece of shit and press the microphone button to mute them. You can mute their voice, and if you feel really frisky, you can mute their text too!"
-        "Script_4_Communication_13" "feel free to hit them with a well played as well."
-        "Script_4_Communication_14" "don't do that, that is also toxic"
-        "Script_4_Communication_15" "eh"
+        "Script_4_Communication_13" ":if you have a rager on your team and you screw up, just hit ‘em with a whoops. No one could possibly be mad at someone spamming whoops, right?"
+        "Script_4_Communication_14" "they absolutely can be"
+        "Script_4_Communication_15" "whoops"
         "Script_4_Communication_16" "see? There he goes. his power over us is lost. And we too must go! For there is more to learn!"
         "Script_4_Communication_17" "Head to the next marker. I won't tell you where it is, so use your minimap and camera to find it. We will meet you there!"
 
@@ -240,5 +240,19 @@
         "Script_5_Opening_8" "Yes! Are you starting to see a pattern here? Creeps spawn every 30 seconds. Power runes every 2 minutes, Bounty runes every 5 minutes and Outposts every ten. There is a ton happening on the dota 2 map, and you as a team need to handle all of this as well as murdering your enemies. We have a saying in dota: if you are standing still, you are most likely doing something wrong. There is always something to do, so go forth and do it!"
         "Script_5_Opening_9" "Now, lets give you my favorite rune, the double damage rune, and introduce you to someone very special."
         "Script_5_Opening_10" "Click on it to pick it up, young one!"
+
+        "Script_6_Opening_1" "and here we are. We have truly come full circle."
+        "Script_6_Opening_2" "you did a great job in the tutorial. We are very proud to have you join us."
+        "Script_6_Opening_3" "Now, some final lessons. First, lets talk about heroes that aren’t Dragon Knight."
+        "Script_6_Opening_4" "Heroes are broken down into 3 categories. Strength, agility, and intelligence. Your hero, dragon knight, is a strength hero. They are known for being beefy. Having a ton of health, and staying in fights a long time as they beat their enemies down with brute force."
+        "Script_6_Opening_5" "Agility heroes are glass cannons, for a while! These heroes are known for dealing lots of damage later in the game, but are relatively weak at the start. They need to weave in and out of combat to be effective, doing large amounts of damage but then escaping before the enemy can kill them."
+        "Script_6_Opening_6" "Intelligence heros are kind of the opposite. They are typically strongest in the early game, but become weaker as the game goes on. However, they are able to cast powerful spells which allow for games to never get to the late game at all!"
+        "Script_6_Opening_7" "These are further broken down into roles, such as position 1, the carry, position 2, the mid, position 3, the offlane, and pos 4 and 5, the supports. But we wont get into that garbage."
+        "Script_6_Opening_8" "The time has come for you to decide, which hero class best suits you? Are you the kind of guy who wades into the battle with his big belly ready to smash? Or are you the cunning assassin? Perhaps you would rather destroy your enemies in an instant with a powerful spell? That is for you to decide."
+        "Script_6_Opening_9" "And that is it my friend, the end of the tutorial. Oh wait, one thing"
+        "Script_6_Closing_1" "These are all of the people who made this possible, as well as some community members that have more advanced resources for you. Dota is a nearly impossible game to master, but that’s what makes it so fun! Go up to any of the people at the party and click on them, and they will introduce themselves and link you to additional resources and advanced guides."
+        "Script_6_Closing_2" "We will miss you young one. Make sure to say goodbye before you leave. You are now ready."
+        "Script_6_Closing_3" "Don't feel bad if you lose, you're going to lose a lot."
+        "Script_6_Closing_4" "That’s true, but Dota is one of the most rewarding games to play if you give it a chance. The map is yours my child. Good luck, and have fun!"
     }
 }

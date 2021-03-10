@@ -224,3 +224,12 @@
     horizontal-align: center;
     vertical-align: center;
 }
+
+#DialogImagePortrait {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    box-shadow: fill #000000af -6px -6px 12px 12px;
+    border: 2px solid black;
+    z-index: 1;
+}
