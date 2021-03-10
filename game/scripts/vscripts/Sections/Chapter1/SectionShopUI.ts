@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 
@@ -47,41 +47,75 @@ const onStart = (complete: () => void) => {
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.wait(FrameTime()),
+
+            // Wait for the player to open their shop.
             tg.immediate(_ => {
                 goalOpenShop.start();
-                playerHero.SetGold(90, true);
-                highlightUiElement(shopBtnUIPath)
-                waitingForPlayerToPurchaseTango = true;
+                highlightUiElement(shopBtnUIPath);
             }),
             tg.completeOnCheck(_ => isShopOpen(), 0.1),
             tg.immediate(_ => {
+                removeHighlight(shopBtnUIPath);
                 goalOpenShop.complete();
+            }),
+
+            // Shop stuff dialog, tells player to buy a tango.
+            tg.textDialog(LocalizationKey.Script_1_Shop_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Shop_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Shop_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Shop_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Shop_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Shop_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Shop_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
+            // Give the player some gold and wait for them to buy a tango.
+            tg.immediate(_ => {
                 goalBuyTango.start();
                 highlightUiElement(tangoInGuideUIPath, undefined, true);
+                playerHero.SetGold(90, true);
+                waitingForPlayerToPurchaseTango = true;
             }),
-            tg.completeOnCheck(_ => {
-                return playerBoughtTango;
-            }, 0.2),
+            tg.completeOnCheck(_ => playerBoughtTango, 0.2),
             tg.immediate(_ => {
-                removeHighlight(shopBtnUIPath);
                 removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
-                goalEatTree.start();
                 highlightUiElement(inventorySlot0UIPath, undefined, true);
             }),
-            tg.completeOnCheck(_ => {
-                return playerHero.HasModifier("modifier_tango_heal");
-            }, 0.2),
+
+            // Ask the player to use their tango to escape.
+            tg.immediate(_ => freezePlayerHero(true)),
+            tg.textDialog(LocalizationKey.Script_1_Closing_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.textDialog(LocalizationKey.Script_1_Closing_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.immediate(_ => goalEatTree.start()),
+            tg.immediate(_ => freezePlayerHero(false)),
+
+            // Wait for the player to use their tango to escape.
+            tg.completeOnCheck(_ => playerHero.HasModifier("modifier_tango_heal"), 0.2),
             tg.immediate(_ => {
                 goalEatTree.complete();
                 removeHighlight(inventorySlot0UIPath);
-                goalMoveOut.start();
             }),
-            tg.goToLocation(GetGroundPosition(Vector(-6700, -4800), undefined)),
-            tg.immediate(_ => {
-                goalMoveOut.complete();
-            }),
-            tg.wait(1),
+
+            tg.immediate(_ => freezePlayerHero(true)),
+            tg.textDialog(LocalizationKey.Script_1_Closing_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+
+            // Unlock player camera
+            tg.textDialog(LocalizationKey.Script_1_Closing_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.setCameraTarget(undefined),
+
+            // Tell player to escape
+            tg.textDialog(LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.immediate(_ => goalMoveOut.start()),
+
+            // Wait for the player to move out
+            tg.fork([
+                tg.seq([
+                    tg.textDialog(LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                    tg.immediate(_ => freezePlayerHero(false)),
+                ]),
+                tg.goToLocation(GetGroundPosition(Vector(-6700, -4800), undefined)),
+            ]),
+            tg.immediate(_ => goalMoveOut.complete()),
         ])
     )
 
