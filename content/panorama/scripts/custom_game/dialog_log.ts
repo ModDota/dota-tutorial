@@ -6,8 +6,6 @@ const MAX_CHAT_LENGTH = 50;
 const lines: Panel[] = [];
 
 function ToggleDialogLog() {
-    $.Msg("ToggleDialogLog");
-
     $("#DialogLog").ToggleClass("Visible");
     Game.EmitSound("ui_chat_slide_in");
 
@@ -15,8 +13,6 @@ function ToggleDialogLog() {
 }
 
 function Close() {
-    $.Msg("ToggleDialogLog");
-
     $("#DialogLog").SetHasClass("Visible", false);
     Game.EmitSound("ui_chat_slide_out");
 }

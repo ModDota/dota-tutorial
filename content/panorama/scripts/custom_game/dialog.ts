@@ -19,9 +19,9 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     if (!handleSpecialUnitPortrait(unitName)) {
         dialogImagePortrait.visible = false;
         dialogPortrait.visible = true;
-        dialogPortrait.SetUnit(Entities.GetUnitName(data.DialogEntIndex), "", true);
+        dialogPortrait.SetUnit(unitName, "", true);
     }
-    dialogTitle.text = $.Localize(Entities.GetUnitName(data.DialogEntIndex));
+    dialogTitle.text = $.Localize(unitName);
 
     currentCharacter = 0;
     dialogAdvanceTime = Game.GetGameTime() + data.DialogAdvanceTime;
