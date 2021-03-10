@@ -13,6 +13,7 @@
 
     <Panel class="DialogLine" hittest="false" hittestchildren="false">
         <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false"/>
+        <Image id="DialogImagePortrait" />
         <Panel class="SpeechBubble">
             <Panel class="SpeechBubbleContainer">
                 <Panel class="SpeechBubbleBackgroundOutline"/>
