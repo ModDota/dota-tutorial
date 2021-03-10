@@ -31,6 +31,7 @@ export class GameMode {
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
         chapters.chapter4.sectionOutpost,
+        chapters.chapter4.sectionCommunication,
         chapters.chapter5.sectionOpening,
         chapters.chapter5.sectionRoshan,
     ]);
@@ -40,6 +41,10 @@ export class GameMode {
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
+        PrecacheResource("particle", ParticleName.HighlightCircle, context);
+        PrecacheResource("particle", ParticleName.HighlightArrowEnemy, context);
+        PrecacheResource("particle", ParticleName.HighlightArrow, context);
+        PrecacheResource("particle", ParticleName.Path, context);
     }
 
     public static Activate(this: void) {
@@ -160,7 +165,11 @@ export class GameMode {
     }
 
     ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean {
-        return false;
+        Timers.CreateTimer(() => {
+            PlayerResource.SetGold(event.player_id_const, 0, false),
+                FrameTime() * 1;
+        });
+        return true;
     }
 
     ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {

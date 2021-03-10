@@ -48,7 +48,7 @@ function findPanelAtPath(path: string): Panel | undefined {
     const splitPath = path.split("/");
     let panel = hudRoot;
     for (let i = 0; i < splitPath.length; i++) {
-        const child = panel.FindChild(splitPath[i]);
+        const child = panel.FindChildTraverse(splitPath[i]);
         if (child === null) {
             $.Msg(`Failed to find ${splitPath[i]} in ${splitPath.slice(0, i).join("/")}`);
             return undefined;
@@ -70,8 +70,8 @@ function removeHighlight(event: RemoveHighlightEvent) {
 
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
 //highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
-function highlightUiElement(event: HighlightElementEvent) {
-    const { path, duration } = event;
+function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
+    const { path, duration, setElementAsParent } = event;
     // Panel is already highlighted
     if (highlightedPanels[path]) {
         $.Msg("Element is already highlighted");
@@ -84,7 +84,8 @@ function highlightUiElement(event: HighlightElementEvent) {
         const parent = element.GetParent()!;
 
         const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
-        highlightPanel.SetParent(parent);
+        if (setElementAsParent) highlightPanel.SetParent(element);
+        else highlightPanel.SetParent(parent);
 
         highlightPanel.AddClass("UIHighlight");
 
@@ -119,10 +120,27 @@ function ChaptersClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
+//** Guides Panel */
+function ToggleGuidesMenu() {
+    $.Msg("ToggleGuidesMenu");
+
+    $("#GuidesMenu").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_in");
+}
+
+function GuidesClose() {
+    $.Msg("ToggleGuidesMenu");
+
+    $("#GuidesMenu").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,
     SectionName.Chapter3_Opening,
+    SectionName.Chapter4_Opening,
+    SectionName.Chapter5_Opening,
 ];
 
 function playChapter(chapterNumber: number) {

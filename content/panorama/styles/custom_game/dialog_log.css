@@ -4,14 +4,17 @@
 }
 
 .TopLeftMenu {
-    width: 240px;
+    width: 125px;
     height: 40px;
     margin-top: 9px;
-    margin-left: -5px;
+    margin-left: 150px;
     opacity: 1.2;
     transition-duration: 0.05s;
     transition-property: background-image;
     transition-timing-function: ease-in-out;
+    background-color: #00000099;
+    box-shadow: #00000033 -2px -2px 1px 4px;
+    border-radius: 5px;
 }
 
 .TopLeftMenuButton {
@@ -28,48 +31,46 @@
 
 #DialogLogButton {
     background-image: url("file://{images}/custom_game/message_log/message_log.png");
-    background-size: 95%;
-    margin-top: 6px;
-    margin-left: 160px;
-    transition-duration: 0.3s;
-    transition-property: wash-color;
+    background-size: 90%;
+    margin-top: 7px;
+    margin-left: 8px;
+    transition-duration: 0.2s;
+    transition-property: opacity;
     transition-timing-function: ease-in-out;
+    wash-color: #F6A639;
+    opacity: 1;
 }
 
 #SkipButton {
     background-image: url("file://{images}/custom_game/skip_section/skip_section.png");
-    background-size: 100%;
+    background-size: 110%;
     margin-top: 5px;
-    margin-left: 205px;
-    transition-duration: 0.3s;
-    transition-property: wash-color;
+    margin-left: 45px;
+    transition-duration: 0.2s;
+    transition-property: opacity;
     transition-timing-function: ease-in-out;
+    brightness: 1.5;
+    wash-color: #F6A639;
+    opacity: 1;
 }
 
-@keyframes 'RefreshButtonAnimation'
-{
-    0%
-    {
-        transform: rotateZ( 0deg );
-    }
-    100%
-    {
-        transform: rotateZ( 180deg );
-    }
-}
-
-#SkipButton.Activated {
-    animation-name: RefreshButtonAnimation;
-    animation-duration: 0.55s;
-    animation-delay: 0.15s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: 1;
-    animation-direction: reverse;
+#GuidesButton {
+    background-image: url("file://{images}/custom_game/guides/guide.png");
+    background-size: 90%;
+    margin-top: 8px;
+    margin-left: 90px;
+    transition-duration: 0.2s;
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    brightness: 1;
+    wash-color: #F6A639;
+    opacity: 1;
 }
 
 #DialogLogButton:hover,
-#SkipButton:hover {
-    opacity: 1;
+#SkipButton:hover,
+#GuidesButton:hover {
+    opacity: 0.5;
     transition-duration: 0.3s;
     transition-property: opacity;
     transition-timing-function: ease-in-out;
@@ -222,4 +223,13 @@
 #CloseButton {
     horizontal-align: center;
     vertical-align: center;
+}
+
+#DialogImagePortrait {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    box-shadow: fill #000000af -6px -6px 12px 12px;
+    border: 2px solid black;
+    z-index: 1;
 }

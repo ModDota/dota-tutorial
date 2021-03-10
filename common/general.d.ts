@@ -12,6 +12,7 @@ declare const enum SectionName {
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
     Chapter4_Outpost = "Chapter4_Outpost",
+    Chapter4_Communication = "Chapter4_Communication",
     Chapter5_Opening ="Chapter5_Opening",
     Chapter5_Roshan ="Chapter5_Roshan",
 }
@@ -57,4 +58,11 @@ declare const enum ModifierKey {
     Alt,
     Shift,
     Control,
+}
+
+declare const enum ParticleName {
+    HighlightCircle = "particles/tutorial_highlight.vpcf",
+    HighlightArrow = "particles/tutorial_arrow_base.vpcf",
+    HighlightArrowEnemy = "particles/tutorial_arrow_attack_base.vpcf",
+    Path = "particles/tutorial_path.vpcf",
 }

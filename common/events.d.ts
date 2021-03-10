@@ -10,44 +10,10 @@ interface SetGoalsEvent {
     goals: Goal[];
 }
 
-interface MoveCameraEvent {
-    cameraTargetX?: number;
-    cameraTargetY?: number;
-    cameraTargetZ?: number;
-    unitTargetEntIndex?: EntityIndex;
-    lerp: number;
-}
-
-interface DialogConfirmedEvent {
-    PlayerID: PlayerID;
-}
-
 interface DialogReceivedEvent {
     DialogText: string;
-    SendToAll: boolean;
     DialogEntIndex: EntityIndex;
-    PlayerHeroEntIndex: EntityIndex;
-    ShowAdvanceButton: boolean;
-    ConfirmToken?: string;
-    DialogPlayerConfirm?: boolean;
     DialogAdvanceTime: number;
-}
-
-interface DialogCompleteEvent {
-    DialogEntIndex: EntityIndex | null;
-    ShowNextLine: number;
-    PlayerHeroEntIndex: EntityIndex;
-}
-
-interface DialogConfirmEvent {
-    nPlayerID: PlayerID;
-    ConfirmToken?: string;
-    DialogEntIndex: EntityIndex | null;
-}
-
-interface DialogConfirmExpireEvent {
-    ConfirmToken?: string;
-    DialogEntIndex: EntityIndex | null;
 }
 
 interface DetectCommandEvent {
@@ -74,6 +40,7 @@ interface ClockTimeEvent {
 interface HighlightElementEvent {
     path: string;
     duration?: number;
+    setElementAsParent?: boolean;
 }
 
 interface RemoveHighlightEvent {
@@ -84,15 +51,15 @@ interface ChatWheelPhraseSelectedEvent {
     phraseIndex: number;
 }
 
+interface ShopOpenChangedEvent {
+    open: boolean;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
-    move_camera: MoveCameraEvent;
-    dialog_confirm_expire: DialogConfirmExpireEvent;
-    dialog_confirm: DialogConfirmEvent;
-    dialog_complete: DialogCompleteEvent;
+    dialog_complete: {};
     dialog: DialogReceivedEvent;
-    dialog_player_confirm: DialogConfirmedEvent;
     dialog_clear: {};
     ui_loaded: {};
     detect_camera_movement: {};
@@ -106,4 +73,5 @@ interface CustomGameEventDeclarations {
     highlight_element: HighlightElementEvent;
     remove_highlight: RemoveHighlightEvent;
     chat_wheel_phrase_selected: ChatWheelPhraseSelectedEvent;
+    shop_open_changed: ShopOpenChangedEvent;
 }

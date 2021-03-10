@@ -1,7 +1,8 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
@@ -19,12 +20,20 @@ const requiredState: RequiredState = {
 let waitingForPlayerToPurchaseTango = false;
 let playerBoughtTango = false;
 
+// UI Highlighting Paths
+const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
+const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/"
+
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
 
     const playerHero = getPlayerHero();
     if (!playerHero) error("Could not find the player's hero.");
+
+    const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
+    const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
 
     const goalTracker = new GoalTracker();
     const goalOpenShop = goalTracker.addBoolean("Open the shop.");
@@ -37,28 +46,35 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.wait(FrameTime()),
             tg.immediate(_ => {
                 goalOpenShop.start();
                 playerHero.SetGold(90, true);
+                highlightUiElement(shopBtnUIPath)
                 waitingForPlayerToPurchaseTango = true;
             }),
-            tg.wait(10),
+            tg.completeOnCheck(_ => isShopOpen(), 0.1),
             tg.immediate(_ => {
                 goalOpenShop.complete();
                 goalBuyTango.start();
+                highlightUiElement(tangoInGuideUIPath, undefined, true);
             }),
             tg.completeOnCheck(_ => {
                 return playerBoughtTango;
             }, 0.2),
             tg.immediate(_ => {
+                removeHighlight(shopBtnUIPath);
+                removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
                 goalEatTree.start();
+                highlightUiElement(inventorySlot0UIPath, undefined, true);
             }),
             tg.completeOnCheck(_ => {
                 return playerHero.HasModifier("modifier_tango_heal");
             }, 0.2),
             tg.immediate(_ => {
                 goalEatTree.complete();
+                removeHighlight(inventorySlot0UIPath);
                 goalMoveOut.start();
             }),
             tg.goToLocation(GetGroundPosition(Vector(-6700, -4800), undefined)),
@@ -77,7 +93,9 @@ const onStart = (complete: () => void) => {
 
 function onStop() {
     print("Stopping", sectionName);
-
+    removeHighlight(shopBtnUIPath);
+    removeHighlight(tangoInGuideUIPath);
+    removeHighlight(inventorySlot0UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;

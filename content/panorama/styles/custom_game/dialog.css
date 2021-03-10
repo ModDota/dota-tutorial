@@ -271,7 +271,8 @@
 }
 
 #GlassBallOverlay,
-#DialogPortrait {
+#DialogPortrait,
+#DialogImagePortrait {
     width: 128px;
     height: 128px;
     //  border-bottom-left-radius: 50%;

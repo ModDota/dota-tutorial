@@ -2,6 +2,7 @@ import { defaultRequiredState, FilledRequiredState, RequiredState } from "./Requ
 import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
 import { Blockade } from "../Blockade"
 import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
+import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
 
 // Keep track of spawned blockades so we can remove them again.
 const spawnedBlockades = new Set<Blockade>()
@@ -194,7 +195,8 @@ function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, fa
     }
 
     if (!context[unitName] || !IsValidEntity(context[unitName]) || !context[unitName].IsAlive()) {
-        const unit = CreateUnitByName(unitName, location, true, undefined, undefined, team)
+        const unit = CreateUnitByName(unitName, location, true, undefined, undefined, team);
+        spawnWearables(unitName, unit);
         postCreate(unit)
         if (onPostCreate) {
             onPostCreate(unit, true)
@@ -204,6 +206,37 @@ function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, fa
         if (onPostCreate) {
             onPostCreate(context[unitName], false)
         }
+    }
+}
+
+function spawnWearables(unitName: string, unit: CDOTA_BaseNPC) {
+    if (unitName === CustomNpcKeys.SlacksMudGolem) {
+        const greevilConfig: GreevilConfig = {
+            material: 4,
+            stance: "white",
+            ears: 2,
+            horns: 1,
+            hair: 1,
+            nose: 1,
+            tail: 1,
+            teeth: 1,
+            feathers: false,
+        };
+        unit.AddNewModifier(unit, undefined, modifier_greevil.name, greevilConfig);
+    }
+    if (unitName === CustomNpcKeys.SunsFanMudGolem) {
+        const greevilConfig: GreevilConfig = {
+            material: 2,
+            stance: "level_3",
+            ears: 1,
+            horns: 3,
+            hair: 2,
+            nose: 3,
+            tail: 3,
+            teeth: 3,
+            feathers: false,
+        };
+        unit.AddNewModifier(unit, undefined, modifier_greevil.name, greevilConfig);
     }
 }
 

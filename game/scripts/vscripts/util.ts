@@ -151,9 +151,10 @@ export function displayDotaErrorMessage(message: string) {
  * Highlights a panel along a path
  * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
  * @param duration Optional time in seconds after which to remove the highlight
+ * @param setElementAsParent Optional. Sets the element provided in the path as the parent, instead of as a sibling. Used for cases where the parent has the flow-children CSS property.
  */
-export function highlightUiElement(path: string, duration?: number) {
-    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration });
+export function highlightUiElement(path: string, duration?: number, setElementAsParent?: boolean) {
+    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration, setElementAsParent });
 }
 
 /**
@@ -275,4 +276,117 @@ export function removeContextEntityIfExists(context: TutorialContext, entityKey:
  */
 export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
+}
+
+export function createPathParticle(locations: Vector[]): ParticleID {
+    const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
+
+    for (let i = 0; i < locations.length; i++) {
+        ParticleManager.SetParticleControl(particle, i, locations[i])
+    }
+    ParticleManager.SetParticleControl(particle, 61, Vector(locations.length, 0, 0))
+
+    ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+    return particle
+}
+
+/**
+ * Creates a particle at a location.
+ * @param particleName Name of the particle.
+ * @param location Location to spawn the particle at.
+ * @returns The created particle.
+ */
+export const createParticleAtLocation = (particleName: string, location: Vector) => {
+    const particle = ParticleManager.CreateParticle(particleName, ParticleAttachment.CUSTOMORIGIN, undefined)
+    ParticleManager.SetParticleControl(particle, 0, GetGroundPosition(location, undefined))
+    return particle
+}
+
+/**
+ * Creates a particle attached to a unit.
+ * @param particleName Name of the particle.
+ * @param unit Unit to attach the particle to.
+ * @returns The created particle.
+ */
+export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC) => {
+    return ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit)
+}
+
+export type HighlightType = "circle" | "arrow" | "arrow_enemy"
+
+const highlightTypeParticleNames: Record<HighlightType, string> = {
+    "circle": ParticleName.HighlightCircle,
+    "arrow": ParticleName.HighlightArrow,
+    "arrow_enemy": ParticleName.HighlightArrowEnemy,
+}
+
+/**
+ * Highlight data.
+ */
+export type HighlightProps = {
+    /**
+     * Type of highlight.
+     */
+    type: HighlightType
+
+    /**
+     * Units to highlight.
+     */
+    units?: CDOTA_BaseNPC[]
+
+    /**
+     * Locations to highlight.
+     */
+    locations?: Vector[]
+
+    /**
+     * Radius of the highlight if using circle.
+     */
+    radius?: number
+
+    /**
+     * Whether the unit particles should be attached to the unit or only using its ground location. Defaults to true.
+     */
+    attach?: boolean
+}
+
+/**
+ * Creates particle highlights.
+ * @param props Properties describing the desired highlights.
+ * @returns Particles created for the highlights.
+ */
+export function highlight(props: HighlightProps): ParticleID[] {
+    const { type, units, locations, radius, attach } = props
+
+    const particleName = highlightTypeParticleNames[type]
+
+    const particles: ParticleID[] = []
+
+    // Create unit highlights
+    if (units) {
+        for (const unit of units) {
+            particles.push(attach !== false ?
+                createParticleAttachedToUnit(particleName, unit) :
+                createParticleAtLocation(particleName, GetGroundPosition(unit.GetAbsOrigin(), undefined))
+            )
+        }
+    }
+
+    // Create location highlights
+    if (locations) {
+        for (const location of locations) {
+            particles.push(createParticleAtLocation(particleName, location))
+        }
+    }
+
+    particles.forEach(particle => {
+        ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+        if (radius) {
+            ParticleManager.SetParticleControl(particle, 1, Vector(radius, 0, 0))
+        }
+    })
+
+    return particles
 }
