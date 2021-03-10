@@ -4,6 +4,7 @@ import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
 import { findAllPlayersID, getCameraDummy, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import * as dg from "./Dialog"
 
 declare global {
     interface CDOTAGamerules {
@@ -59,6 +60,8 @@ export class GameMode {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
         })
+
+        dg.init();
     }
 
     private configure(): void {
