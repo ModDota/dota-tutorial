@@ -67,6 +67,7 @@ const onStart = (complete: () => void) => {
     const demonEdgeGuideUIPath = getPathToItemInGuideByID(51)
     const crystalisGuideUIPath = getPathToItemInGuideByID(149)
     const daedalusGuideUIPath = getPathToItemInGuideByID(140)
+    const deliverItemsUIPath = "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton"
 
     canPlayerIssueOrders = true;
     playerOrderMustBuyDemonEdge = false
@@ -90,13 +91,13 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
         tg.setCameraTarget(undefined),
-        tg.textDialog("Now that you’ve killed some creeps....", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.textDialog("As we mentioned previously....", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
         tg.immediate(context => {
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
         }),
-        tg.textDialog("Your minimap will show the 2 locations of this shop...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem], 3),
         tg.immediate(context => {
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
@@ -108,7 +109,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalMoveToSecretShop.complete()
         }),
-        tg.textDialog("There is a powerful damage item called...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_4, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
         tg.immediate(() => {
             highlightUiElement(shopBtnUIPath)
             goalOpenShop.start()
@@ -136,7 +137,7 @@ const onStart = (complete: () => void) => {
             playerOrderMustBuyDemonEdge = false
             goalBuyDemonEdge.complete()
         }),
-        tg.textDialog("In order to complete the daedalus...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem], 3),
         tg.immediate(() => {
             playerHero.SetGold(2950, false)
             playerOrderMustBuyRecipeAndCrystalis = true
@@ -161,13 +162,13 @@ const onStart = (complete: () => void) => {
             playerOrderMustBuyRecipeAndCrystalis = false
             canPlayerIssueOrders = false
         }),
-        tg.textDialog("Keep in mind that for the regular shop...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog("Ok, now I don’t know about you...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog("Everyone starts with a cute little courier...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem], 3),
         tg.immediate(() => {
-            highlightUiElement("HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton")
+            highlightUiElement(deliverItemsUIPath)
         }),
-        tg.textDialog("Now just hit the deliver button on the courier and it will come...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem], 3),
         tg.immediate(() => {
             canPlayerIssueOrders = true
             playerOrderMustDeliverItemsFromCourier = true
@@ -189,10 +190,10 @@ const onStart = (complete: () => void) => {
         }, 0.2),
         tg.immediate(() => goalWaitToCourierToDeliverItems.complete()),
         tg.setCameraTarget(undefined),
-        tg.textDialog("Congratulations, you’ve successfully used...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog("these little critters can die, ....", context => context[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.textDialog("ok, you have some items...", context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog("use your minimap to...", context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_10, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_11, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_12, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.textDialog(LocalizationKey.Script_2_Courier_13, context => context[CustomNpcKeys.SlacksMudGolem], 3),
         tg.immediate(() => {
             canPlayerIssueOrders = true
             goalMoveToFinalPosition.start()

@@ -46,7 +46,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
 
-        pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        if (actualVisualIntermediateLocations && actualVisualIntermediateLocations.length > 0) pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
