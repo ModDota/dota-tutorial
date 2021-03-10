@@ -3,13 +3,24 @@ import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
 
-const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
-    DotaTeam.BADGUYS, location, undefined, radius,
-    UnitTargetTeam.BOTH,
-    UnitTargetType.HERO,
-    UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
-    0, false
-).length > 0
+const isHeroNearby = (location: Vector, radius: number, heroName: string) => {
+    let unitsWithinRadius = FindUnitsInRadius(
+        DotaTeam.BADGUYS, location, undefined, radius,
+        UnitTargetTeam.BOTH,
+        UnitTargetType.HERO,
+        UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
+        0, false
+    )
+
+    let foundHeroUnit = false
+
+    for (const unitWithinRadius of unitsWithinRadius) {
+        if (unitWithinRadius.GetName() === heroName)
+            foundHeroUnit = true
+    }
+
+    return foundHeroUnit
+}
 
 /**
  * Creates a tutorial step that waits for a hero to go to a location.
@@ -50,7 +61,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-            if (isHeroNearby(actualLocation!, 200)) {
+            if (isHeroNearby(actualLocation!, 200, hero.GetName())) {
                 cleanup()
                 complete()
             } else {
@@ -139,7 +150,10 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             Queue: true
         }
 
-        ExecuteOrderFromTable(order)
+        if (actualUnit.IsAlive())
+            ExecuteOrderFromTable(order)
+        else
+            complete() // Unit is dead, skip doing anything
 
         const checkIsIdle = () => {
             if (actualUnit && actualUnit.IsIdle()) {

@@ -4,15 +4,13 @@ import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { chapter5Blockades, runeSpawnsLocations } from "./Shared";
 import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util";
+import { modifier_custom_roshan_attack_speed } from "../../modifiers/modifier_custom_roshan_attack_speed";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = false;
 
-/**
- * Describes the state we want the game to be in before this section is executed. The game will try to make the state match this required state.
- */
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
@@ -41,17 +39,19 @@ const friendlyHeroesInfo = [
     { name: "npc_dota_hero_lion", loc: Vector(-2282, 1462, 0) }, // Position 5
 ];
 
+const roshanMusic = "valve_ti10.music.roshan"
+
 function onStart(complete: () => void) {
     print("Starting", sectionName);
     const goalTracker = new GoalTracker();
     const goalEnterRoshPit = goalTracker.addBoolean("Walk into Roshan's pit.");
-    const goalUseAbilityPoints = goalTracker.addBoolean("Spend all of your ability and talent points.")
+    const goalUpgradeTalents = goalTracker.addBoolean("Choose and pick between the available talents.")
     const goalDefeatRoshan = goalTracker.addBoolean("Defeat Roshan!");
     const goalPickupAegis = goalTracker.addBoolean("Pick up the Aegis of the Immortal.")
     const goalLeaveRoshPit = goalTracker.addBoolean("Leave Roshan's pit and move to the next marker.")
 
     const roshPitGoalPosition = Vector(-2600, 2200, 28)
-    const leaveRoshPitGoalPosition = Vector(-2200, 1900, 0)
+    const leaveRoshPitGoalPosition = Vector(-2140, 1740, 0)
 
     const playerHero = getOrError(getPlayerHero())
 
@@ -62,27 +62,28 @@ function onStart(complete: () => void) {
     const itemAegis = "item_aegis"
 
     let roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
-    let aegis = Entities.FindAllByName(itemAegis)[0] as CDOTA_Item
-
-    if (aegis) {
-        print("Aegis exists on the ground:")
-        print(!aegis.IsInBackpack())
-    }
 
     if (!roshan) {
         roshan = CreateUnitByName("npc_dota_roshan", Vector(-2919, 2315, 32), true, undefined, undefined, DotaTeam.NEUTRALS)
-        roshan.AddItemByName(itemAegis)
+        roshan.FaceTowards(leaveRoshPitGoalPosition)
+        roshan.AddItemByName(itemAegis) // -2140, 1740
     }
 
-    // DK abilities
-    const dragonTailAbility = playerHero.FindAbilityByName("dragon_knight_dragon_tail") as CDOTABaseAbility
-    const breatheFireAbility = playerHero.FindAbilityByName("dragon_knight_breathe_fire") as CDOTABaseAbility
-    const dragonBloodAbility = playerHero.FindAbilityByName("dragon_knight_dragon_blood") as CDOTABaseAbility
-    const elderDragonAbility = playerHero.FindAbilityByName("dragon_knight_elder_dragon_form") as CDOTABaseAbility
+    setupRoshanModifiers(roshan)
 
-    // DK talents
-    const mpRegen10Talent = playerHero.FindAbilityByName("special_bonus_mp_regen_2") as CDOTABaseAbility
-    const dmgReduction10Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight_3") as CDOTABaseAbility
+    // Clear any Aegis boxes left on the ground
+    let droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+
+    if (droppedItems) {
+        for (const droppedItem of droppedItems) {
+            let itemEntity = droppedItem.GetContainedItem()
+            if (itemEntity.GetAbilityName() === itemAegis) {
+                droppedItem.Destroy()
+            }
+        }
+    }
+
+    // DK lvl 25 talents
     const dragonBlood25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight") as CDOTABaseAbility
     const dragonTail25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight_2") as CDOTABaseAbility
 
@@ -116,41 +117,30 @@ function onStart(complete: () => void) {
                 playerHero.AddItemByName(itemAC)
                 playerHero.AddItemByName(itemDaedalus)
                 playerHero.AddItemByName(itemHeart)
-                // Reapply DD rune
+                // Reapply DD rune for infinite duration
                 playerHero.RemoveModifierByName("modifier_rune_doubledamage")
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
+                maxLevelAbilities(playerHero)
             }),
             tg.immediate(() => canPlayerIssueOrders = false),
             tg.wait(1),
+            tg.immediate(() => goalUpgradeTalents.start()),
             tg.textDialog(LocalizationKey.Script_5_Roshan_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 10),
-            tg.immediate(() => {
-                canPlayerIssueOrders = true
-                goalUseAbilityPoints.start()
-            }),
+            tg.immediate(() => canPlayerIssueOrders = true),
             tg.completeOnCheck(() => {
                 return ((dragonBlood25Talent.GetLevel() >= 1 || dragonTail25Talent.GetLevel() >= 1))
             }, 2),
-            // Require player to spend all ability points
-            tg.upgradeAbility(dragonTailAbility, 4),
-            tg.upgradeAbility(breatheFireAbility, 4),
-            tg.upgradeAbility(dragonBloodAbility, 4),
-            tg.upgradeAbility(elderDragonAbility, 3),
-            tg.immediate(() => goalUseAbilityPoints.complete()),
+            tg.immediate(() => goalUpgradeTalents.complete()),
             tg.textDialog(LocalizationKey.Script_5_Roshan_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.immediate(() => {
                 setUnitPacifist(roshan, false)
                 goalDefeatRoshan.start()
             }),
-            tg.playGlobalSound("valve_ti10.music.roshan"),
+            tg.playGlobalSound(roshanMusic),
             tg.completeOnCheck(() => {
                 return roshan.IsAttacking()
             }, 0.5),
-            // tg.immediate(() => {
-            //     let player = PlayerResource.GetPlayer(playerHero.GetPlayerID())
-            //     if (player)
-            //         player.SetMusicStatus(MusicStatus.NONE, 0)
-            // }),
-            tg.fork(friendlyHeroesInfo.map(hero => 
+            tg.fork(friendlyHeroesInfo.map(hero =>
                 tg.seq([
                     tg.spawnUnit(hero.name, hero.loc, DotaTeam.GOODGUYS, hero.name),
                     tg.immediate((ctx) => ctx[hero.name].AddExperience(24, ModifyXpReason.UNSPECIFIED, true, false))
@@ -174,6 +164,8 @@ function onStart(complete: () => void) {
             }, 2),
             tg.immediate(() => {
                 goalDefeatRoshan.complete()
+                StopGlobalSound(roshanMusic)
+                playerHero.RemoveModifierByName("modifier_rune_doubledamage")
                 canPlayerIssueOrders = false
             }),
             tg.immediate(context => {
@@ -190,7 +182,7 @@ function onStart(complete: () => void) {
                 tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], roshPitGoalPosition.__add(Vector(300, -500, 0))),
                 tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], roshPitGoalPosition.__add(Vector(100, -500, 0))),
             ]),
-            tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0,0,0)))),
+            tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0, 0, 0)))),
             tg.immediate(() => {
                 goalPickupAegis.start()
                 canPlayerIssueOrders = true
@@ -202,9 +194,10 @@ function onStart(complete: () => void) {
             tg.goToLocation(leaveRoshPitGoalPosition),
             tg.immediate(() => {
                 goalLeaveRoshPit.complete()
-                // Move to requiredState when last section of CH5 is done
+                // Move to requiredState when last section of CH5 is being implemented
                 disposeHeroes()
             }),
+            tg.wait(1)
         ])
     )
 
@@ -216,7 +209,17 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
+
+    StopGlobalSound(roshanMusic)
+
+    let roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
+
+    if (roshan) {
+        roshan.Destroy()
+    }
+
     disposeHeroes()
+
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
@@ -240,6 +243,14 @@ export const sectionRoshan = new tut.FunctionalSection(
     chapterFiveRoshanOrderFilter
 );
 
+function maxLevelAbilities(heroUnit: CDOTA_BaseNPC_Hero) {
+    const abilities = [0, 1, 2, 5].map((abilityIndex) => heroUnit.GetAbilityByIndex(abilityIndex))
+    for (const ability of abilities) {
+        if (ability)
+            ability.SetLevel(ability.GetMaxLevel())
+    }
+}
+
 // Similar func used in Chapter 4 in two sections, maybe refactor as util function at some point
 function disposeHeroes() {
     for (const friendlyHero of friendlyHeroesInfo) {
@@ -248,4 +259,12 @@ function disposeHeroes() {
             hero.RemoveSelf();
         GameRules.Addon.context[friendlyHero.name] = undefined;
     }
+}
+
+// Setup Roshan's modifiers
+function setupRoshanModifiers(roshan: CDOTA_BaseNPC) {
+    roshan.RemoveModifierByName("modifier_roshan_inherent_buffs")
+    roshan.RemoveModifierByName("modifier_roshan_devotion")
+    roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
+    roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
 }

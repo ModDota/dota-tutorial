@@ -130,6 +130,10 @@ export class GameMode {
 
         // Make the fountain unable to attack
         setUnitPacifist(getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC), true)
+
+        // Remove Roshan spawner
+        let roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
+        roshanSpawner.Destroy()
     }
 
     registerFilters() {
