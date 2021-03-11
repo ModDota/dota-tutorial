@@ -650,7 +650,7 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5, complete)
+        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, complete)
     }, _ => dg.stop())
 }
 

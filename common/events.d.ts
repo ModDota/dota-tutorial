@@ -40,7 +40,6 @@ interface ClockTimeEvent {
 interface HighlightElementEvent {
     path: string;
     duration?: number;
-    setElementAsParent?: boolean;
 }
 
 interface RemoveHighlightEvent {
