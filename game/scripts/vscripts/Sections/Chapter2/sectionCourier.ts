@@ -129,8 +129,7 @@ const onStart = (complete: () => void) => {
             goalBuyDemonEdge.start()
             playerHero.SetGold(5150, false)
             playerOrderMustBuyDemonEdge = true
-            Timers.CreateTimer(() =>
-            {
+            Timers.CreateTimer(() => {
                 highlightUiElement(demonEdgeGuideUIPath);
             })
         }),
@@ -155,13 +154,11 @@ const onStart = (complete: () => void) => {
             for (let index = DOTA_ITEM_STASH_MIN; index < DOTA_ITEM_STASH_MAX; index++) {
                 const item = playerHero.GetItemInSlot(index)
                 if (item) {
-                    if (item.GetAbilityName() === recipeName)
-                    {
+                    if (item.GetAbilityName() === recipeName) {
                         requiredItemCount++
                         removeHighlight(daedalusGuideUIPath);
                     }
-                    if (item.GetAbilityName() === crystalisName)
-                    {
+                    if (item.GetAbilityName() === crystalisName) {
                         requiredItemCount++
                         removeHighlight(crystalisGuideUIPath);
                     }
@@ -204,8 +201,7 @@ const onStart = (complete: () => void) => {
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(daedalusName)
         }, 0.2),
-        tg.immediate(() =>
-        {
+        tg.immediate(() => {
             goalWaitToCourierToDeliverItems.complete()
             playerCourier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
         }),
@@ -233,8 +229,7 @@ const onStop = () => {
     print("Stopping", sectionName);
 
     const courier = getPlayerCourier()
-    if (courier && courier.HasModifier(modifier_courier_chapter_2_ms_bonus.name))
-    {
+    if (courier && courier.HasModifier(modifier_courier_chapter_2_ms_bonus.name)) {
         courier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
     }
 

@@ -99,27 +99,25 @@ const onStart = (complete: () => void) => {
 
                                 if (radiantCreeps.length == 0) {
                                     radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, true)
-                                    if (currentLastHitStage === LastHitStages.LAST_HIT_DENY)
-                                    {
+                                    if (currentLastHitStage === LastHitStages.LAST_HIT_DENY) {
                                         highlight(
-                                        {
-                                            type: "arrow_enemy",
-                                            attach: true,
-                                            units: radiantCreeps
-                                        })
+                                            {
+                                                type: "arrow_enemy",
+                                                attach: true,
+                                                units: radiantCreeps
+                                            })
                                     }
                                 }
 
                                 if (direCreeps.length == 0) {
                                     direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, true)
-                                    if (currentLastHitStage === LastHitStages.LAST_HIT || currentLastHitStage === LastHitStages.LAST_HIT_BREATHE_FIRE)
-                                    {
+                                    if (currentLastHitStage === LastHitStages.LAST_HIT || currentLastHitStage === LastHitStages.LAST_HIT_BREATHE_FIRE) {
                                         highlight(
-                                        {
-                                            type: "arrow_enemy",
-                                            attach: true,
-                                            units: direCreeps
-                                        })
+                                            {
+                                                type: "arrow_enemy",
+                                                attach: true,
+                                                units: direCreeps
+                                            })
                                     }
                                 }
 
@@ -132,7 +130,7 @@ const onStart = (complete: () => void) => {
                 tg.seq([
                     tg.setCameraTarget(radiantCreeps[0]),
                     tg.wait(3.5),
-                    tg.withHighlights( tg.seq(
+                    tg.withHighlights(tg.seq(
                         [
                             tg.audioDialog(LocalizationKey.Script_2_Creeps_1, LocalizationKey.Script_2_Creeps_1, context => context[CustomNpcKeys.SlacksMudGolem]),
                             tg.audioDialog(LocalizationKey.Script_2_Creeps_2, LocalizationKey.Script_2_Creeps_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
@@ -160,8 +158,7 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
                         currentLastHitStage = LastHitStages.LAST_HIT
-                        if (direCreeps)
-                        {
+                        if (direCreeps) {
                             highlight(
                                 {
                                     type: "arrow_enemy",
@@ -229,7 +226,7 @@ const onStart = (complete: () => void) => {
                             modifier.sniperDenyingOwnCreeps = true
                         }
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Creeps_14, LocalizationKey.Script_2_Creeps_14,  context => context[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_2_Creeps_14, LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_15, LocalizationKey.Script_2_Creeps_15, context => context[CustomNpcKeys.SlacksMudGolem]),
                     // no spoken dialog for this yet, unfortunately
                     tg.textDialog(chosenSniperTalkShitLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
@@ -240,8 +237,7 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalDenyOwnCreeps.start()
                         currentLastHitStage = LastHitStages.LAST_HIT_DENY
-                        if (radiantCreeps)
-                        {
+                        if (radiantCreeps) {
                             highlight(
                                 {
                                     type: "arrow_enemy",
@@ -277,24 +273,24 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_23, LocalizationKey.Script_2_Creeps_23, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.withHighlights(
                         tg.seq(
-                        [
-                            tg.immediate(context => {
-                                goalKillSniper.start()
-                                const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero]
-                                if (sniper) {
-                                    if (sniper.HasModifier(modifier_sniper_deny_chapter2_creeps.name)) {
-                                        const modifier = sniper.FindModifierByName(modifier_sniper_deny_chapter2_creeps.name) as modifier_sniper_deny_chapter2_creeps;
-                                        if (modifier) {
-                                            modifier.sniperDenyingOwnCreeps = false;
+                            [
+                                tg.immediate(context => {
+                                    goalKillSniper.start()
+                                    const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero]
+                                    if (sniper) {
+                                        if (sniper.HasModifier(modifier_sniper_deny_chapter2_creeps.name)) {
+                                            const modifier = sniper.FindModifierByName(modifier_sniper_deny_chapter2_creeps.name) as modifier_sniper_deny_chapter2_creeps;
+                                            if (modifier) {
+                                                modifier.sniperDenyingOwnCreeps = false;
+                                            }
                                         }
                                     }
-                                }
-                            }),
-                            tg.completeOnCheck(context => {
-                                const sniper = context[Chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
-                                return !sniper.IsAlive()
-                            }, 0.25),
-                        ]),
+                                }),
+                                tg.completeOnCheck(context => {
+                                    const sniper = context[Chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
+                                    return !sniper.IsAlive()
+                                }, 0.25),
+                            ]),
                         context =>
                         (
                             {

@@ -337,8 +337,7 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
 export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC) => {
     const particleID = ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit)
     const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
-    if (modifier)
-    {
+    if (modifier) {
         modifier.AddParticle(particleID, false, false, -1, false, false);
     }
 
@@ -427,17 +426,12 @@ export function highlight(props: HighlightProps): ParticleID[] {
  * Removes all attached particle modifiers from the supplied units.
  * @param units The units to remove the particle modifiers from.
  */
-export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
-{
-    for (const unit of units)
-    {
-        if (unit.HasModifier("modifier_particle_attach"))
-        {
+export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[]) {
+    for (const unit of units) {
+        if (unit.HasModifier("modifier_particle_attach")) {
             const modifiers = unit.FindAllModifiersByName("modifier_particle_attach")
-            if (modifiers)
-            {
-                for (const modifier of modifiers)
-                {
+            if (modifiers) {
+                for (const modifier of modifiers) {
                     modifier.Destroy()
                 }
             }

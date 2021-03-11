@@ -183,7 +183,7 @@ const onStart = (complete: () => void) => {
 
                     tg.goToLocation(firstTowerSneakLocation, _ => [firstTowerSneakLocation]),
                     tg.immediate(() => goalSneakThroughTower.setValue(1)),
-                    tg.goToLocation(secondTowerSneakLocation, _ =>[secondTowerSneakLocation]),
+                    tg.goToLocation(secondTowerSneakLocation, _ => [secondTowerSneakLocation]),
                     tg.immediate(() => goalSneakThroughTower.setValue(2)),
                     tg.goToLocation(thirdTowerSneakLocation, _ => [thirdTowerSneakLocation]),
                     tg.immediate(() => goalSneakThroughTower.setValue(3)),
@@ -194,8 +194,7 @@ const onStart = (complete: () => void) => {
                         freezePlayerHero(true)
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_10, LocalizationKey.Script_2_Tower_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(() =>
-                    {
+                    tg.immediate(() => {
                         goalSneakBackAgain.start()
                         freezePlayerHero(false)
                     }),
@@ -205,7 +204,7 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => goalSneakBackAgain.setValue(2)),
                     tg.goToLocation(firstTowerSneakLocation, _ => [firstTowerSneakLocation]),
                     tg.immediate(() => goalSneakBackAgain.setValue(3)),
-                    tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _=> [moveAfterTeleportCloseToTowerLocation]),
+                    tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => [moveAfterTeleportCloseToTowerLocation]),
                     tg.immediate(() => {
                         goalSneakBackAgain.setValue(4)
                         goalSneakBackAgain.complete()
@@ -350,7 +349,7 @@ const onStart = (complete: () => void) => {
                         setUnitPacifist(playerHero, false)
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                         for (const radiantCreep of radiantCreeps) {
-                            radiantCreep.AddNewModifier(undefined, undefined, "modifier_fountain_glyph", {duration: 7})
+                            radiantCreep.AddNewModifier(undefined, undefined, "modifier_fountain_glyph", { duration: 7 })
                         }
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_17, LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem]),

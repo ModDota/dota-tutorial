@@ -88,11 +88,11 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(LocalizationKey.Script_2_Opening_2, LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_3, LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem]),
                 ]), {
-                    type: "circle",
-                    units: Entities.FindAllByClassname("npc_dota_filler").concat(Entities.FindAllByClassname("npc_dota_effigy_statue")) as CDOTA_BaseNPC[],
-                    radius: 150,
-                    attach: false,
-                }
+                type: "circle",
+                units: Entities.FindAllByClassname("npc_dota_filler").concat(Entities.FindAllByClassname("npc_dota_effigy_statue")) as CDOTA_BaseNPC[],
+                radius: 150,
+                attach: false,
+            }
             ),
 
             // Talking about barracks
@@ -104,12 +104,12 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(LocalizationKey.Script_2_Opening_7, LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_8, LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_9, LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem]),
-                ]),  {
-                    type: "circle",
-                    units: Entities.FindAllByClassnameWithin("npc_dota_barracks", inFrontOfRadiantAncientLocation, 2500) as CDOTA_BaseNPC[], // only radiant barracks should be highlighted here
-                    radius: 230,
-                    attach: false,
-                }
+                ]), {
+                type: "circle",
+                units: Entities.FindAllByClassnameWithin("npc_dota_barracks", inFrontOfRadiantAncientLocation, 2500) as CDOTA_BaseNPC[], // only radiant barracks should be highlighted here
+                radius: 230,
+                attach: false,
+            }
             ),
 
             tg.audioDialog(LocalizationKey.Script_2_Opening_10, LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
