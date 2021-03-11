@@ -3,25 +3,7 @@ import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
 
-const isPlayerHeroNearby = (location: Vector, radius: number) => {
-    const unitsWithinRadius = FindUnitsInRadius(
-        DotaTeam.BADGUYS, location, undefined, radius,
-        UnitTargetTeam.BOTH,
-        UnitTargetType.HERO,
-        UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
-        0, false
-    )
-    
-    let foundHeroUnit = false
-    const playerHeroName = getOrError(getPlayerHero()).GetName()
-
-    for (const unitWithinRadius of unitsWithinRadius) {
-        if (unitWithinRadius.GetName() === playerHeroName)
-            foundHeroUnit = true
-    }
-
-    return foundHeroUnit
-}
+const isPlayerHeroNearby = (location: Vector, radius: number) => getOrError(getPlayerHero()).GetAbsOrigin().__sub(location).Length2D() < radius
 
 /**
  * Creates a tutorial step that waits for a hero to go to a location.
@@ -135,6 +117,7 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
  * Creates a tutorial step that moves a unit.
  * @param unit The unit to move.
  * @param moveLocation Location to move the unit to.
+ * @param completeIfUnitInvalid Optional param that controls whether step should complete if provided unit is invalid or dead. Default value is false
  */
 export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>, completeIfUnitInvalid: boolean = false) => {
     let checkTimer: string | undefined = undefined
