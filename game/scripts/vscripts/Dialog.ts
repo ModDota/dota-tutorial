@@ -87,7 +87,16 @@ class DialogController {
     }
 }
 
-const dialogController = new DialogController();
+let dialogController: DialogController | undefined = undefined;
+
+/**
+ * Initializes the dialog controller if it has not yet been initialized.
+ */
+export function init() {
+    if (!dialogController) {
+        dialogController = new DialogController();
+    }
+}
 
 function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, onEnded?: () => void, soundName?: string) {
     const dialog: DialogData = {
@@ -98,7 +107,7 @@ function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, onEnded
         sound: soundName,
     }
 
-    dialogController.play(dialog, onEnded);
+    getOrError(dialogController).play(dialog, onEnded);
 }
 
 /**
@@ -127,5 +136,5 @@ export function playText(text: string, unit: CDOTA_BaseNPC, duration: number, on
  * Clears the dialog queue and stops all current dialog.
  */
 export function stop() {
-    dialogController.stop();
+    getOrError(dialogController).stop();
 }
