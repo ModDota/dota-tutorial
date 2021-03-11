@@ -1,5 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
+import * as shared from "./Shared"
 import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
@@ -16,6 +17,7 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 1],
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
+    blockades: Object.values(shared.blockades),
 };
 
 let canPlayerIssueOrders = true;
@@ -26,8 +28,8 @@ const slarkName = "npc_dota_hero_slark";
 const jukeDuo = [miranaName, slarkName];
 const firstScanLocation = Vector(2000, 3800);
 const secondScanLocation = Vector(-2000, 3800);
+const outpostHighgroundCenter = Vector(-1800, 4000);
 let currentRequiredScanLocation = firstScanLocation;
-const scanDuration = 8;
 
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 let radiantCreeps: CDOTA_BaseNPC[] = [];
@@ -55,8 +57,8 @@ function onStart(complete: () => void) {
 
             tg.textDialog(LocalizationKey.Script_4_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_4_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            //TODO: Part0: The camera pans to an empty part of the map
-
+            //Part0: The camera pans to an empty part of the map
+            tg.panCameraExponential(playerHero.GetAbsOrigin(), outpostHighgroundCenter, 0.9),
             tg.textDialog(LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             //Part1: Creep wave explains vision
             tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),

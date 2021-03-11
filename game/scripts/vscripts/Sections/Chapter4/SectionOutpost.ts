@@ -1,7 +1,8 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
+import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight } from "../../util";
+import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, freezePlayerHero } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
@@ -11,16 +12,17 @@ let graph: tg.TutorialStep | undefined = undefined;
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    heroLocation: Vector(-2000, 3800, 128),
+    heroLocation: Vector(-2000, 3800, 256),
     requireRiki: true,
     rikiLocation: Vector(-1000, 4400, 256),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
+    blockades: Object.values(shared.blockades),
 };
 
 const dustName = "item_dust";
 const dustLocation = Vector(-1700, 3800, 256);
-
+const lastSawRikiLocation = Vector(-1300, 4200);
 // UI Highlighting Paths
 const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
@@ -42,11 +44,10 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
             tg.setCameraTarget(playerHero),
 
             // Part 0: Pick up and use dust
-            // TODO: lock hero position to ensure dust affect on Riki
-
             tg.textDialog(LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
             tg.immediate(_ => {
@@ -59,9 +60,9 @@ function onStart(complete: () => void) {
                 goalPickupDust.complete();
                 goalGoToLastLocationSawRiki.start();
             }),
-            // TODO: save last position saw riki
-            tg.goToLocation(Vector(-1500, 4000)),
 
+            tg.goToLocation(lastSawRikiLocation),
+            tg.immediate(_ => freezePlayerHero(true)),
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
@@ -72,7 +73,7 @@ function onStart(complete: () => void) {
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),
             tg.immediate(_ => goalUseDust.complete()),
-            tg.wait(1),
+            tg.immediate(_ => freezePlayerHero(false)),
             tg.immediate(_ => {
                 removeHighlight(inventorySlot0UIPath);
             }),

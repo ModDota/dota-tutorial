@@ -1,6 +1,7 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight } from "../../util";
+import * as shared from "./Shared"
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -16,6 +17,7 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 1],
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
+    blockades: Object.values(shared.blockades),
 };
 
 const markerLocation = Vector(-2200, 3800, 256);
@@ -23,6 +25,27 @@ const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
 const invisHeroesCenter = Vector(-1800, 4000);
 const rikiName = "npc_dota_hero_riki";
+
+//dire mid top
+const cliffLocation1 = Vector(-261, 2047);
+//dire mid bot
+const cliffLocation2 = Vector(2011, -780);
+//radiant mid bot
+const cliffLocation3 = Vector(770, -2300);
+//radiant toplane
+const cliffLocation4 = Vector(-5503, 2292);
+//radiant jungle top
+const cliffLocation5 = Vector(-4376, -1162)
+//radiant jungle tier 2 bot
+const cliffLocation6 = Vector(-1805, -4973)
+//radiant jungle outpost
+const cliffLocation7 = Vector(1028, -4103)
+//dire tier 1 bot
+const cliffLocation8 = Vector(4868, -2300)
+//dire tier 2 bot
+const cliffLocation9 = Vector(5204, 662)
+//dire tier 2 top
+const cliffLocation10 = Vector(1101, 4734)
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
@@ -56,12 +79,14 @@ function onStart(complete: () => void) {
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.setCameraTarget(playerHero),
-            tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name))),
+            tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name, true))),
 
             tg.immediate(context => {
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
+                    hero.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
                     hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
+                    hero.Stop();
                     hero.FaceTowards(playerHero.GetAbsOrigin());
                 }
             }),
@@ -84,16 +109,29 @@ function onStart(complete: () => void) {
             tg.textDialog(LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            
+
             // TODO: Camera pan to cliffs
+            tg.fork([
+                tg.seq([
+                    tg.panCameraExponential(playerHero.GetAbsOrigin(), cliffLocation1, 0.9),
+                    tg.panCameraExponential(cliffLocation1, cliffLocation2, 0.9),
+                    tg.panCameraExponential(cliffLocation2, cliffLocation3, 0.9),
+                    tg.panCameraExponential(cliffLocation3, cliffLocation4, 0.9),
+                    tg.panCameraExponential(cliffLocation4, cliffLocation5, 0.9),
+                    tg.panCameraExponential(cliffLocation5, cliffLocation6, 0.9),
+                    tg.panCameraExponential(cliffLocation6, cliffLocation7, 0.9),
+                    tg.panCameraExponential(cliffLocation7, cliffLocation8, 0.9),
+                    tg.panCameraExponential(cliffLocation8, cliffLocation9, 0.9),
+                    tg.panCameraExponential(cliffLocation9, cliffLocation10, 0.9),
+                    tg.panCameraExponential(cliffLocation10, playerHero.GetAbsOrigin(), 0.9),
+                ]),
+                tg.textDialog(LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            ]),
 
             tg.immediate(_ => {
                 goalPlaceObserverWard.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
-
-            tg.textDialog(LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            // TODO: Camera pan back to hero
 
             tg.textDialog(LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
@@ -102,6 +140,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 goalPlaceObserverWard.complete();
                 goalPlaceSentryWard.start();
+                freezePlayerHero(true);
             }),
 
             tg.textDialog(LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
@@ -109,6 +148,7 @@ function onStart(complete: () => void) {
             tg.textDialog(LocalizationKey.Script_4_Wards_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.textDialog(LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
+            tg.immediate(_ => freezePlayerHero(false)),
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
             tg.immediate(_ => goalPlaceSentryWard.complete()),
@@ -122,6 +162,7 @@ function onStart(complete: () => void) {
                     const runDirection = hero.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                     hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)));
                 }
+                shared.blockades.direJungleLowToHighground.destroy();
                 goalAttackRiki.start();
                 context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
             }),
