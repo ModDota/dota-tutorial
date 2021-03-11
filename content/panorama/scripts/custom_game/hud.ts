@@ -61,38 +61,38 @@ function findPanelAtPath(path: string): Panel | undefined {
 function removeHighlight(event: RemoveHighlightEvent) {
     const { path } = event;
     if (!highlightedPanels[path]) {
-        $.Msg("Panel is not currently highlighted");
+        $.Msg(`Panel ${path} is not currently highlighted`);
     }
 
     highlightedPanels[path].DeleteAsync(0);
     delete highlightedPanels[path];
 }
 
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
+// Example usage:
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
 function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
-    const { path, duration, setElementAsParent } = event;
+    const { path, duration } = event;
     // Panel is already highlighted
     if (highlightedPanels[path]) {
-        $.Msg("Element is already highlighted");
+        $.Msg(`Element ${path} is already highlighted`);
         return;
     }
 
     const element = findPanelAtPath(path);
     // Can't highlight if the scale is too small/large/uninitialized
     if (element && element.actualuiscale_x > 0.01) {
-        const parent = element.GetParent()!;
+        const pos = element.GetPositionWithinAncestor(hudRoot);
 
         const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
-        if (setElementAsParent) highlightPanel.SetParent(element);
-        else highlightPanel.SetParent(parent);
-
+        highlightPanel.hittest = false; // Dont block interactions
         highlightPanel.AddClass("UIHighlight");
+        highlightPanel.SetParent(hudRoot);
 
         // Set size/position
         highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
         highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
-        highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
+        highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
 
         highlightedPanels[path] = highlightPanel;
 
