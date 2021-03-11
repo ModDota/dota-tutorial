@@ -168,6 +168,8 @@ declare const enum LocalizationKey {
     Script_3_Neutrals_12 = "Script_3_Neutrals_12",
     Script_3_Neutrals_13 = "Script_3_Neutrals_13",
     Script_3_Neutrals_14 = "Script_3_Neutrals_14",
+    Script_3_Neutrals_99 = "RIKI SCREAMING?", // Placeholder
+    
     Script_4_Opening_1 = "Script_4_Opening_1",
     Script_4_Opening_2 = "Script_4_Opening_2",
     Script_4_Opening_3 = "Script_4_Opening_3",
