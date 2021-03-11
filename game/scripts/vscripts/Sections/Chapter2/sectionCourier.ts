@@ -3,7 +3,7 @@ import { isShopOpen } from "../../Shop";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, printEventTable, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, printEventTable, removeHighlight } from "../../util";
 import { chapter2Blockades, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
@@ -31,7 +31,6 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 }
 
-let canPlayerIssueOrders = true;
 let playerOrderMustBuyDemonEdge = false
 let playerOrderMustBuyRecipeAndCrystalis = false
 let playerOrderMustDeliverItemsFromCourier = false
@@ -69,7 +68,6 @@ const onStart = (complete: () => void) => {
     const daedalusGuideUIPath = getPathToItemInGuideByID(140)
     const deliverItemsUIPath = "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton"
 
-    canPlayerIssueOrders = true;
     playerOrderMustBuyDemonEdge = false
     playerOrderMustBuyRecipeAndCrystalis = false
     playerOrderMustDeliverItemsFromCourier = false
@@ -91,13 +89,13 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
         tg.setCameraTarget(undefined),
-        tg.textDialog(LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(context => {
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
         }),
-        tg.textDialog(LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_3, LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(context => {
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
             MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
@@ -105,11 +103,11 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalMoveToSecretShop.start()
         }),
-        tg.goToLocation(inFrontOfRadiantSecretShopLocation),
+        tg.goToLocation(inFrontOfRadiantSecretShopLocation, [playerHero.GetAbsOrigin(), inFrontOfRadiantSecretShopLocation]),
         tg.immediate(() => {
             goalMoveToSecretShop.complete()
         }),
-        tg.textDialog(LocalizationKey.Script_2_Courier_4, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_4, LocalizationKey.Script_2_Courier_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(() => {
             highlightUiElement(shopBtnUIPath)
             goalOpenShop.start()
@@ -121,26 +119,23 @@ const onStart = (complete: () => void) => {
             removeHighlight(shopBtnUIPath)
             goalOpenShop.complete()
             goalBuyDemonEdge.start()
-            playerHero.SetGold(2200, false)
+            playerHero.SetGold(4150, false)
             playerOrderMustBuyDemonEdge = true
-
-            // For some reason the highlighting doesn't work, I have no idea why :/
-            // highlightUiElement(getPathToItemInGuideByID(44), undefined, true);
-            // highlightUiElement(demonEdgeGuideUIPath, undefined, true);
-            // highlightUiElement(crystalisGuideUIPath, undefined, true);
-            // highlightUiElement(daedalusGuideUIPath, undefined, true);
+            highlightUiElement(demonEdgeGuideUIPath);
         }),
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(demonEdgeName)
         }, 0.2),
         tg.immediate(() => {
             playerOrderMustBuyDemonEdge = false
+            removeHighlight(demonEdgeGuideUIPath)
             goalBuyDemonEdge.complete()
         }),
-        tg.textDialog(LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_5, LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(() => {
-            playerHero.SetGold(2950, false)
             playerOrderMustBuyRecipeAndCrystalis = true
+            highlightUiElement(crystalisGuideUIPath);
+            highlightUiElement(daedalusGuideUIPath);
             goalBuyCrystalisAndRecipe.start()
             goalBuyCrystalisAndRecipe.setValue(0)
         }),
@@ -149,8 +144,16 @@ const onStart = (complete: () => void) => {
             for (let index = DOTA_ITEM_STASH_MIN; index < DOTA_ITEM_STASH_MAX; index++) {
                 const item = playerHero.GetItemInSlot(index)
                 if (item) {
-                    if (item.GetAbilityName() === recipeName) requiredItemCount++
-                    if (item.GetAbilityName() === crystalisName) requiredItemCount++
+                    if (item.GetAbilityName() === recipeName)
+                    {
+                        requiredItemCount++
+                        removeHighlight(daedalusGuideUIPath);
+                    }
+                    if (item.GetAbilityName() === crystalisName)
+                    {
+                        requiredItemCount++
+                        removeHighlight(crystalisGuideUIPath);
+                    }
                 }
             }
             goalBuyCrystalisAndRecipe.setValue(requiredItemCount)
@@ -160,17 +163,17 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalBuyCrystalisAndRecipe.complete()
             playerOrderMustBuyRecipeAndCrystalis = false
-            canPlayerIssueOrders = false
+            freezePlayerHero(true)
         }),
-        tg.textDialog(LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_6, LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_7, LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_8, LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(() => {
             highlightUiElement(deliverItemsUIPath)
         }),
-        tg.textDialog(LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_9, LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(() => {
-            canPlayerIssueOrders = true
+            freezePlayerHero(false)
             playerOrderMustDeliverItemsFromCourier = true
             goalRequestItemsToBeDeliveredFromCourier.start()
         }),
@@ -181,7 +184,8 @@ const onStart = (complete: () => void) => {
             goalRequestItemsToBeDeliveredFromCourier.complete()
             goalWaitToCourierToDeliverItems.start()
             playerOrderMustDeliverItemsFromCourier = false
-            canPlayerIssueOrders = false
+            removeHighlight(deliverItemsUIPath)
+            freezePlayerHero(true)
         }),
         tg.panCameraLinear(playerHero.GetAbsOrigin(), playerCourier.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerCourier),
@@ -190,15 +194,15 @@ const onStart = (complete: () => void) => {
         }, 0.2),
         tg.immediate(() => goalWaitToCourierToDeliverItems.complete()),
         tg.setCameraTarget(undefined),
-        tg.textDialog(LocalizationKey.Script_2_Courier_10, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_2_Courier_11, context => context[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_2_Courier_12, context => context[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.textDialog(LocalizationKey.Script_2_Courier_13, context => context[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_10, LocalizationKey.Script_2_Courier_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_11, LocalizationKey.Script_2_Courier_11, context => context[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_12, LocalizationKey.Script_2_Courier_12, context => context[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_2_Courier_13, LocalizationKey.Script_2_Courier_13, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(() => {
-            canPlayerIssueOrders = true
+            freezePlayerHero(false)
             goalMoveToFinalPosition.start()
         }),
-        tg.goToLocation(finalMovementPositionLocation),
+        tg.goToLocation(finalMovementPositionLocation, [playerHero.GetAbsOrigin(), finalMovementPositionLocation]),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )
@@ -218,7 +222,7 @@ const onStop = () => {
     }
 }
 
-export const SectionCourier = new tut.FunctionalSection(
+export const sectionCourier = new tut.FunctionalSection(
     SectionName.Chapter2_Courier,
     requiredState,
     onStart,
@@ -287,8 +291,6 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
         displayDotaErrorMessage("Request the courier to deliver items.")
         return false
     }
-
-    if (!canPlayerIssueOrders) return false;
 
     return true;
 }

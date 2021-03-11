@@ -1,6 +1,7 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
+import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
 
 /**
@@ -334,7 +335,14 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @returns The created particle.
  */
 export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC) => {
-    return ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit)
+    const particleID = ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit)
+    const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
+    if (modifier)
+    {
+        modifier.AddParticle(particleID, false, false, -1, false, false);
+    }
+
+    return particleID;
 }
 
 export type HighlightType = "circle" | "arrow" | "arrow_enemy"
@@ -413,4 +421,26 @@ export function highlight(props: HighlightProps): ParticleID[] {
     })
 
     return particles
+}
+
+/**
+ * Removes all attached particle modifiers from the supplied units.
+ * @param units The units to remove the particle modifiers from.
+ */
+export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
+{
+    for (const unit of units)
+    {
+        if (unit.HasModifier("modifier_particle_attach"))
+        {
+            const modifiers = unit.FindAllModifiersByName("modifier_particle_attach")
+            if (modifiers)
+            {
+                for (const modifier of modifiers)
+                {
+                    modifier.Destroy()
+                }
+            }
+        }
+    }
 }
