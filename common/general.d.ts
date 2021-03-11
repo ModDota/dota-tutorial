@@ -29,7 +29,11 @@ declare const enum CustomNpcKeys {
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
     DireTopT1Tower = "npc_dota_badguys_tower1_top",
-    Sniper = "npc_dota_hero_sniper"
+    Sniper = "npc_dota_hero_sniper",
+    Juggernaut = "npc_dota_hero_juggernaut",
+    Zeus = "npc_dota_hero_zuus",
+    CrystalMaiden = "npc_dota_hero_crystal_maiden",
+    MiranaIllusions = "mirana_illusions"
 }
 
 declare const enum CustomEntityKeys {
