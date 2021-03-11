@@ -55,6 +55,10 @@ interface ShopOpenChangedEvent {
     open: boolean;
 }
 
+interface PlayVideoEvent {
+    name: VideoName;
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -74,4 +78,7 @@ interface CustomGameEventDeclarations {
     remove_highlight: RemoveHighlightEvent;
     chat_wheel_phrase_selected: ChatWheelPhraseSelectedEvent;
     shop_open_changed: ShopOpenChangedEvent;
+    play_video: PlayVideoEvent;
+    hide_video: {};
+    play_video_continue: {};
 }

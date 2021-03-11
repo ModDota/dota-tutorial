@@ -66,13 +66,18 @@ const onStart = (complete: () => void) => {
                 goalOpenShop.complete();
             }),
 
-            // Shop stuff dialog, tells player to buy a tango.
+            // Talking about how confusing the shop is and what items are good for
             tg.audioDialog(LocalizationKey.Script_1_Shop_1, LocalizationKey.Script_1_Shop_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_1_Shop_2, LocalizationKey.Script_1_Shop_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_1_Shop_3, LocalizationKey.Script_1_Shop_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+
+            // Show guides video
             tg.audioDialog(LocalizationKey.Script_1_Shop_4, LocalizationKey.Script_1_Shop_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.showVideo("guides"),
             tg.audioDialog(LocalizationKey.Script_1_Shop_5, LocalizationKey.Script_1_Shop_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_1_Shop_6, LocalizationKey.Script_1_Shop_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
+            // Tell player to buy a tango.
             tg.audioDialog(LocalizationKey.Script_1_Shop_7, LocalizationKey.Script_1_Shop_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Give the player some gold and wait for them to buy a tango.

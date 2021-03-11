@@ -710,3 +710,30 @@ export const withHighlights = (step: tg.StepArgument<tg.TutorialStep>, props: tg
         }
     })
 }
+
+/**
+ * Shows a video and waits for the player to press continue.
+ * @param name Name of the video to play.
+ */
+export const showVideo = (name: VideoName) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("play_video_continue", _ => {
+            if (listenerId) {
+                CustomGameEventManager.UnregisterListener(listenerId)
+                listenerId = undefined
+            }
+
+            complete()
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("play_video", { name });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+            CustomGameEventManager.Send_ServerToAllClients("hide_video", {});
+        }
+    })
+}
