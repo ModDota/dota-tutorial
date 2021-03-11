@@ -72,13 +72,30 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
 }
 
 /**
+ * Whether the player hero is currently frozen using freezePlayerHero().
+ */
+let playerHeroFrozen = false;
+
+/**
+ * Returns whether the player hero is currently frozen using freezePlayerHero().
+ * @returns Whether the player hero is currently frozen.
+ */
+export function isPlayerHeroFrozen() {
+    return playerHeroFrozen;
+}
+
+/**
  * Makes the player hero (un-)able to attack and move.
  * @param frozen Whether or not to freeze the hero.
  */
 export function freezePlayerHero(frozen: boolean) {
-    const hero = getOrError(getPlayerHero(), "Could not find player hero")
-    setUnitPacifist(hero, frozen)
-    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND)
+    const hero = getOrError(getPlayerHero(), "Could not find player hero");
+    setUnitPacifist(hero, frozen);
+    if (frozen) {
+        hero.Stop();
+    }
+    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND);
+    playerHeroFrozen = frozen;
 }
 
 /**
