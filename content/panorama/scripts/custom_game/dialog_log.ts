@@ -3,11 +3,9 @@ interface DialogLinePanel extends LabelPanel {
 }
 
 const MAX_CHAT_LENGTH = 50;
-let lines: Panel[] = [];
+const lines: Panel[] = [];
 
 function ToggleDialogLog() {
-    $.Msg("ToggleDialogLog");
-
     $("#DialogLog").ToggleClass("Visible");
     Game.EmitSound("ui_chat_slide_in");
 
@@ -15,27 +13,17 @@ function ToggleDialogLog() {
 }
 
 function Close() {
-    $.Msg("ToggleDialogLog");
-
     $("#DialogLog").SetHasClass("Visible", false);
     Game.EmitSound("ui_chat_slide_out");
 }
 
 function AddLine(data: NetworkedData<DialogReceivedEvent>) {
-    const { DialogText, DialogEntIndex } = data;
+    const { DialogText } = data;
     const unitName = Entities.GetUnitName(data["DialogEntIndex"]);
 
-    let linePanel = $.CreatePanel(
-        "Panel",
-        $("#DialogLineContainer"),
-        ""
-    ) as DialogLinePanel;
+    const linePanel = $.CreatePanel("Panel", $("#DialogLineContainer"), "") as DialogLinePanel;
 
-    linePanel.BLoadLayout(
-        "file://{resources}/layout/custom_game/dialog_line.xml",
-        false,
-        false
-    );
+    linePanel.BLoadLayout("file://{resources}/layout/custom_game/dialog_line.xml", false, false);
 
     linePanel.SetItem(unitName, DialogText);
 

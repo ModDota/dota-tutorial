@@ -2,15 +2,14 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/localization.js" />
         <include src="file://{resources}/scripts/custom_game/section-selector.js" />
-        <include src="file://{resources}/scripts/custom_game/move-camera.js" />
         <include src="file://{resources}/scripts/custom_game/command-detection.js" />
         <include src="file://{resources}/scripts/custom_game/modifier-key-detection.js" />
         <include src="file://{resources}/scripts/custom_game/time_control.js" />
         <include src="file://{resources}/scripts/custom_game/chatwheel-detection.js" />
-        <!-- <include src="file://{resources}/scripts/custom_game/manifest.js" /> -->
+        <include src="file://{resources}/scripts/custom_game/shop-detection.js" />
     </scripts>
     <Panel>
-        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/dialog.xml" />>
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/dialog.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/hud.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/devpanel.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/questspanel.xml" />
@@ -21,3 +20,10 @@
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/sectionCameraUnlock.xml" />
     </Panel>
 </root>
+
+<!--
+    Preload some images, these will not be compiled otherwise because they are only set form code!
+    This does not have to be uncommented, panorama is too dumb to realise
+    <Image src="file://{images}/custom_game/portraits/sunsfan_greevil.png" />
+    <Image src="file://{images}/custom_game/portraits/slacks_greevil.png" />
+-->

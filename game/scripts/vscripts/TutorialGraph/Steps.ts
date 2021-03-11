@@ -1,6 +1,7 @@
-import { createDummy, findAllPlayersID, getPlayerHero, getSoundDuration, setGoalsUI, setUnitVisibilityThroughFogOfWar } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
+import { getSoundDuration } from "../Sounds"
 
 const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
     DotaTeam.BADGUYS, location, undefined, radius,
@@ -13,20 +14,44 @@ const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
 /**
  * Creates a tutorial step that waits for a hero to go to a location.
  * @param location Target location
+ * @param visualIntermediateLocations Locations to use for the visual path between the current and end location.
  */
-export const goToLocation = (location: tg.StepArgument<Vector>) => {
+export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations?: tg.StepArgument<Vector[]>) => {
     let checkTimer: string | undefined = undefined
+    let pathParticle: ParticleID | undefined = undefined
+    let actualLocation: Vector | undefined = undefined
+
+    const cleanup = () => {
+        if (pathParticle) {
+            ParticleManager.DestroyParticle(pathParticle, false)
+            pathParticle = undefined
+        }
+
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+
+        if (actualLocation) {
+            MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero()!, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+            actualLocation = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
-        const actualLocation = tg.getArg(location, context)
+        actualLocation = tg.getArg(location, context)
+        const actualVisualIntermediateLocations = tg.getOptionalArg(visualIntermediateLocations, context) ?? []
 
-        MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+        const hero = getOrError(getPlayerHero())
+
+        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+
+        pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-
-            if (isHeroNearby(actualLocation, 200)) {
-                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+            if (isHeroNearby(actualLocation!, 200)) {
+                cleanup()
                 complete()
             } else {
                 checkTimer = Timers.CreateTimer(1, () => checkIsAtGoal())
@@ -34,12 +59,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
         }
 
         checkIsAtGoal()
-    }, context => {
-        if (checkTimer) {
-            Timers.RemoveTimer(checkTimer)
-            checkTimer = undefined
-        }
-    })
+    }, context => cleanup())
 }
 
 /**
@@ -53,8 +73,26 @@ export const goToLocation = (location: tg.StepArgument<Vector>) => {
 export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.StepArgument<Vector>, team: tg.StepArgument<DotaTeam>, entityKey?: tg.StepArgument<string>, removeOnStop?: boolean) => {
     let unit: CDOTA_BaseNPC | undefined = undefined
     let actualEntityKey: string | undefined = undefined
+    let shouldGetRemoved = false // Used if the unit spawns, the step is stopped and the async callback for the unit spawn is only called afterwards to remove the unit.
+
+    const cleanupUnit = (context: tg.TutorialContext) => {
+        if (removeOnStop && unit) {
+            if (actualEntityKey && context[actualEntityKey] === unit) {
+                context[actualEntityKey] = undefined
+            }
+
+            if (IsValidEntity(unit)) {
+                unit.RemoveSelf()
+            }
+
+            unit = undefined
+            shouldGetRemoved = false
+        }
+    }
 
     return tg.step((context, complete) => {
+        shouldGetRemoved = false
+
         const actualUnitName = tg.getArg(unitName, context)
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualTeam = tg.getArg(team, context)
@@ -68,21 +106,16 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
 
                 unit = createdUnit
 
-                complete()
+                if (shouldGetRemoved) {
+                    cleanupUnit(context)
+                } else {
+                    complete()
+                }
             }
         )
     }, context => {
-        if (removeOnStop && unit) {
-            if (actualEntityKey && context[actualEntityKey] === unit) {
-                context[actualEntityKey] = undefined
-            }
-
-            if (IsValidEntity(unit)) {
-                unit.RemoveSelf()
-            }
-
-            unit = undefined
-        }
+        shouldGetRemoved = true
+        cleanupUnit(context)
     })
 }
 
@@ -232,47 +265,6 @@ export const setCameraTarget = (target: tg.StepArgument<CBaseEntity | undefined>
 }
 
 /**
- * Moves the camera to a unit, with lerp
- * @param target Unit to move the camera to.
- * @param lerp Speed at which the camera moves
- */
-export const moveCameraToUnit = (target: CBaseEntity, lerp: number) => {
-    let playerIds = findAllPlayersID();
-
-    playerIds.forEach(playerId => {
-        let player = PlayerResource.GetPlayer(playerId);
-
-        if (player) {
-            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-                unitTargetEntIndex: target.GetEntityIndex(),
-                lerp: lerp
-            })
-        }
-    })
-}
-
-/**
- * Moves the camera to a position, with lerp
- * @param position Point to move the camera to.
- * @param lerp Speed at which the camera moves
- */
-export const moveCameraToPosition = (position: Vector, lerp: number) => {
-    let playerIds = findAllPlayersID();
-
-    playerIds.forEach(playerId => {
-        let player = PlayerResource.GetPlayer(playerId);
-        if (player) {
-            CustomGameEventManager.Send_ServerToPlayer(player, "move_camera", {
-                cameraTargetX: position.x,
-                cameraTargetY: position.y,
-                cameraTargetZ: position.z,
-                lerp: lerp
-            })
-        }
-    })
-}
-
-/**
  * Pans the camera from the start location to the end location with the speed at each timestep calculated using a given function.
  * @param startLocation Start location for the pan.
  * @param endLocation End location for the pan.
@@ -281,7 +273,6 @@ export const moveCameraToPosition = (position: Vector, lerp: number) => {
 export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, getSpeed: (startLocation: Vector, endLocation: Vector, location: Vector) => number) => {
     let cameraTimer: string | undefined = undefined
     let playerIds: PlayerID[] | undefined = undefined
-    let cameraDummy: CDOTA_BaseNPC | undefined = undefined
 
     const cleanup = () => {
         if (cameraTimer) {
@@ -293,31 +284,26 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
             playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, undefined))
             playerIds = undefined
         }
-
-        if (cameraDummy) {
-            if (IsValidEntity(cameraDummy)) {
-                cameraDummy.RemoveSelf()
-            }
-            cameraDummy = undefined
-        }
     }
 
     return tg.step((context, complete) => {
-        const updateInterval = FrameTime()
+        const updateInterval = 2 * FrameTime()
         const actualStartLocation = tg.getArg(startLocation, context)
         const actualEndLocation = tg.getArg(endLocation, context)
-        cameraDummy = createDummy(actualStartLocation)
+        const cameraDummy = getCameraDummy(actualStartLocation)
 
-        // Focus all cameras on the dummy
-        playerIds = findAllPlayersID()
-        playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+        // Focus all cameras on the dummy. Wait one frame for the dummy to have its location set correctly, otherwise
+        // we'd see the camera jumping.
+        Timers.CreateTimer(updateInterval, () => {
+            // Make sure the camera timer still exists. We might have stopped the panning before this is called.
+            if (cameraTimer) {
+                playerIds = findAllPlayersID()
+                playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, cameraDummy))
+            }
+        })
 
         // Order the dummy to move to the target location. Periodically update the speed using the passed function.
         const updateDummy = () => {
-            if (!cameraDummy || !IsValidEntity(cameraDummy)) {
-                error("Camera dummy was invalid")
-            }
-
             const currentLocation = cameraDummy.GetAbsOrigin()
             const distance = actualEndLocation.__sub(currentLocation).Length2D()
 
@@ -352,9 +338,10 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
  */
 export const panCameraExponential = (startLocation: tg.StepArgument<Vector>, endLocation: tg.StepArgument<Vector>, alpha: number) => {
     return panCamera(startLocation, endLocation, (startLoc, endLoc, loc) => {
-        // Speed proportional to the remaining distance.
+        // Speed proportional to the remaining distance but capped at a minimum.
+        const minSpeed = 400
         const remainingDistance = endLoc.__sub(loc).Length2D()
-        return alpha * remainingDistance
+        return Math.max(minSpeed, alpha * remainingDistance)
     })
 }
 
@@ -663,7 +650,7 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5, complete)
+        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, complete)
     }, _ => dg.stop())
 }
 
@@ -691,90 +678,35 @@ export const neverComplete = () => {
 }
 
 /**
- * Creates a particle system at a location and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
- * @param particleName Name of the particle system.
- * @param location Location to spawn the particles at.
- * @param duration Optional duration after which to destroy the particles and complete.
+ * Executes a step and highlights during it.
+ * @param props Object containing the highlight data.
  */
-export const createParticleAtLocation = (particleName: tg.StepArgument<string>, location: tg.StepArgument<Vector>, duration?: tg.StepArgument<number>) => {
-    let timer: string | undefined = undefined
-    let particle: ParticleID | undefined = undefined
+export const withHighlights = (step: tg.StepArgument<tg.TutorialStep>, props: tg.StepArgument<HighlightProps>) => {
+    let particles: ParticleID[] | undefined = undefined
+    let actualStep: tg.TutorialStep | undefined = undefined
+
+    const cleanup = () => {
+        if (particles) {
+            particles.forEach(particle => ParticleManager.DestroyParticle(particle, false))
+            particles = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
-        const actualParticleName = tg.getArg(particleName, context)
-        const actualLocation = tg.getArg(location, context)
-        const actualDuration = tg.getOptionalArg(duration, context)
+        actualStep = tg.getArg(step, context)
+        const actualProps = tg.getArg(props, context)
 
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, true)
-        }
+        particles = highlight(actualProps)
 
-        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
-        ParticleManager.SetParticleControl(particle, 1, actualLocation)
-
-        if (actualDuration !== undefined) {
-            timer = Timers.CreateTimer(actualDuration, () => {
-                if (particle) {
-                    ParticleManager.DestroyParticle(particle, false)
-                    particle = undefined
-                }
-
-                complete()
-            })
-        }
+        actualStep.start(context, () => {
+            cleanup()
+            complete()
+        })
     }, context => {
-        if (timer) {
-            Timers.RemoveTimer(timer)
-            timer = undefined
-        }
+        cleanup()
 
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, false)
-            particle = undefined
-        }
-    })
-}
-
-/**
- * Creates a particle system attached to a unit and optionally destroys it and complets after a given time. If no duration is passed it will never complete.
- * @param particleName Name of the particle system.
- * @param unit Unit to attach the particles to.
- * @param duration Optional duration after which to destroy the particles and complete.
- */
-export const createParticleAttachedToUnit = (particleName: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, duration?: tg.StepArgument<number>) => {
-    let timer: string | undefined = undefined
-    let particle: ParticleID | undefined = undefined
-
-    return tg.step((context, complete) => {
-        const actualParticleName = tg.getArg(particleName, context)
-        const actualUnit = tg.getArg(unit, context)
-        const actualDuration = tg.getOptionalArg(duration, context)
-
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, true)
-        }
-
-        particle = ParticleManager.CreateParticle(actualParticleName, ParticleAttachment.ABSORIGIN_FOLLOW, actualUnit)
-
-        if (actualDuration !== undefined) {
-            timer = Timers.CreateTimer(actualDuration, () => {
-                if (particle) {
-                    ParticleManager.DestroyParticle(particle, false)
-                    particle = undefined
-                }
-
-                complete()
-            })
-        }
-    }, context => {
-        if (timer) {
-            Timers.RemoveTimer(timer)
-            timer = undefined
-        }
-
-        if (particle) {
-            ParticleManager.DestroyParticle(particle, false)
-            particle = undefined
+        if (actualStep) {
+            actualStep.stop(context)
         }
     })
 }

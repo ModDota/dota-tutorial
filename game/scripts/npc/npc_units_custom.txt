@@ -35,7 +35,7 @@
 		// Bounds
 		//----------------------------------------------------------------
 		"RingRadius"				"60"
-		"HealthBarOffset"			"190"
+		"HealthBarOffset"			"400"
 
 		// Bounty
 		//----------------------------------------------------------------
@@ -98,7 +98,7 @@
 		// Bounds
 		//----------------------------------------------------------------
 		"RingRadius"				"60"
-		"HealthBarOffset"			"190"
+		"HealthBarOffset"			"400"
 
 		// Bounty
 		//----------------------------------------------------------------
@@ -620,7 +620,8 @@
 
     "npc_dummy_unit"
 	{
-        "BaseClass"					"npc_dota_creature"
+        "BaseClass"					"npc_dota_base_additive"
+        "Model"						"models/development/invisiblebox.vmdl"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "VisionDaytimeRange"		"0"
         "VisionNighttimeRange"		"0"

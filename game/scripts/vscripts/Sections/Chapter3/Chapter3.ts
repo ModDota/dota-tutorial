@@ -1,12 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import {
-    DestroyNeutrals,
-    getOrError,
-    getPlayerHero,
-    unitIsValidAndAlive,
-    isPointInsidePolygon,
-} from "../../util";
+import { DestroyNeutrals, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, isPointInsidePolygon } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
@@ -16,7 +10,7 @@ import { TutorialContext } from "../../TutorialGraph/index";
 let graph: tg.TutorialStep | undefined = undefined;
 
 let movedToStash = false;
-
+let riki: CDOTA_BaseNPC | undefined = undefined;
 const creepCampCenter = Vector(-2650, 4760.31);
 const markerLocation = Vector(-3250, 4917);
 const creepCampRadius = 1000;
@@ -26,6 +20,11 @@ const creepCampBox = [
     Vector(-2141, 5203),
     Vector(-2141, 4388),
 ];
+let creepPhase = 0;
+
+const giveAwayItemName = "item_arcane_ring";
+const dropInStashItemName = "item_mysterious_hat";
+const keepItemName = "item_possessed_mask";
 
 let entityKilledListenerId: EventListenerID;
 let timeManagerZeroTimeId: number;
@@ -67,7 +66,13 @@ const requiredState: RequiredState = {
     heroLocation: GetGroundPosition(Vector(-3500, 4500), undefined),
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
+    requireRiki: true,
 };
+
+// UI Highlighting Paths
+const neutralSlotUIPath = "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot"
+const inventorySlot6UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel"
+const inventorySlot7UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_7/ButtonAndLevel"
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
@@ -100,7 +105,12 @@ const onStart = (complete: () => void) => {
         "Kill the stacked creeps"
     );
 
-    const goalPickUpItems = goalTracker.addBoolean("Pickup the dropped items");
+    const goalPickupItem = goalTracker.addBoolean("Pickup the dropped item");
+
+    const goalKillThirdSpawn = goalTracker.addBoolean(
+        "Kill the neutral creeps"
+    );
+
     const goalStash = goalTracker.addBoolean(
         "Put the item in the neutral stash"
     );
@@ -113,9 +123,7 @@ const onStart = (complete: () => void) => {
     );
 
     // Also in orderfilter at the bottom!
-    const giveAwayItemName = "item_arcane_ring";
-    const dropInStashItemName = "item_mysterious_hat";
-    const keepItemName = "item_possessed_mask";
+
     let itemsToDrop = [dropInStashItemName, giveAwayItemName];
 
     movedToStash = false;
@@ -128,20 +136,11 @@ const onStart = (complete: () => void) => {
                 event.entindex_killed
             ) as CDOTA_BaseNPC;
 
-            if (unit.IsNeutralUnitType()) {
-                SendOverheadEventMessage(
-                    playerHero.GetPlayerOwner(),
-                    OverheadAlert.GOLD,
-                    unit,
-                    1,
-                    playerHero.GetPlayerOwner()
-                );
-            }
-
             if (creepArr.includes(unit)) {
                 if (
                     creepArr.filter((x) => IsValidEntity(x) && x.IsAlive())
-                        .length == 2
+                        .length == 1 &&
+                    creepPhase == 2
                 ) {
                     DropNeutralItemAtPositionForHero(
                         giveAwayItemName,
@@ -152,7 +151,8 @@ const onStart = (complete: () => void) => {
                     );
                 } else if (
                     creepArr.filter((x) => IsValidEntity(x) && x.IsAlive())
-                        .length == 1
+                        .length == 1 &&
+                    creepPhase == 3
                 ) {
                     DropNeutralItemAtPositionForHero(
                         dropInStashItemName,
@@ -177,6 +177,7 @@ const onStart = (complete: () => void) => {
 
     const spawnAndKillFirstRound = () => {
         let units: CDOTA_BaseNPC[];
+        creepPhase = 1;
         return [
             tg.seq([
                 tg.immediate((ctx) => {
@@ -287,6 +288,13 @@ const onStart = (complete: () => void) => {
         return [
             tg.seq([
                 tg.immediate((_) => {
+                    playerHero.AddNewModifier(
+                        undefined,
+                        undefined,
+                        "modifier_deal_no_damage",
+                        undefined
+                    );
+
                     goalStackCreeps.start();
                     GameRules.SpawnNeutralCreeps();
                     timeManager.customTimeEnabled = true;
@@ -309,12 +317,8 @@ const onStart = (complete: () => void) => {
                             tryCount++;
                         }
                     );
-                    playerHero.AddNewModifier(
-                        undefined,
-                        undefined,
-                        "modifier_deal_no_damage",
-                        undefined
-                    );
+
+                    playerHero.Hold();
                 }),
 
                 tg.textDialog(
@@ -349,10 +353,11 @@ const onStart = (complete: () => void) => {
                     3
                 ),
                 tg.immediate((_) => {
-                    let units = GetUnitsInsidePolygon(creepCampBox).filter(
-                        (x) => x.IsBaseNPC() && x.IsNeutralUnitType()
-                    );
-                    units.forEach((x) => UTIL_Remove(x));
+                    // Commented because removing them seems weird, the player won't understand what's happening
+                    // let units = GetUnitsInsidePolygon(creepCampBox).filter(
+                    //     (x) => x.IsBaseNPC() && x.IsNeutralUnitType()
+                    // );
+                    // units.forEach((x) => UTIL_Remove(x));
 
                     timeManager.unRegisterCallBackOnTime(
                         timeManagerResetTimeId
@@ -377,7 +382,7 @@ const onStart = (complete: () => void) => {
                 tg.immediate((_) => {
                     goalStackCreepsMultipleTimes.start();
                     GameRules.SpawnNeutralCreeps();
-
+                    timeManager.time = 45;
                     creepArr = GetUnitsInsidePolygon(creepCampBox);
                     timeManager.customTimeEnabled = true;
                     timeManagerResetTimeId = timeManager.registerCallBackOnTime(
@@ -426,7 +431,7 @@ const onStart = (complete: () => void) => {
                         if (completed === false) {
                             switch (stackCount) {
                                 case 0:
-                                    completed = true;
+                                    //completed = true;
                                     tryCount = 0;
                                     return tg.textDialog(
                                         LocalizationKey.Script_3_Opening_20,
@@ -458,6 +463,23 @@ const onStart = (complete: () => void) => {
                                             ctx[CustomNpcKeys.ODPixelMudGolem],
                                         3
                                     );
+                                // Not reachable but added just in case...
+                                case 4:
+                                    goalStackCreepsMultipleTimes.complete();
+                                    return tg.textDialog(
+                                        LocalizationKey.Script_3_Opening_24,
+                                        (ctx) =>
+                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                        3
+                                    );
+                                case 5:
+                                    goalStackCreepsMultipleTimes.complete();
+                                    return tg.textDialog(
+                                        LocalizationKey.Script_3_Opening_25,
+                                        (ctx) =>
+                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                        3
+                                    );
                                 default:
                                     break;
                             }
@@ -480,11 +502,14 @@ const onStart = (complete: () => void) => {
     const killStackedCamp = () => [
         tg.seq([
             tg.textDialog(
-                LocalizationKey.Script_3_Opening_24,
+                LocalizationKey.Script_3_Opening_26,
                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                 3
             ),
-            tg.immediate((_) => goalKillStackedCreeps.start()),
+            tg.immediate((_) => {
+                goalKillStackedCreeps.start();
+                creepPhase = 2;
+            }),
             tg.completeOnCheck((_) => {
                 // itemdrop handled in entity_killed event
                 return (
@@ -505,7 +530,7 @@ const onStart = (complete: () => void) => {
             ),
             tg.textDialog(
                 LocalizationKey.Script_3_Neutrals_2,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
             tg.textDialog(
@@ -513,36 +538,138 @@ const onStart = (complete: () => void) => {
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.immediate((_) => goalPickUpItems.start()),
+
+            tg.immediate((_) => goalPickupItem.start()),
             tg.fork([
                 tg.completeOnCheck(() => {
                     return playerHero.HasItemInInventory(giveAwayItemName);
                 }, 0.1),
-                tg.completeOnCheck(() => {
-                    return playerHero.HasItemInInventory(dropInStashItemName);
-                }, 0.1),
             ]),
-            tg.immediate((_) => goalPickUpItems.complete()),
+            tg.immediate((_) => goalPickupItem.complete()),
         ]),
     ];
+
+    const killThirdSpawn = () => {
+        return [
+            tg.seq([
+                tg.immediate((_) => {
+                    goalKillThirdSpawn.start();
+                    creepPhase = 3;
+                    let units = GetUnitsInsidePolygon(creepCampBox);
+                    units.forEach((unit) => {
+                        if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
+                            UTIL_Remove(unit);
+                        }
+                    });
+                }),
+                tg.wait(0),
+                tg.immediate((_) => GameRules.SpawnNeutralCreeps()),
+                tg.textDialog(
+                    LocalizationKey.Script_3_Neutrals_4,
+                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
+                    3
+                ),
+                tg.textDialog(
+                    LocalizationKey.Script_3_Neutrals_5,
+                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                    3
+                ),
+                tg.wait(0),
+                tg.immediate(
+                    (_) =>
+                        (creepArr = GetUnitsInsidePolygon(
+                            creepCampBox
+                        ).filter((x) => x.IsNeutralUnitType()))
+                ),
+                tg.wait(0),
+                tg.completeOnCheck((ctx) => {
+                    return (
+                        creepArr.length == 0 ||
+                        creepArr.every((unit) => {
+                            return !unit || unit.IsNull() || !unit.IsAlive();
+                        })
+                    );
+                }, 1),
+                tg.immediate((_) => goalKillThirdSpawn.complete()),
+                tg.immediate((_) => goalPickupItem.start()),
+                tg.completeOnCheck(
+                    (_) => playerHero.HasItemInInventory(dropInStashItemName),
+                    0.1
+                ),
+                tg.immediate((_) => goalPickupItem.complete()),
+            ]),
+        ];
+    };
 
     const stashItem = () => [
         tg.seq([
             tg.immediate((_) => goalStash.start()),
-            tg.completeOnCheck((_) => movedToStash === true, 0.1),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_6,
+                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
+                3
+            ),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_7,
+                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                3
+            ),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_8,
+                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                3
+            ),
+            tg.completeOnCheck((_) => {
+                return movedToStash === true;
+            }, 0.1),
             tg.immediate((_) => goalStash.complete()),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_9,
+                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
+                3
+            ),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_10,
+                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
+                3
+            ),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_11,
+                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                3
+            ),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_12,
+                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
+                3
+            ),
+            tg.textDialog(
+                LocalizationKey.Script_3_Neutrals_13,
+                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
+                3
+            ),
         ]),
     ];
 
-    const chaseRiki = () => [
-        tg.seq([
-            tg.immediate((_) => {
-                goalMoveToRiki.start();
-            }),
-            tg.goToLocation(playerHero.GetAbsOrigin()), // FIX THIS WITH RIKI
-            tg.immediate((_) => goalMoveToRiki.complete()),
-        ]),
-    ];
+    const chaseRiki = () => {
+        return [
+            tg.seq([
+                tg.immediate((_) => {
+                    goalMoveToRiki.start();
+                }),
+                tg.textDialog(
+                    LocalizationKey.Script_3_Neutrals_99,
+                    (ctx) => ctx[CustomNpcKeys.Riki],
+                    3
+                ),
+                tg.textDialog(
+                    LocalizationKey.Script_3_Neutrals_14,
+                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                    3
+                ),
+            ]),
+        ];
+    };
 
     graph = tg.withGoals(
         (_) => goalTracker.getGoals(),
@@ -555,7 +682,9 @@ const onStart = (complete: () => void) => {
             ...stackCreepsMultiple(),
             ...killStackedCamp(),
             ...pickUpItems(),
+            ...killThirdSpawn(),
             ...stashItem(),
+            ...chaseRiki(),
         ])
     );
 
@@ -592,10 +721,6 @@ export const sectionOpening = new tut.FunctionalSection(
 
 // Certain order will need to be filtered, if the player sabotages themselves they will get stuck
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
-    const giveAwayItemName = "item_arcane_ring";
-    const dropInStashItemName = "item_mysterious_hat";
-    const keepItemName = "item_possessed_mask";
-
     const unitIndex = event.units["0"];
     if (!unitIndex) {
         return true;

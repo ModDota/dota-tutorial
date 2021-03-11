@@ -72,13 +72,30 @@ export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, durati
 }
 
 /**
+ * Whether the player hero is currently frozen using freezePlayerHero().
+ */
+let playerHeroFrozen = false;
+
+/**
+ * Returns whether the player hero is currently frozen using freezePlayerHero().
+ * @returns Whether the player hero is currently frozen.
+ */
+export function isPlayerHeroFrozen() {
+    return playerHeroFrozen;
+}
+
+/**
  * Makes the player hero (un-)able to attack and move.
  * @param frozen Whether or not to freeze the hero.
  */
 export function freezePlayerHero(frozen: boolean) {
-    const hero = getOrError(getPlayerHero(), "Could not find player hero")
-    setUnitPacifist(hero, frozen)
-    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND)
+    const hero = getOrError(getPlayerHero(), "Could not find player hero");
+    setUnitPacifist(hero, frozen);
+    if (frozen) {
+        hero.Stop();
+    }
+    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND);
+    playerHeroFrozen = frozen;
 }
 
 /**
@@ -128,16 +145,6 @@ export function DestroyNeutrals() {
     const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
     units.forEach(x => x.Destroy());
 }
-
-/**
- * Returns the duration of the given sound in seconds.
- * @param soundName Name of the sound.
- */
-export function getSoundDuration(soundName: string) {
-    const anyEntity = getOrError(Entities.Next(undefined), "Could not find any entity")
-    return anyEntity.GetSoundDuration(soundName, "")
-}
-
 
 /**
  * Prints all key values of an event. (though it actually would work on any array, I guess)
@@ -208,9 +215,26 @@ export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
  * @param location Location to spawn the dummy at.
  */
 export function createDummy(location: Vector) {
-    const dummy = CreateUnitByName("npc_dummy_unit", location, true, undefined, undefined, DotaTeam.GOODGUYS)
+    const dummy = CreateUnitByName("npc_dummy_unit", GetGroundPosition(location, undefined), false, undefined, undefined, DotaTeam.GOODGUYS)
     dummy.AddNewModifier(dummy, undefined, "modifier_dummy", {})
     return dummy
+}
+
+let cameraDummy: CDOTA_BaseNPC | undefined = undefined
+
+/**
+ * Gets the camera dummy and positions it at a given location. If the dummy doesn't already exist it will be created.
+ * @param location Location to position the camera dummy at.
+ * @returns Camera dummy
+ */
+export function getCameraDummy(location: Vector) {
+    if (cameraDummy && unitIsValidAndAlive(cameraDummy)) {
+        cameraDummy.SetAbsOrigin(location)
+    } else {
+        cameraDummy = createDummy(location)
+    }
+
+    return cameraDummy
 }
 
 /**
@@ -261,11 +285,124 @@ export function removeContextEntityIfExists(context: TutorialContext, entityKey:
         context[entityKey] = undefined;
     }
 }
-      
+
 /**
  * Returns whether a passed unit is a valid entity and alive.
  * @param unit Unit to check.
  */
 export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
+}
+
+export function createPathParticle(locations: Vector[]): ParticleID {
+    const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
+
+    for (let i = 0; i < locations.length; i++) {
+        ParticleManager.SetParticleControl(particle, i, locations[i])
+    }
+    ParticleManager.SetParticleControl(particle, 61, Vector(locations.length, 0, 0))
+
+    ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+    return particle
+}
+
+/**
+ * Creates a particle at a location.
+ * @param particleName Name of the particle.
+ * @param location Location to spawn the particle at.
+ * @returns The created particle.
+ */
+export const createParticleAtLocation = (particleName: string, location: Vector) => {
+    const particle = ParticleManager.CreateParticle(particleName, ParticleAttachment.CUSTOMORIGIN, undefined)
+    ParticleManager.SetParticleControl(particle, 0, GetGroundPosition(location, undefined))
+    return particle
+}
+
+/**
+ * Creates a particle attached to a unit.
+ * @param particleName Name of the particle.
+ * @param unit Unit to attach the particle to.
+ * @returns The created particle.
+ */
+export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC) => {
+    return ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit)
+}
+
+export type HighlightType = "circle" | "arrow" | "arrow_enemy"
+
+const highlightTypeParticleNames: Record<HighlightType, string> = {
+    "circle": ParticleName.HighlightCircle,
+    "arrow": ParticleName.HighlightArrow,
+    "arrow_enemy": ParticleName.HighlightArrowEnemy,
+}
+
+/**
+ * Highlight data.
+ */
+export type HighlightProps = {
+    /**
+     * Type of highlight.
+     */
+    type: HighlightType
+
+    /**
+     * Units to highlight.
+     */
+    units?: CDOTA_BaseNPC[]
+
+    /**
+     * Locations to highlight.
+     */
+    locations?: Vector[]
+
+    /**
+     * Radius of the highlight if using circle.
+     */
+    radius?: number
+
+    /**
+     * Whether the unit particles should be attached to the unit or only using its ground location. Defaults to true.
+     */
+    attach?: boolean
+}
+
+/**
+ * Creates particle highlights.
+ * @param props Properties describing the desired highlights.
+ * @returns Particles created for the highlights.
+ */
+export function highlight(props: HighlightProps): ParticleID[] {
+    const { type, units, locations, radius, attach } = props
+
+    const particleName = highlightTypeParticleNames[type]
+
+    const particles: ParticleID[] = []
+
+    // Create unit highlights
+    if (units) {
+        for (const unit of units) {
+            particles.push(attach !== false ?
+                createParticleAttachedToUnit(particleName, unit) :
+                createParticleAtLocation(particleName, GetGroundPosition(unit.GetAbsOrigin(), undefined))
+            )
+        }
+    }
+
+    // Create location highlights
+    if (locations) {
+        for (const location of locations) {
+            particles.push(createParticleAtLocation(particleName, location))
+        }
+    }
+
+    particles.forEach(particle => {
+        ParticleManager.SetParticleShouldCheckFoW(particle, false)
+
+        if (radius) {
+            ParticleManager.SetParticleControl(particle, 1, Vector(radius, 0, 0))
+        }
+    })
+
+    return particles
 }
