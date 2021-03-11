@@ -301,7 +301,7 @@ const onStart = (complete: () => void) => {
                     tg.textDialog(LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem], 3),
                     tg.immediate(() => {
                         goalUseGlyph.start()
-                        highlightUiElement(glyphUIPath, undefined, true)
+                        highlightUiElement(glyphUIPath)
                         canPlayerIssueOrders = true
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})

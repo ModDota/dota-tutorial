@@ -61,7 +61,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
-                highlightUiElement(inventorySlot0UIPath, undefined, true)
+                highlightUiElement(inventorySlot0UIPath);
             }),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),

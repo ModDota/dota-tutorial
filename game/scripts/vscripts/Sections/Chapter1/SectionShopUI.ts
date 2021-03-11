@@ -24,7 +24,7 @@ let playerBoughtTango = false;
 // UI Highlighting Paths
 const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
 const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
-const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer"
 
 const blockadeRadiantBaseMid = new Blockade(Vector(-4793, -3550, 256), Vector(-4061, -4212, 256))
 const blockadeRadiantBaseBottom = new Blockade(Vector(-3612, -5557, 256), Vector(-3584, -6567, 256))
@@ -78,7 +78,7 @@ const onStart = (complete: () => void) => {
             // Give the player some gold and wait for them to buy a tango.
             tg.immediate(_ => {
                 goalBuyTango.start();
-                highlightUiElement(tangoInGuideUIPath, undefined, true);
+                highlightUiElement(tangoInGuideUIPath);
                 playerHero.SetGold(90, true);
                 waitingForPlayerToPurchaseTango = true;
             }),
@@ -86,7 +86,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => {
                 removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
-                highlightUiElement(inventorySlot0UIPath, undefined, true);
+                highlightUiElement(inventorySlot0UIPath);
             }),
 
             // Ask the player to use their tango to escape.
