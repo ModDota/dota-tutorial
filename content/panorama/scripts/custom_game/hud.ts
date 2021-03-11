@@ -22,6 +22,9 @@ const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
 }
 
 GameEvents.Subscribe("section_started", event => {
+    // Clear old UI highlights
+    clearUiHighlights();
+    
     const enabledUI = sectionUi[event.section];
     if (enabledUI) {
         const disabledUi = except(allUI, enabledUI);
@@ -66,6 +69,13 @@ function removeHighlight(event: RemoveHighlightEvent) {
 
     highlightedPanels[path].DeleteAsync(0);
     delete highlightedPanels[path];
+}
+
+function clearUiHighlights() {
+    for (const panel of Object.values(highlightedPanels)) {
+        panel.DeleteAsync(0);
+    }
+    highlightedPanels = {};
 }
 
 // Example usage:
