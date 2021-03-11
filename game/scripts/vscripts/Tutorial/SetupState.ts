@@ -131,10 +131,10 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
     // Recreate the hero if we want a lower level than the current one (because you can't downlevel a hero)
     if (hero.GetLevel() > state.heroLevel || hero.GetUnitName() !== state.heroUnitName) {
         hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, 0)
-    } else {
-        // Make sure the hero is not frozen
-        freezePlayerHero(false)
     }
+
+    // Make sure the hero is not frozen. Note: can still be frozen when replacing because of order filter.
+    freezePlayerHero(false)
 
     // Level the hero to the desired level. 1 experience per level as defined in GameMode.
     hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
