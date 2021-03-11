@@ -97,12 +97,19 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => freezePlayerHero(false)),
 
             // Wait for the player to use their tango to escape.
-            tg.completeOnCheck(_ => playerHero.HasModifier("modifier_tango_heal"), 0.2),
+            tg.withHighlights(
+                tg.completeOnCheck(_ => playerHero.HasModifier("modifier_tango_heal"), 0.2),
+                
+                 {
+                type: "arrow",
+                units: [Entities.FindAllByClassname("dota_temp_tree")[1]] as CDOTA_BaseNPC[],
+                radius: 400,
+                attach: true,
+            }),
             tg.immediate(_ => {
                 goalEatTree.complete();
                 removeHighlight(inventorySlot0UIPath);
             }),
-
             tg.immediate(_ => freezePlayerHero(true)),
             tg.audioDialog(LocalizationKey.Script_1_Closing_3, LocalizationKey.Script_1_Closing_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 

@@ -116,11 +116,16 @@ function onStart(complete: () => void) {
                     direTopTower2.TakeDamage(dmgToDestroyTower);
                 }
             }),
-
-            tg.completeOnCheck(_ => {
-                return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
-            }, 1),
-
+            tg.withHighlights(
+                tg.completeOnCheck(_ => {
+                    return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
+                }, 1),
+                {
+                    type: "circle",
+                    units: [Entities.FindAllByName("npc_dota_watch_tower_top")[0]] as CDOTA_BaseNPC[],
+                    radius: 340,
+                    attach: false
+                }),
             // Part 3: Take down Riki
             tg.immediate(_ => {
                 goalTakeOutpost.complete();

@@ -41,6 +41,8 @@ const requiredState: RequiredState = {
 
 // UI Highlighting Paths
 const glyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
+// Tower Highlight Search Position
+const direTopTowerLocation = Vector(-4672, 6016, 128)
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -104,11 +106,19 @@ const onStart = (complete: () => void) => {
                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
                 direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
             }),
-            tg.completeOnCheck(() => {
-                const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
-                if (!modifier) error("Dragon Knight death modifier does not exists")
-                return modifier.dkDiedToTower
-            }, 0.5),
+            tg.withHighlights(
+                tg.completeOnCheck(() => {
+                    const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
+                    if (!modifier) error("Dragon Knight death modifier does not exists")
+                    return modifier.dkDiedToTower
+                }, 0.5),
+                {
+                    type: "circle",
+                    units: [Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building],
+                    radius: 870,
+                    attach: false
+            }),
+
             tg.immediate(() => {
                 goalAttemptToAttackTower.complete()
                 goalwaitToRespawn.start()

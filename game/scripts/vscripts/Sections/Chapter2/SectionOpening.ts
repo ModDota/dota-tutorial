@@ -99,8 +99,7 @@ const onStart = (complete: () => void) => {
                     units: Entities.FindAllByClassname("npc_dota_barracks") as CDOTA_BaseNPC[],
                     radius: 230,
                     attach: false,
-                }
-            ),
+                }),
 
             tg.textDialog(LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SunsFanMudGolem], 18),
             tg.textDialog(LocalizationKey.Script_2_Opening_11, context => context[CustomNpcKeys.SlacksMudGolem], 5),
@@ -136,7 +135,15 @@ const onStart = (complete: () => void) => {
                 goalPrepareToMove.start()
             }),
             tg.immediate(_ => canPlayerIssueOrders = true),
+            tg.withHighlights(
             tg.goToLocation(moveToPrepareToLaunchAssaultLocation),
+            {
+                type: "circle",
+                units: radiantCreeps,
+                radius: 16,
+                attach: true,
+            }
+            ),
             tg.immediate(context => {
                 goalPrepareToMove.complete()
                 goalWaitForCreepsToPrepareToAttack.start()

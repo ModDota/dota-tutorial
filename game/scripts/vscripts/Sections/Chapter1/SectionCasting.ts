@@ -38,8 +38,13 @@ const start = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
 
         tg.immediate(_ => freezePlayerHero(false)),
-
-        tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+        tg.withHighlights(tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+            {
+                type: "circle",
+                units: [Entities.FindAllByClassname("npc_dota_creature")[1]] as CDOTA_BaseNPC[],
+                radius: 800,
+                attach: false
+            }),
         tg.immediate(_ => goalKillSlacks.complete()),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_4, LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
