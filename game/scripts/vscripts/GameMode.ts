@@ -34,6 +34,7 @@ export class GameMode {
         chapters.chapter4.sectionOutpost,
         chapters.chapter4.sectionCommunication,
         chapters.chapter5.sectionOpening,
+        chapters.chapter5.sectionRoshan,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -132,6 +133,10 @@ export class GameMode {
 
         // Make the fountain unable to attack
         setUnitPacifist(getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC), true)
+
+        // Remove Roshan spawner
+        const roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
+        roshanSpawner.Destroy()
     }
 
     registerFilters() {
@@ -184,9 +189,6 @@ export class GameMode {
     }
 
     ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
-        if (event.name_const === "modifier_rune_doubledamage")
-            event.duration = -1
-
         return true
     }
 

@@ -14,6 +14,7 @@ declare const enum SectionName {
     Chapter4_Outpost = "Chapter4_Outpost",
     Chapter4_Communication = "Chapter4_Communication",
     Chapter5_Opening = "Chapter5_Opening",
+    Chapter5_Roshan = "Chapter5_Roshan",
 }
 
 declare const enum CustomNpcKeys {

@@ -13,4 +13,9 @@
 			}
         }
     }
+
+	"item_aegis"
+	{
+		"ItemKillable"                    "0"
+	}
 }
