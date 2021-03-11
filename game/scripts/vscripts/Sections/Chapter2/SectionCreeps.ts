@@ -49,6 +49,8 @@ const onStart = (complete: () => void) => {
     const godzSpawnLocation = Vector(-6715, 4402, 128)
     const sniperSpawnLocation = Vector(-5700, 5555, 128)
 
+    const sniperTalkShitLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_16, LocalizationKey.Script_2_Creeps_17, LocalizationKey.Script_2_Creeps_18]
+
     const lastHitCount = 5;
     const lastHitBreathFireCount = 3;
     const denyCount = 5;
@@ -149,7 +151,7 @@ const onStart = (complete: () => void) => {
                             }
                         }
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_5, context => context[CustomNpcKeys.SunsFanMudGolem], 12),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_11, context => context[CustomNpcKeys.SunsFanMudGolem], 12),
                     tg.completeOnCheck(_ => {
                         const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
                         goalLastHitCreepsWithBreatheFire.setValue(currentLastHitWithFire)
@@ -160,7 +162,7 @@ const onStart = (complete: () => void) => {
                         setUnitPacifist(playerHero, true);
                         canPlayerIssueOrders = false;
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_6, context => context[CustomNpcKeys.GodzMudGolem], 3),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.GodzMudGolem], 3),
                     tg.immediate(context => {
                         const godzMudGolem = (context[CustomNpcKeys.GodzMudGolem] as CDOTA_BaseNPC);
                         godzMudGolem.ForceKill(false)
@@ -174,7 +176,7 @@ const onStart = (complete: () => void) => {
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                     }),
                     tg.setCameraTarget(context => context[Chapter2SpecificKeys.sniperEnemyHero]),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_7, context => context[CustomNpcKeys.SlacksMudGolem], 4),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem], 4),
                     tg.immediate(context => {
                         const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero];
                         sniper.FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
@@ -184,13 +186,13 @@ const onStart = (complete: () => void) => {
                             modifier.sniperDenyingOwnCreeps = true
                         }
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_8, context => context[CustomNpcKeys.SunsFanMudGolem], 6),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_9, context => context[CustomNpcKeys.SlacksMudGolem], 12),
-                    tg.playGlobalSound("sniperTalkingShit.wav", false),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_10, context => context[CustomNpcKeys.SunsFanMudGolem], 8),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem], 6),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_15, context => context[CustomNpcKeys.SlacksMudGolem], 12),
+                    tg.textDialog(sniperTalkShitLocalizationOptions[RandomInt(0, sniperTalkShitLocalizationOptions.length - 1)], context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_19, context => context[CustomNpcKeys.SunsFanMudGolem], 8),
                     tg.setCameraTarget(undefined),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_11, context => context[CustomNpcKeys.SlacksMudGolem], 15),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_20, context => context[CustomNpcKeys.SlacksMudGolem], 15),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_21, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
                     tg.immediate(() => {
                         goalDenyOwnCreeps.start()
 
@@ -214,8 +216,8 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalDenyOwnCreeps.complete()
                     }),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem], 8),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_22, context => context[CustomNpcKeys.SlacksMudGolem], 8),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_23, context => context[CustomNpcKeys.SunsFanMudGolem], 4),
                     tg.immediate(context => {
                         goalKillSniper.start()
                         const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero]
@@ -231,8 +233,8 @@ const onStart = (complete: () => void) => {
                     tg.completeOnCheck(context => {
                         const sniper = context[Chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
                         return !sniper.IsAlive()
-                    }, 0.5),
-                    tg.playGlobalSound("SniperDiesLamely.mp3", true),
+                    }, 0.25),
+                    tg.textDialog(LocalizationKey.Script_2_Creeps_24, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
                     tg.immediate(() => {
                         goalKillSniper.complete()
 
