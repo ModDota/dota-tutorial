@@ -148,14 +148,15 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
 
         const errorMsg = "Unit wasn't a valid entity or wasn't alive"
 
-        if (unitIsValidAndAlive(actualUnit))
+        if (unitIsValidAndAlive(actualUnit)) {
             ExecuteOrderFromTable(order)
-        else if (completeIfUnitInvalid) {
+        } else if (completeIfUnitInvalid) {
+            cleanup()
             complete()
             return
-        }
-        else
+        } else {
             error(errorMsg)
+        }
 
         const checkIsIdleAndValid = () => {
             if (!unitIsValidAndAlive(actualUnit)) {
@@ -176,12 +177,8 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             }
         }
 
-        delayCheckTimer = Timers.CreateTimer(0.1, () => complete())
-    },
-        context => {
-            print("Removing timers")
-            cleanup()
-        })
+        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdleAndValid())
+    }, context => cleanup())
 }
 
 /**
