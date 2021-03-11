@@ -33,17 +33,17 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => goalMoveCamera.complete()),
 
         // Lock camera on hero and play some dialog
-        tg.audioDialog(LocalizationKey.Script_1_Camera_1, LocalizationKey.Script_1_Camera_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_1, LocalizationKey.Script_1_Camera_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.setCameraTarget(_ => getOrError(getPlayerHero())),
-        tg.audioDialog(LocalizationKey.Script_1_Camera_2, LocalizationKey.Script_1_Camera_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_2, LocalizationKey.Script_1_Camera_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
         // Spawn dummy and play some dialog about it. Freeze the hero during this and focus camera on the dummy.
         tg.immediate(_ => freezePlayerHero(true)),
-        tg.audioDialog(LocalizationKey.Script_1_Camera_3, LocalizationKey.Script_1_Camera_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_3, LocalizationKey.Script_1_Camera_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DotaTeam.NEUTRALS, CustomNpcKeys.TargetDummy, true),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.TargetDummy]),
         tg.textDialog(LocalizationKey.Script_1_Camera_4, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Camera_5, LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_5, LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
         // Unfreeze the hero and focus the camera on it again.
         tg.setCameraTarget(_ => getOrError(getPlayerHero())),
@@ -56,7 +56,7 @@ const onStart = (complete: () => void) => {
 
         // Target dummy died dialog
         tg.textDialog(LocalizationKey.Script_1_Camera_6, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Camera_7, LocalizationKey.Script_1_Camera_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_7, LocalizationKey.Script_1_Camera_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
         // MAke SUNSfan attackable
         tg.immediate(_ => goalKillSunsfan.start()),
@@ -68,7 +68,7 @@ const onStart = (complete: () => void) => {
             // Show a dialog after 10 seconds if the player didn't attack yet encouraging them.
             tg.seq([
                 tg.wait(10),
-                tg.audioDialog(LocalizationKey.Script_1_Camera_8, LocalizationKey.Script_1_Camera_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                tg.audioDialog(LocalizationKey.Script_1_Camera_8, LocalizationKey.Script_1_Camera_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.neverComplete()
             ]),
             tg.completeOnCheck(context => {
@@ -79,8 +79,8 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => goalKillSunsfan.complete()),
 
         // Death dialog
-        tg.audioDialog(LocalizationKey.Script_1_Camera_9, LocalizationKey.Script_1_Camera_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Camera_10, LocalizationKey.Script_1_Camera_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_9, LocalizationKey.Script_1_Camera_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Camera_10, LocalizationKey.Script_1_Camera_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
         // Level up and done
         tg.immediate(_ => getOrError(getPlayerHero()).HeroLevelUp(true)),

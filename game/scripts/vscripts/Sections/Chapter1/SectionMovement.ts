@@ -41,27 +41,27 @@ const onStart = (complete: () => void) => {
                 }),
             ]),
             tg.seq([
-                tg.audioDialog(LocalizationKey.Script_1_Movement_1, LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_2, LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_1, LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_2, LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.immediate(_ => {
                     goalMoveToFirstMarker.start()
                     canPlayerIssueOrders = true
                 }),
                 tg.completeOnCheck(_ => playerHero.IsMoving(), 0.5),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_3, LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_4, LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_3, LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_4, LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
         ]),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_5, LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_5, LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.spawnUnit(CustomNpcKeys.Mirana, miranaSpawnLocation, DotaTeam.BADGUYS, CustomNpcKeys.Mirana, true),
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
         tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
         tg.immediate(_ => goalMoveToSecondMarker.start()),
         tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), miranaSpawnLocation, 4),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_6, LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_7, LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_8, LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_6, LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_7, LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_8, LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         // Make sure player hero is not in the arrow firing area
         tg.immediate(_ => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
         tg.wait(0.5),
@@ -91,10 +91,10 @@ const onStart = (complete: () => void) => {
             }
         }),
         // Should be different personalities for the following two lines, until determined, using Slacks and SUNSfan
-        tg.audioDialog(LocalizationKey.Script_1_Movement_9, LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_10, LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_9, LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_10, LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-        tg.audioDialog(LocalizationKey.Script_1_Movement_11, LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Movement_11, LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ])
     )
 

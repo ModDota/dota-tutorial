@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getCameraDummy, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
 
 declare global {
@@ -155,6 +155,11 @@ export class GameMode {
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         // Cancel orders if false
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
+            return false;
+        }
+
+        // Cancel player orders if they are frozen
+        if (isPlayerHeroFrozen() && event.issuer_player_id_const === findRealPlayerID()) {
             return false;
         }
 
