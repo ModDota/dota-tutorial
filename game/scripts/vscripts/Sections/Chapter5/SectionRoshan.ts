@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { chapter5Blockades, runeSpawnsLocations } from "./Shared";
-import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util";
+import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { modifier_custom_roshan_attack_speed } from "../../modifiers/modifier_custom_roshan_attack_speed";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
@@ -18,6 +18,8 @@ const requiredState: RequiredState = {
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroLocation: runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-200, 0, -48)),
     heroLocationTolerance: 800,
+    heroLevel: 6,
+    heroAbilityMinLevels: [1, 1, 1, 1],
     heroHasDoubleDamage: true,
     blockades: [
         chapter5Blockades.direJungleLowgroundRiver,
@@ -72,11 +74,11 @@ function onStart(complete: () => void) {
     setupRoshanModifiers(roshan)
 
     // Clear any Aegis boxes left on the ground
-    let droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
 
     if (droppedItems) {
         for (const droppedItem of droppedItems) {
-            let itemEntity = droppedItem.GetContainedItem()
+            const itemEntity = droppedItem.GetContainedItem()
             if (itemEntity.GetAbilityName() === itemAegis) {
                 droppedItem.Destroy()
             }
@@ -84,8 +86,8 @@ function onStart(complete: () => void) {
     }
 
     // DK lvl 25 talents
-    const dragonBlood25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight") as CDOTABaseAbility
-    const dragonTail25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight_2") as CDOTABaseAbility
+    const dragonBlood25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight")
+    const dragonTail25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight_2")
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
@@ -128,7 +130,11 @@ function onStart(complete: () => void) {
             tg.textDialog(LocalizationKey.Script_5_Roshan_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 10),
             tg.immediate(() => canPlayerIssueOrders = true),
             tg.completeOnCheck(() => {
-                return ((dragonBlood25Talent.GetLevel() >= 1 || dragonTail25Talent.GetLevel() >= 1))
+                if (dragonBlood25Talent && dragonTail25Talent)
+                    return ((dragonBlood25Talent.GetLevel() >= 1 || dragonTail25Talent.GetLevel() >= 1))
+                else {
+                    error("Hero talents/abilities not found!")
+                }
             }, 2),
             tg.immediate(() => goalUpgradeTalents.complete()),
             tg.textDialog(LocalizationKey.Script_5_Roshan_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
@@ -177,10 +183,10 @@ function onStart(complete: () => void) {
             // Move units assuming offlane -> carry -> pos 4 -> pos 5 ordering in friendlyHeroesInfo
             tg.fork([
                 tg.textDialog(LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 4),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], roshPitGoalPosition.__add(Vector(500, -800, 0))),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], roshPitGoalPosition.__add(Vector(500, -600, 0))),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], roshPitGoalPosition.__add(Vector(300, -500, 0))),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], roshPitGoalPosition.__add(Vector(100, -500, 0))),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], roshPitGoalPosition.__add(Vector(500, -800, 0)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], roshPitGoalPosition.__add(Vector(500, -600, 0)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], roshPitGoalPosition.__add(Vector(300, -500, 0)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], roshPitGoalPosition.__add(Vector(100, -500, 0)), true),
             ]),
             tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0, 0, 0)))),
             tg.immediate(() => {
@@ -212,7 +218,7 @@ function onStop() {
 
     StopGlobalSound(roshanMusic)
 
-    let roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
+    const roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
 
     if (roshan) {
         roshan.Destroy()
@@ -254,9 +260,12 @@ function maxLevelAbilities(heroUnit: CDOTA_BaseNPC_Hero) {
 // Similar func used in Chapter 4 in two sections, maybe refactor as util function at some point
 function disposeHeroes() {
     for (const friendlyHero of friendlyHeroesInfo) {
-        const hero: CDOTA_BaseNPC_Hero | undefined = GameRules.Addon.context[friendlyHero.name];
-        if (hero && IsValidEntity(hero) && hero.IsAlive())
+        let hero: CDOTA_BaseNPC_Hero | undefined = GameRules.Addon.context[friendlyHero.name];
+        if (unitIsValidAndAlive(hero)) {
+            hero = hero as CDOTA_BaseNPC_Hero
             hero.RemoveSelf();
+        }
+        
         GameRules.Addon.context[friendlyHero.name] = undefined;
     }
 }

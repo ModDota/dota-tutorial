@@ -1,21 +1,22 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight, unitIsValidAndAlive } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
 
-const isHeroNearby = (location: Vector, radius: number, heroName: string) => {
-    let unitsWithinRadius = FindUnitsInRadius(
+const isPlayerHeroNearby = (location: Vector, radius: number) => {
+    const unitsWithinRadius = FindUnitsInRadius(
         DotaTeam.BADGUYS, location, undefined, radius,
         UnitTargetTeam.BOTH,
         UnitTargetType.HERO,
         UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
         0, false
     )
-
+    
     let foundHeroUnit = false
+    const playerHeroName = getOrError(getPlayerHero()).GetName()
 
     for (const unitWithinRadius of unitsWithinRadius) {
-        if (unitWithinRadius.GetName() === heroName)
+        if (unitWithinRadius.GetName() === playerHeroName)
             foundHeroUnit = true
     }
 
@@ -61,7 +62,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-            if (isHeroNearby(actualLocation!, 200, hero.GetName())) {
+            if (isPlayerHeroNearby(actualLocation!, 200)) {
                 cleanup()
                 complete()
             } else {
@@ -135,9 +136,21 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
  * @param unit The unit to move.
  * @param moveLocation Location to move the unit to.
  */
-export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>) => {
+export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>, completeIfUnitInvalid: boolean = false) => {
     let checkTimer: string | undefined = undefined
     let delayCheckTimer: string | undefined = undefined
+
+    const cleanup = () => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+
+        if (delayCheckTimer) {
+            Timers.RemoveTimer(delayCheckTimer)
+            delayCheckTimer = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
         const actualUnit = tg.getArg(unit, context)
@@ -150,30 +163,41 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             Queue: true
         }
 
-        if (actualUnit.IsAlive())
-            ExecuteOrderFromTable(order)
-        else
-            complete() // Unit is dead, skip doing anything
+        const errorMsg = "Unit wasn't a valid entity or wasn't alive"
 
-        const checkIsIdle = () => {
-            if (actualUnit && actualUnit.IsIdle()) {
+        if (unitIsValidAndAlive(actualUnit))
+            ExecuteOrderFromTable(order)
+        else if (completeIfUnitInvalid) {
+            complete()
+            return
+        }
+        else
+            error(errorMsg)
+
+        const checkIsIdleAndValid = () => {
+            if (!unitIsValidAndAlive(actualUnit)) {
+                if (completeIfUnitInvalid) {
+                    cleanup()
+                    complete()
+                    return
+                } else {
+                    error(errorMsg)
+                }
+            }
+
+            if (actualUnit.IsIdle()) {
+                cleanup()
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
+                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdleAndValid())
             }
         }
 
-        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
+        delayCheckTimer = Timers.CreateTimer(0.1, () => complete())
     },
         context => {
-            if (checkTimer) {
-                Timers.RemoveTimer(checkTimer)
-                checkTimer = undefined
-            }
-            if (delayCheckTimer) {
-                Timers.RemoveTimer(delayCheckTimer)
-                delayCheckTimer = undefined
-            }
+            print("Removing timers")
+            cleanup()
         })
 }
 
