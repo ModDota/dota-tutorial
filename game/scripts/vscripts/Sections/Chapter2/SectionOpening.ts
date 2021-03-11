@@ -63,7 +63,7 @@ const onStart = (complete: () => void) => {
             tg.setCameraTarget(undefined),
             tg.immediate(context => goalMoveNextToBarracks.start()),
             tg.immediate(() => freezePlayerHero(false)),
-            tg.goToLocation(moveNextToBarracksLocation, _ => [playerHero.GetAbsOrigin(), moveNextToBarracksLocation]),
+            tg.goToLocation(moveNextToBarracksLocation, _ => [moveNextToBarracksLocation]),
             tg.immediate(context => {
                 goalMoveNextToBarracks.complete()
                 goalListenToSunsfanAndSlacks.start()
@@ -146,7 +146,7 @@ const onStart = (complete: () => void) => {
                 goalPrepareToMove.start()
             }),
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => [playerHero.GetAbsOrigin(), moveToPrepareToLaunchAssaultLocation]),
+            tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => [moveToPrepareToLaunchAssaultLocation]),
             tg.immediate(context => {
                 goalPrepareToMove.complete()
                 goalWaitForCreepsToPrepareToAttack.start()

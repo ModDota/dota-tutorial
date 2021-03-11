@@ -3,15 +3,16 @@ import { isShopOpen } from "../../Shop";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, printEventTable, removeHighlight } from "../../util";
-import { chapter2Blockades, radiantCreepsNames } from "./shared";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { chapter2Blockades } from "./shared";
+import { modifier_courier_chapter_2_ms_bonus } from "../../modifiers/modifier_courier_chapter_2_ms_bonus";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
 let graph: tg.TutorialStep | undefined = undefined
 
 const requiredState: RequiredState = {
     heroLocation: Vector(-4941, 5874, 128),
-    heroLocationTolerance: 300,
+    heroLocationTolerance: 1000,
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     slacksLocation: Vector(-5495, 2930, 128),
@@ -53,6 +54,8 @@ const onStart = (complete: () => void) => {
 
     const radiantSecretShopLocation = Vector(-5082, 2011, 128)
     const direSecretShopLocation = Vector(4804, 1304, 128)
+    const inFrontOfTheRiverLocation = Vector(-3661, 3761, 128)
+    const insideRiverLocation = Vector(-4106, 2298, 0)
     const inFrontOfRadiantSecretShopLocation = Vector(-4840, 1822, 128)
     const finalMovementPositionLocation = Vector(-3538, 3861, 128)
 
@@ -88,7 +91,11 @@ const onStart = (complete: () => void) => {
     const goalMoveToFinalPosition = goalTracker.addBoolean("Move into the Dire jungle.")
 
     graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
+        tg.wait(FrameTime()),
+        tg.setCameraTarget(playerHero),
+        tg.wait(FrameTime()),
         tg.setCameraTarget(undefined),
+        tg.immediate(() => freezePlayerHero(true)),
         tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(context => {
@@ -102,8 +109,9 @@ const onStart = (complete: () => void) => {
         }),
         tg.immediate(() => {
             goalMoveToSecretShop.start()
+            freezePlayerHero(false)
         }),
-        tg.goToLocation(inFrontOfRadiantSecretShopLocation, [playerHero.GetAbsOrigin(), inFrontOfRadiantSecretShopLocation]),
+        tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation, inFrontOfRadiantSecretShopLocation]),
         tg.immediate(() => {
             goalMoveToSecretShop.complete()
         }),
@@ -119,9 +127,12 @@ const onStart = (complete: () => void) => {
             removeHighlight(shopBtnUIPath)
             goalOpenShop.complete()
             goalBuyDemonEdge.start()
-            playerHero.SetGold(4150, false)
+            playerHero.SetGold(5150, false)
             playerOrderMustBuyDemonEdge = true
-            highlightUiElement(demonEdgeGuideUIPath);
+            Timers.CreateTimer(() =>
+            {
+                highlightUiElement(demonEdgeGuideUIPath);
+            })
         }),
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(demonEdgeName)
@@ -183,6 +194,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalRequestItemsToBeDeliveredFromCourier.complete()
             goalWaitToCourierToDeliverItems.start()
+            playerCourier.AddNewModifier(undefined, undefined, modifier_courier_chapter_2_ms_bonus.name, {})
             playerOrderMustDeliverItemsFromCourier = false
             removeHighlight(deliverItemsUIPath)
             freezePlayerHero(true)
@@ -192,7 +204,11 @@ const onStart = (complete: () => void) => {
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(daedalusName)
         }, 0.2),
-        tg.immediate(() => goalWaitToCourierToDeliverItems.complete()),
+        tg.immediate(() =>
+        {
+            goalWaitToCourierToDeliverItems.complete()
+            playerCourier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
+        }),
         tg.setCameraTarget(undefined),
         tg.audioDialog(LocalizationKey.Script_2_Courier_10, LocalizationKey.Script_2_Courier_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_11, LocalizationKey.Script_2_Courier_11, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -202,7 +218,7 @@ const onStart = (complete: () => void) => {
             freezePlayerHero(false)
             goalMoveToFinalPosition.start()
         }),
-        tg.goToLocation(finalMovementPositionLocation, [playerHero.GetAbsOrigin(), finalMovementPositionLocation]),
+        tg.goToLocation(finalMovementPositionLocation, _ => [insideRiverLocation, inFrontOfTheRiverLocation, finalMovementPositionLocation]),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )
@@ -215,6 +231,12 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
+
+    const courier = getPlayerCourier()
+    if (courier && courier.HasModifier(modifier_courier_chapter_2_ms_bonus.name))
+    {
+        courier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
+    }
 
     if (graph) {
         graph.stop(GameRules.Addon.context);
