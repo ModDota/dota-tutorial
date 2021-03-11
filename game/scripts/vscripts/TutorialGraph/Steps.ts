@@ -1,15 +1,9 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight, unitIsValidAndAlive } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
 
-const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
-    DotaTeam.BADGUYS, location, undefined, radius,
-    UnitTargetTeam.BOTH,
-    UnitTargetType.HERO,
-    UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
-    0, false
-).length > 0
+const isPlayerHeroNearby = (location: Vector, radius: number) => getOrError(getPlayerHero()).GetAbsOrigin().__sub(location).Length2D() < radius
 
 /**
  * Creates a tutorial step that waits for a hero to go to a location.
@@ -50,7 +44,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-            if (isHeroNearby(actualLocation!, 200)) {
+            if (isPlayerHeroNearby(actualLocation!, 200)) {
                 cleanup()
                 complete()
             } else {
@@ -123,10 +117,23 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
  * Creates a tutorial step that moves a unit.
  * @param unit The unit to move.
  * @param moveLocation Location to move the unit to.
+ * @param completeIfUnitInvalid Optional param that controls whether step should complete if provided unit is invalid or dead. Default value is false
  */
-export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>) => {
+export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>, completeIfUnitInvalid: boolean = false) => {
     let checkTimer: string | undefined = undefined
     let delayCheckTimer: string | undefined = undefined
+
+    const cleanup = () => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+
+        if (delayCheckTimer) {
+            Timers.RemoveTimer(delayCheckTimer)
+            delayCheckTimer = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
         const actualUnit = tg.getArg(unit, context)
@@ -139,27 +146,41 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             Queue: true
         }
 
-        ExecuteOrderFromTable(order)
+        const errorMsg = "Unit wasn't a valid entity or wasn't alive"
 
-        const checkIsIdle = () => {
-            if (actualUnit && actualUnit.IsIdle()) {
+        if (unitIsValidAndAlive(actualUnit))
+            ExecuteOrderFromTable(order)
+        else if (completeIfUnitInvalid) {
+            complete()
+            return
+        }
+        else
+            error(errorMsg)
+
+        const checkIsIdleAndValid = () => {
+            if (!unitIsValidAndAlive(actualUnit)) {
+                if (completeIfUnitInvalid) {
+                    cleanup()
+                    complete()
+                    return
+                } else {
+                    error(errorMsg)
+                }
+            }
+
+            if (actualUnit.IsIdle()) {
+                cleanup()
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
+                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdleAndValid())
             }
         }
 
-        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
+        delayCheckTimer = Timers.CreateTimer(0.1, () => complete())
     },
         context => {
-            if (checkTimer) {
-                Timers.RemoveTimer(checkTimer)
-                checkTimer = undefined
-            }
-            if (delayCheckTimer) {
-                Timers.RemoveTimer(delayCheckTimer)
-                delayCheckTimer = undefined
-            }
+            print("Removing timers")
+            cleanup()
         })
 }
 
@@ -650,7 +671,7 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5, complete)
+        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, complete)
     }, _ => dg.stop())
 }
 

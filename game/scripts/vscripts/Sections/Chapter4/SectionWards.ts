@@ -119,7 +119,7 @@ function onStart(complete: () => void) {
             ]),
             tg.immediate(_ => freezePlayerHero(false)),
             tg.immediate(_ => {
-                highlightUiElement(inventorySlot0UIPath, undefined, true);
+                highlightUiElement(inventorySlot0UIPath);
                 goalPlaceObserverWard.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),

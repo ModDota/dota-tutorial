@@ -71,7 +71,7 @@ function onStart(complete: () => void) {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
                 allowUseItem = true;
-                highlightUiElement(inventorySlot0UIPath, undefined, true)
+                highlightUiElement(inventorySlot0UIPath);
             }),
             tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
