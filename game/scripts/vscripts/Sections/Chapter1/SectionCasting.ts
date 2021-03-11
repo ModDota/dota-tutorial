@@ -32,18 +32,18 @@ const start = (complete: () => void) => {
             slacks.SetTeam(DotaTeam.NEUTRALS);
         }),
 
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(_ => goalKillSlacks.start()),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
         tg.immediate(_ => freezePlayerHero(false)),
 
         tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
         tg.immediate(_ => goalKillSlacks.complete()),
 
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_4, LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_5, LocalizationKey.Script_1_BreatheFire_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
+        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_4, LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_5, LocalizationKey.Script_1_BreatheFire_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ]));
 
     graph.start(GameRules.Addon.context, () => {
