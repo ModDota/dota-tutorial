@@ -135,6 +135,22 @@ function GuidesClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
+//** Muting Players Movie Panel */
+function MutePlayersContinue() {
+    $.Msg("MutePlayersContinue");
+
+    $("#MutePlayersPanel").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
+//** Selecting a Guide Movie Panel */
+function SelectGuideContinue() {
+    $.Msg("SelectGuideContinue");
+
+    $("#SelectGuidePanel").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,
