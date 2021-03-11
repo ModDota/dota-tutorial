@@ -91,7 +91,9 @@ export function isPlayerHeroFrozen() {
 export function freezePlayerHero(frozen: boolean) {
     const hero = getOrError(getPlayerHero(), "Could not find player hero");
     setUnitPacifist(hero, frozen);
-    hero.Stop();
+    if (frozen) {
+        hero.Stop();
+    }
     hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND);
     playerHeroFrozen = frozen;
 }
