@@ -72,8 +72,7 @@ const onStart = (complete: () => void) => {
                 playerHero.Stop()
                 freezePlayerHero(true)
             }),
-            tg.withHighlights(
-                tg.audioDialog(LocalizationKey.Script_2_Opening_1, LocalizationKey.Script_2_Opening_1, context => context[CustomNpcKeys.SlacksMudGolem]),
+            tg.withHighlights(tg.audioDialog(LocalizationKey.Script_2_Opening_1, LocalizationKey.Script_2_Opening_1, context => context[CustomNpcKeys.SlacksMudGolem]),
                 {
                     type: "circle",
                     units: Entities.FindAllByClassnameWithin("npc_dota_barracks", inFrontOfRadiantAncientLocation, 2500) as CDOTA_BaseNPC[], // only radiant barracks should be highlighted here
@@ -83,8 +82,7 @@ const onStart = (complete: () => void) => {
             ),
 
             // Talking about moonwells
-            tg.withHighlights(
-                tg.seq([
+            tg.withHighlights(tg.seq([
                     tg.audioDialog(LocalizationKey.Script_2_Opening_2, LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_3, LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem]),
                 ]), {
@@ -96,8 +94,7 @@ const onStart = (complete: () => void) => {
             ),
 
             // Talking about barracks
-            tg.withHighlights(
-                tg.seq([
+            tg.withHighlights(tg.seq([
                     tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_5, LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_6, LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SunsFanMudGolem]),

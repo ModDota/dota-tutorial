@@ -107,12 +107,11 @@ const onStart = (complete: () => void) => {
                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
                 direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
             }),
-            tg.withHighlights(
-                tg.completeOnCheck(() => {
-                    const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
-                    if (!modifier) error("Dragon Knight death modifier does not exists")
-                    return modifier.dkDiedToTower
-                }, 0.5),
+            tg.withHighlights(tg.completeOnCheck(() => {
+                const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
+                if (!modifier) error("Dragon Knight death modifier does not exists")
+                return modifier.dkDiedToTower
+            }, 0.5),
                 _ =>
                 ({
                     type: "arrow_enemy",
@@ -215,12 +214,11 @@ const onStart = (complete: () => void) => {
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                         playerHero.AddNewModifier(playerHero, undefined, modifier_dk_attack_tower_chapter2.name, {})
                     }),
-                    tg.withHighlights(
-                        tg.completeOnCheck(() => {
-                            const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
-                            if (!modifier) error("Could not find the modifier for attacking the tower")
-                            return modifier.dkAttackedTower
-                        }, 0.5),
+                    tg.withHighlights(tg.completeOnCheck(() => {
+                        const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
+                        if (!modifier) error("Could not find the modifier for attacking the tower")
+                        return modifier.dkAttackedTower
+                    }, 0.5),
                         _ =>
                         ({
                             type: "arrow_enemy",
@@ -308,12 +306,11 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalAttackTowerStrong.start()
                     }),
-                    tg.withHighlights(
-                        tg.completeOnCheck(() => {
-                            const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
-                            if (!modifier) error("Could not find Dragon Knight's tower attack modifier")
-                            return modifier.dkAttackedTowerAgainBeforeGlyph
-                        }, 0.1),
+                    tg.withHighlights(tg.completeOnCheck(() => {
+                        const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
+                        if (!modifier) error("Could not find Dragon Knight's tower attack modifier")
+                        return modifier.dkAttackedTowerAgainBeforeGlyph
+                    }, 0.1),
                         _ =>
                         ({
                             type: "arrow_enemy",
@@ -354,10 +351,9 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_17, LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.immediate(() => goalDestroyTower.start()),
-                    tg.withHighlights(
-                        tg.completeOnCheck(() => {
-                            return !IsValidEntity(direTopTower) || !direTopTower.IsAlive()
-                        }, 0.1),
+                    tg.withHighlights(tg.completeOnCheck(() => {
+                        return !IsValidEntity(direTopTower) || !direTopTower.IsAlive()
+                    }, 0.1),
                         _ => ({
                             type: "arrow_enemy",
                             attach: true,

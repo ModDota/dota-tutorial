@@ -289,18 +289,15 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             }
         }
 
-        if (units.length == 1) {
+        if (units.length == 1 && event.entindex_ability > 0) {
             const unit = units[0]
             if (unit.GetName() === "npc_dota_courier" && UnitOrder.CAST_NO_TARGET) {
-                if (event.entindex_ability > 0) {
-                    const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility
-                    if (ability && IsValidEntity(ability)) {
-                        if (ability.GetAbilityName() === "courier_take_stash_and_transfer_items") {
-                            // Player ordered courier to deliver
-                            hasPlayerRequestedToDeliverFromCourier = true
-                            return true
-                        }
-                    }
+
+                const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility
+                if (ability && IsValidEntity(ability) && ability.GetAbilityName() === "courier_take_stash_and_transfer_items") {
+                    // Player ordered courier to deliver
+                    hasPlayerRequestedToDeliverFromCourier = true
+                    return true
                 }
             }
         }
@@ -318,10 +315,8 @@ function getPlayerCourier(): CDOTA_Unit_Courier | undefined {
 
     const couriers = Entities.FindAllByClassname("npc_dota_courier") as CDOTA_Unit_Courier[]
     for (const courier of couriers) {
-        if (courier.IsCourier()) {
-            if (courier.GetPlayerOwnerID() === playerOwner) {
-                return courier
-            }
+        if (courier.IsCourier() && courier.GetPlayerOwnerID() === playerOwner) {
+            return courier
         }
     }
 
