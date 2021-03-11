@@ -73,16 +73,14 @@ function onStart(complete: () => void) {
             tg.immediate(_ => canPlayerIssueOrders = false),
             tg.setCameraTarget(_ => radiantCreeps[0]),
 
-            tg.fork([
+            tg.forkAny([
                 tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
-                tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_4_Opening_4, LocalizationKey.Script_4_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_4_Opening_5, LocalizationKey.Script_4_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_4_Opening_6, LocalizationKey.Script_4_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                ]),
+                tg.audioDialog(LocalizationKey.Script_4_Opening_4, LocalizationKey.Script_4_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]),
 
             tg.setCameraTarget(playerHero),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_5, LocalizationKey.Script_4_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_6, LocalizationKey.Script_4_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => {
                 disposeCreeps();
                 goalListenDialog.complete();

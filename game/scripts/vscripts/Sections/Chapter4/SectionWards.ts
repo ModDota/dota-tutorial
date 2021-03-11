@@ -1,7 +1,7 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
-import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -20,11 +20,11 @@ const requiredState: RequiredState = {
     blockades: Object.values(shared.blockades),
 };
 
-const markerLocation = Vector(-2200, 3800, 256);
+const markerLocation = Vector(-2200, 3700, 256);
 const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
-const invisHeroesCenter = Vector(-1800, 4000);
 const rikiName = "npc_dota_hero_riki";
+let allowUseItem = false;
 
 //dire mid top
 const cliffLocation1 = Vector(-261, 2047);
@@ -34,18 +34,8 @@ const cliffLocation2 = Vector(2011, -780);
 const cliffLocation3 = Vector(770, -2300);
 //radiant toplane
 const cliffLocation4 = Vector(-5503, 2292);
-//radiant jungle top
-const cliffLocation5 = Vector(-4376, -1162)
-//radiant jungle tier 2 bot
-const cliffLocation6 = Vector(-1805, -4973)
-//radiant jungle outpost
-const cliffLocation7 = Vector(1028, -4103)
-//dire tier 1 bot
-const cliffLocation8 = Vector(4868, -2300)
-//dire tier 2 bot
-const cliffLocation9 = Vector(5204, 662)
-//dire tier 2 top
-const cliffLocation10 = Vector(1101, 4734)
+
+const cameraSpeed = 2000;
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
@@ -75,10 +65,12 @@ function onStart(complete: () => void) {
 
     const observerWardItem = CreateItem("item_ward_observer", undefined, undefined);
     const sentryWardItem = CreateItem("item_ward_sentry", undefined, undefined);
+    allowUseItem = false;
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.setCameraTarget(playerHero),
+            tg.immediate(_ => setUnitPacifist(playerHero, true)),
             tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name, true))),
 
             tg.immediate(context => {
@@ -86,8 +78,8 @@ function onStart(complete: () => void) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     hero.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
                     hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
-                    hero.Stop();
                     hero.FaceTowards(playerHero.GetAbsOrigin());
+                    setUnitPacifist(hero, true);
                 }
             }),
 
@@ -108,72 +100,53 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Wards_3, LocalizationKey.Script_4_Wards_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_4, LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_5, LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.immediate(_ => freezePlayerHero(true)),
             tg.audioDialog(LocalizationKey.Script_4_Wards_6, LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             tg.fork([
                 tg.seq([
-                    tg.panCameraLinear(playerHero.GetAbsOrigin(), cliffLocation1, 2),
-                    tg.panCameraLinear(cliffLocation1, cliffLocation1, 1),
-
-                    tg.panCameraLinear(cliffLocation1, cliffLocation2, 2),
-                    tg.panCameraLinear(cliffLocation2, cliffLocation2, 1),
-
-                    tg.panCameraLinear(cliffLocation2, cliffLocation3, 2),
-                    tg.panCameraLinear(cliffLocation3, cliffLocation3, 1),
-
-                    tg.panCameraLinear(cliffLocation3, cliffLocation4, 2),
-                    tg.panCameraLinear(cliffLocation4, cliffLocation4, 1),
-
-                    tg.panCameraLinear(cliffLocation4, cliffLocation5, 2),
-                    tg.panCameraLinear(cliffLocation5, cliffLocation5, 1),
-
-                    tg.panCameraLinear(cliffLocation5, cliffLocation6, 2),
-                    tg.panCameraLinear(cliffLocation6, cliffLocation6, 1),
-
-                    tg.panCameraLinear(cliffLocation6, cliffLocation7, 2),
-                    tg.panCameraLinear(cliffLocation7, cliffLocation7, 1),
-
-                    tg.panCameraLinear(cliffLocation7, cliffLocation8, 2),
-                    tg.panCameraLinear(cliffLocation8, cliffLocation8, 1),
-
-                    tg.panCameraLinear(cliffLocation8, cliffLocation9, 2),
-                    tg.panCameraLinear(cliffLocation9, cliffLocation9, 1),
-
-                    tg.panCameraLinear(cliffLocation9, cliffLocation10, 2),
-                    tg.panCameraLinear(cliffLocation10, cliffLocation10, 1),
-
-                    tg.panCameraLinear(cliffLocation10, playerHero.GetAbsOrigin(), 2),
-                    tg.panCameraLinear(playerHero.GetAbsOrigin(), playerHero.GetAbsOrigin(), 1),
+                    tg.panCamera(playerHero.GetAbsOrigin(), cliffLocation1, _ => cameraSpeed),
+                    tg.wait(1),
+                    tg.panCamera(cliffLocation1, cliffLocation2, _ => cameraSpeed),
+                    tg.wait(1),
+                    tg.panCamera(cliffLocation2, cliffLocation3, _ => cameraSpeed),
+                    tg.wait(1),
+                    tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
+                    tg.wait(1),
+                    tg.panCamera(cliffLocation4, playerHero.GetAbsOrigin(), _ => cameraSpeed),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
-
+            tg.immediate(_ => freezePlayerHero(false)),
             tg.immediate(_ => {
+                highlightUiElement(inventorySlot0UIPath, undefined, true);
                 goalPlaceObserverWard.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_8, LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
+            tg.immediate(_ => allowUseItem = true),
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
 
             tg.immediate(_ => {
                 goalPlaceObserverWard.complete();
+                allowUseItem = false;
                 goalPlaceSentryWard.start();
-                freezePlayerHero(true);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_9, LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_4_Wards_10, LocalizationKey.Script_4_Wards_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_4_Wards_11, LocalizationKey.Script_4_Wards_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.immediate(_ => freezePlayerHero(false)),
+            tg.immediate(_ => allowUseItem = true),
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
-            tg.immediate(_ => goalPlaceSentryWard.complete()),
+            tg.immediate(_ => {
+                goalPlaceSentryWard.complete();
+                removeHighlight(inventorySlot0UIPath);
+            }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 1),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(context => {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
@@ -185,10 +158,12 @@ function onStart(complete: () => void) {
                 shared.blockades.direJungleLowToHighground.destroy();
                 goalAttackRiki.start();
                 context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
+                setUnitPacifist(playerHero, false);
             }),
+
             tg.audioDialog(LocalizationKey.Script_4_Wards_14, LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 400, 0.1),
+            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 700, 0.1),
 
             tg.immediate(context => {
                 goalAttackRiki.complete();
@@ -235,13 +210,17 @@ function disposeHeroes() {
 
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.order_type === UnitOrder.CAST_POSITION) {
+        if (!allowUseItem) {
+            displayDotaErrorMessage("Using item is disabled for now.")
+            return false;
+        }
         const targetPosition2D = Vector(event.position_x, event.position_y);
         const distance = markerLocation.__sub(targetPosition2D).Length2D();
         const targetZ = event.position_z;
 
         const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility;
         if (ability.GetName() === "item_ward_dispenser" || ability.GetName() === "item_ward_sentry") {
-            if (targetZ === markerLocation.z && distance < 200) {
+            if (targetZ === markerLocation.z && distance < 150) {
                 return true;
             } else {
                 displayDotaErrorMessage("Place the ward on the target location.")
