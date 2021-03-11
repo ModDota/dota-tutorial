@@ -112,6 +112,8 @@ declare const enum LocalizationKey {
     Script_3_Opening_22 = "Script_3_Opening_22",
     Script_3_Opening_23 = "Script_3_Opening_23",
     Script_3_Opening_24 = "Script_3_Opening_24",
+    Script_3_Opening_25 = "Script_3_Opening_25",
+    Script_3_Opening_26 = "Script_3_Opening_26",
     Script_3_Neutrals_1 = "Script_3_Neutrals_1",
     Script_3_Neutrals_2 = "Script_3_Neutrals_2",
     Script_3_Neutrals_3 = "Script_3_Neutrals_3",
@@ -125,4 +127,6 @@ declare const enum LocalizationKey {
     Script_3_Neutrals_11 = "Script_3_Neutrals_11",
     Script_3_Neutrals_12 = "Script_3_Neutrals_12",
     Script_3_Neutrals_13 = "Script_3_Neutrals_13",
+    Script_3_Neutrals_14 = "Script_3_Neutrals_14",
+    Script_3_Neutrals_99 = "RIKI SCREAMING?", // Placeholder
 }
