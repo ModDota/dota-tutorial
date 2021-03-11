@@ -96,7 +96,7 @@ function onStart(complete: () => void) {
             tg.immediate(() => setUnitPacifist(roshan, true)),
             tg.fork([
                 tg.seq([
-                    tg.textDialog(LocalizationKey.Script_5_Roshan_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                    tg.audioDialog(LocalizationKey.Script_5_Roshan_1, LocalizationKey.Script_5_Roshan_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
                     tg.immediate(() => goalEnterRoshPit.start()),
                     tg.goToLocation(roshPitGoalPosition),
                 ]),
@@ -110,8 +110,8 @@ function onStart(complete: () => void) {
                 ]),
             ]),
             tg.immediate(() => goalEnterRoshPit.complete()),
-            tg.textDialog(LocalizationKey.Script_5_Roshan_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
-            tg.textDialog(LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_2, LocalizationKey.Script_5_Roshan_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_3, LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.immediate(() => {
                 // Lvl up to 25, assuming 1 xp per level
                 playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
@@ -127,7 +127,7 @@ function onStart(complete: () => void) {
             tg.immediate(() => canPlayerIssueOrders = false),
             tg.wait(1),
             tg.immediate(() => goalUpgradeTalents.start()),
-            tg.textDialog(LocalizationKey.Script_5_Roshan_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 10),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_4, LocalizationKey.Script_5_Roshan_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.immediate(() => canPlayerIssueOrders = true),
             tg.completeOnCheck(() => {
                 if (dragonBlood25Talent && dragonTail25Talent)
@@ -137,7 +137,7 @@ function onStart(complete: () => void) {
                 }
             }, 2),
             tg.immediate(() => goalUpgradeTalents.complete()),
-            tg.textDialog(LocalizationKey.Script_5_Roshan_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_5, LocalizationKey.Script_5_Roshan_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
             tg.immediate(() => {
                 setUnitPacifist(roshan, false)
                 goalDefeatRoshan.start()
@@ -164,7 +164,7 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(playerHero),
             tg.wait(1),
             tg.setCameraTarget(undefined),
-            tg.textDialog(LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_6, LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.completeOnCheck(() => {
                 return !roshan.IsAlive()
             }, 2),
@@ -182,7 +182,7 @@ function onStart(complete: () => void) {
             }),
             // Move units assuming offlane -> carry -> pos 4 -> pos 5 ordering in friendlyHeroesInfo
             tg.fork([
-                tg.textDialog(LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 4),
+                tg.audioDialog(LocalizationKey.Script_5_Roshan_7, LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
                 tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], roshPitGoalPosition.__add(Vector(500, -800, 0)), true),
                 tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], roshPitGoalPosition.__add(Vector(500, -600, 0)), true),
                 tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], roshPitGoalPosition.__add(Vector(300, -500, 0)), true),
@@ -195,7 +195,7 @@ function onStart(complete: () => void) {
             }),
             tg.completeOnCheck(() => playerHero.HasItemInInventory(itemAegis), 2),
             tg.immediate(() => goalPickupAegis.complete()),
-            tg.textDialog(LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.immediate(() => goalLeaveRoshPit.start()),
             tg.goToLocation(leaveRoshPitGoalPosition),
             tg.immediate(() => {
@@ -265,7 +265,7 @@ function disposeHeroes() {
             hero = hero as CDOTA_BaseNPC_Hero
             hero.RemoveSelf();
         }
-        
+
         GameRules.Addon.context[friendlyHero.name] = undefined;
     }
 }
