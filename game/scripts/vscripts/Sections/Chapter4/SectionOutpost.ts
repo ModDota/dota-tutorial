@@ -66,7 +66,7 @@ function onStart(complete: () => void) {
             }),
 
             tg.goToLocation(lastSawRikiLocation),
-            tg.immediate(_ => freezePlayerHero(true)),
+            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.NONE)),
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
@@ -78,7 +78,7 @@ function onStart(complete: () => void) {
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 0.2),
             tg.immediate(_ => {
                 goalUseDust.complete();
-                freezePlayerHero(false);
+                playerHero.SetMoveCapability(UnitMoveCapability.GROUND)
                 removeHighlight(inventorySlot0UIPath);
                 setUnitPacifist(playerHero, false);
             }),
@@ -123,7 +123,6 @@ function onStart(complete: () => void) {
                 // Part 2: Take outpost
                 tg.immediate(_ => {
                     goalTakeOutpost.start();
-                    setUnitPacifist(playerHero, false);
 
                     const dmgToDestroyTower = CreateDamageInfo(playerHero, playerHero, playerHero.GetAbsOrigin(), playerHero.GetAbsOrigin(), 9999, 9999);
 
