@@ -188,6 +188,16 @@ function handleRequiredAbilities(state: FilledRequiredState, hero: CDOTA_BaseNPC
         abil.SetLevel(Math.max(state.heroAbilityMinLevels[abilityIndex], abil.GetLevel()))
     }
 
+    // Set or remove DD modifier as needed
+    if (state.heroHasDoubleDamage) {
+        if (!hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", {
+                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c                
+                duration: 45
+            })
+        }
+    }
+    
     // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
     remainingAbilityPoints = getRemainingAbilityPoints()
     if (remainingAbilityPoints < 0) {

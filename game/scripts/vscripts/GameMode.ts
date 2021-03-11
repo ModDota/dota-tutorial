@@ -35,6 +35,7 @@ export class GameMode {
         chapters.chapter4.sectionOutpost,
         chapters.chapter4.sectionCommunication,
         chapters.chapter5.sectionOpening,
+        chapters.chapter5.sectionRoshan,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -43,8 +44,10 @@ export class GameMode {
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
         PrecacheResource("particle", ParticleName.HighlightCircle, context);
-        PrecacheResource("particle", ParticleName.HighlightArrowEnemy, context);
-        PrecacheResource("particle", ParticleName.HighlightArrow, context);
+        PrecacheResource("particle", ParticleName.HighlightOrangeArrow, context);
+        PrecacheResource("particle", ParticleName.HighlightOrangeCircle, context);
+        PrecacheResource("particle", ParticleName.HighlightRedArrow, context);
+        PrecacheResource("particle", ParticleName.HighlightRedCircle, context);
         PrecacheResource("particle", ParticleName.Path, context);
     }
 
@@ -133,6 +136,10 @@ export class GameMode {
 
         // Make the fountain unable to attack
         setUnitPacifist(getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC), true)
+
+        // Remove Roshan spawner
+        const roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
+        roshanSpawner.Destroy()
     }
 
     registerFilters() {
@@ -185,9 +192,6 @@ export class GameMode {
     }
 
     ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
-        if (event.name_const === "modifier_rune_doubledamage")
-            event.duration = -1
-
         return true
     }
 
