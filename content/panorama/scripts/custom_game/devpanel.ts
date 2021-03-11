@@ -26,6 +26,7 @@ const sections = {
     "CH4 - Outpost": SectionName.Chapter4_Outpost,
     "CH4 - Communication": SectionName.Chapter4_Communication,
     "CH5 - Opening": SectionName.Chapter5_Opening,
+    "CH6 - Opening": SectionName.Chapter6_Opening,
 };
 
 // Add a button for each section
