@@ -315,7 +315,7 @@ export function createPathParticle(locations: Vector[]): ParticleID {
  */
 export const createParticleAtLocation = (particleName: string, location: Vector) => {
     const particle = ParticleManager.CreateParticle(particleName, ParticleAttachment.CUSTOMORIGIN, undefined)
-    ParticleManager.SetParticleControl(particle, 0, GetGroundPosition(location, undefined))
+    ParticleManager.SetParticleControl(particle, 0, location)
     return particle
 }
 
@@ -344,11 +344,11 @@ const highlightTypeParticleNames: Record<HighlightType, HighlightParticleDescrip
     ],
     "arrow": [
         { name: ParticleName.HighlightOrangeCircle },
-        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 200) },
+        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
     ],
     "arrow_enemy": [
         { name: ParticleName.HighlightRedCircle },
-        { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 200) },
+        { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
     ],
 }
 
@@ -408,7 +408,7 @@ export function highlight(props: HighlightProps): ParticleID[] {
         // Create location highlights
         if (locations) {
             for (const location of locations) {
-                particles.push(createParticleAtLocation(desc.name, location.__add(desc.offset ?? Vector(0, 0, 0))))
+                particles.push(createParticleAtLocation(desc.name, GetGroundPosition(location, undefined).__add(desc.offset ?? Vector(0, 0, 0))))
             }
         }
     }
