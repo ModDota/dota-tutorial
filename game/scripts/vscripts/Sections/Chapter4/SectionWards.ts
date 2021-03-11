@@ -155,7 +155,6 @@ function onStart(complete: () => void) {
                     const runDirection = hero.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                     hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)));
                 }
-                shared.blockades.direJungleLowToHighground.destroy();
                 goalAttackRiki.start();
                 context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
                 setUnitPacifist(playerHero, false);
@@ -163,7 +162,8 @@ function onStart(complete: () => void) {
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_14, LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 700, 0.1),
+            tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
+            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 620, 0.1),
 
             tg.immediate(context => {
                 goalAttackRiki.complete();
@@ -231,8 +231,8 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         return true;
     }
 
-    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM || event.order_type === UnitOrder.CAST_TOGGLE) {
-        displayDotaErrorMessage("Dropping, moving or toggling your items is disabled during this section.")
+    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM || event.order_type === UnitOrder.CAST_TOGGLE || event.order_type === UnitOrder.SET_ITEM_COMBINE_LOCK) {
+        displayDotaErrorMessage("Dropping, moving, toggling, lock or combine items is disabled during this section.")
         return false;
     }
 
