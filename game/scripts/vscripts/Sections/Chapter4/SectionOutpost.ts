@@ -48,8 +48,8 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(playerHero),
 
             // Part 0: Pick up and use dust
-            tg.textDialog(LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_1, LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_2, LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(_ => {
                 goalPickupDust.start();
                 CreateItemOnPositionSync(dustLocation, CreateItem(dustName, undefined, undefined));
@@ -69,7 +69,7 @@ function onStart(complete: () => void) {
                 highlightUiElement(inventorySlot0UIPath, undefined, true)
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 1),
             tg.immediate(_ => goalUseDust.complete()),
@@ -78,7 +78,7 @@ function onStart(complete: () => void) {
                 removeHighlight(inventorySlot0UIPath);
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Outpost_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_4, LocalizationKey.Script_4_Outpost_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
@@ -108,9 +108,9 @@ function onStart(complete: () => void) {
             }),
             tg.wait(3),
 
-            tg.textDialog(LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Outpost_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 8),
-            tg.textDialog(LocalizationKey.Script_4_Outpost_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_5, LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_6, LocalizationKey.Script_4_Outpost_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_7, LocalizationKey.Script_4_Outpost_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Part 2: Take outpost
             // TODO: Camera pan on outpost
@@ -130,7 +130,7 @@ function onStart(complete: () => void) {
                 }
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Outpost_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_8, LocalizationKey.Script_4_Outpost_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             tg.completeOnCheck(_ => {
                 return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
@@ -148,7 +148,7 @@ function onStart(complete: () => void) {
                 riki.MoveToTargetToAttack(playerHero);
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.completeOnCheck(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
@@ -156,9 +156,9 @@ function onStart(complete: () => void) {
             }, 1),
 
             tg.immediate(_ => goalKillRiki.complete()),
-            
-            tg.textDialog(LocalizationKey.Script_4_Outpost_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Outpost_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
+
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_10, LocalizationKey.Script_4_Outpost_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_11, LocalizationKey.Script_4_Outpost_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         ])
     )
 

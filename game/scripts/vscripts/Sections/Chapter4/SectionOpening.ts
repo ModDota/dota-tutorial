@@ -55,11 +55,11 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(playerHero),
             tg.wait(2),
 
-            tg.textDialog(LocalizationKey.Script_4_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_1, LocalizationKey.Script_4_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_2, LocalizationKey.Script_4_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             //Part0: The camera pans to an empty part of the map
             tg.panCameraExponential(playerHero.GetAbsOrigin(), outpostHighgroundCenter, 0.9),
-            tg.textDialog(LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_3, LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             //Part1: Creep wave explains vision
             tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),
             tg.immediate(_ => {
@@ -76,9 +76,9 @@ function onStart(complete: () => void) {
             tg.fork([
                 tg.fork(_ => radiantCreeps.map(unit => tg.moveUnit(_ => unit, Vector(4000, -6000, 128)))),
                 tg.seq([
-                    tg.textDialog(LocalizationKey.Script_4_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
-                    tg.textDialog(LocalizationKey.Script_4_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
-                    tg.textDialog(LocalizationKey.Script_4_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                    tg.audioDialog(LocalizationKey.Script_4_Opening_4, LocalizationKey.Script_4_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_4_Opening_5, LocalizationKey.Script_4_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_4_Opening_6, LocalizationKey.Script_4_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 ]),
             ]),
 
@@ -90,7 +90,7 @@ function onStart(complete: () => void) {
             }),
 
             //Part2: Juke
-            tg.textDialog(LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_7, LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
             tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
             tg.setCameraTarget(context => context[slarkName]),
@@ -116,11 +116,11 @@ function onStart(complete: () => void) {
             tg.immediate(_ => disposeHeroes()),
             tg.immediate(_ => goalWatchJuke.complete()),
 
-            tg.textDialog(LocalizationKey.Script_4_Opening_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 1),
-            tg.textDialog(LocalizationKey.Script_4_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 1),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_8, LocalizationKey.Script_4_Opening_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_9, LocalizationKey.Script_4_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_10, LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(_ => canPlayerIssueOrders = true),
-            tg.textDialog(LocalizationKey.Script_4_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_11, LocalizationKey.Script_4_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             //Part3: 1st scan, failed
             tg.immediate(_ => {
@@ -130,17 +130,17 @@ function onStart(complete: () => void) {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_12, LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.completeOnCheck(_ => checkIfScanCoversTheLocation(firstScanLocation), 1),
             tg.immediate(_ => {
                 goalScanFailed.complete();
                 removeHighlight(scanUIPath);
             }),
-            tg.textDialog(LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_13, LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
-            tg.textDialog(LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 5),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => {
                 scanLocation = undefined;
                 currentRequiredScanLocation = secondScanLocation;
@@ -157,9 +157,9 @@ function onStart(complete: () => void) {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
-            tg.textDialog(LocalizationKey.Script_4_Opening_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 2),
-            tg.textDialog(LocalizationKey.Script_4_Opening_18, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_16, LocalizationKey.Script_4_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_17, LocalizationKey.Script_4_Opening_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_18, LocalizationKey.Script_4_Opening_18, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         ])
     );
 

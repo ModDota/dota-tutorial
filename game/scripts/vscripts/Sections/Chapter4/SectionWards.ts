@@ -98,34 +98,54 @@ function onStart(complete: () => void) {
                 }),
 
                 tg.immediate(_ => goalFetchWard.start()),
-                tg.textDialog(LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                tg.audioDialog(LocalizationKey.Script_4_Wards_1, LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
                 tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
             ]), { type: "arrow", locations: [wardLocationObs, wardLocationSentry] }),
 
             tg.immediate(_ => goalFetchWard.complete()),
-            tg.textDialog(LocalizationKey.Script_4_Wards_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_2, LocalizationKey.Script_4_Wards_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_3, LocalizationKey.Script_4_Wards_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_4, LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_5, LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_6, LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            // TODO: Camera pan to cliffs
             tg.fork([
                 tg.seq([
-                    tg.panCameraExponential(playerHero.GetAbsOrigin(), cliffLocation1, 0.9),
-                    tg.panCameraExponential(cliffLocation1, cliffLocation2, 0.9),
-                    tg.panCameraExponential(cliffLocation2, cliffLocation3, 0.9),
-                    tg.panCameraExponential(cliffLocation3, cliffLocation4, 0.9),
-                    tg.panCameraExponential(cliffLocation4, cliffLocation5, 0.9),
-                    tg.panCameraExponential(cliffLocation5, cliffLocation6, 0.9),
-                    tg.panCameraExponential(cliffLocation6, cliffLocation7, 0.9),
-                    tg.panCameraExponential(cliffLocation7, cliffLocation8, 0.9),
-                    tg.panCameraExponential(cliffLocation8, cliffLocation9, 0.9),
-                    tg.panCameraExponential(cliffLocation9, cliffLocation10, 0.9),
-                    tg.panCameraExponential(cliffLocation10, playerHero.GetAbsOrigin(), 0.9),
+                    tg.panCameraLinear(playerHero.GetAbsOrigin(), cliffLocation1, 2),
+                    tg.panCameraLinear(cliffLocation1, cliffLocation1, 1),
+
+                    tg.panCameraLinear(cliffLocation1, cliffLocation2, 2),
+                    tg.panCameraLinear(cliffLocation2, cliffLocation2, 1),
+
+                    tg.panCameraLinear(cliffLocation2, cliffLocation3, 2),
+                    tg.panCameraLinear(cliffLocation3, cliffLocation3, 1),
+
+                    tg.panCameraLinear(cliffLocation3, cliffLocation4, 2),
+                    tg.panCameraLinear(cliffLocation4, cliffLocation4, 1),
+
+                    tg.panCameraLinear(cliffLocation4, cliffLocation5, 2),
+                    tg.panCameraLinear(cliffLocation5, cliffLocation5, 1),
+
+                    tg.panCameraLinear(cliffLocation5, cliffLocation6, 2),
+                    tg.panCameraLinear(cliffLocation6, cliffLocation6, 1),
+
+                    tg.panCameraLinear(cliffLocation6, cliffLocation7, 2),
+                    tg.panCameraLinear(cliffLocation7, cliffLocation7, 1),
+
+                    tg.panCameraLinear(cliffLocation7, cliffLocation8, 2),
+                    tg.panCameraLinear(cliffLocation8, cliffLocation8, 1),
+
+                    tg.panCameraLinear(cliffLocation8, cliffLocation9, 2),
+                    tg.panCameraLinear(cliffLocation9, cliffLocation9, 1),
+
+                    tg.panCameraLinear(cliffLocation9, cliffLocation10, 2),
+                    tg.panCameraLinear(cliffLocation10, cliffLocation10, 1),
+
+                    tg.panCameraLinear(cliffLocation10, playerHero.GetAbsOrigin(), 2),
+                    tg.panCameraLinear(playerHero.GetAbsOrigin(), playerHero.GetAbsOrigin(), 1),
                 ]),
-                tg.textDialog(LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
 
             tg.immediate(_ => {
@@ -133,7 +153,7 @@ function onStart(complete: () => void) {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_8, LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
 
@@ -143,17 +163,17 @@ function onStart(complete: () => void) {
                 freezePlayerHero(true);
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-            tg.textDialog(LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_9, LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_10, LocalizationKey.Script_4_Wards_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_11, LocalizationKey.Script_4_Wards_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => freezePlayerHero(false)),
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
             tg.immediate(_ => goalPlaceSentryWard.complete()),
 
-            tg.textDialog(LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 1),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 1),
 
             tg.immediate(context => {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
@@ -166,7 +186,7 @@ function onStart(complete: () => void) {
                 goalAttackRiki.start();
                 context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
             }),
-            tg.textDialog(LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_14, LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 400, 0.1),
 
@@ -179,7 +199,7 @@ function onStart(complete: () => void) {
             tg.wait(3),
             tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
-            tg.textDialog(LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Wards_15, LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.waitForModifierKey(ModifierKey.Alt),
             tg.immediate(_ => {
                 goalHoldAlt.complete();
