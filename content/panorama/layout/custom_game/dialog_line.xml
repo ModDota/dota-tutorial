@@ -1,30 +1,28 @@
 <root>
-  <styles>
-  <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
+        <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
 
-  <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
-  <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/dialog_log.css" />
+    </styles>
 
-  <include src="s2r://panorama/styles/custom_game/dialog_log.vcss_c" />
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/dialog_line.js" />
+    </scripts>
 
-  </styles>
-
-  <scripts>
-  <include src="s2r://panorama/scripts/custom_game/dialog_line.vjs_c" />
-  </scripts>
-
-  <Panel class="DialogLine">
-    <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" hittest="false"/>
-    <Panel class="SpeechBubble" hittest="false">
-      <Panel class="SpeechBubbleContainer" hittest="false">
-        <Panel class="SpeechBubbleBackgroundOutline" hittest="false"/>
-        <Panel class="SpeechBubbleCalloutSquash" hittest="false">
-          <Panel class="SpeechBubbleCallout" hittest="false"/>
+    <Panel class="DialogLine" hittest="false" hittestchildren="false">
+        <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false"/>
+        <Image id="DialogImagePortrait" />
+        <Panel class="SpeechBubble">
+            <Panel class="SpeechBubbleContainer">
+                <Panel class="SpeechBubbleBackgroundOutline"/>
+                <Panel class="SpeechBubbleCalloutSquash">
+                    <Panel class="SpeechBubbleCallout"/>
+                </Panel>
+                <Panel class="SpeechBubbleBackground"/>
+            </Panel>
+            <Label id="DialogText" html="true" class="DialogPanelText" />
         </Panel>
-        <Panel class="SpeechBubbleBackground" hittest="false"/>
-      </Panel>
-      <Label id="DialogText" html="true" class="DialogPanelText" hittest="false" />
-
     </Panel>
-  </Panel>
 </root>

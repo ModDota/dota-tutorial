@@ -22,6 +22,9 @@ const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
 }
 
 GameEvents.Subscribe("section_started", event => {
+    // Clear old UI highlights
+    clearUiHighlights();
+    
     const enabledUI = sectionUi[event.section];
     if (enabledUI) {
         const disabledUi = except(allUI, enabledUI);
@@ -48,7 +51,7 @@ function findPanelAtPath(path: string): Panel | undefined {
     const splitPath = path.split("/");
     let panel = hudRoot;
     for (let i = 0; i < splitPath.length; i++) {
-        const child = panel.FindChild(splitPath[i]);
+        const child = panel.FindChildTraverse(splitPath[i]);
         if (child === null) {
             $.Msg(`Failed to find ${splitPath[i]} in ${splitPath.slice(0, i).join("/")}`);
             return undefined;
@@ -61,37 +64,45 @@ function findPanelAtPath(path: string): Panel | undefined {
 function removeHighlight(event: RemoveHighlightEvent) {
     const { path } = event;
     if (!highlightedPanels[path]) {
-        $.Msg("Panel is not currently highlighted");
+        $.Msg(`Panel ${path} is not currently highlighted`);
     }
 
     highlightedPanels[path].DeleteAsync(0);
     delete highlightedPanels[path];
 }
 
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
-function highlightUiElement(event: HighlightElementEvent) {
+function clearUiHighlights() {
+    for (const panel of Object.values(highlightedPanels)) {
+        panel.DeleteAsync(0);
+    }
+    highlightedPanels = {};
+}
+
+// Example usage:
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
+function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
     const { path, duration } = event;
     // Panel is already highlighted
     if (highlightedPanels[path]) {
-        $.Msg("Element is already highlighted");
+        $.Msg(`Element ${path} is already highlighted`);
         return;
     }
 
     const element = findPanelAtPath(path);
     // Can't highlight if the scale is too small/large/uninitialized
     if (element && element.actualuiscale_x > 0.01) {
-        const parent = element.GetParent()!;
+        const pos = element.GetPositionWithinAncestor(hudRoot);
 
         const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
-        highlightPanel.SetParent(parent);
-
+        highlightPanel.hittest = false; // Dont block interactions
         highlightPanel.AddClass("UIHighlight");
+        highlightPanel.SetParent(hudRoot);
 
         // Set size/position
         highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
         highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
-        highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
+        highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
 
         highlightedPanels[path] = highlightPanel;
 
@@ -119,10 +130,43 @@ function ChaptersClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
+//** Guides Panel */
+function ToggleGuidesMenu() {
+    $.Msg("ToggleGuidesMenu");
+
+    $("#GuidesMenu").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_in");
+}
+
+function GuidesClose() {
+    $.Msg("ToggleGuidesMenu");
+
+    $("#GuidesMenu").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
+//** Muting Players Movie Panel */
+function MutePlayersContinue() {
+    $.Msg("MutePlayersContinue");
+
+    $("#MutePlayersPanel").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
+//** Selecting a Guide Movie Panel */
+function SelectGuideContinue() {
+    $.Msg("SelectGuideContinue");
+
+    $("#SelectGuidePanel").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,
     SectionName.Chapter3_Opening,
+    SectionName.Chapter4_Opening,
+    SectionName.Chapter5_Opening,
 ];
 
 function playChapter(chapterNumber: number) {

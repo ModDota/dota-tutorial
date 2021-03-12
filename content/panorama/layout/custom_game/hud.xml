@@ -17,6 +17,7 @@
         <Panel hittest="false" class="TopLeftMenu">
             <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
             <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleChaptersMenu();" onmouseover="UIShowTextTooltip('#Chapters')" onmouseout="UIHideTextTooltip()" />
+            <Button id="GuidesButton" class="TopLeftMenuButton" onactivate="ToggleGuidesMenu();" onmouseover="UIShowTextTooltip('#Guides')" onmouseout="UIHideTextTooltip()" />
         </Panel>
 
         <Panel id="DialogLog" hittest="false">
@@ -99,6 +100,66 @@
                         </Button>
                     </Panel>
                 </Panel>
+            </Panel>
+        </Panel>
+
+        <Panel id="GuidesMenu" hittest="false">
+            <Panel class="GuidesMenuHeader">
+                <Label class="GuidesTitle" text="#Guides" hittest="false"/>
+                <Button class="GuidesCloseButton" onactivate="GuidesClose()" onmouseover="UIShowTextTooltip('#Close')" onmouseout="UIHideTextTooltip()"/>
+            </Panel>
+            <Panel class="GuidesMenuContents">
+                <Panel class="GuideContainer" id="Guide1">
+                     <Panel class="GuideThumbnailContainer">
+                        <Panel class="Guide1Thumbnail" />
+                    </Panel>
+                    <Panel class="GuideInformationContainer">
+                        <Label class="GuideSubTitle" text="#Guide_1" hittest="false"/>
+                        <Button id="GuideOpenButton" class="ButtonBevel" onactivate="ExternalBrowserGoToURL('https://www.youtube.com/watch?v=9Szj-CloJiI');">
+                            <Label text="#Watch"/>
+                        </Button>
+                    </Panel>
+                </Panel>
+                <Panel class="GuideContainer" id="Guide2">
+                     <Panel class="GuideThumbnailContainer">
+                        <Panel class="Guide2Thumbnail" />
+                    </Panel>
+                    <Panel class="GuideInformationContainer">
+                        <Label class="GuideSubTitle" text="#Guide_2" hittest="false"/>
+                        <Button id="GuideOpenButton" class="ButtonBevel" onactivate="ExternalBrowserGoToURL('https://howdoiplay.com/');">
+                            <Label text="#Go_To_Website"/>
+                        </Button>
+                    </Panel>
+                </Panel>
+                <Panel class="GuideContainer" id="Guide3" />
+                <Panel class="GuideContainer" id="Guide4" />
+                <Panel class="GuideContainer" id="Guide5" />
+                <Panel class="GuideContainer" id="Guide6" />
+                <Panel class="GuideContainer" id="Guide7" />
+                <Panel class="GuideContainer" id="Guide8" />
+                <Panel class="GuideContainer" id="Guide9" />
+            </Panel>
+        </Panel>
+
+        <Panel id="MutePlayersPanel" hittest="false">
+            <Panel class="BlurBackground" hittest="false" />
+            <Panel class="MovieContainerMutes">
+                <Label class="MutePlayersTitle" text="#Muting_Player"/>
+                <MoviePanel class ="CustomMoviePanelMuting" src="s2r://panorama/videos/MutePlayer.webm" repeat="true" autoplay="onload" />
+                <Button id="MutePlayersContinue" onactivate="MutePlayersContinue();">
+                    <Label text="#Continue"/>
+                </Button>
+            </Panel>
+        </Panel>
+
+        <Panel id="SelectGuidePanel" hittest="false">
+            <Panel class="BlurBackground" hittest="false" />
+            <Panel class="MovieContainerGuides">
+                <Label class="MutePlayersTitle" text="#Select_Guide"/>
+                <MoviePanel class ="CustomMoviePanelGuides" src="s2r://panorama/videos/Guides.webm" repeat="true" autoplay="onload" />
+                <Button id="MutePlayersContinue" onactivate="SelectGuideContinue();">
+                    <Label text="#Continue"/>
+                </Button>
             </Panel>
         </Panel>
     </Panel>

@@ -3,7 +3,8 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, setUnitPacifist } from "./util";
+import * as dg from "./Dialog"
 
 declare global {
     interface CDOTAGamerules {
@@ -26,18 +27,24 @@ export class GameMode {
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
         chapters.chapter2.SectionCreeps,
+        chapters.chapter2.SectionTower,
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
         chapters.chapter4.sectionOutpost,
+        chapters.chapter4.sectionCommunication,
+        chapters.chapter5.sectionOpening,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
     context: TutorialContext = {};
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
-        // PrecacheResource("particle", "particles/units/heroes/hero_meepo/meepo_earthbind_projectile_fx.vpcf", context);
-        // PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_meepo.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
+        PrecacheResource("particle", ParticleName.HighlightCircle, context);
+        PrecacheResource("particle", ParticleName.HighlightArrowEnemy, context);
+        PrecacheResource("particle", ParticleName.HighlightArrow, context);
+        PrecacheResource("particle", ParticleName.Path, context);
     }
 
     public static Activate(this: void) {
@@ -53,6 +60,8 @@ export class GameMode {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
         })
+
+        dg.init();
     }
 
     private configure(): void {
@@ -93,7 +102,7 @@ export class GameMode {
         GameRules.SetCreepSpawningEnabled(false);
         GameRules.SetAllowOutpostBonuses(false);
         this.Game.SetCustomScanCooldown(9);
-        this.Game.SetCustomGlyphCooldown(99999);
+        this.Game.SetCustomGlyphCooldown(10);
         this.Game.DisableClumpingBehaviorByDefault(true);
         this.Game.SetBuybackEnabled(false);
         this.Game.SetCustomDireScore(0);
@@ -131,6 +140,7 @@ export class GameMode {
         this.Game.SetModifyExperienceFilter(event => this.ModifyExperienceFilter(event), this);
         this.Game.SetModifyGoldFilter(event => this.ModifyGoldFilter(event), this);
         this.Game.SetItemAddedToInventoryFilter(event => this.ItemAddedToInventoryFilter(event), this);
+        this.Game.SetModifierGainedFilter(event => this.ModifierGainedFilter(event), this)
     }
 
     DamageFilter(event: DamageFilterEvent): boolean {
@@ -140,6 +150,11 @@ export class GameMode {
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         // Cancel orders if false
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
+            return false;
+        }
+
+        // Cancel player orders if they are frozen
+        if (isPlayerHeroFrozen() && event.issuer_player_id_const === findRealPlayerID()) {
             return false;
         }
 
@@ -157,11 +172,22 @@ export class GameMode {
     }
 
     ModifyGoldFilter(event: ModifyGoldFilterEvent): boolean {
-        return false;
+        Timers.CreateTimer(() => {
+            PlayerResource.SetGold(event.player_id_const, 0, false),
+                FrameTime() * 1;
+        });
+        return true;
     }
 
     ItemAddedToInventoryFilter(event: ItemAddedToInventoryFilterEvent): boolean {
         return true;
+    }
+
+    ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
+        if (event.name_const === "modifier_rune_doubledamage")
+            event.duration = -1
+
+        return true
     }
 
     public OnStateChange(): void {
@@ -183,26 +209,17 @@ export class GameMode {
             Timers.CreateTimer(3, () => this.StartGame());
         }
 
-        if (state === GameState.GAME_IN_PROGRESS) {
-            // Remove starting TP from player
-            Timers.CreateTimer(1, () => {
-                const hero = getPlayerHero();
-                if (hero && hero.HasItemInInventory("item_tpscroll")) {
-                    const item = hero.FindItemInInventory("item_tpscroll");
-                    if (item) {
-                        hero.RemoveItem(item);
-                    }
-                }
-            });
-        }
+        if (state === GameState.GAME_IN_PROGRESS) { }
     }
 
     private StartGame(): void {
         print("Game starting!");
 
-        print("Starting tutorial from scratch")
-        this.tutorial.start()
+        // Make sure the camera dummy is spawned
+        getCameraDummy(Vector(0, 0, 0));
 
+        print("Starting tutorial from scratch");
+        this.tutorial.start();
     }
 
     // Called on script_reload
@@ -224,6 +241,16 @@ export class GameMode {
                         this.OnPlayerHeroAssigned(unit);
                     }
                 }
+
+                // Remove starting TP from player
+                Timers.CreateTimer(1 / 30, () => {
+                    if (unit && IsValidEntity(unit) && unit.HasItemInInventory("item_tpscroll")) {
+                        const item = unit.FindItemInInventory("item_tpscroll");
+                        if (item) {
+                            unit.RemoveItem(item);
+                        }
+                    }
+                });
             }
 
             // Couriers

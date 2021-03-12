@@ -271,7 +271,8 @@
 }
 
 #GlassBallOverlay,
-#DialogPortrait {
+#DialogPortrait,
+#DialogImagePortrait {
     width: 128px;
     height: 128px;
     //  border-bottom-left-radius: 50%;
@@ -393,7 +394,6 @@
 .DialogPanelText {
     color: black;
     font-style: normal;
-    font-weight: semi-bold;
     font-size: 20px;
     text-overflow: shrink;
     font-family: defaultFont;

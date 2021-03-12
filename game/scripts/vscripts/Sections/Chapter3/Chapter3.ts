@@ -1,13 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import {
-    DestroyNeutrals,
-    getOrError,
-    getPlayerHero,
-    unitIsValidAndAlive,
-    isPointInsidePolygon,
-    setUnitPacifist,
-} from "../../util";
+import { DestroyNeutrals, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, isPointInsidePolygon } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
@@ -17,7 +10,7 @@ import { TutorialContext } from "../../TutorialGraph/index";
 let graph: tg.TutorialStep | undefined = undefined;
 
 let movedToStash = false;
-let riki: CDOTA_BaseNPC | undefined = undefined
+let riki: CDOTA_BaseNPC | undefined = undefined;
 const creepCampCenter = Vector(-2650, 4760.31);
 const markerLocation = Vector(-3250, 4917);
 const creepCampRadius = 1000;
@@ -73,8 +66,13 @@ const requiredState: RequiredState = {
     heroLocation: GetGroundPosition(Vector(-3500, 4500), undefined),
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    requireRiki:true,
+    requireRiki: true,
 };
+
+// UI Highlighting Paths
+const neutralSlotUIPath = "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot"
+const inventorySlot6UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel"
+const inventorySlot7UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_7/ButtonAndLevel"
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
@@ -319,7 +317,7 @@ const onStart = (complete: () => void) => {
                             tryCount++;
                         }
                     );
-                    
+
                     playerHero.Hold();
                 }),
 
@@ -355,7 +353,7 @@ const onStart = (complete: () => void) => {
                     3
                 ),
                 tg.immediate((_) => {
-                    // Commented because removing them seems weird, the player won't understand what's happening 
+                    // Commented because removing them seems weird, the player won't understand what's happening
                     // let units = GetUnitsInsidePolygon(creepCampBox).filter(
                     //     (x) => x.IsBaseNPC() && x.IsNeutralUnitType()
                     // );
@@ -465,7 +463,7 @@ const onStart = (complete: () => void) => {
                                             ctx[CustomNpcKeys.ODPixelMudGolem],
                                         3
                                     );
-                                    // Not reachable but added just in case...
+                                // Not reachable but added just in case...
                                 case 4:
                                     goalStackCreepsMultipleTimes.complete();
                                     return tg.textDialog(
@@ -475,13 +473,13 @@ const onStart = (complete: () => void) => {
                                         3
                                     );
                                 case 5:
-                                        goalStackCreepsMultipleTimes.complete();
-                                        return tg.textDialog(
-                                            LocalizationKey.Script_3_Opening_25,
-                                            (ctx) =>
-                                                ctx[CustomNpcKeys.ODPixelMudGolem],
-                                            3
-                                        );
+                                    goalStackCreepsMultipleTimes.complete();
+                                    return tg.textDialog(
+                                        LocalizationKey.Script_3_Opening_25,
+                                        (ctx) =>
+                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                        3
+                                    );
                                 default:
                                     break;
                             }
@@ -540,7 +538,7 @@ const onStart = (complete: () => void) => {
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            
+
             tg.immediate((_) => goalPickupItem.start()),
             tg.fork([
                 tg.completeOnCheck(() => {
@@ -552,10 +550,8 @@ const onStart = (complete: () => void) => {
     ];
 
     const killThirdSpawn = () => {
-        
         return [
             tg.seq([
-                
                 tg.immediate((_) => {
                     goalKillThirdSpawn.start();
                     creepPhase = 3;
@@ -580,7 +576,10 @@ const onStart = (complete: () => void) => {
                 ),
                 tg.wait(0),
                 tg.immediate(
-                    (_) => (creepArr = GetUnitsInsidePolygon(creepCampBox).filter(x=>x.IsNeutralUnitType()))
+                    (_) =>
+                        (creepArr = GetUnitsInsidePolygon(
+                            creepCampBox
+                        ).filter((x) => x.IsNeutralUnitType()))
                 ),
                 tg.wait(0),
                 tg.completeOnCheck((ctx) => {
@@ -593,9 +592,11 @@ const onStart = (complete: () => void) => {
                 }, 1),
                 tg.immediate((_) => goalKillThirdSpawn.complete()),
                 tg.immediate((_) => goalPickupItem.start()),
-                tg.completeOnCheck((_) => playerHero.HasItemInInventory(dropInStashItemName), .1),
+                tg.completeOnCheck(
+                    (_) => playerHero.HasItemInInventory(dropInStashItemName),
+                    0.1
+                ),
                 tg.immediate((_) => goalPickupItem.complete()),
-                
             ]),
         ];
     };
@@ -619,8 +620,8 @@ const onStart = (complete: () => void) => {
                 3
             ),
             tg.completeOnCheck((_) => {
-                return movedToStash === true
-            },  0.1),
+                return movedToStash === true;
+            }, 0.1),
             tg.immediate((_) => goalStash.complete()),
             tg.textDialog(
                 LocalizationKey.Script_3_Neutrals_9,
@@ -651,24 +652,24 @@ const onStart = (complete: () => void) => {
     ];
 
     const chaseRiki = () => {
-        
-        return[
-        tg.seq([
-            tg.immediate((_) => {
-                goalMoveToRiki.start();
-            }),
-            tg.textDialog(
-                LocalizationKey.Script_3_Neutrals_99,
-                (ctx) => ctx[CustomNpcKeys.Riki],
-                3
-            ),
-            tg.textDialog(
-                LocalizationKey.Script_3_Neutrals_14,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                3
-            ),
-        ]),
-    ]};
+        return [
+            tg.seq([
+                tg.immediate((_) => {
+                    goalMoveToRiki.start();
+                }),
+                tg.textDialog(
+                    LocalizationKey.Script_3_Neutrals_99,
+                    (ctx) => ctx[CustomNpcKeys.Riki],
+                    3
+                ),
+                tg.textDialog(
+                    LocalizationKey.Script_3_Neutrals_14,
+                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
+                    3
+                ),
+            ]),
+        ];
+    };
 
     graph = tg.withGoals(
         (_) => goalTracker.getGoals(),

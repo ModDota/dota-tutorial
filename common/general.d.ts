@@ -7,10 +7,13 @@ declare const enum SectionName {
     Chapter1_ShopUI = "Chapter1_ShopUI",
     Chapter2_Opening = "Chapter2_Opening",
     Chapter2_Creeps = "Chapter2_Creeps",
+    Chapter2_Tower = "Chapter2_Tower",
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
     Chapter4_Outpost = "Chapter4_Outpost",
+    Chapter4_Communication = "Chapter4_Communication",
+    Chapter5_Opening = "Chapter5_Opening",
 }
 
 declare const enum CustomNpcKeys {
@@ -26,6 +29,20 @@ declare const enum CustomNpcKeys {
     Riki = "npc_dota_hero_riki",
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
+    DireTopT1Tower = "npc_dota_badguys_tower1_top",
+    Sniper = "npc_dota_hero_sniper"
+}
+
+declare const enum CustomEntityKeys {
+    RadiantTopBountyFOWViewer = "radiant_top_bounty_fow_viewer",
+    RadiantAncientsBountyFOWViewer = "radiant_ancients_bounty_fow_viewer",
+    DireBotBountyFOWViewer = "dire_bot_bounty_fow_viewer",
+    DireAncientsBountyFOWViewer = "dire_ancients_bounty_fow_viewer",
+    RadiantTopBountyRune = "radiant_top_bounty_rune",
+    RadiantAncientsBountyRune = "radiant_ancients_bounty_rune",
+    DireBotBountyRune = "dire_bot_bounty_rune",
+    DireAncientsBountyRune = "dire_ancients_bounty_rune",
+    TopPowerRune = "top_power_rune"
 }
 
 declare const enum CustomAbilityKeys {
@@ -41,4 +58,11 @@ declare const enum ModifierKey {
     Alt,
     Shift,
     Control,
+}
+
+declare const enum ParticleName {
+    HighlightCircle = "particles/tutorial_highlight.vpcf",
+    HighlightArrow = "particles/tutorial_arrow_base.vpcf",
+    HighlightArrowEnemy = "particles/tutorial_arrow_attack_base.vpcf",
+    Path = "particles/tutorial_path.vpcf",
 }

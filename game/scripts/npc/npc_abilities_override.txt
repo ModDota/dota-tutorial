@@ -1,0 +1,16 @@
+"DOTAAbilities"
+{
+	"Version"		"1"
+
+    "dragon_knight_elder_dragon_form"
+    {
+        "AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"					"FIELD_FLOAT"
+				"duration"                  "300"
+			}
+        }
+    }
+}
