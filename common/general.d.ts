@@ -62,8 +62,10 @@ declare const enum ModifierKey {
 
 declare const enum ParticleName {
     HighlightCircle = "particles/tutorial_highlight.vpcf",
-    HighlightArrow = "particles/tutorial_arrow_base.vpcf",
-    HighlightArrowEnemy = "particles/tutorial_arrow_attack_base.vpcf",
+    HighlightOrangeArrow = "particles/tutorial_arrow.vpcf",
+    HighlightOrangeCircle = "particles/tutorial_arrow_ring.vpcf",
+    HighlightRedArrow = "particles/tutorial_arrow_attack.vpcf",
+    HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
 }
 
