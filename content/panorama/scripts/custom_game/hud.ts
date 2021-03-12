@@ -22,6 +22,9 @@ const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
 }
 
 GameEvents.Subscribe("section_started", event => {
+    // Clear old UI highlights
+    clearUiHighlights();
+
     const enabledUI = sectionUi[event.section];
     if (enabledUI) {
         const disabledUi = except(allUI, enabledUI);
@@ -61,45 +64,85 @@ function findPanelAtPath(path: string): Panel | undefined {
 function removeHighlight(event: RemoveHighlightEvent) {
     const { path } = event;
     if (!highlightedPanels[path]) {
-        $.Msg("Panel is not currently highlighted");
+        $.Msg(`Panel ${path} is not currently highlighted`);
+        return;
     }
 
     highlightedPanels[path].DeleteAsync(0);
     delete highlightedPanels[path];
 }
 
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
+function clearUiHighlights() {
+    for (const panel of Object.values(highlightedPanels)) {
+        panel.DeleteAsync(0);
+    }
+    highlightedPanels = {};
+}
+
+// Example usage:
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
 function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
-    const { path, duration, setElementAsParent } = event;
+    const { path, duration } = event;
     // Panel is already highlighted
     if (highlightedPanels[path]) {
-        $.Msg("Element is already highlighted");
+        $.Msg(`Element ${path} is already highlighted`);
         return;
     }
 
     const element = findPanelAtPath(path);
     // Can't highlight if the scale is too small/large/uninitialized
     if (element && element.actualuiscale_x > 0.01) {
-        const parent = element.GetParent()!;
+        const pos = element.GetPositionWithinAncestor(hudRoot);
 
         const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
-        if (setElementAsParent) highlightPanel.SetParent(element);
-        else highlightPanel.SetParent(parent);
-
+        highlightPanel.hittest = false; // Dont block interactions
         highlightPanel.AddClass("UIHighlight");
+        highlightPanel.SetParent(hudRoot);
 
         // Set size/position
         highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
         highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
-        highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
+        highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
 
         highlightedPanels[path] = highlightPanel;
 
         if (duration) {
             $.Schedule(duration, () => removeHighlight({ path }));
         }
+
+        const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
+        if (isShopGuideItem) {
+            const needsAdjusting = !Game.IsShopOpen()
+            checkShopHighlightItemPanel(highlightPanel, element, needsAdjusting)
+        }
     }
+}
+
+function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel, needsAdjusting: boolean) {
+    if (!highlightPanel.IsValid()) return
+
+    const isShopOpen = Game.IsShopOpen()
+
+    // Manage visibility
+    isShopOpen ? highlightPanel.style.visibility = "visible" :
+        highlightPanel.style.visibility = "collapse"
+
+    // Adjust position of the panel if needed
+    if (needsAdjusting) {
+        if (!isShopOpen) {
+            $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
+            return;
+        }
+        else {
+            const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
+            const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
+            if (highlightPanel.style.position !== originalPanelPosition)
+                highlightPanel.style.position = originalPanelPosition
+        }
+    }
+
+    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
 }
 
 GameEvents.Subscribe("highlight_element", highlightUiElement);
@@ -135,22 +178,6 @@ function GuidesClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
-//** Muting Players Movie Panel */
-function MutePlayersContinue() {
-    $.Msg("MutePlayersContinue");
-
-    $("#MutePlayersPanel").SetHasClass("Visible", false);
-    Game.EmitSound("ui_chat_slide_out");
-}
-
-//** Selecting a Guide Movie Panel */
-function SelectGuideContinue() {
-    $.Msg("SelectGuideContinue");
-
-    $("#SelectGuidePanel").SetHasClass("Visible", false);
-    Game.EmitSound("ui_chat_slide_out");
-}
-
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,
@@ -160,6 +187,7 @@ const chapterSections = [
 ];
 
 function playChapter(chapterNumber: number) {
+    Game.EmitSound("ui_generic_button_click")
     if (chapterSections[chapterNumber]) {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
     }

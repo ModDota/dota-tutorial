@@ -12,6 +12,8 @@ export type RequiredState = {
     heroLocationTolerance?: number // How far the hero can be from heroLocation without getting teleported
     heroGold?: number
     heroAbilityMinLevels?: [number, number, number, number],
+    heroItems?: Record<string, number>, // Items (and how many of them) the hero must have in his inventory.
+    removeUnrequiredItems?: boolean,  // If true, remove any items not specified in heroItems. (Default true)
     heroHasDoubleDamage?: boolean
 
     // Golems
@@ -19,6 +21,9 @@ export type RequiredState = {
     sunsFanLocation?: Vector
     requireSlacksGolem?: boolean
     slacksLocation?: Vector
+
+    // Towers
+    topDireT1TowerStanding?: boolean
 
     // Riki
     requireRiki?: boolean
@@ -50,6 +55,8 @@ export const defaultRequiredState: FilledRequiredState = {
     heroLocationTolerance: 1000,
     heroGold: 0,
     heroAbilityMinLevels: [0, 0, 1, 0],
+    heroItems: {},
+    removeUnrequiredItems: true,
     heroHasDoubleDamage: false,
 
     // Golems
@@ -57,6 +64,9 @@ export const defaultRequiredState: FilledRequiredState = {
     sunsFanLocation: Vector(0, 0, 256),
     requireSlacksGolem: false,
     slacksLocation: Vector(0, 0, 256),
+
+    // Towers
+    topDireT1TowerStanding: true,
 
     // Riki
     requireRiki: false,

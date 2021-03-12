@@ -532,7 +532,7 @@
 		},
 		{
 			_class = "C_OP_LerpEndCapScalar"
-			m_nFieldOutput = 7
+			m_nFieldOutput = "7"
 			m_flOutput = 0.0
 			m_flLerpTime = 0.2
 		},
@@ -545,12 +545,12 @@
 		},
 		{
 			_class = "C_OP_NormalizeVector"
-			m_nFieldOutput = 21
+			m_nFieldOutput = "21"
 			m_bDisableOperator = true
 		},
 		{
 			_class = "C_OP_RemapDirectionToCPToVector"
-			m_nFieldOutput = 21
+			m_nFieldOutput = "21"
 		},
 	]
 	m_Renderers = 

@@ -40,7 +40,6 @@ interface ClockTimeEvent {
 interface HighlightElementEvent {
     path: string;
     duration?: number;
-    setElementAsParent?: boolean;
 }
 
 interface RemoveHighlightEvent {
@@ -53,6 +52,10 @@ interface ChatWheelPhraseSelectedEvent {
 
 interface ShopOpenChangedEvent {
     open: boolean;
+}
+
+interface PlayVideoEvent {
+    name: VideoName;
 }
 
 interface CustomGameEventDeclarations {
@@ -74,4 +77,7 @@ interface CustomGameEventDeclarations {
     remove_highlight: RemoveHighlightEvent;
     chat_wheel_phrase_selected: ChatWheelPhraseSelectedEvent;
     shop_open_changed: ShopOpenChangedEvent;
+    play_video: PlayVideoEvent;
+    hide_video: {};
+    play_video_continue: {};
 }
