@@ -193,32 +193,38 @@ const onStart = (complete: () => void) => {
                 }),
                 tg.wait(0),
                 tg.immediate((_) => GameRules.SpawnNeutralCreeps()),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_1,
                     LocalizationKey.Script_3_Opening_1,
                     (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_2,
                     LocalizationKey.Script_3_Opening_2,
                     (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_3,
                     LocalizationKey.Script_3_Opening_3,
                     (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_4,
                     LocalizationKey.Script_3_Opening_4,
                     (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_5,
                     LocalizationKey.Script_3_Opening_5,
                     (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_6,
                     LocalizationKey.Script_3_Opening_6,
                     (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                     3
@@ -250,7 +256,8 @@ const onStart = (complete: () => void) => {
         tg.seq([
             tg.immediate((_) => goalPressAlt.start()),
             tg.waitForModifierKey(ModifierKey.Alt),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Opening_7,
                 LocalizationKey.Script_3_Opening_7,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
@@ -268,12 +275,14 @@ const onStart = (complete: () => void) => {
             }, 0.1),
             tg.immediate((_) => goalMoveOutOfNeutralBox.complete()),
             tg.wait(2),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Opening_8,
                 LocalizationKey.Script_3_Opening_8,
                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Opening_9,
                 LocalizationKey.Script_3_Opening_9,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
@@ -321,7 +330,8 @@ const onStart = (complete: () => void) => {
                     playerHero.Hold();
                 }),
 
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_10,
                     LocalizationKey.Script_3_Opening_10,
                     (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
@@ -337,7 +347,8 @@ const onStart = (complete: () => void) => {
                     () => {
                         if (tryCount === 1) {
                             tryCount = 0;
-                            return tg.textDialog(
+                            return tg.audioDialog(
+                                LocalizationKey.Script_3_Opening_16,
                                 LocalizationKey.Script_3_Opening_16,
                                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                                 3
@@ -347,7 +358,8 @@ const onStart = (complete: () => void) => {
                         }
                     }
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Opening_17,
                     LocalizationKey.Script_3_Opening_17,
                     (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
@@ -374,7 +386,7 @@ const onStart = (complete: () => void) => {
         let units: CDOTA_BaseNPC[] = [];
         let stackCount = 0;
         let tryCount = 0;
-        let stackTries = 3;
+        let stackTries = 5;
         let completed = true;
         const timeManager = GameRules.Addon.customTimeManager;
         return [
@@ -419,65 +431,72 @@ const onStart = (complete: () => void) => {
                         undefined
                     );
                 }),
-                tg.textDialog(
+                tg.audioDialog(
                     LocalizationKey.Script_3_Opening_19,
-                    (ctx) => ctx[CustomNpcKeys.ODPixelMudGolem],
+                    LocalizationKey.Script_3_Opening_19,
+                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
                 ),
                 tg.loop(
                     (_) => completed,
                     (ctx: TutorialContext) => {
-                        completed = !(timeManager.time === 0 && tryCount === 3);
+                        completed = !(timeManager.time === 0 && tryCount === stackTries);
                         if (completed === false) {
                             switch (stackCount) {
                                 case 0:
-                                    //completed = true;
+                                    completed = true;
                                     tryCount = 0;
-                                    return tg.textDialog(
+                                    return tg.audioDialog(
+                                        LocalizationKey.Script_3_Opening_20,
                                         LocalizationKey.Script_3_Opening_20,
                                         (ctx) =>
-                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                            ctx[CustomNpcKeys.SunsFanMudGolem],
                                         3
                                     );
                                 case 1:
                                     goalStackCreepsMultipleTimes.complete();
-                                    return tg.textDialog(
+                                    return tg.audioDialog(
+                                        LocalizationKey.Script_3_Opening_21,
                                         LocalizationKey.Script_3_Opening_21,
                                         (ctx) =>
-                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                            ctx[CustomNpcKeys.SunsFanMudGolem],
                                         3
                                     );
                                 case 2:
                                     goalStackCreepsMultipleTimes.complete();
-                                    return tg.textDialog(
+                                    return tg.audioDialog(
+                                        LocalizationKey.Script_3_Opening_22,
                                         LocalizationKey.Script_3_Opening_22,
                                         (ctx) =>
-                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                            ctx[CustomNpcKeys.SunsFanMudGolem],
                                         3
                                     );
                                 case 3:
                                     goalStackCreepsMultipleTimes.complete();
-                                    return tg.textDialog(
+                                    return tg.audioDialog(
+                                        LocalizationKey.Script_3_Opening_23,
                                         LocalizationKey.Script_3_Opening_23,
                                         (ctx) =>
-                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                            ctx[CustomNpcKeys.SunsFanMudGolem],
                                         3
                                     );
                                 // Not reachable but added just in case...
                                 case 4:
                                     goalStackCreepsMultipleTimes.complete();
-                                    return tg.textDialog(
+                                    return tg.audioDialog(
+                                        LocalizationKey.Script_3_Opening_24,
                                         LocalizationKey.Script_3_Opening_24,
                                         (ctx) =>
-                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                            ctx[CustomNpcKeys.SunsFanMudGolem],
                                         3
                                     );
                                 case 5:
                                     goalStackCreepsMultipleTimes.complete();
-                                    return tg.textDialog(
+                                    return tg.audioDialog(
+                                        LocalizationKey.Script_3_Opening_25,
                                         LocalizationKey.Script_3_Opening_25,
                                         (ctx) =>
-                                            ctx[CustomNpcKeys.ODPixelMudGolem],
+                                            ctx[CustomNpcKeys.SunsFanMudGolem],
                                         3
                                     );
                                 default:
@@ -501,7 +520,8 @@ const onStart = (complete: () => void) => {
 
     const killStackedCamp = () => [
         tg.seq([
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Opening_26,
                 LocalizationKey.Script_3_Opening_26,
                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                 3
@@ -523,17 +543,20 @@ const onStart = (complete: () => void) => {
 
     const pickUpItems = () => [
         tg.seq([
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_1,
                 LocalizationKey.Script_3_Neutrals_1,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_2,
                 LocalizationKey.Script_3_Neutrals_2,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_3,
                 LocalizationKey.Script_3_Neutrals_3,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
@@ -564,12 +587,14 @@ const onStart = (complete: () => void) => {
                 }),
                 tg.wait(0),
                 tg.immediate((_) => GameRules.SpawnNeutralCreeps()),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Neutrals_4,
                     LocalizationKey.Script_3_Neutrals_4,
                     (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Neutrals_5,
                     LocalizationKey.Script_3_Neutrals_5,
                     (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                     3
@@ -604,17 +629,20 @@ const onStart = (complete: () => void) => {
     const stashItem = () => [
         tg.seq([
             tg.immediate((_) => goalStash.start()),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_6,
                 LocalizationKey.Script_3_Neutrals_6,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_7,
                 LocalizationKey.Script_3_Neutrals_7,
                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_8,
                 LocalizationKey.Script_3_Neutrals_8,
                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                 3
@@ -623,27 +651,32 @@ const onStart = (complete: () => void) => {
                 return movedToStash === true;
             }, 0.1),
             tg.immediate((_) => goalStash.complete()),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_9,
                 LocalizationKey.Script_3_Neutrals_9,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_10,
                 LocalizationKey.Script_3_Neutrals_10,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_11,
                 LocalizationKey.Script_3_Neutrals_11,
                 (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_12,
                 LocalizationKey.Script_3_Neutrals_12,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
             ),
-            tg.textDialog(
+            tg.audioDialog(
+                LocalizationKey.Script_3_Neutrals_13,
                 LocalizationKey.Script_3_Neutrals_13,
                 (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
                 3
@@ -657,12 +690,14 @@ const onStart = (complete: () => void) => {
                 tg.immediate((_) => {
                     goalMoveToRiki.start();
                 }),
-                tg.textDialog(
-                    LocalizationKey.Script_3_Neutrals_99,
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Neutrals_1,
+                    LocalizationKey.Script_3_Neutrals_1,
                     (ctx) => ctx[CustomNpcKeys.Riki],
                     3
                 ),
-                tg.textDialog(
+                tg.audioDialog(
+                    LocalizationKey.Script_3_Neutrals_14,
                     LocalizationKey.Script_3_Neutrals_14,
                     (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
                     3
