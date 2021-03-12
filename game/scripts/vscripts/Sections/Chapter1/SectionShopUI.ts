@@ -53,7 +53,7 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.wait(FrameTime()),
+            tg.wait(FrameTime() * 2),
 
             // Wait for the player to open their shop.
             tg.immediate(_ => {
