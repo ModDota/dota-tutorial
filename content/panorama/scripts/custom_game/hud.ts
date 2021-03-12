@@ -112,38 +112,33 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
         }
 
         const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
-        if (isShopGuideItem)
-        {
+        if (isShopGuideItem) {
             const needsAdjusting = !Game.IsShopOpen()
             checkShopHighlightItemPanel(highlightPanel, element, needsAdjusting)
         }
     }
 }
 
-function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel, needsAdjusting: boolean)
-{
+function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel, needsAdjusting: boolean) {
     if (!highlightPanel.IsValid()) return
 
     const isShopOpen = Game.IsShopOpen()
 
     // Manage visibility
-    isShopOpen ?  highlightPanel.style.visibility = "visible" :
-                  highlightPanel.style.visibility = "collapse"
+    isShopOpen ? highlightPanel.style.visibility = "visible" :
+        highlightPanel.style.visibility = "collapse"
 
     // Adjust position of the panel if needed
-    if (needsAdjusting)
-    {
-        if (!isShopOpen)
-        {
+    if (needsAdjusting) {
+        if (!isShopOpen) {
             $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
             return;
         }
-        else
-        {
+        else {
             const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
             const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
             if (highlightPanel.style.position !== originalPanelPosition)
-            highlightPanel.style.position = originalPanelPosition
+                highlightPanel.style.position = originalPanelPosition
         }
     }
 
