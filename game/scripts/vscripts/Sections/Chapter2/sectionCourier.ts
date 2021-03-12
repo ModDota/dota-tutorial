@@ -47,7 +47,6 @@ const crystalisRecipe = "item_recipe_lesser_crit"
 
 const allowedItems: Set<String> = new Set()
 
-
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
@@ -111,7 +110,7 @@ const onStart = (complete: () => void) => {
             goalMoveToSecretShop.start()
             freezePlayerHero(false)
         }),
-        tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation, inFrontOfRadiantSecretShopLocation]),
+        tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation]),
         tg.immediate(() => {
             goalMoveToSecretShop.complete()
         }),
@@ -214,7 +213,7 @@ const onStart = (complete: () => void) => {
             freezePlayerHero(false)
             goalMoveToFinalPosition.start()
         }),
-        tg.goToLocation(finalMovementPositionLocation, _ => [insideRiverLocation, inFrontOfTheRiverLocation, finalMovementPositionLocation]),
+        tg.goToLocation(finalMovementPositionLocation, _ => [insideRiverLocation, inFrontOfTheRiverLocation]),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )
@@ -228,7 +227,7 @@ const onStart = (complete: () => void) => {
 const onStop = () => {
     print("Stopping", sectionName);
 
-    const courier = getPlayerCourier()
+    const courier = getOrError(getPlayerCourier())
     if (courier && courier.HasModifier(modifier_courier_chapter_2_ms_bonus.name)) {
         courier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
     }
@@ -264,15 +263,12 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
     }
 
     if (playerOrderMustBuyRecipeAndCrystalis) {
-        print(event.shop_item_name, event.order_type)
         if (event.order_type !== UnitOrder.PURCHASE_ITEM) {
-            print("Not a purchase order")
             displayDotaErrorMessage("Buy the Daedalus recipe and Crystalis to continue")
             return false
         }
 
         if (!allowedItems.has(event.shop_item_name)) {
-            print(`${event.shop_item_name} not included in the allowed items list`)
             displayDotaErrorMessage("Buy the Daedalus recipe and Crystalis to continue")
             return false
         }

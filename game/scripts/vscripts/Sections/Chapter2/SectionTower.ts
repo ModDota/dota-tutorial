@@ -142,7 +142,7 @@ const onStart = (complete: () => void) => {
                 freezePlayerHero(false)
             }),
             tg.panCameraExponential(_ => fountainLocation, playerHero.GetAbsOrigin(), 0.9),
-            tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => [moveAfterTeleportCloseToTowerLocation]),
+            tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => []),
             tg.immediate(() => {
                 goalGetBackToTopTowerPosition.complete()
                 playerHero.Stop()
@@ -180,13 +180,13 @@ const onStart = (complete: () => void) => {
                         freezePlayerHero(false)
                     }),
 
-                    tg.goToLocation(firstTowerSneakLocation, _ => [firstTowerSneakLocation]),
+                    tg.goToLocation(firstTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakThroughTower.setValue(1)),
-                    tg.goToLocation(secondTowerSneakLocation, _ => [secondTowerSneakLocation]),
+                    tg.goToLocation(secondTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakThroughTower.setValue(2)),
-                    tg.goToLocation(thirdTowerSneakLocation, _ => [thirdTowerSneakLocation]),
+                    tg.goToLocation(thirdTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakThroughTower.setValue(3)),
-                    tg.goToLocation(finalTowerSneakLocation, _ => [finalTowerSneakLocation]),
+                    tg.goToLocation(finalTowerSneakLocation, _ => []),
                     tg.immediate(() => {
                         goalSneakThroughTower.setValue(4)
                         goalSneakThroughTower.complete()
@@ -197,13 +197,13 @@ const onStart = (complete: () => void) => {
                         goalSneakBackAgain.start()
                         freezePlayerHero(false)
                     }),
-                    tg.goToLocation(thirdTowerSneakLocation, _ => [thirdTowerSneakLocation]),
+                    tg.goToLocation(thirdTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakBackAgain.setValue(1)),
-                    tg.goToLocation(secondTowerSneakLocation, _ => [secondTowerSneakLocation]),
+                    tg.goToLocation(secondTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakBackAgain.setValue(2)),
-                    tg.goToLocation(firstTowerSneakLocation, _ => [firstTowerSneakLocation]),
+                    tg.goToLocation(firstTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakBackAgain.setValue(3)),
-                    tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => [moveAfterTeleportCloseToTowerLocation]),
+                    tg.goToLocation(moveAfterTeleportCloseToTowerLocation, []),
                     tg.immediate(() => {
                         goalSneakBackAgain.setValue(4)
                         goalSneakBackAgain.complete()

@@ -53,23 +53,21 @@ const onStart = (complete: () => void) => {
     const chosenSniperTalkShitLocalizationOption = sniperTalkShitLocalizationOptions[RandomInt(0, sniperTalkShitLocalizationOptions.length - 1)]
 
     const lastHitCount = 5;
-    const lastHitBreathFireCount = 3;
-    const denyCount = 5;
+    const lastHitBreathFireCount = 1;
+    const denyCount = 3;
 
     const goalTracker = new GoalTracker()
-    const goalLastHitCreeps = goalTracker.addNumeric(`Last hit ${lastHitCount} creeps`, lastHitCount);
-    const goalLastHitCreepsWithBreatheFire = goalTracker.addNumeric(`Last hit ${lastHitBreathFireCount} creeps using Breath Fire`, lastHitBreathFireCount);
-    const goalDenyOwnCreeps = goalTracker.addNumeric(`Deny ${denyCount} friendly creeps`, denyCount);
+    const goalLastHitCreeps = goalTracker.addNumeric(`Last hit enemy creeps`, lastHitCount);
+    const goalLastHitCreepsWithBreatheFire = goalTracker.addNumeric(`Last hit enemy creeps using Breath Fire`, lastHitBreathFireCount);
+    const goalDenyOwnCreeps = goalTracker.addNumeric(`Deny friendly creeps`, denyCount);
     const goalKillSniper = goalTracker.addBoolean("Kill Sniper.");
 
     if (!radiantCreeps) {
         radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, false);
-        GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] = radiantCreeps;
     }
 
     if (!direCreeps) {
         direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, false);
-        GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] = direCreeps;
     }
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
@@ -283,21 +281,21 @@ const onStart = (complete: () => void) => {
                         }, 0.25),
                     ]),
                         context =>
-                        (
-                            {
-                                type: "arrow_enemy",
-                                attach: true,
-                                units: [context[Chapter2SpecificKeys.sniperEnemyHero]]
-                            }
-                        )
+                        ({
+                            type: "arrow_enemy",
+                            attach: true,
+                            units: [context[Chapter2SpecificKeys.sniperEnemyHero]]
+                        })
                     ),
 
                     // No audio dialog for this yet
                     tg.textDialog(LocalizationKey.Script_2_Creeps_24, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
-                    tg.immediate(() => {
+                    tg.immediate(context => {
                         goalKillSniper.complete()
 
                         if (lastHitTimer) Timers.RemoveTimer(lastHitTimer)
+                        removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
+                        removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
                     })
                 ])
             ])
@@ -371,7 +369,12 @@ function createLaneCreeps(creepNames: string[], location: Vector, team: DotaTeam
         arrayToPush.push(creep);
 
         if (sendCreepToFight) Timers.CreateTimer(0.1, () => SendCreepToFight(creep))
-
     }
+
+    if (team === DotaTeam.GOODGUYS)
+        GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] = arrayToPush
+    else
+        GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] = arrayToPush
+
     return arrayToPush;
 }
