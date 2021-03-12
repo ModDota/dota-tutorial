@@ -60,10 +60,13 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
+            tg.wait(FrameTime()),
             tg.setCameraTarget(undefined),
-            tg.immediate(context => goalMoveNextToBarracks.start()),
-            tg.immediate(() => freezePlayerHero(false)),
-            tg.goToLocation(moveNextToBarracksLocation, _ => []),
+            tg.immediate(context => {
+                goalMoveNextToBarracks.start(),
+                    freezePlayerHero(false)
+            }),
+            tg.goToLocation(moveNextToBarracksLocation),
             tg.immediate(context => {
                 goalMoveNextToBarracks.complete()
                 goalListenToSunsfanAndSlacks.start()
@@ -83,9 +86,9 @@ const onStart = (complete: () => void) => {
 
             // Talking about moonwells
             tg.withHighlights(tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_2, LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_3, LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-                ]), {
+                tg.audioDialog(LocalizationKey.Script_2_Opening_2, LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Opening_3, LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem]),
+            ]), {
                 type: "circle",
                 units: Entities.FindAllByClassname("npc_dota_filler").concat(Entities.FindAllByClassname("npc_dota_effigy_statue")) as CDOTA_BaseNPC[],
                 radius: 150,
@@ -95,13 +98,13 @@ const onStart = (complete: () => void) => {
 
             // Talking about barracks
             tg.withHighlights(tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_5, LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_6, LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_7, LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_8, LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_9, LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem]),
-                ]), {
+                tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Opening_5, LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Opening_6, LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Opening_7, LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Opening_8, LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Opening_9, LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem]),
+            ]), {
                 type: "circle",
                 units: Entities.FindAllByClassnameWithin("npc_dota_barracks", inFrontOfRadiantAncientLocation, 2500) as CDOTA_BaseNPC[], // only radiant barracks should be highlighted here
                 radius: 230,
