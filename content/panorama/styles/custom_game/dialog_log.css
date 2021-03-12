@@ -4,7 +4,7 @@
 }
 
 .TopLeftMenu {
-    width: 125px;
+    width: 175px;
     height: 40px;
     margin-top: 9px;
     margin-left: 150px;
@@ -67,9 +67,23 @@
     opacity: 1;
 }
 
+#CreditsButton {
+    background-image: url("file://{images}/custom_game/credits/credits.png");
+    background-size: 95%;
+    margin-top: 7px;
+    margin-left: 135px;
+    transition-duration: 0.2s;
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    brightness: 1;
+    wash-color: #F6A639;
+    opacity: 1;
+}
+
 #DialogLogButton:hover,
 #SkipButton:hover,
-#GuidesButton:hover {
+#GuidesButton:hover,
+#CreditsButton:hover {
     opacity: 0.5;
     transition-duration: 0.3s;
     transition-property: opacity;

@@ -145,6 +145,21 @@ function GuidesClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
+//** Credits Panel */
+function ToggleCreditsMenu() {
+    $.Msg("ToggleCreditsMenu");
+
+    $("#CreditsMenu").ToggleClass("Visible");
+    Game.EmitSound("ui_chat_slide_in");
+}
+
+function CreditsClose() {
+    $.Msg("CreditsClose");
+
+    $("#CreditsMenu").SetHasClass("Visible", false);
+    Game.EmitSound("ui_chat_slide_out");
+}
+
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,
