@@ -154,6 +154,7 @@ const chapterSections = [
 ];
 
 function playChapter(chapterNumber: number) {
+    Game.EmitSound("ui_generic_button_click")
     if (chapterSections[chapterNumber]) {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
     }
