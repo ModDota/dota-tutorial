@@ -39,7 +39,7 @@
     transition-property: opacity, transform;
     transition-duration: 0.3s;
     z-index: 5;
-     background-color: #111920ff;
+     background-color: #000000ef;
     border-radius: 5px;
     box-shadow: #000000aa -4px -4px 8px 8px;
 }
