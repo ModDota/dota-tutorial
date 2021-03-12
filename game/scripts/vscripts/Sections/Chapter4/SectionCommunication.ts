@@ -36,6 +36,8 @@ function onStart(complete: () => void) {
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
+    let voicePressed = false;
+
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
@@ -75,9 +77,13 @@ function onStart(complete: () => void) {
             tg.forkAny([
                 tg.seq([
                     tg.waitForCommand(37), // Team voice
+                    tg.immediate(_ => voicePressed = true),
                     tg.audioDialog(LocalizationKey.Script_4_Communication_4, LocalizationKey.Script_4_Communication_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 ]),
-                tg.wait(8),
+                tg.seq([
+                    tg.wait(8),
+                    tg.completeOnCheck(_ => !voicePressed, 0.1),
+                ])
             ]),
             tg.immediate(_ => goalPressVoiceChatButton.complete()),
 
@@ -98,7 +104,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Communication_9, LocalizationKey.Script_4_Communication_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_10, LocalizationKey.Script_4_Communication_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_11, LocalizationKey.Script_4_Communication_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            // TODO: Lightup scoreboard and mute screenshot
+            tg.showVideo("muting"),
             // TODO: Spam Whoops
             tg.audioDialog(LocalizationKey.Script_4_Communication_12, LocalizationKey.Script_4_Communication_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_13, LocalizationKey.Script_4_Communication_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
