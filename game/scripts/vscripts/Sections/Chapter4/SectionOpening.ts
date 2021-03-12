@@ -103,7 +103,7 @@ function onStart(complete: () => void) {
                 scanLocation = undefined;
                 goalWatchJuke.complete();
                 goalScanFailed.start();
-                highlightUiElement(scanUIPath, undefined, false)
+                highlightUiElement(scanUIPath);
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
@@ -121,7 +121,7 @@ function onStart(complete: () => void) {
                 scanLocation = undefined;
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
-                highlightUiElement(scanUIPath, undefined, false);
+                highlightUiElement(scanUIPath);
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 

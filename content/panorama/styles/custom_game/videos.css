@@ -1,0 +1,126 @@
+.VideosRoot {
+    width: 100%;
+    height: 100%;
+}
+
+#MutePlayersPanel {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+    transition-property: opacity, transform;
+    transition-duration: 0.3s;
+    z-index: 5;
+}
+
+#MutePlayersPanel.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+.MovieContainerMuting {
+    width: 1050px;
+    height: 670px;
+    align: center center;
+    background-color: #111920ff;
+    border-radius: 5px;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+}
+
+.BlurBackground {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    saturation: 0.5;
+    opacity: 0.966;
+}
+
+.CustomMoviePanelMuting {
+    width: 1000px;
+    height: 550px;
+    align: center center;
+    background-size: 100% 100%;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-radius: 2px;
+    margin-top: 00px;
+}
+
+.VideoTitle {
+    text-align: center;
+    align: left top;
+    text-transform: uppercase;
+    color: #ffffffdd;
+    font-weight: bold;
+    font-size: 25px;
+    letter-spacing: 2px;
+    background-color: #bb5c2c;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-radius: 2px;
+    width: 26%;
+    margin-top: 14px;
+    margin-left: 25px;
+}
+
+.VideoContinue {
+    min-width: 140px;
+    height: 36px;
+    horizontal-align: center;
+    vertical-align: bottom;
+    margin-bottom: 10px;
+    background-color: #bb5c2c;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-radius: 2px;
+}
+
+.VideoContinue:hover {
+    opacity: 1.4;
+}
+
+.VideoContinue > Label {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: #000000aa -4px -4px 8px 8px;
+    color: white;
+    align: center center;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#SelectGuidePanel {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+    transition-property: opacity, transform;
+    transition-duration: 0.3s;
+    z-index: 5;
+}
+
+#SelectGuidePanel.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+.MovieContainerGuides {
+    width: 1150px;
+    height: 770px;
+    align: center center;
+    background-color: #111920ff;
+    border-radius: 5px;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+}
+
+.CustomMoviePanelGuides {
+    width: 1100px;
+    height: 650px;
+    align: center center;
+    background-size: 100% 100%;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-radius: 2px;
+    margin-top: 00px;
+}
+
+.ButtonBevel Label {
+    font-size: 15px;
+}

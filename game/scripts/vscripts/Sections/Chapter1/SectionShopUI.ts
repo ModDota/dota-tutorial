@@ -24,7 +24,7 @@ let playerBoughtTango = false;
 // UI Highlighting Paths
 const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
 const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
-const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer"
 
 const blockadeRadiantBaseMid = new Blockade(Vector(-4793, -3550, 256), Vector(-4061, -4212, 256))
 const blockadeRadiantBaseBottom = new Blockade(Vector(-3612, -5557, 256), Vector(-3584, -6567, 256))
@@ -66,19 +66,24 @@ const onStart = (complete: () => void) => {
                 goalOpenShop.complete();
             }),
 
-            // Shop stuff dialog, tells player to buy a tango.
+            // Talking about how confusing the shop is and what items are good for
             tg.audioDialog(LocalizationKey.Script_1_Shop_1, LocalizationKey.Script_1_Shop_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_1_Shop_2, LocalizationKey.Script_1_Shop_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_1_Shop_3, LocalizationKey.Script_1_Shop_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+
+            // Show guides video
             tg.audioDialog(LocalizationKey.Script_1_Shop_4, LocalizationKey.Script_1_Shop_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.showVideo("guides"),
             tg.audioDialog(LocalizationKey.Script_1_Shop_5, LocalizationKey.Script_1_Shop_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_1_Shop_6, LocalizationKey.Script_1_Shop_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
+            // Tell player to buy a tango.
             tg.audioDialog(LocalizationKey.Script_1_Shop_7, LocalizationKey.Script_1_Shop_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Give the player some gold and wait for them to buy a tango.
             tg.immediate(_ => {
                 goalBuyTango.start();
-                highlightUiElement(tangoInGuideUIPath, undefined, true);
+                highlightUiElement(tangoInGuideUIPath);
                 playerHero.SetGold(90, true);
                 waitingForPlayerToPurchaseTango = true;
             }),
@@ -86,7 +91,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => {
                 removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
-                highlightUiElement(inventorySlot0UIPath, undefined, true);
+                highlightUiElement(inventorySlot0UIPath);
             }),
 
             // Ask the player to use their tango to escape.

@@ -14,6 +14,7 @@ declare const enum SectionName {
     Chapter4_Outpost = "Chapter4_Outpost",
     Chapter4_Communication = "Chapter4_Communication",
     Chapter5_Opening = "Chapter5_Opening",
+    Chapter5_Roshan = "Chapter5_Roshan",
 }
 
 declare const enum CustomNpcKeys {
@@ -65,7 +66,11 @@ declare const enum ModifierKey {
 
 declare const enum ParticleName {
     HighlightCircle = "particles/tutorial_highlight.vpcf",
-    HighlightArrow = "particles/tutorial_arrow_base.vpcf",
-    HighlightArrowEnemy = "particles/tutorial_arrow_attack_base.vpcf",
+    HighlightOrangeArrow = "particles/tutorial_arrow.vpcf",
+    HighlightOrangeCircle = "particles/tutorial_arrow_ring.vpcf",
+    HighlightRedArrow = "particles/tutorial_arrow_attack.vpcf",
+    HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
 }
+
+type VideoName = "guides" | "muting"

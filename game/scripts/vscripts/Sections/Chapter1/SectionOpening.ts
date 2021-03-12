@@ -33,22 +33,22 @@ const onStart = (complete: () => void) => {
                 tg.setCameraTarget(context => context[CustomNpcKeys.SlacksMudGolem]),
             ])
         ]),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_1, LocalizationKey.Script_1_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_2, LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_3, LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_4, LocalizationKey.Script_1_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_1, LocalizationKey.Script_1_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_2, LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_3, LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_4, LocalizationKey.Script_1_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.panCameraLinear(ctx => ctx[CustomNpcKeys.SlacksMudGolem].GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 8),
 
         // Highlight the enemy ancient while talking about it
         tg.withHighlights(
             tg.seq([
-                tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-                tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]), {
                 type: "circle",
                 units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],

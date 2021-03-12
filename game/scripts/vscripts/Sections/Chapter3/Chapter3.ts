@@ -132,7 +132,7 @@ const onStart = (complete: () => void) => {
         // Tell the player that some neutral items have active abilities, tell them to use it.
         tg.immediate(_ => {
             goalPickupArcane.complete();
-            highlightUiElement(neutralSlotUIPath, undefined, false);
+            highlightUiElement(neutralSlotUIPath);
             goalUseArcane.start();
         }),
         tg.completeOnCheck(_ => {
@@ -208,7 +208,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalPickupItems.complete();
             goalSwitchItems.start();
-            highlightUiElement(neutralSlotUIPath, undefined, false);
+            highlightUiElement(neutralSlotUIPath);
         }),
         tg.completeOnCheck((context) => {
             const item = playerHero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT);
@@ -217,8 +217,8 @@ const onStart = (complete: () => void) => {
                 goalSwitchItems.complete();
                 removeHighlight(neutralSlotUIPath)
                 goalGiveArcane.start();
-                highlightUiElement(inventorySlot6UIPath, undefined, false);
-                highlightUiElement(inventorySlot7UIPath, undefined, false);
+                highlightUiElement(inventorySlot6UIPath);
+                highlightUiElement(inventorySlot7UIPath);
                 goalStash.start();
                 return true;
             }

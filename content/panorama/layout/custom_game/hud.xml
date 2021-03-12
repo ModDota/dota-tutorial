@@ -140,27 +140,5 @@
                 <Panel class="GuideContainer" id="Guide9" />
             </Panel>
         </Panel>
-
-        <Panel id="MutePlayersPanel" hittest="false">
-            <Panel class="BlurBackground" hittest="false" />
-            <Panel class="MovieContainerMutes">
-                <Label class="MutePlayersTitle" text="#Muting_Player"/>
-                <MoviePanel class ="CustomMoviePanelMuting" src="s2r://panorama/videos/MutePlayer.webm" repeat="true" autoplay="onload" />
-                <Button id="MutePlayersContinue" onactivate="MutePlayersContinue();">
-                    <Label text="#Continue"/>
-                </Button>
-            </Panel>
-        </Panel>
-
-        <Panel id="SelectGuidePanel" hittest="false">
-            <Panel class="BlurBackground" hittest="false" />
-            <Panel class="MovieContainerGuides">
-                <Label class="MutePlayersTitle" text="#Select_Guide"/>
-                <MoviePanel class ="CustomMoviePanelGuides" src="s2r://panorama/videos/Guides.webm" repeat="true" autoplay="onload" />
-                <Button id="MutePlayersContinue" onactivate="SelectGuideContinue();">
-                    <Label text="#Continue"/>
-                </Button>
-            </Panel>
-        </Panel>
     </Panel>
 </root>
