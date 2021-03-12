@@ -444,7 +444,7 @@ const onStart = (complete: () => void) => {
                     (_) => completed,
                     (ctx: TutorialContext) => {
                         completed = !(timeManager.time === 0 && tryCount === stackTries);
-                        goalStackCreepsOptional.setValue(stackCount)
+                        goalStackCreepsOptional.setValue(tryCount)
                         if (completed === false) {
                             switch (stackCount) {
                                 case 0:
