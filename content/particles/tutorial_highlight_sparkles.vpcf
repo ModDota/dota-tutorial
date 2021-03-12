@@ -929,8 +929,11 @@
 			m_RateMax = 2.0
 			m_flEndTime_min = 9999.0
 			m_flEndTime_max = 9999.0
-			m_nField = 4
+			m_nField = "4"
 			m_bProportionalOp = false
+		},
+		{
+			_class = "C_OP_PositionLock"
 		},
 	]
 	m_ForceGenerators = 

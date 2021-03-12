@@ -18,4 +18,88 @@
 	{
 		"ItemKillable"                    "0"
 	}
+
+    "item_demon_edge"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_greater_crit"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_recipe_greater_crit"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_lesser_crit"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_broadsword"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_blades_of_attack"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_recipe_lesser_crit"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_heart"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_power_treads"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_rapier"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_desolator"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
+
+    "item_moon_shard"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
 }

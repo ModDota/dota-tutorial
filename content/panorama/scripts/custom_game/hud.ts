@@ -65,6 +65,7 @@ function removeHighlight(event: RemoveHighlightEvent) {
     const { path } = event;
     if (!highlightedPanels[path]) {
         $.Msg(`Panel ${path} is not currently highlighted`);
+        return;
     }
 
     highlightedPanels[path].DeleteAsync(0);

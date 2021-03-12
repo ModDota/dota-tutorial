@@ -1,3 +1,4 @@
+import * as dg from "../Dialog"
 import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
 import { LastHitStages } from "../Sections/Chapter2/shared";
 import { isCustomLaneCreepUnit } from "../util";
@@ -9,6 +10,8 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     IsDebuff() { return false }
 
     currentStage: LastHitStages = LastHitStages.LAST_HIT
+    private successLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_5, LocalizationKey.Script_2_Creeps_6, LocalizationKey.Script_2_Creeps_7]
+    private missLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_8, LocalizationKey.Script_2_Creeps_9, LocalizationKey.Script_2_Creeps_10]
 
     OnCreated() {
         if (!IsServer()) return;
@@ -54,12 +57,31 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     }
 
     LastHit(event: ModifierAttackEvent) {
-        if (event.attacker != this.GetParent()) return;
+        if (event.attacker != this.GetParent()) {
+            // Check if killer is on DK's team
+            if (event.attacker.GetTeamNumber() == this.GetParent().GetTeamNumber()) {
+                // Check if DK's is in 300 distance from the dying unit
+                if (event.unit) {
+                    const distance = ((this.GetParent().GetAbsOrigin() - event.unit.GetAbsOrigin()) as Vector).Length2D()
+                    if (distance <= 300) {
+                        // Play "you missed!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
+                        const chosenLocalizaionKey = this.missLocalizationKeys[RandomInt(0, this.missLocalizationKeys.length - 1)];
+                        dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+                    }
+                }
+            }
+
+            return;
+        }
 
         if (event.unit) {
             if (!isCustomLaneCreepUnit(event.unit)) return;
             if (event.unit.GetTeamNumber() == this.GetParent().GetTeamNumber()) return;
         }
+
+        // Play "nice hit!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
+        const chosenLocalizationKey = this.successLocalizationKeys[RandomInt(0, this.successLocalizationKeys.length - 1)]
+        dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
 
         this.IncrementStackCount();
     }
