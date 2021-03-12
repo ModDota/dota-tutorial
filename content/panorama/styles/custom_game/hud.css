@@ -170,11 +170,11 @@
 
 .Chapter4Art {
     width: 100%;
-    height: 100%;
+    height: 70%;
     background-size: 50% 50%;
     background-repeat: no-repeat;
     background-position: 15px 20px;
-    margin-top: 40px;
+    margin-top: 30px;
     align: center center;
 }
 
@@ -185,7 +185,7 @@
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/skip_section/Chapter5Art.png");
     align: center center;
-    margin-top: 30px;
+    margin-top: 40px;
 }
 
 .Chapter6Art {
