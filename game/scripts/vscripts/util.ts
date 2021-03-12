@@ -1,6 +1,7 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
+import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
 
 /**
@@ -294,6 +295,14 @@ export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
 }
 
+/**
+ * Returns the path to an item located in the guide, to the left of the shop.
+ * @param itemID The ID of the item, as defined by Valve's items.txt, e.g. "ID" "44"
+ */
+export function getPathToItemInGuideByID(itemID: number): string {
+    return "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item" + itemID;
+}
+
 export function createPathParticle(locations: Vector[]): ParticleID {
     const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
 
@@ -315,7 +324,7 @@ export function createPathParticle(locations: Vector[]): ParticleID {
  */
 export const createParticleAtLocation = (particleName: string, location: Vector) => {
     const particle = ParticleManager.CreateParticle(particleName, ParticleAttachment.CUSTOMORIGIN, undefined)
-    ParticleManager.SetParticleControl(particle, 0, GetGroundPosition(location, undefined))
+    ParticleManager.SetParticleControl(particle, 0, location)
     return particle
 }
 
@@ -323,18 +332,39 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * Creates a particle attached to a unit.
  * @param particleName Name of the particle.
  * @param unit Unit to attach the particle to.
+ * @param attachPoint Optional parameter for where and how to attach the particle.
  * @returns The created particle.
  */
-export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC) => {
-    return ParticleManager.CreateParticle(particleName, ParticleAttachment.ABSORIGIN_FOLLOW, unit)
+ export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
+    const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
+    const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
+    if (modifier) {
+        modifier.AddParticle(particleID, false, false, -1, false, false);
+    }
+
+    return particleID;
 }
 
 export type HighlightType = "circle" | "arrow" | "arrow_enemy"
 
-const highlightTypeParticleNames: Record<HighlightType, string> = {
-    "circle": ParticleName.HighlightCircle,
-    "arrow": ParticleName.HighlightArrow,
-    "arrow_enemy": ParticleName.HighlightArrowEnemy,
+type HighlightParticleDescriptor = {
+    name: string // Particle name
+    attach?: ParticleAttachment // Attach method when attached to a unit. Default ABSORIGIN_FOLLOW
+    offset?: Vector // Location offset when not attached to a unit. Default zero.
+}
+
+const highlightTypeParticleNames: Record<HighlightType, HighlightParticleDescriptor[]> = {
+    "circle": [
+        { name: ParticleName.HighlightCircle },
+    ],
+    "arrow": [
+        { name: ParticleName.HighlightOrangeCircle },
+        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+    ],
+    "arrow_enemy": [
+        { name: ParticleName.HighlightRedCircle },
+        { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+    ],
 }
 
 /**
@@ -375,24 +405,26 @@ export type HighlightProps = {
 export function highlight(props: HighlightProps): ParticleID[] {
     const { type, units, locations, radius, attach } = props
 
-    const particleName = highlightTypeParticleNames[type]
+    const particleDescriptors = highlightTypeParticleNames[type]
 
     const particles: ParticleID[] = []
 
-    // Create unit highlights
-    if (units) {
-        for (const unit of units) {
-            particles.push(attach !== false ?
-                createParticleAttachedToUnit(particleName, unit) :
-                createParticleAtLocation(particleName, GetGroundPosition(unit.GetAbsOrigin(), undefined))
-            )
+    for (const desc of particleDescriptors) {
+        // Create unit highlights
+        if (units) {
+            for (const unit of units) {
+                particles.push(attach !== false ?
+                    createParticleAttachedToUnit(desc.name, unit, desc.attach ?? ParticleAttachment.ABSORIGIN_FOLLOW) :
+                    createParticleAtLocation(desc.name, GetGroundPosition(unit.GetAbsOrigin(), undefined).__add(desc.offset ?? Vector(0, 0, 0)))
+                )
+            }
         }
-    }
 
-    // Create location highlights
-    if (locations) {
-        for (const location of locations) {
-            particles.push(createParticleAtLocation(particleName, location))
+        // Create location highlights
+        if (locations) {
+            for (const location of locations) {
+                particles.push(createParticleAtLocation(desc.name, GetGroundPosition(location, undefined).__add(desc.offset ?? Vector(0, 0, 0))))
+            }
         }
     }
 
@@ -405,4 +437,21 @@ export function highlight(props: HighlightProps): ParticleID[] {
     })
 
     return particles
+}
+
+/**
+ * Removes all attached particle modifiers from the supplied units.
+ * @param units The units to remove the particle modifiers from.
+ */
+export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[]) {
+    for (const unit of units) {
+        if (unit.HasModifier("modifier_particle_attach")) {
+            const modifiers = unit.FindAllModifiersByName("modifier_particle_attach")
+            if (modifiers) {
+                for (const modifier of modifiers) {
+                    modifier.Destroy()
+                }
+            }
+        }
+    }
 }

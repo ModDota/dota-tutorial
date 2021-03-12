@@ -24,7 +24,7 @@ const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
 GameEvents.Subscribe("section_started", event => {
     // Clear old UI highlights
     clearUiHighlights();
-    
+
     const enabledUI = sectionUi[event.section];
     if (enabledUI) {
         const disabledUi = except(allUI, enabledUI);
@@ -65,6 +65,7 @@ function removeHighlight(event: RemoveHighlightEvent) {
     const { path } = event;
     if (!highlightedPanels[path]) {
         $.Msg(`Panel ${path} is not currently highlighted`);
+        return;
     }
 
     highlightedPanels[path].DeleteAsync(0);
@@ -109,7 +110,39 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
         if (duration) {
             $.Schedule(duration, () => removeHighlight({ path }));
         }
+
+        const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
+        if (isShopGuideItem) {
+            const needsAdjusting = !Game.IsShopOpen()
+            checkShopHighlightItemPanel(highlightPanel, element, needsAdjusting)
+        }
     }
+}
+
+function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel, needsAdjusting: boolean) {
+    if (!highlightPanel.IsValid()) return
+
+    const isShopOpen = Game.IsShopOpen()
+
+    // Manage visibility
+    isShopOpen ? highlightPanel.style.visibility = "visible" :
+        highlightPanel.style.visibility = "collapse"
+
+    // Adjust position of the panel if needed
+    if (needsAdjusting) {
+        if (!isShopOpen) {
+            $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
+            return;
+        }
+        else {
+            const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
+            const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
+            if (highlightPanel.style.position !== originalPanelPosition)
+                highlightPanel.style.position = originalPanelPosition
+        }
+    }
+
+    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
 }
 
 GameEvents.Subscribe("highlight_element", highlightUiElement);
@@ -145,22 +178,6 @@ function GuidesClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
-//** Muting Players Movie Panel */
-function MutePlayersContinue() {
-    $.Msg("MutePlayersContinue");
-
-    $("#MutePlayersPanel").SetHasClass("Visible", false);
-    Game.EmitSound("ui_chat_slide_out");
-}
-
-//** Selecting a Guide Movie Panel */
-function SelectGuideContinue() {
-    $.Msg("SelectGuideContinue");
-
-    $("#SelectGuidePanel").SetHasClass("Visible", false);
-    Game.EmitSound("ui_chat_slide_out");
-}
-
 const chapterSections = [
     SectionName.Chapter1_Opening,
     SectionName.Chapter2_Opening,
@@ -170,6 +187,7 @@ const chapterSections = [
 ];
 
 function playChapter(chapterNumber: number) {
+    Game.EmitSound("ui_generic_button_click")
     if (chapterSections[chapterNumber]) {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
     }

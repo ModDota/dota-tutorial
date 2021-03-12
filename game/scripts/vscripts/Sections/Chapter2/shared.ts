@@ -24,5 +24,8 @@ export const chapter2Blockades = {
     secretShopToRiverStairs: new Blockade(Vector(-4173, 1816, 128), Vector(-4576, 2208, 128)),
     topToRiverStairs: new Blockade(Vector(-5144, 2535, 128), Vector(-5144, 3099, 128)),
     direTopDividerRiver: new Blockade(Vector(-3969, 3352, 128), Vector(-3232, 4512, 128)),
-    direTopDividerCliff: new Blockade(Vector(-3062, 4710, 128), Vector(-2969, 7335, 128))
+    direTopDividerCliff: new Blockade(Vector(-3062, 4710, 128), Vector(-2969, 7335, 128)),
+    direTopJungleBlocker: new Blockade(Vector(-2976, 4503, 128), Vector(-2937, 3562, 128)),
+    aboveRoshanBlocker: new Blockade(Vector(-2592, 3103, 0), Vector(-2720, 2784, 0)),
+    belowRoshanBlocker: new Blockade(Vector(-3232, 1952, 0), Vector(-3488, 1440, 0))
 }

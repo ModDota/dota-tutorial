@@ -20,12 +20,14 @@ const sections = {
     "CH2 - Opening": SectionName.Chapter2_Opening,
     "CH2 - Creeps": SectionName.Chapter2_Creeps,
     "CH2 - Tower": SectionName.Chapter2_Tower,
+    "CH2 - Courier": SectionName.Chapter2_Courier,
     "CH3": SectionName.Chapter3_Opening,
     "CH4 - Opening": SectionName.Chapter4_Opening,
     "CH4 - Wards": SectionName.Chapter4_Wards,
     "CH4 - Outpost": SectionName.Chapter4_Outpost,
     "CH4 - Communication": SectionName.Chapter4_Communication,
     "CH5 - Opening": SectionName.Chapter5_Opening,
+    "CH5 - Roshan": SectionName.Chapter5_Roshan,
 };
 
 // Add a button for each section
