@@ -149,7 +149,7 @@ function GuidesClose() {
 function ToggleCreditsMenu() {
     $.Msg("ToggleCreditsMenu");
 
-    $("#CreditsMenu").ToggleClass("Visible");
+    //**$("#CreditsMenu").ToggleClass("Visible");*/
     Game.EmitSound("ui_chat_slide_in");
 }
 
