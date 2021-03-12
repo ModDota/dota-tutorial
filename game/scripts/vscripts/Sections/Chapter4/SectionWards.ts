@@ -15,6 +15,7 @@ const requiredState: RequiredState = {
     heroLocation: Vector(-3000, 3800, 128),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
+    heroItems: { "item_greater_crit": 1 },
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
     blockades: Object.values(shared.blockades),
@@ -49,7 +50,7 @@ const invisHeroInfo = [
 ];
 
 // UI Highlighting Paths
-const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
+const inventorySlot1UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_1"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -119,7 +120,7 @@ function onStart(complete: () => void) {
             ]),
             tg.immediate(_ => freezePlayerHero(false)),
             tg.immediate(_ => {
-                highlightUiElement(inventorySlot0UIPath);
+                highlightUiElement(inventorySlot1UIPath);
                 goalPlaceObserverWard.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
@@ -143,7 +144,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(_ => {
                 goalPlaceSentryWard.complete();
-                removeHighlight(inventorySlot0UIPath);
+                removeHighlight(inventorySlot1UIPath);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -211,7 +212,7 @@ function disposeHeroes() {
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.order_type === UnitOrder.CAST_POSITION) {
         if (!allowUseItem) {
-            displayDotaErrorMessage("Using item is disabled for now.")
+            displayDotaErrorMessage("Item usage is currently disabled.")
             return false;
         }
         const targetPosition2D = Vector(event.position_x, event.position_y);
@@ -231,11 +232,22 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         return true;
     }
 
-    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM || event.order_type === UnitOrder.CAST_TOGGLE || event.order_type === UnitOrder.SET_ITEM_COMBINE_LOCK) {
-        displayDotaErrorMessage("Dropping, moving, toggling, lock or combine items is disabled during this section.")
+    if (event.order_type === UnitOrder.DROP_ITEM) {
+        displayDotaErrorMessage("Dropping items is currently disabled.")
         return false;
     }
-
+    if (event.order_type === UnitOrder.MOVE_ITEM) {
+        displayDotaErrorMessage("Moving items is currently disabled.")
+        return false;
+    }
+    if (event.order_type === UnitOrder.CAST_TOGGLE) {
+        displayDotaErrorMessage("Toggling items is currently disabled.")
+        return false;
+    }
+    if (event.order_type === UnitOrder.SET_ITEM_COMBINE_LOCK) {
+        displayDotaErrorMessage("Locking or combining items is currently disabled.")
+        return false;
+    }
     return true;
 }
 

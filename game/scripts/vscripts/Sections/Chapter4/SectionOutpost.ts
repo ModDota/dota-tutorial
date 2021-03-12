@@ -17,6 +17,7 @@ const requiredState: RequiredState = {
     rikiLocation: Vector(-1000, 4400, 256),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
+    heroItems: { "item_greater_crit": 1 },
     blockades: Object.values(shared.blockades),
 };
 
@@ -26,7 +27,7 @@ const dustLocation = Vector(-1700, 3800, 256);
 const outpostLocation = Vector(-2000, 4300);
 const lastSawRikiLocation = Vector(-1300, 4200);
 // UI Highlighting Paths
-const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
+const inventorySlot1UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_1"
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -71,15 +72,14 @@ function onStart(complete: () => void) {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
                 allowUseItem = true;
-                highlightUiElement(inventorySlot0UIPath);
+                highlightUiElement(inventorySlot1UIPath);
             }),
             tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 0.2),
             tg.immediate(_ => {
                 goalUseDust.complete();
-                playerHero.SetMoveCapability(UnitMoveCapability.GROUND)
-                removeHighlight(inventorySlot0UIPath);
+                removeHighlight(inventorySlot1UIPath);
                 setUnitPacifist(playerHero, false);
             }),
 
@@ -113,6 +113,7 @@ function onStart(complete: () => void) {
             }),
             tg.wait(3),
 
+            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
             tg.audioDialog(LocalizationKey.Script_4_Outpost_5, LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.withHighlights(tg.seq([
@@ -178,7 +179,7 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
-    removeHighlight(inventorySlot0UIPath);
+    removeHighlight(inventorySlot1UIPath);
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
@@ -187,11 +188,11 @@ function onStop() {
 
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
-        displayDotaErrorMessage("Drop, move items are disabled in this section.")
+        displayDotaErrorMessage("Dropping and moving items are disabled in this section.")
         return false;
     }
     if (event.order_type === UnitOrder.CAST_NO_TARGET && !allowUseItem) {
-        displayDotaErrorMessage("Use item will be allowed later in this section.")
+        displayDotaErrorMessage("Item usage is currently disabled.")
         return false;
     }
     return true;
