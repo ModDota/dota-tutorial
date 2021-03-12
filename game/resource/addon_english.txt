@@ -30,6 +30,7 @@
         "Go_To_Website" "Go to Website"
         "Guide_1" "Purge's Dota Basics"
         "Guide_2" "Tsunami's Dota Hero Tips"
+        "Guide_3" "DOTAFire Guides"
 
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"

@@ -255,7 +255,7 @@
     transition-duration: 0.3s;
     z-index: 5;
 
-    background-color: #000000ef;
+    background-color: #111920ff;
     background-repeat: no-repeat;
     border-radius: 5px;
     box-shadow: #000000aa -4px -4px 8px 8px;
@@ -375,6 +375,17 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/guides/Guide2Thumbnail.png");
+    margin-top: 0px;
+    align: center center;
+    border-radius: 5px;
+}
+
+.Guide3Thumbnail {
+    width: 95%;
+    height: 95%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/guides/Guide3Thumbnail.png");
     margin-top: 0px;
     align: center center;
     border-radius: 5px;

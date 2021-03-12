@@ -131,7 +131,17 @@
                         </Button>
                     </Panel>
                 </Panel>
-                <Panel class="GuideContainer" id="Guide3" />
+               <Panel class="GuideContainer" id="Guide3">
+                     <Panel class="GuideThumbnailContainer">
+                        <Panel class="Guide3Thumbnail" />
+                    </Panel>
+                    <Panel class="GuideInformationContainer">
+                        <Label class="GuideSubTitle" text="#Guide_3" hittest="false"/>
+                        <Button id="GuideOpenButton" class="ButtonBevel" onactivate="ExternalBrowserGoToURL('https://www.dotafire.com/');">
+                            <Label text="#Go_To_Website"/>
+                        </Button>
+                    </Panel>
+                </Panel>
                 <Panel class="GuideContainer" id="Guide4" />
                 <Panel class="GuideContainer" id="Guide5" />
                 <Panel class="GuideContainer" id="Guide6" />
