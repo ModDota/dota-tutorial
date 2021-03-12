@@ -1,9 +1,11 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
+import * as dg from "../../Dialog"
 import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
+import { TutorialContext } from "../../TutorialGraph/index";
 
 const sectionName: SectionName = SectionName.Chapter4_Opening;
 
@@ -130,7 +132,7 @@ function onStart(complete: () => void) {
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_12, LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.completeOnCheck(_ => checkIfScanCoversTheLocation(firstScanLocation), 1),
+            tg.completeOnCheck(context => checkIfScanCoversTheLocation(firstScanLocation, context), 1),
             tg.immediate(_ => {
                 goalScanFailed.complete();
                 removeHighlight(scanUIPath);
@@ -148,7 +150,7 @@ function onStart(complete: () => void) {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
-            tg.completeOnCheck(_ => checkIfScanCoversTheLocation(secondScanLocation), 1),
+            tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
 
             tg.immediate(_ => {
                 goalScanSucceed.complete();
@@ -180,13 +182,13 @@ function onStop() {
 }
 
 // Scan radius is 900, but check within 500 to avoid the case of not covering target heroes
-function checkIfScanCoversTheLocation(targetScanLocation: Vector): boolean {
+function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: TutorialContext): boolean {
     if (scanLocation) {
         if (scanLocation.__sub(targetScanLocation).Length2D() < 500) {
             return true;
         }
         displayDotaErrorMessage("Scan the required location");
-        // TODO: Play opening_15 audio SL
+        dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem]);
         scanLocation = undefined;
     }
     return false;
@@ -224,7 +226,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 
     if (event.order_type === UnitOrder.RADAR) {
         scanLocation = Vector(event.position_x, event.position_y);
-        return checkIfScanCoversTheLocation(currentRequiredScanLocation);
+        return checkIfScanCoversTheLocation(currentRequiredScanLocation, GameRules.Addon.context);
     }
 
     return canPlayerIssueOrders;
