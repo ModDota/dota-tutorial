@@ -22,7 +22,7 @@
         "Chapter_5_BriefInformation" "Covers runes, Roshan, and team fights."
         "Chapter_6" "Back Home"
         "Chapter_6_BriefInformation" "Covers attributes. Also features many external resources."
-        "SkipChapter" "Skip to Chapter"
+        "SkipChapter" "Play"
         "Muting_Player" "Muting a Player"
         "Select_Guide" "Selecting a Guide"
         "Continue" "Continue"
