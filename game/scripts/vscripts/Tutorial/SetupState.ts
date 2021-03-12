@@ -95,6 +95,7 @@ function handleUnits(state: FilledRequiredState) {
         }
     }
 
+    // Requiring golem
     if (state.requireSlacksGolem) {
         createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
     } else {
@@ -266,6 +267,22 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
         for (let i = 0; i < requiredItemCount - currentItemCount; i++) {
             hero.AddItemByName(itemName)
         }
+    }
+
+    // Create the top T1 dier tower if it's down
+    const direTopTowerLocation = Vector(-4672, 6016, 128)
+    let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
+    if (state.topDireT1TowerStanding) {
+        if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive()) {
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
+            direTop.RemoveModifierByName("modifier_invulnerable")
+            direTop.SetRenderColor(65, 78, 63)
+        }
+    }
+    else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
+        UTIL_Remove(direTop)
     }
 }
 

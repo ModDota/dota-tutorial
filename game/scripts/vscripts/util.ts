@@ -1,6 +1,7 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
+import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
 
 /**
@@ -294,6 +295,14 @@ export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
 }
 
+/**
+ * Returns the path to an item located in the guide, to the left of the shop.
+ * @param itemID The ID of the item, as defined by Valve's items.txt, e.g. "ID" "44"
+ */
+export function getPathToItemInGuideByID(itemID: number): string {
+    return "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item" + itemID;
+}
+
 export function createPathParticle(locations: Vector[]): ParticleID {
     const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
 
@@ -326,8 +335,14 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @param attachPoint Optional parameter for where and how to attach the particle.
  * @returns The created particle.
  */
-export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
-    return ParticleManager.CreateParticle(particleName, attach, unit)
+ export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
+    const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
+    const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
+    if (modifier) {
+        modifier.AddParticle(particleID, false, false, -1, false, false);
+    }
+
+    return particleID;
 }
 
 export type HighlightType = "circle" | "arrow" | "arrow_enemy"
@@ -422,4 +437,21 @@ export function highlight(props: HighlightProps): ParticleID[] {
     })
 
     return particles
+}
+
+/**
+ * Removes all attached particle modifiers from the supplied units.
+ * @param units The units to remove the particle modifiers from.
+ */
+export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[]) {
+    for (const unit of units) {
+        if (unit.HasModifier("modifier_particle_attach")) {
+            const modifiers = unit.FindAllModifiersByName("modifier_particle_attach")
+            if (modifiers) {
+                for (const modifier of modifiers) {
+                    modifier.Destroy()
+                }
+            }
+        }
+    }
 }

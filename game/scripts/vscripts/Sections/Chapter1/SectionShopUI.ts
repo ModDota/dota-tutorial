@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 import { Blockade } from "../../Blockade";
@@ -40,7 +40,8 @@ const onStart = (complete: () => void) => {
     if (!playerHero) error("Could not find the player's hero.");
 
     const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
-    const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+    const tangoItemID = 44;
+    const tangoInGuideUIPath = getPathToItemInGuideByID(tangoItemID)
 
     const goalTracker = new GoalTracker();
     const goalOpenShop = goalTracker.addBoolean("Open the shop.");

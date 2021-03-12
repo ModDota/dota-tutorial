@@ -19,8 +19,6 @@ export class modifier_dk_death_chapter2_tower extends BaseModifier {
     OnDeath(event: ModifierAttackEvent) {
         if (!IsServer()) return;
 
-        print(event.attacker.GetUnitName(), event.unit?.GetUnitName())
-
         if (event.attacker.GetUnitName() != CustomNpcKeys.DireTopT1Tower) return;
         if (event.unit) {
             if (event.unit == this.GetParent()) {
@@ -31,7 +29,6 @@ export class modifier_dk_death_chapter2_tower extends BaseModifier {
 
     GetModifierIncomingDamage_Percentage(event: ModifierAttackEvent): number {
         if (!IsServer()) return 0;
-        print(event.attacker.GetUnitName())
         if (event.attacker.GetUnitName() != CustomNpcKeys.DireTopT1Tower) return 0
 
         return 300
@@ -39,8 +36,9 @@ export class modifier_dk_death_chapter2_tower extends BaseModifier {
 
     OnRespawn(event: ModifierUnitEvent) {
         if (!IsServer()) return;
-        if (event.unit == this.GetParent())
+        if (event.unit === this.GetParent()) {
             if (!this.dkDiedToTower) return;
-        this.dkRespawned = true
+            this.dkRespawned = true
+        }
     }
 }
