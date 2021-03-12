@@ -96,10 +96,12 @@ const onStart = (complete: () => void) => {
     );
 
     const goalStackCreeps = goalTracker.addBoolean("Stack the creeps");
+    
 
     const goalStackCreepsMultipleTimes = goalTracker.addBoolean(
-        "Stack the creeps as much as you can!"
+        "Stack the creeps at least once!"
     );
+    const goalStackCreepsOptional = goalTracker.addNumeric("Stack the creeps as much you can",5);
 
     const goalKillStackedCreeps = goalTracker.addBoolean(
         "Kill the stacked creeps"
@@ -393,6 +395,7 @@ const onStart = (complete: () => void) => {
             tg.seq([
                 tg.immediate((_) => {
                     goalStackCreepsMultipleTimes.start();
+                    goalStackCreepsOptional.start();
                     GameRules.SpawnNeutralCreeps();
                     timeManager.time = 45;
                     creepArr = GetUnitsInsidePolygon(creepCampBox);
@@ -441,6 +444,7 @@ const onStart = (complete: () => void) => {
                     (_) => completed,
                     (ctx: TutorialContext) => {
                         completed = !(timeManager.time === 0 && tryCount === stackTries);
+                        goalStackCreepsOptional.setValue(stackCount)
                         if (completed === false) {
                             switch (stackCount) {
                                 case 0:
@@ -512,6 +516,7 @@ const onStart = (complete: () => void) => {
                     );
                     timeManager.unRegisterCallBackOnTime(timeManagerZeroTimeId);
                     playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                    goalStackCreepsMultipleTimes.complete();
                     goalStackCreepsMultipleTimes.complete();
                 }),
             ]),
