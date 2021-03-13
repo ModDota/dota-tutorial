@@ -30,7 +30,6 @@ const requiredState: RequiredState = {
         chapter2Blockades.belowRoshanBlocker
     ],
     topDireT1TowerStanding: false,
-    respawnLocation: Vector(-4941, 5874, 128),
     centerCameraOnHero: true,
 }
 

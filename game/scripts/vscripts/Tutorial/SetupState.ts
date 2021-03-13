@@ -295,7 +295,8 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
 }
 
 function handleRequiredRespawn(state: FilledRequiredState) {
-    setRespawnSettings(state.respawnLocation, state.respawnTime)
+    const respawnLocation = state.respawnLocation === "heroLocation" ? state.heroLocation : state.respawnLocation
+    setRespawnSettings(respawnLocation, state.respawnTime)
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {
