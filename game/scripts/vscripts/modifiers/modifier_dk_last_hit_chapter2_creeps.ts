@@ -8,6 +8,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     IsHidden() { return true }
     IsPurgable() { return false }
     IsDebuff() { return false }
+    RemoveOnDeath() { return false }
 
     currentStage: LastHitStages = LastHitStages.LAST_HIT
     private successLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_5, LocalizationKey.Script_2_Creeps_6, LocalizationKey.Script_2_Creeps_7]
