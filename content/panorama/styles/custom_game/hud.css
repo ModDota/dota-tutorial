@@ -39,9 +39,7 @@
     transition-property: opacity, transform;
     transition-duration: 0.3s;
     z-index: 5;
-
-    background-color: #111920ff;
-    background-repeat: no-repeat;
+    background-color: #000000ef;
     border-radius: 5px;
     box-shadow: #000000aa -4px -4px 8px 8px;
 }
@@ -61,8 +59,9 @@
     align: center center;
 
     text-transform: uppercase;
-    color: #ffffffdd;
-    text-shadow: 0px 0px 20px 1 #3382ff44;
+    text-decoration: underline;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) )
+    text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
     font-size: 25px;
     letter-spacing: 2px;
@@ -80,12 +79,12 @@
     background-repeat: no-repeat;
 
     margin-top: 8px;
-    margin-right: 14px;
+    margin-right: 19px;
     brightness: 1;
     transition-property: brightness;
     transition-duration: 0.2s;
 
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 .ChaptersCloseButton:hover {
@@ -107,21 +106,15 @@
     margin-top: 10px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    border: 2px solid #222222;
-    box-shadow: #000000aa -4px -4px 8px 8px;
     background-image: url("file://{images}/custom_game/skip_section/backgroundcover.png");
-    background-size: 140% 102%;
-    background-position: -38px -34px;
+    background-size: 100% 100%;
     transition-property: background-image;
     transition-duration: 0.2s;
 }
 
 .ChapterContainer:hover {
-    background-image: url("file://{images}/custom_game/skip_section/backgroundcoverhover.png");
-    background-size: 140% 104%;
-    background-position: -38px -34px;
-
-    transition-property: background-image;
+    brightness: 1.5;
+    transition-property: box-shadow;
     transition-duration: 0.2s;
 }
 
@@ -130,9 +123,9 @@
     height: 60%;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-size: 100% 100%;
+    background-size: 90% 100%;
+    background-position: 10px 10px;
     background-repeat: no-repeat;
-    background-image: url("file://{images}/custom_game/skip_section/background.png");
 
     tooltip-position: top;
 }
@@ -149,39 +142,39 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/skip_section/Chapter1Art.png");
-    margin-top: 10px;
+    margin-top: 40px;
     align: center center;
 }
 
 .Chapter2Art {
-    width: 65%;
-    height: 65%;
-    background-size: 90% 90%;
+    width: 75%;
+    height: 75%;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/skip_section/Chapter2Art.png");
-    margin-top: 25px;
+    margin-left: 10px;
+    margin-top: 40px;
     align: center center;
 }
 
 .Chapter3Art {
     width: 65%;
     height: 65%;
-    background-size: 95% 90%;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/skip_section/Chapter3Art.png");
-    margin-top: 25px;
+    margin-top: 55px;
     margin-left: 10px;
     align: center center;
 }
 
 .Chapter4Art {
-    width: 65%;
-    height: 65%;
-    background-size: 80% 70%;
+    width: 100%;
+    height: 70%;
+    background-size: 50% 50%;
     background-repeat: no-repeat;
-    background-image: url("file://{images}/custom_game/skip_section/Chapter4Art.png");
-    background-position: 20px 20px;
-    margin-top: 10px;
+    background-position: 15px 20px;
+    margin-top: 30px;
     align: center center;
 }
 
@@ -192,6 +185,7 @@
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/skip_section/Chapter5Art.png");
     align: center center;
+    margin-top: 40px;
 }
 
 .Chapter6Art {
@@ -201,26 +195,53 @@
     background-repeat: no-repeat;
     background-image: url("file://{images}/custom_game/skip_section/Chapter6Art.png");
     align: center center;
+    margin-top: 30px;
 }
 
 .ChaptersSubTitle {
     text-align: center;
     align: center top;
     text-transform: uppercase;
-    color: #ffffffdd;
-    text-shadow: 0px 0px 20px 1 #3382ff44;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
+    text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
     font-size: 20px;
     letter-spacing: 2px;
-    margin-top: 5px;
+    margin-top: 15px;
+    font-family: titleFont;
 }
 
 #ChapterPlayButton {
-    min-width: 120px;
-    height: 36px;
+    min-width: 70px;
+    height: 30px;
     horizontal-align: center;
     vertical-align: bottom;
-    margin-bottom: 10px;
+    margin-bottom: 17px;
+
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/ButtonBackground.png");
+
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: #00000055 -2px -2px 4px 4px;
+
+    transition-property: background-color, opacity;
+    transition-duration: 0.05s;
+    transition-timing-function: linear;
+}
+
+#ChapterPlayButton:hover {
+    brightness: 1.3;
+}
+
+#ChapterPlayButton > Label {
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    align: center center;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px black;
 }
 
 #GuidesMenu {
@@ -255,8 +276,9 @@
     align: center center;
 
     text-transform: uppercase;
-    color: #ffffffdd;
-    text-shadow: 0px 0px 20px 1 #3382ff44;
+    text-decoration: underline;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) )
+    text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
     font-size: 25px;
     letter-spacing: 2px;
@@ -358,12 +380,23 @@
     border-radius: 5px;
 }
 
+.Guide3Thumbnail {
+    width: 95%;
+    height: 95%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/guides/Guide3Thumbnail.png");
+    margin-top: 0px;
+    align: center center;
+    border-radius: 5px;
+}
+
 .GuideSubTitle {
     text-align: center;
     align: center top;
     text-transform: uppercase;
-    color: #ffffffdd;
-    text-shadow: 0px 0px 20px 1 #3382ff44;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) )
+    text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
     font-size: 20px;
     letter-spacing: 2px;

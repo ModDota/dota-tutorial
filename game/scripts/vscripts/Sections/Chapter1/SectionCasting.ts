@@ -14,6 +14,7 @@ const requiredState: RequiredState = {
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 };
 
 const start = (complete: () => void) => {

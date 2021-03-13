@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../util"
+import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
 import { roshanLocations, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
@@ -21,13 +21,25 @@ export const setupState = (stateReq: RequiredState): void => {
     const hero = handleHeroCreationAndLevel(state)
     handleRequiredAbilities(state, hero)
     handleRequiredItems(state, hero)
+    handleRequiredRespawn(state)
 
     handleUnits(state)
     handleFountainTrees(state)
     handleBlockades(state)
     handleRoshan(state)
 
+    handleCamera(state, hero)
     handleMisc(state, hero)
+}
+
+function handleCamera(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
+    // Focus or unlock all cameras
+    findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, state.lockCameraOnHero ? hero : undefined))
+
+    // Center camera on the hero
+    if (state.centerCameraOnHero) {
+        centerCameraOnHero()
+    }
 }
 
 function handleMisc(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
@@ -97,6 +109,7 @@ function handleUnits(state: FilledRequiredState) {
         }
     }
 
+    // Requiring golem
     if (state.requireSlacksGolem) {
         createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
     } else {
@@ -140,10 +153,6 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
 
     // Level the hero to the desired level. 1 experience per level as defined in GameMode.
     hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
-
-    // Focus all cameras on the hero
-    const playerIds = findAllPlayersID()
-    playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, hero))
 
     // Move the hero if not within tolerance
     if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
@@ -193,7 +202,7 @@ function handleRequiredAbilities(state: FilledRequiredState, hero: CDOTA_BaseNPC
     if (state.heroHasDoubleDamage) {
         if (!hero.HasModifier("modifier_rune_doubledamage")) {
             hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", {
-                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c                
+                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c
                 duration: 45
             })
         }
@@ -269,6 +278,27 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
             hero.AddItemByName(itemName)
         }
     }
+
+    // Create the top T1 dier tower if it's down
+    const direTopTowerLocation = Vector(-4672, 6016, 128)
+    let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
+    if (state.topDireT1TowerStanding) {
+        if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive()) {
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
+            direTop.RemoveModifierByName("modifier_invulnerable")
+            direTop.SetRenderColor(65, 78, 63)
+        }
+    }
+    else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
+        UTIL_Remove(direTop)
+    }
+}
+
+function handleRequiredRespawn(state: FilledRequiredState) {
+    const respawnLocation = state.respawnLocation === "heroLocation" ? state.heroLocation : state.respawnLocation
+    setRespawnSettings(respawnLocation, state.respawnTime)
 }
 
 function handleRoshan(state: FilledRequiredState) {

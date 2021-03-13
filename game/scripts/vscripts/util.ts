@@ -1,7 +1,10 @@
 import "./modifiers/modifier_visible_through_fog"
 import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
+import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
+
+let respawnListener: EventListenerID | undefined
 
 /**
  * Get a list of all valid players currently in the game.
@@ -294,6 +297,14 @@ export function unitIsValidAndAlive(unit: CDOTA_BaseNPC | undefined): boolean {
     return unit !== undefined && IsValidEntity(unit) && unit.IsAlive()
 }
 
+/**
+ * Returns the path to an item located in the guide, to the left of the shop.
+ * @param itemID The ID of the item, as defined by Valve's items.txt, e.g. "ID" "44"
+ */
+export function getPathToItemInGuideByID(itemID: number): string {
+    return "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item" + itemID;
+}
+
 export function createPathParticle(locations: Vector[]): ParticleID {
     const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
 
@@ -327,7 +338,13 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @returns The created particle.
  */
 export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
-    return ParticleManager.CreateParticle(particleName, attach, unit)
+    const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
+    const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
+    if (modifier) {
+        modifier.AddParticle(particleID, false, false, -1, false, false);
+    }
+
+    return particleID;
 }
 
 export type HighlightType = "circle" | "arrow" | "arrow_enemy"
@@ -437,4 +454,71 @@ export function disposeHeroes(heroesInfoArray: { name: CustomNpcKeys }[]) {
 
         GameRules.Addon.context[friendlyHero.name] = undefined;
     }
+}
+
+/**
+ * Removes all attached particle modifiers from the supplied units.
+ * @param units The units to remove the particle modifiers from.
+ */
+export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[]) {
+    for (const unit of units) {
+        if (unit.HasModifier("modifier_particle_attach")) {
+            const modifiers = unit.FindAllModifiersByName("modifier_particle_attach")
+            if (modifiers) {
+                for (const modifier of modifiers) {
+                    modifier.Destroy()
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Returns the current camera location (technically the target, not the origin) of the player.
+ * @returns Current camera location of the player.
+ */
+export function getPlayerCameraLocation() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    const owner = playerHero.GetOwner();
+    if (!owner || !IsValidEntity(owner)) {
+        error("Could not get player hero owner");
+    }
+
+    const cameraOrigin = owner.GetAbsOrigin();
+    const cameraForward = owner.GetAngles().Forward();
+
+    // Assume fixed camera distance stored in dota_camera_distance
+    const cameraDistance = cvar_getf("dota_camera_distance");
+
+    return GetGroundPosition(cameraOrigin.__add(cameraForward.__mul(cameraDistance)), undefined);
+}
+
+/**
+ * Centers the camera on the player's hero. Does not lock the camera.
+ */
+export function centerCameraOnHero() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    CenterCameraOnUnit(playerHero.GetPlayerOwnerID(), playerHero);
+}
+
+/**
+ * Sets the player's respawn settings.
+ * @param respawnLocation The location the player should respawn at.
+ * @param respawnTime How long it should take the player to respawn.
+ */
+export function setRespawnSettings(respawnLocation: Vector, respawnTime: number) {
+    if (respawnListener) {
+        StopListeningToGameEvent(respawnListener)
+        respawnListener = undefined;
+    }
+
+    respawnListener = ListenToGameEvent("entity_killed", event => {
+        const hero = getPlayerHero()
+        const killed = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC_Hero
+
+        if (killed === hero) {
+            killed.SetRespawnPosition(respawnLocation)
+            killed.SetTimeUntilRespawn(respawnTime)
+        }
+    }, GameRules.Addon)
 }

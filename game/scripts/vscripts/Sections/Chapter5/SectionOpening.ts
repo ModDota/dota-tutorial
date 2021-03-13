@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { disposeHeroes, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
+import { centerCameraOnHero, disposeHeroes, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
 import { chapter5Blockades, roshanLocations, runeSpawnsLocations } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
@@ -77,16 +77,16 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.immediate(ctx => canPlayerIssueOrders = false),
+            tg.immediate(_ => canPlayerIssueOrders = false),
             tg.wait(1),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
             tg.audioDialog(LocalizationKey.Script_5_Opening_1, LocalizationKey.Script_5_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_Opening_2, LocalizationKey.Script_5_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_5_Opening_3, LocalizationKey.Script_5_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 // Pan camera over bounty rune spawns
                 tg.seq([
-                    tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.RadiantTopBountyRune]),
-                    tg.wait(1),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), runeSpawnsLocations.radiantTopBountyPos, 1),
                     tg.panCamera(runeSpawnsLocations.radiantTopBountyPos, runeSpawnsLocations.radiantAncientsBountyPos, slowerCameraSpeedFunc),
                     // Slightly correct panCamera targeting
                     tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.RadiantAncientsBountyRune]),
@@ -116,15 +116,16 @@ function onStart(complete: () => void) {
             // Return camera to player
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_5_Opening_4, LocalizationKey.Script_5_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.panCamera(runeSpawnsLocations.direAncientsBountyPos, playerHero.GetAbsOrigin(), fasterCameraSpeedFunc),
+                tg.panCamera(runeSpawnsLocations.direAncientsBountyPos, _ => playerHero.GetAbsOrigin(), fasterCameraSpeedFunc),
             ]),
             tg.audioDialog(LocalizationKey.Script_5_Opening_5, LocalizationKey.Script_5_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_Opening_6, LocalizationKey.Script_5_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.fork([
                 tg.seq([
-                    tg.panCamera(playerHero.GetAbsOrigin(), runeSpawnsLocations.topPowerUpRunePos, slowerCameraSpeedFunc),
+                    tg.panCamera(_ => getPlayerCameraLocation(), runeSpawnsLocations.topPowerUpRunePos, slowerCameraSpeedFunc),
                     tg.wait(1),
-                    tg.setCameraTarget(playerHero),
+                    tg.setCameraTarget(undefined),
+                    tg.immediate(_ => centerCameraOnHero()),
                     tg.immediate((ctx) => {
                         canPlayerIssueOrders = true
                         goalMoveToRune.start()
@@ -136,13 +137,13 @@ function onStart(complete: () => void) {
                 ]),
                 tg.goToLocation(runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3250, 1600), undefined)]),
             ]),
-            tg.immediate(() => {
+            tg.immediate(_ => {
                 canPlayerIssueOrders = false
                 setUnitPacifist(playerHero, true)
                 goalMoveToRune.complete()
             }),
             tg.audioDialog(LocalizationKey.Script_5_Opening_7, LocalizationKey.Script_5_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(ctx => {
+            tg.immediate(_ => {
                 goalWatchRangers.start()
             }),
             // DD power rune ranger sequence
@@ -296,7 +297,7 @@ function onStart(complete: () => void) {
             tg.fork([
                 tg.textDialog(LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.CrystalMaiden], 4),
             ]),
-            tg.immediate(ctx => {
+            tg.immediate(_ => {
                 goalWatchRangers.complete()
                 chapter5Blockades.roshan.destroy()
             }),

@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight, getPlayerCameraLocation } from "../../util";
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 import { Blockade } from "../../Blockade";
@@ -16,6 +16,7 @@ const requiredState: RequiredState = {
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 };
 
 let waitingForPlayerToPurchaseTango = false;
@@ -24,7 +25,7 @@ let playerBoughtTango = false;
 // UI Highlighting Paths
 const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
 const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
-const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer"
+const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 const blockadeRadiantBaseMid = new Blockade(Vector(-4793, -3550, 256), Vector(-4061, -4212, 256))
 const blockadeRadiantBaseBottom = new Blockade(Vector(-3612, -5557, 256), Vector(-3584, -6567, 256))
@@ -40,7 +41,8 @@ const onStart = (complete: () => void) => {
     if (!playerHero) error("Could not find the player's hero.");
 
     const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
-    const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+    const tangoItemID = 44;
+    const tangoInGuideUIPath = getPathToItemInGuideByID(tangoItemID)
 
     const goalTracker = new GoalTracker();
     const goalOpenShop = goalTracker.addBoolean("Open the shop.");
@@ -53,7 +55,7 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.wait(FrameTime()),
+            tg.wait(FrameTime() * 2),
 
             // Wait for the player to open their shop.
             tg.immediate(_ => {
@@ -126,14 +128,13 @@ const onStart = (complete: () => void) => {
                 tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
                     tg.wait(2.5),
-                    tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), bottomMidPoint, 4),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseBottom.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(bottomMidPoint, middleMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseMid.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(middleMidPoint, _ => playerHero.GetAbsOrigin(), 4),
-                    tg.setCameraTarget(undefined),
                 ])
             ]),
 

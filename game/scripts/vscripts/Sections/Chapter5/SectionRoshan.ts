@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { chapter5Blockades, roshanLocations, runeSpawnsLocations } from "./Shared";
-import { disposeHeroes, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util";
+import { disposeHeroes, centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist } from "../../util";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
@@ -79,12 +79,11 @@ function onStart(complete: () => void) {
                     tg.goToLocation(roshPitGoalPosition),
                 ]),
                 tg.seq([
-                    tg.panCameraLinear(playerHero.GetOrigin(), roshPitGoalPosition, 2),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 2),
                     tg.wait(2),
                     tg.immediate(() => canPlayerIssueOrders = true),
-                    tg.setCameraTarget(playerHero),
-                    tg.wait(1),
                     tg.setCameraTarget(undefined),
+                    tg.immediate(_ => centerCameraOnHero()),
                 ]),
             ]),
             tg.immediate(() => goalEnterRoshPit.complete()),
@@ -139,9 +138,8 @@ function onStart(complete: () => void) {
             }),
             tg.setCameraTarget(context => context[friendlyHeroesInfo[0].name]),
             tg.wait(1),
-            tg.setCameraTarget(playerHero),
-            tg.wait(1),
             tg.setCameraTarget(undefined),
+            tg.immediate(_ => centerCameraOnHero()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_6, LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.completeOnCheck(() => {
                 return !roshan.IsAlive()
