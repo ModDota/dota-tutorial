@@ -65,12 +65,10 @@ const onStart = (complete: () => void) => {
     const goalKillSniper = goalTracker.addBoolean("Kill Sniper.");
 
     if (!radiantCreeps) {
-        radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, false);
+        radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, true);
     }
 
-    if (!direCreeps) {
-        direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, false);
-    }
+    direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, true);
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
@@ -80,12 +78,6 @@ const onStart = (complete: () => void) => {
                 if (radiantCreeps) {
                     for (const radiantCreep of radiantCreeps) {
                         SendCreepToFight(radiantCreep);
-                    }
-                }
-
-                if (direCreeps) {
-                    for (const direCreep of direCreeps) {
-                        SendCreepToFight(direCreep)
                     }
                 }
             }),
