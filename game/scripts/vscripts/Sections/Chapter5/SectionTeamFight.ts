@@ -60,7 +60,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalSpotEnemies.start()),
             tg.immediate(_ => freezePlayerHero(true)),
             tg.fork([
-                tg.audioDialog(LocalizationKey.Script_5_5v5_1, LocalizationKey.Script_5_5v5_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_5_5v5_1, LocalizationKey.Script_5_5v5_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
                     tg.panCameraExponential(_ => getPlayerCameraLocation(), shared.enemyLocation, 2),
                     tg.wait(0.75),
@@ -106,9 +106,9 @@ function onStart(complete: () => void) {
             tg.completeOnCheck(_ => playerUsedTp, 0.1),
 
             // More dialog about importance of tps and bait player into using voice
-            tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_5_5v5_10, LocalizationKey.Script_5_5v5_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_5_5v5_11, LocalizationKey.Script_5_5v5_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_5_5v5_10, LocalizationKey.Script_5_5v5_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_5_5v5_11, LocalizationKey.Script_5_5v5_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Wait for player to use their voice, or not
             tg.immediate(_ => goalPromiseCarryTp.start()),
@@ -116,7 +116,7 @@ function onStart(complete: () => void) {
                 tg.seq([
                     tg.waitForCommand(37), // Team voice
                     tg.immediate(_ => voicePressed = true),
-                    tg.audioDialog(LocalizationKey.Script_5_5v5_12, LocalizationKey.Script_5_5v5_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_5_5v5_12, LocalizationKey.Script_5_5v5_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 ]),
                 tg.seq([
                     tg.wait(6),
