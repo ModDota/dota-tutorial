@@ -46,6 +46,15 @@ export const enemyHeroesInfo: HeroInfo[] = [
     { name: "npc_dota_hero_wisp" },
 ]
 
+export const itemAegis = "item_aegis"
+
+export const preRoshKillItems = [
+    "item_greater_crit",
+    "item_assault",
+    "item_power_treads",
+    "item_heart",
+]
+
 export const allHeroesInfo = friendlyHeroesInfo.concat(enemyHeroesInfo)
 
 function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: DotaTeam) {

@@ -49,18 +49,12 @@ function onStart(complete: () => void) {
 
     const playerHero = getOrError(getPlayerHero())
 
-    const itemDaedalus = "item_greater_crit"
-    const itemAC = "item_assault"
-    const itemPowerTreads = "item_power_treads"
-    const itemHeart = "item_heart"
-    const itemAegis = "item_aegis"
-
     let roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
 
     if (!roshan) {
         roshan = CreateUnitByName("npc_dota_roshan", shared.roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
         roshan.FaceTowards(shared.outsidePitLocation)
-        roshan.AddItemByName(itemAegis)
+        roshan.AddItemByName(shared.itemAegis)
     }
 
     setupRoshanModifiers(roshan)
@@ -71,7 +65,7 @@ function onStart(complete: () => void) {
     if (droppedItems) {
         for (const droppedItem of droppedItems) {
             const itemEntity = droppedItem.GetContainedItem()
-            if (itemEntity.GetAbilityName() === itemAegis) {
+            if (itemEntity.GetAbilityName() === shared.itemAegis) {
                 droppedItem.Destroy()
             }
         }
@@ -106,10 +100,7 @@ function onStart(complete: () => void) {
             tg.immediate(() => {
                 // Lvl up to 25, assuming 1 xp per level
                 playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
-                playerHero.AddItemByName(itemPowerTreads)
-                playerHero.AddItemByName(itemAC)
-                playerHero.AddItemByName(itemDaedalus)
-                playerHero.AddItemByName(itemHeart)
+                shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
                 // Reapply DD rune for infinite duration
                 playerHero.RemoveModifierByName("modifier_rune_doubledamage")
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
@@ -178,7 +169,7 @@ function onStart(complete: () => void) {
                 goalPickupAegis.start()
                 canPlayerIssueOrders = true
             }),
-            tg.completeOnCheck(() => playerHero.HasItemInInventory(itemAegis), 2),
+            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 2),
             tg.immediate(() => goalPickupAegis.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
