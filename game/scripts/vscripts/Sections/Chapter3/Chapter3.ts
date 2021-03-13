@@ -351,7 +351,7 @@ const onStart = (complete: () => void) => {
     ];
 
     const chaseRiki = () => {
-        let location = GetGroundPosition(Vector(-2250, 3850), undefined);
+        const location = GetGroundPosition(Vector(-2250, 3850), undefined);
         return [
             tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, (ctx) => ctx[CustomNpcKeys.Riki]),
             tg.immediate((ctx) => {
@@ -359,9 +359,7 @@ const onStart = (complete: () => void) => {
                 let riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
                 riki.SetAbsOrigin(GetGroundPosition(Vector(-2700, 4200), undefined));
                 let backstab = riki.FindAbilityByName("riki_backstab");
-                print("Backstab",backstab);
-                backstab?.SetLevel(0);
-                print("Backstab",backstab?.GetLevel());
+                backstab!.SetLevel(0);
                 riki.RemoveModifierByName("modifier_invisible");
                 riki.RemoveModifierByName("modifier_riki_backstab")
                 riki.Hold();
