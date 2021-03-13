@@ -455,3 +455,23 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
         }
     }
 }
+
+/**
+ * Returns the current camera location (technically the target, not the origin) of the player.
+ * @returns Current camera location of the player.
+ */
+export function getPlayerCameraLocation() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    const owner = playerHero.GetOwner();
+    if (!owner || !IsValidEntity(owner)) {
+        error("Could not get player hero owner");
+    }
+
+    const cameraOrigin = owner.GetAbsOrigin();
+    const cameraForward = owner.GetAngles().Forward();
+
+    // Assume fixed camera distance stored in dota_camera_distance
+    const cameraDistance = cvar_getf("dota_camera_distance");
+
+    return GetGroundPosition(cameraOrigin.__add(cameraForward.__mul(cameraDistance)), undefined);
+}
