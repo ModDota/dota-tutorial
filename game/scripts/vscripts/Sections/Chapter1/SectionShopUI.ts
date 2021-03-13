@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight, getPlayerCameraLocation } from "../../util";
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 import { Blockade } from "../../Blockade";
@@ -128,7 +128,7 @@ const onStart = (complete: () => void) => {
                 tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
                     tg.wait(2.5),
-                    tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), bottomMidPoint, 4),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseBottom.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(bottomMidPoint, middleMidPoint, 4),

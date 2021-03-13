@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { freezePlayerHero, getOrError, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Communication;
@@ -93,7 +93,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalChatWheelWP.start()),
             tg.waitForChatWheel(),
             tg.immediate(_ => goalChatWheelWP.complete()),
-            tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), context => context[lunaName].GetAbsOrigin(), 1),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[lunaName].GetAbsOrigin(), 1),
             tg.setCameraTarget(context => context[lunaName]),
             tg.textDialog(LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName], 3),
             tg.moveUnit(context => context[lunaName], allyHeroStartLocation),

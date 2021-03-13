@@ -1,7 +1,7 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
-import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist, getPlayerCameraLocation } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -105,7 +105,7 @@ function onStart(complete: () => void) {
 
             tg.fork([
                 tg.seq([
-                    tg.panCamera(playerHero.GetAbsOrigin(), cliffLocation1, _ => cameraSpeed),
+                    tg.panCamera(_ => getPlayerCameraLocation(), cliffLocation1, _ => cameraSpeed),
                     tg.wait(1),
                     tg.panCamera(cliffLocation1, cliffLocation2, _ => cameraSpeed),
                     tg.wait(1),
@@ -113,7 +113,7 @@ function onStart(complete: () => void) {
                     tg.wait(1),
                     tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
                     tg.wait(1),
-                    tg.panCamera(cliffLocation4, playerHero.GetAbsOrigin(), _ => cameraSpeed),
+                    tg.panCamera(cliffLocation4, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),

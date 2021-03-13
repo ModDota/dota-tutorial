@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util"
+import { findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation, sunsfanFountainLocation } from "./Shared"
@@ -58,7 +58,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
         tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
         tg.immediate(_ => goalMoveToSecondMarker.start()),
-        tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), miranaSpawnLocation, 4),
+        tg.panCameraExponential(_ => getPlayerCameraLocation(), miranaSpawnLocation, 4),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
         tg.audioDialog(LocalizationKey.Script_1_Movement_6, LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Movement_7, LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
