@@ -373,14 +373,14 @@ const onStart = (complete: () => void) => {
     };
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        // ...goToCamp(),
-        // ...spawnAndKillFirstRound(),
-        // ...respawnCreepsInitially(),
-        // ...pressAlt(),
-        // ...stackCreepsPractice(),
-        // ...stackCreepsMultiple(),
-        // ...killStackedCamp(),
-        // ...pickUpItems(),
+        ...goToCamp(),
+        ...spawnAndKillFirstRound(),
+        ...respawnCreepsInitially(),
+        ...pressAlt(),
+        ...stackCreepsPractice(),
+        ...stackCreepsMultiple(),
+        ...killStackedCamp(),
+        ...pickUpItems(),
         ...killThirdSpawn(),
         ...stashItem(),
         ...chaseRiki(),
