@@ -193,7 +193,7 @@ const onStart = (complete: () => void) => {
             removeHighlight(deliverItemsUIPath)
             freezePlayerHero(true)
         }),
-        tg.panCameraLinear(_ => getPlayerCameraLocation(), playerCourier.GetAbsOrigin(), 0.5),
+        tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerCourier.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerCourier),
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(daedalusName)
