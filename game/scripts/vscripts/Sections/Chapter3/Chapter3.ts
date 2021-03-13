@@ -117,14 +117,14 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => goalMoveToTarget.complete()),
         tg.immediate(_ => freezePlayerHero(true)),
         tg.audioDialog(LocalizationKey.Script_3_Opening_7, LocalizationKey.Script_3_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_3_Opening_8, LocalizationKey.Script_3_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_8, LocalizationKey.Script_3_Opening_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Opening_9, LocalizationKey.Script_3_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
     ];
 
     const pressAlt = () => [
         tg.audioDialog(LocalizationKey.Script_3_Opening_10, LocalizationKey.Script_3_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_3_Opening_11, LocalizationKey.Script_3_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_11, LocalizationKey.Script_3_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Opening_12, LocalizationKey.Script_3_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
         tg.immediate(_ => goalPressAlt.start()),
@@ -159,7 +159,7 @@ const onStart = (complete: () => void) => {
                 playerHero.Hold();
             }),
 
-            tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => freezePlayerHero(false)),
 
@@ -198,6 +198,7 @@ const onStart = (complete: () => void) => {
 
         const timeManager = GameRules.Addon.customTimeManager;
         return [
+            tg.audioDialog(LocalizationKey.Script_3_Opening_18, LocalizationKey.Script_3_Opening_18, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => {
                 goalOptionalStackCreeps.start();
                 goalTryStackCreeps.start();
@@ -270,7 +271,7 @@ const onStart = (complete: () => void) => {
     const pickUpItems = () => [
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
         tg.immediate(_ => goalPickupItem.start()),
         tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1),
