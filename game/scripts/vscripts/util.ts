@@ -144,6 +144,7 @@ export function setGoalsUI(goals: Goal[]) {
 */
 export function DestroyNeutrals() {
     const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
+    units.filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS);
     units.forEach(x => x.Destroy());
 }
 

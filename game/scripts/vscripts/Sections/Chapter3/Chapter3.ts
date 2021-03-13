@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { DestroyNeutrals, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
@@ -406,6 +406,8 @@ const onStop = () => {
             hero.RemoveModifierByName("modifier_deal_no_damage");
             hero.RemoveModifierByName("modifier_keep_hero_alive");
         }
+
+        DestroyNeutrals();
     }
 };
 
