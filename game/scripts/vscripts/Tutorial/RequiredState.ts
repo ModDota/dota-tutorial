@@ -73,9 +73,9 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Golems
     requireSunsfanGolem: false,
-    sunsFanLocation: Vector(0, 0, 256),
+    sunsFanLocation: Vector(-7000, 600, 128),
     requireSlacksGolem: false,
-    slacksLocation: Vector(0, 0, 256),
+    slacksLocation: Vector(-7000, 600, 128),
 
     // Towers
     topDireT1TowerStanding: true,
