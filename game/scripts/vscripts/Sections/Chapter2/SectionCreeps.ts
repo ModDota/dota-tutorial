@@ -28,7 +28,9 @@ const requiredState: RequiredState = {
         chapter2Blockades.radiantBaseBottom,
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
-    ]
+    ],
+    respawnLocation: Vector(-6270, 2722, 128),
+    respawnTime: 5
 }
 
 let lastHitTimer: string | undefined;

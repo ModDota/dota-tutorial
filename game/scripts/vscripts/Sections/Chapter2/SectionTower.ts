@@ -2,10 +2,11 @@ import { GoalTracker } from "../../Goals";
 import { modifier_dk_attack_tower_chapter2 } from "../../modifiers/modifier_dk_attack_tower_chapter2";
 import { modifier_dk_death_chapter2_tower } from "../../modifiers/modifier_dk_death_chapter2_tower";
 import { modifier_nodamage_chapter2_tower } from "../../modifiers/modifier_nodamage_chapter2_tower";
+import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -17,6 +18,7 @@ let playerMustOrderGlyph = false
 let hasPlayerOrderedGlyphWhenMust = false
 let playerOrderMustCastUltimate = false
 let radiantCreepTimer: string | undefined;
+const deathConversations = [LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_6]
 
 const requiredState: RequiredState = {
     heroLocation: Vector(-6130, 4860, 128),
@@ -37,6 +39,8 @@ const requiredState: RequiredState = {
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
     ],
+    respawnLocation: Vector(-6130, 4860, 128),
+    respawnTime: 5
 }
 
 // UI Highlighting Paths
@@ -102,6 +106,9 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_1, LocalizationKey.Script_2_Tower_1, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(() => {
+                // Calculate how long you should be dead while Slacks and Sunsfan explain death
+                const deathDuration = deathConversations.map(getSoundDuration).reduce((accumulator, current) => accumulator + current + 0.5, 0)
+                setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
                 freezePlayerHero(false)
                 goalAttemptToAttackTower.start()
                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
@@ -128,12 +135,18 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_5, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_6, LocalizationKey.Script_2_Tower_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
+            tg.immediate(() => {
+                if (!playerHero.IsAlive()) playerHero.RespawnHero(false, false)
+            }),
             tg.completeOnCheck(() => {
                 const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
                 if (!modifier) error("The modifier does not exists")
                 return modifier.dkRespawned
             }, 0.5),
-            tg.immediate(() => goalwaitToRespawn.complete()),
+            tg.immediate(() => {
+                goalwaitToRespawn.complete()
+                setRespawnSettings(Vector(-6130, 4860, 128), 5)
+            }),
             tg.audioDialog(LocalizationKey.Script_2_Tower_7, LocalizationKey.Script_2_Tower_7, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(() => {
                 playerHero.RemoveModifierByName(modifier_dk_death_chapter2_tower.name)

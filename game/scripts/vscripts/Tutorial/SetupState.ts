@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
+import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist } from "../util"
 import { Blockade } from "../Blockade"
 import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
@@ -20,6 +20,7 @@ export const setupState = (stateReq: RequiredState): void => {
     const hero = handleHeroCreationAndLevel(state)
     handleRequiredAbilities(state, hero)
     handleRequiredItems(state, hero)
+    handleRequiredRespawn(state)
 
     handleUnits(state)
     handleFountainTrees(state)
@@ -192,12 +193,12 @@ function handleRequiredAbilities(state: FilledRequiredState, hero: CDOTA_BaseNPC
     if (state.heroHasDoubleDamage) {
         if (!hero.HasModifier("modifier_rune_doubledamage")) {
             hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", {
-                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c                
+                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c
                 duration: 45
             })
         }
     }
-    
+
     // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
     remainingAbilityPoints = getRemainingAbilityPoints()
     if (remainingAbilityPoints < 0) {
@@ -284,6 +285,10 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
         UTIL_Remove(direTop)
     }
+}
+
+function handleRequiredRespawn(state: FilledRequiredState) {
+    setRespawnSettings(state.respawnLocation, state.respawnTime)
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {

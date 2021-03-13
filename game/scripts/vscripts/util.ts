@@ -4,6 +4,8 @@ import "./modifiers/modifier_dummy"
 import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
 
+let respawnListener: EventListenerID | undefined
+
 /**
  * Get a list of all valid players currently in the game.
  */
@@ -335,7 +337,7 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @param attachPoint Optional parameter for where and how to attach the particle.
  * @returns The created particle.
  */
- export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
+export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
     const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
     const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
     if (modifier) {
@@ -454,4 +456,21 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
             }
         }
     }
+}
+
+export function setRespawnSettings(respawnLocation: Vector, respawnTime: number) {
+    if (respawnListener) {
+        StopListeningToGameEvent(respawnListener)
+        respawnListener = undefined;
+    }
+
+    respawnListener = ListenToGameEvent("entity_killed", event => {
+        const hero = getOrError(getPlayerHero())
+        const killed = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC
+
+        if (killed.IsRealHero() && killed === hero) {
+            killed.SetRespawnPosition(respawnLocation)
+            killed.SetTimeUntilRespawn(respawnTime)
+        }
+    }, GameRules.Addon)
 }
