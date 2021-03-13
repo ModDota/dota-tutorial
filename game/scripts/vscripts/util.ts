@@ -459,6 +459,14 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
 }
 
 /**
+ * Centers the camera on the player's hero. Does not lock the camera.
+ */
+export function centerCameraOnHero() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    CenterCameraOnUnit(playerHero.GetPlayerOwnerID(), playerHero);
+}
+
+/**
  * Sets the player's respawn settings.
  * @param respawnLocation The location the player should respawn at.
  * @param respawnTime How long it should take the player to respawn.

@@ -47,6 +47,9 @@ function handleMisc(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
     } else {
         removeBountyRunes()
     }
+
+    // Focus or unlock all cameras
+    findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, state.lockCameraOnHero ? hero : undefined))
 }
 
 function handleFountainTrees(state: FilledRequiredState) {
@@ -140,10 +143,6 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
 
     // Level the hero to the desired level. 1 experience per level as defined in GameMode.
     hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
-
-    // Focus all cameras on the hero
-    const playerIds = findAllPlayersID()
-    playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, hero))
 
     // Move the hero if not within tolerance
     if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {

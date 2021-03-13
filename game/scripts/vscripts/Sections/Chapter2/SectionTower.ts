@@ -6,7 +6,7 @@ import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -88,10 +88,7 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
-            tg.wait(FrameTime()),
-            tg.setCameraTarget(playerHero),
-            tg.wait(FrameTime()),
-            tg.setCameraTarget(undefined),
+            tg.immediate(_ => centerCameraOnHero()),
             tg.immediate(context => {
                 freezePlayerHero(true);
                 playerMustOrderTrainUltimate = false;

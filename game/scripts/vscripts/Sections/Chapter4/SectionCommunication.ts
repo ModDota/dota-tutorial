@@ -144,8 +144,9 @@ function onStart(complete: () => void) {
             tg.immediate(context => context[kunkkaName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.moveUnit(context => context[kunkkaName], allyHeroStartLocation),
             tg.immediate(context => context[kunkkaName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
+
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.setCameraTarget(playerHero),
+            tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),

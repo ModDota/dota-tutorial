@@ -70,7 +70,6 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.setCameraTarget(playerHero),
             tg.immediate(_ => setUnitPacifist(playerHero, true)),
             tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name, true))),
 
