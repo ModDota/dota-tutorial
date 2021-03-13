@@ -1,19 +1,14 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { DestroyNeutrals, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, isPointInsidePolygon } from "../../util";
+import { freezePlayerHero, getOrError, getPlayerHero, isPointInsidePolygon, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
-import { CustomTimeManager } from "../../TimeManager";
-import { TutorialContext } from "../../TutorialGraph/index";
 
 let graph: tg.TutorialStep | undefined = undefined;
 
 let movedToStash = false;
-let riki: CDOTA_BaseNPC | undefined = undefined;
-const creepCampCenter = Vector(-2650, 4760.31);
 const markerLocation = Vector(-3250, 4917);
-const creepCampRadius = 1000;
 const creepCampBox = [
     Vector(-2915, 4388),
     Vector(-2915, 5203),
@@ -26,38 +21,15 @@ const giveAwayItemName = "item_arcane_ring";
 const dropInStashItemName = "item_mysterious_hat";
 const keepItemName = "item_possessed_mask";
 
-let entityKilledListenerId: EventListenerID;
 let timeManagerZeroTimeId: number;
 let timeManagerResetTimeId: number;
+let entityKilledListenerId: EventListenerID;
 
-const GetUnitsInsidePolygon = (
-    polygon: Vector[],
-    radius?: number,
-    midPoint?: Vector
-) => {
-    let units = FindUnitsInRadius(
-        DotaTeam.GOODGUYS,
-        midPoint || Vector(),
-        undefined,
-        radius || FIND_UNITS_EVERYWHERE,
-        UnitTargetTeam.BOTH,
-        UnitTargetType.ALL,
-        UnitTargetFlags.NONE,
-        FindOrder.ANY,
-        false
-    );
+const GetUnitsInsidePolygon = (polygon: Vector[], radius?: number, midPoint?: Vector) => {
+    const units = FindUnitsInRadius(DotaTeam.GOODGUYS, midPoint || Vector(), undefined, radius || FIND_UNITS_EVERYWHERE, UnitTargetTeam.BOTH,
+        UnitTargetType.ALL, UnitTargetFlags.NONE, FindOrder.ANY, false);
 
-    let inside: CDOTA_BaseNPC[] = [];
-
-    units.forEach((unit) => {
-        let loc = unit.GetAbsOrigin();
-        let u = unit as CDOTA_BaseNPC;
-        if (isPointInsidePolygon(loc, polygon)) {
-            inside.push(unit);
-        }
-    });
-
-    return inside;
+    return units.filter(unit => isPointInsidePolygon(unit.GetAbsOrigin(), polygon));
 };
 
 const requiredState: RequiredState = {
@@ -69,227 +41,98 @@ const requiredState: RequiredState = {
     requireRiki: true,
 };
 
-// UI Highlighting Paths
-const neutralSlotUIPath = "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot"
-const inventorySlot6UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel"
-const inventorySlot7UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_7/ButtonAndLevel"
-
 const onStart = (complete: () => void) => {
-    CustomGameEventManager.Send_ServerToAllClients("section_started", {
-        section: SectionName.Chapter3_Opening,
-    });
+    CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Chapter3_Opening, });
 
     const goalTracker = new GoalTracker();
-    const goalMoveToCamp = goalTracker.addBoolean(
-        "Move to the neutral creep camp"
-    );
-
-    const goalKillFirstSpawn = goalTracker.addBoolean(
-        "Kill the neutral creeps"
-    );
-
-    const goalPressAlt = goalTracker.addBoolean(
-        "Press alt to see the spawn box"
-    );
-    const goalMoveOutOfNeutralBox = goalTracker.addBoolean(
-        "Move out of the spawn box"
-    );
-
+    const goalMoveToCamp = goalTracker.addBoolean("Move to the neutral creep camp");
+    const goalKillFirstSpawn = goalTracker.addBoolean("Kill the neutral creeps");
+    const goalMoveToTarget = goalTracker.addBoolean("Move to the marked location");
+    const goalPressAlt = goalTracker.addBoolean("Press 'ALT' to see the spawn box");
     const goalStackCreeps = goalTracker.addBoolean("Stack the creeps");
-    
-
-    const goalStackCreepsMultipleTimes = goalTracker.addBoolean(
-        "Stack the creeps at least once!"
-    );
-    const goalStackCreepsOptional = goalTracker.addNumeric("Stack the creeps as much you can",5);
-
-    const goalKillStackedCreeps = goalTracker.addBoolean(
-        "Kill the stacked creeps"
-    );
-
+    const goalTryStackCreeps = goalTracker.addNumeric("Try to stack the creeps again, do it successfully at least once", 5);
+    const goalOptionalStackCreeps = goalTracker.addNumeric("(Optional) Successfully stack the creeps again", 5);
+    const goalKillStackedCreeps = goalTracker.addBoolean("Kill the stacked creeps");
     const goalPickupItem = goalTracker.addBoolean("Pickup the dropped item");
-
-    const goalKillThirdSpawn = goalTracker.addBoolean(
-        "Kill the neutral creeps"
-    );
-
-    const goalStash = goalTracker.addBoolean(
-        "Put the item in the neutral stash"
-    );
-
+    const goalKillThirdSpawn = goalTracker.addBoolean("Kill the neutral creeps");
+    const goalStash = goalTracker.addBoolean("Put the item in the neutral stash");
     const goalMoveToRiki = goalTracker.addBoolean("Move to riki");
 
-    const playerHero = getOrError(
-        getPlayerHero(),
-        "Could not find the player's hero."
-    );
-
-    // Also in orderfilter at the bottom!
-
-    let itemsToDrop = [dropInStashItemName, giveAwayItemName];
+    const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
     movedToStash = false;
     let creepArr: CDOTA_BaseNPC[] = [];
 
-    entityKilledListenerId = ListenToGameEvent(
-        "entity_killed",
-        (event) => {
-            let unit = EntIndexToHScript(
-                event.entindex_killed
-            ) as CDOTA_BaseNPC;
+    entityKilledListenerId = ListenToGameEvent("entity_killed", event => {
+        const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
 
-            if (creepArr.includes(unit)) {
-                if (
-                    creepArr.filter((x) => IsValidEntity(x) && x.IsAlive())
-                        .length == 1 &&
-                    creepPhase == 2
-                ) {
-                    DropNeutralItemAtPositionForHero(
-                        giveAwayItemName,
-                        unit.GetAbsOrigin(),
-                        playerHero,
-                        0,
-                        true
-                    );
-                } else if (
-                    creepArr.filter((x) => IsValidEntity(x) && x.IsAlive())
-                        .length == 1 &&
-                    creepPhase == 3
-                ) {
-                    DropNeutralItemAtPositionForHero(
-                        dropInStashItemName,
-                        unit.GetAbsOrigin(),
-                        playerHero,
-                        0,
-                        true
-                    );
-                }
+        if (creepArr.includes(unit)) {
+            if (creepArr.filter((x) => IsValidEntity(x) && x.IsAlive()).length === 1 && creepPhase === 2) {
+                DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+            } else if (creepArr.filter((x) => IsValidEntity(x) && x.IsAlive()).length === 1 && creepPhase === 3) {
+                DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
             }
-        },
-        undefined
-    );
+        }
+    }, undefined);
 
     const goToCamp = () => [
-        tg.seq([
-            tg.immediate((_) => goalMoveToCamp.start()),
-            tg.goToLocation(markerLocation),
-            tg.immediate((_) => goalMoveToCamp.complete()),
-        ]),
+        tg.immediate(_ => goalMoveToCamp.start()),
+        tg.goToLocation(markerLocation),
+        tg.immediate(_ => goalMoveToCamp.complete()),
     ];
 
     const spawnAndKillFirstRound = () => {
         let units: CDOTA_BaseNPC[];
         creepPhase = 1;
         return [
-            tg.seq([
-                tg.immediate((ctx) => {
-                    goalKillFirstSpawn.start();
+            tg.immediate(_ => {
+                goalKillFirstSpawn.start();
 
-                    // Make sure the creep spawn box is empty (Hero can't be in there since he's at the marker)
-                    let units = GetUnitsInsidePolygon(creepCampBox);
-                    units.forEach((unit) => {
-                        if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
-                            UTIL_Remove(unit);
-                        }
-                    });
-                }),
-                tg.wait(0),
-                tg.immediate((_) => GameRules.SpawnNeutralCreeps()),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_1,
-                    LocalizationKey.Script_3_Opening_1,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_2,
-                    LocalizationKey.Script_3_Opening_2,
-                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_3,
-                    LocalizationKey.Script_3_Opening_3,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_4,
-                    LocalizationKey.Script_3_Opening_4,
-                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_5,
-                    LocalizationKey.Script_3_Opening_5,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_6,
-                    LocalizationKey.Script_3_Opening_6,
-                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                    3
-                ),
-                tg.immediate((ctx) => {
-                    units = GetUnitsInsidePolygon(creepCampBox).filter(
-                        (x) => x.IsBaseNPC() && x.IsNeutralUnitType()
-                    ) as CDOTA_BaseNPC[];
-                }),
-                // Check if they are killed
-                tg.fork([
-                    tg.completeOnCheck((ctx) => {
-                        return (
-                            units.length == 0 ||
-                            units.every((unit) => {
-                                return (
-                                    !unit || unit.IsNull() || !unit.IsAlive()
-                                );
-                            })
-                        );
-                    }, 1),
-                ]),
-                tg.immediate((_) => goalKillFirstSpawn.complete()),
-            ]),
+                // Make sure the creep spawn box is empty (Hero can't be in there since he's at the marker)
+                const units = GetUnitsInsidePolygon(creepCampBox);
+                units.forEach(unit => {
+                    if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
+                        UTIL_Remove(unit);
+                    }
+                });
+            }),
+            tg.wait(0),
+            tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_1, LocalizationKey.Script_3_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_2, LocalizationKey.Script_3_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_3, LocalizationKey.Script_3_Opening_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_4, LocalizationKey.Script_3_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_6, LocalizationKey.Script_3_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.immediate(_ => units = GetUnitsInsidePolygon(creepCampBox).filter(x => x.IsBaseNPC() && x.IsNeutralUnitType()) as CDOTA_BaseNPC[]),
+            // Check if they are killed
+            tg.completeOnCheck(_ => units.length === 0 || !units.some(unitIsValidAndAlive), 1),
+            tg.immediate(_ => goalKillFirstSpawn.complete()),
         ];
     };
 
-    const pressAlt = () => [
-        tg.seq([
-            tg.immediate((_) => goalPressAlt.start()),
-            tg.waitForModifierKey(ModifierKey.Alt),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Opening_7,
-                LocalizationKey.Script_3_Opening_7,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.immediate((_) => goalPressAlt.complete()),
-        ]),
+    const respawnCreepsInitially = () => [
+        tg.immediate(_ => goalMoveToTarget.start()),
+        tg.goToLocation(markerLocation),
+        tg.immediate(_ => goalMoveToTarget.complete()),
+        tg.immediate(_ => freezePlayerHero(true)),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_7, LocalizationKey.Script_3_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_8, LocalizationKey.Script_3_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_9, LocalizationKey.Script_3_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
     ];
 
-    const moveOutSpawnBox = () => [
-        tg.seq([
-            tg.immediate((_) => goalMoveOutOfNeutralBox.start()),
-            tg.completeOnCheck((_) => {
-                let loc = playerHero.GetAbsOrigin();
-                return !isPointInsidePolygon(loc, creepCampBox);
-            }, 0.1),
-            tg.immediate((_) => goalMoveOutOfNeutralBox.complete()),
-            tg.wait(2),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Opening_8,
-                LocalizationKey.Script_3_Opening_8,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Opening_9,
-                LocalizationKey.Script_3_Opening_9,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-        ]),
+    const pressAlt = () => [
+        tg.audioDialog(LocalizationKey.Script_3_Opening_10, LocalizationKey.Script_3_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_11, LocalizationKey.Script_3_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_12, LocalizationKey.Script_3_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
+        tg.immediate(_ => goalPressAlt.start()),
+        tg.waitForModifierKey(ModifierKey.Alt),
+        tg.immediate(_ => goalPressAlt.complete()),
+
+        tg.audioDialog(LocalizationKey.Script_3_Opening_13, LocalizationKey.Script_3_Opening_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_14, LocalizationKey.Script_3_Opening_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ];
 
     const stackCreepsPractice = () => {
@@ -297,439 +140,202 @@ const onStart = (complete: () => void) => {
         let tryCount = 0;
         const timeManager = GameRules.Addon.customTimeManager;
         return [
-            tg.seq([
-                tg.immediate((_) => {
-                    playerHero.AddNewModifier(
-                        undefined,
-                        undefined,
-                        "modifier_deal_no_damage",
-                        undefined
-                    );
+            tg.immediate(_ => {
+                playerHero.AddNewModifier(undefined, undefined, "modifier_deal_no_damage", undefined);
 
-                    goalStackCreeps.start();
-                    GameRules.SpawnNeutralCreeps();
-                    timeManager.customTimeEnabled = true;
-                    timeManager.time = 45;
-                    timeManagerResetTimeId = timeManager.registerCallBackOnTime(
-                        5,
-                        () => {
-                            timeManager.time = 40;
-                        }
-                    );
-                    timeManagerZeroTimeId = timeManager.registerCallBackOnTime(
-                        0,
-                        () => {
-                            if (
-                                GetUnitsInsidePolygon(creepCampBox).length === 0
-                            ) {
-                                stackCount++;
-                            }
-                            GameRules.SpawnNeutralCreeps();
-                            tryCount++;
-                        }
-                    );
-
-                    playerHero.Hold();
-                }),
-
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_10,
-                    LocalizationKey.Script_3_Opening_10,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-
-                tg.loop(
-                    (_) => {
-                        if (timeManager.time === 0 && tryCount === 1) {
-                            return stackCount === 0;
-                        }
-                        return true;
-                    },
-                    () => {
-                        if (tryCount === 1) {
-                            tryCount = 0;
-                            return tg.audioDialog(
-                                LocalizationKey.Script_3_Opening_16,
-                                LocalizationKey.Script_3_Opening_16,
-                                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                                3
-                            );
-                        } else {
-                            return tg.wait(0);
-                        }
+                goalStackCreeps.start();
+                GameRules.SpawnNeutralCreeps();
+                timeManager.customTimeEnabled = true;
+                timeManager.time = 45;
+                timeManagerResetTimeId = timeManager.registerCallBackOnTime(5, () => timeManager.time = 40);
+                timeManagerZeroTimeId = timeManager.registerCallBackOnTime(0, () => {
+                    if (GetUnitsInsidePolygon(creepCampBox).length === 0) {
+                        stackCount++;
                     }
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_17,
-                    LocalizationKey.Script_3_Opening_17,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-                tg.immediate((_) => {
-                    // Commented because removing them seems weird, the player won't understand what's happening
-                    // let units = GetUnitsInsidePolygon(creepCampBox).filter(
-                    //     (x) => x.IsBaseNPC() && x.IsNeutralUnitType()
-                    // );
-                    // units.forEach((x) => UTIL_Remove(x));
+                    GameRules.SpawnNeutralCreeps();
+                    tryCount++;
+                });
 
-                    timeManager.unRegisterCallBackOnTime(
-                        timeManagerResetTimeId
-                    );
-                    timeManager.unRegisterCallBackOnTime(timeManagerZeroTimeId);
-                    playerHero.RemoveModifierByName("modifier_deal_no_damage");
-                    goalStackCreeps.complete();
-                }),
-            ]),
+                playerHero.Hold();
+            }),
+
+            tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
+            tg.immediate(_ => freezePlayerHero(false)),
+
+            tg.loop(_ => stackCount < 1, _ => {
+                if (tryCount === 1) {
+                    tryCount = 0;
+                    return tg.audioDialog(LocalizationKey.Script_3_Opening_16, LocalizationKey.Script_3_Opening_16, ctx => ctx[CustomNpcKeys.SlacksMudGolem]);
+                } else {
+                    return tg.wait(0);
+                }
+            }),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_17, LocalizationKey.Script_3_Opening_17, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.immediate(_ => {
+                timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
+                timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
+                playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                goalStackCreeps.complete();
+            }),
         ];
     };
 
+    const stackDialogKeys = [
+        LocalizationKey.Script_3_Opening_20,
+        LocalizationKey.Script_3_Opening_21,
+        LocalizationKey.Script_3_Opening_22,
+        LocalizationKey.Script_3_Opening_23,
+        LocalizationKey.Script_3_Opening_24,
+        LocalizationKey.Script_3_Opening_25,
+    ]
+
     const stackCreepsMultiple = () => {
-        let units: CDOTA_BaseNPC[] = [];
         let stackCount = 0;
         let tryCount = 0;
-        let stackTries = 5;
-        let completed = true;
+        let previousTryCount = tryCount;
+        let playedDialogStacks = 0;
+
         const timeManager = GameRules.Addon.customTimeManager;
         return [
-            tg.seq([
-                tg.immediate((_) => {
-                    goalStackCreepsMultipleTimes.start();
-                    goalStackCreepsOptional.start();
-                    GameRules.SpawnNeutralCreeps();
-                    timeManager.time = 45;
-                    creepArr = GetUnitsInsidePolygon(creepCampBox);
-                    timeManager.customTimeEnabled = true;
-                    timeManagerResetTimeId = timeManager.registerCallBackOnTime(
-                        3,
-                        () => {
-                            timeManager.time = 43;
-                        }
-                    );
-                    timeManagerZeroTimeId = timeManager.registerCallBackOnTime(
-                        0,
-                        () => {
-                            if (
-                                GetUnitsInsidePolygon(creepCampBox).length === 0
-                            ) {
-                                stackCount++;
-                            }
-                            GameRules.SpawnNeutralCreeps();
-
-                            GetUnitsInsidePolygon(creepCampBox).forEach(
-                                (unit) => {
-                                    if (!creepArr.includes(unit)) {
-                                        creepArr.push(unit);
-                                    }
-                                }
-                            );
-
-                            tryCount++;
-                        }
-                    );
-                    playerHero.AddNewModifier(
-                        undefined,
-                        undefined,
-                        "modifier_deal_no_damage",
-                        undefined
-                    );
-                }),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Opening_19,
-                    LocalizationKey.Script_3_Opening_19,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-                tg.loop(
-                    (_) => completed,
-                    (ctx: TutorialContext) => {
-                        completed = !(timeManager.time === 0 && tryCount === stackTries);
-                        goalStackCreepsOptional.setValue(tryCount)
-                        if (completed === false) {
-                            switch (stackCount) {
-                                case 0:
-                                    completed = true;
-                                    tryCount = 0;
-                                    return tg.audioDialog(
-                                        LocalizationKey.Script_3_Opening_20,
-                                        LocalizationKey.Script_3_Opening_20,
-                                        (ctx) =>
-                                            ctx[CustomNpcKeys.SunsFanMudGolem],
-                                        3
-                                    );
-                                case 1:
-                                    goalStackCreepsMultipleTimes.complete();
-                                    return tg.audioDialog(
-                                        LocalizationKey.Script_3_Opening_21,
-                                        LocalizationKey.Script_3_Opening_21,
-                                        (ctx) =>
-                                            ctx[CustomNpcKeys.SunsFanMudGolem],
-                                        3
-                                    );
-                                case 2:
-                                    goalStackCreepsMultipleTimes.complete();
-                                    return tg.audioDialog(
-                                        LocalizationKey.Script_3_Opening_22,
-                                        LocalizationKey.Script_3_Opening_22,
-                                        (ctx) =>
-                                            ctx[CustomNpcKeys.SunsFanMudGolem],
-                                        3
-                                    );
-                                case 3:
-                                    goalStackCreepsMultipleTimes.complete();
-                                    return tg.audioDialog(
-                                        LocalizationKey.Script_3_Opening_23,
-                                        LocalizationKey.Script_3_Opening_23,
-                                        (ctx) =>
-                                            ctx[CustomNpcKeys.SunsFanMudGolem],
-                                        3
-                                    );
-                                // Not reachable but added just in case...
-                                case 4:
-                                    goalStackCreepsMultipleTimes.complete();
-                                    return tg.audioDialog(
-                                        LocalizationKey.Script_3_Opening_24,
-                                        LocalizationKey.Script_3_Opening_24,
-                                        (ctx) =>
-                                            ctx[CustomNpcKeys.SunsFanMudGolem],
-                                        3
-                                    );
-                                case 5:
-                                    goalStackCreepsMultipleTimes.complete();
-                                    return tg.audioDialog(
-                                        LocalizationKey.Script_3_Opening_25,
-                                        LocalizationKey.Script_3_Opening_25,
-                                        (ctx) =>
-                                            ctx[CustomNpcKeys.SunsFanMudGolem],
-                                        3
-                                    );
-                                default:
-                                    break;
-                            }
-                        }
-                        return tg.wait(0);
+            tg.immediate(_ => {
+                goalOptionalStackCreeps.start();
+                goalTryStackCreeps.start();
+                GameRules.SpawnNeutralCreeps();
+                timeManager.time = 45;
+                creepArr = GetUnitsInsidePolygon(creepCampBox);
+                timeManager.customTimeEnabled = true;
+                timeManagerResetTimeId = timeManager.registerCallBackOnTime(3, () => timeManager.time = 43);
+                timeManagerZeroTimeId = timeManager.registerCallBackOnTime(0, () => {
+                    if (GetUnitsInsidePolygon(creepCampBox).length === 0) {
+                        stackCount++;
                     }
-                ),
-                tg.immediate((_) => {
-                    timeManager.unRegisterCallBackOnTime(
-                        timeManagerResetTimeId
-                    );
-                    timeManager.unRegisterCallBackOnTime(timeManagerZeroTimeId);
-                    playerHero.RemoveModifierByName("modifier_deal_no_damage");
-                    goalStackCreepsMultipleTimes.complete();
-                    goalStackCreepsMultipleTimes.complete();
-                }),
-            ]),
+                    GameRules.SpawnNeutralCreeps();
+
+                    GetUnitsInsidePolygon(creepCampBox).forEach(unit => {
+                        if (!creepArr.includes(unit)) {
+                            creepArr.push(unit);
+                        }
+                    });
+
+                    tryCount++;
+                });
+                playerHero.AddNewModifier(undefined, undefined, "modifier_deal_no_damage", undefined);
+            }),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.loop(_ => tryCount < 5, _ => {
+                goalTryStackCreeps.setValue(tryCount);
+                goalOptionalStackCreeps.setValue(stackCount);
+
+                // Do something if a try was done.
+                if (tryCount !== previousTryCount) {
+                    previousTryCount = tryCount;
+
+                    if (stackCount === 0) {
+                        // Reset try count if we failed the first stack
+                        tryCount = 0;
+                        return tg.audioDialog(LocalizationKey.Script_3_Opening_20, LocalizationKey.Script_3_Opening_20, ctx => ctx[CustomNpcKeys.SunsFanMudGolem])
+                    } else if (playedDialogStacks !== stackCount) {
+                        // Play dialog if we didn't play it yet for the stack count
+                        playedDialogStacks = stackCount;
+                        return tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.SunsFanMudGolem]);
+                    }
+                }
+
+                return tg.wait(0);
+            }),
+            tg.immediate(_ => {
+                timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
+                timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
+                playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                goalOptionalStackCreeps.setValue(stackCount);
+                goalOptionalStackCreeps.complete();
+                goalTryStackCreeps.setValue(tryCount);
+                goalTryStackCreeps.complete();
+            }),
         ];
     };
 
     const killStackedCamp = () => [
-        tg.seq([
-            tg.audioDialog(
-                LocalizationKey.Script_3_Opening_26,
-                LocalizationKey.Script_3_Opening_26,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                3
-            ),
-            tg.immediate((_) => {
-                goalKillStackedCreeps.start();
-                creepPhase = 2;
-            }),
-            tg.completeOnCheck((_) => {
-                // itemdrop handled in entity_killed event
-                return (
-                    creepArr.length === 0 ||
-                    creepArr.every((x) => x.IsNull() || !x.IsAlive())
-                );
-            }, 0.1),
-            tg.immediate((_) => goalKillStackedCreeps.complete()),
-        ]),
+        tg.audioDialog(LocalizationKey.Script_3_Opening_26, LocalizationKey.Script_3_Opening_26, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.immediate(_ => {
+            goalKillStackedCreeps.start();
+            creepPhase = 2;
+        }),
+        // itemdrop handled in entity_killed event
+        tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(x => x.IsNull() || !x.IsAlive()), 0.1),
+        tg.immediate(_ => goalKillStackedCreeps.complete()),
     ];
 
     const pickUpItems = () => [
-        tg.seq([
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_1,
-                LocalizationKey.Script_3_Neutrals_1,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_2,
-                LocalizationKey.Script_3_Neutrals_2,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_3,
-                LocalizationKey.Script_3_Neutrals_3,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            tg.immediate((_) => goalPickupItem.start()),
-            tg.fork([
-                tg.completeOnCheck(() => {
-                    return playerHero.HasItemInInventory(giveAwayItemName);
-                }, 0.1),
-            ]),
-            tg.immediate((_) => goalPickupItem.complete()),
-        ]),
+        tg.immediate(_ => goalPickupItem.start()),
+        tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1),
+        tg.immediate(_ => goalPickupItem.complete()),
     ];
 
-    const killThirdSpawn = () => {
-        return [
-            tg.seq([
-                tg.immediate((_) => {
-                    goalKillThirdSpawn.start();
-                    creepPhase = 3;
-                    let units = GetUnitsInsidePolygon(creepCampBox);
-                    units.forEach((unit) => {
-                        if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
-                            UTIL_Remove(unit);
-                        }
-                    });
-                }),
-                tg.wait(0),
-                tg.immediate((_) => GameRules.SpawnNeutralCreeps()),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Neutrals_4,
-                    LocalizationKey.Script_3_Neutrals_4,
-                    (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Neutrals_5,
-                    LocalizationKey.Script_3_Neutrals_5,
-                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                    3
-                ),
-                tg.wait(0),
-                tg.immediate(
-                    (_) =>
-                        (creepArr = GetUnitsInsidePolygon(
-                            creepCampBox
-                        ).filter((x) => x.IsNeutralUnitType()))
-                ),
-                tg.wait(0),
-                tg.completeOnCheck((ctx) => {
-                    return (
-                        creepArr.length == 0 ||
-                        creepArr.every((unit) => {
-                            return !unit || unit.IsNull() || !unit.IsAlive();
-                        })
-                    );
-                }, 1),
-                tg.immediate((_) => goalKillThirdSpawn.complete()),
-                tg.immediate((_) => goalPickupItem.start()),
-                tg.completeOnCheck(
-                    (_) => playerHero.HasItemInInventory(dropInStashItemName),
-                    0.1
-                ),
-                tg.immediate((_) => goalPickupItem.complete()),
-            ]),
-        ];
-    };
+    const killThirdSpawn = () => [
+        tg.immediate(_ => {
+            goalKillThirdSpawn.start();
+            creepPhase = 3;
+            GetUnitsInsidePolygon(creepCampBox).forEach(unit => {
+                if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
+                    UTIL_Remove(unit);
+                }
+            });
+        }),
+        tg.wait(0),
+        tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_4, LocalizationKey.Script_3_Neutrals_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.wait(0),
+        tg.immediate(_ => creepArr = GetUnitsInsidePolygon(creepCampBox).filter((x) => x.IsNeutralUnitType())),
+        tg.wait(0),
+        tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(unit => !unit || unit.IsNull() || !unit.IsAlive()), 1),
+        tg.immediate(_ => goalKillThirdSpawn.complete()),
+        tg.immediate(_ => goalPickupItem.start()),
+        tg.completeOnCheck(_ => playerHero.HasItemInInventory(dropInStashItemName), 0.1),
+        tg.immediate(_ => goalPickupItem.complete()),
+    ];
 
     const stashItem = () => [
-        tg.seq([
-            tg.immediate((_) => goalStash.start()),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_6,
-                LocalizationKey.Script_3_Neutrals_6,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_7,
-                LocalizationKey.Script_3_Neutrals_7,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_8,
-                LocalizationKey.Script_3_Neutrals_8,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                3
-            ),
-            tg.completeOnCheck((_) => {
-                return movedToStash === true;
-            }, 0.1),
-            tg.immediate((_) => goalStash.complete()),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_9,
-                LocalizationKey.Script_3_Neutrals_9,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_10,
-                LocalizationKey.Script_3_Neutrals_10,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_11,
-                LocalizationKey.Script_3_Neutrals_11,
-                (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_12,
-                LocalizationKey.Script_3_Neutrals_12,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-            tg.audioDialog(
-                LocalizationKey.Script_3_Neutrals_13,
-                LocalizationKey.Script_3_Neutrals_13,
-                (ctx) => ctx[CustomNpcKeys.SunsFanMudGolem],
-                3
-            ),
-        ]),
+        tg.immediate(_ => goalStash.start()),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_6, LocalizationKey.Script_3_Neutrals_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_7, LocalizationKey.Script_3_Neutrals_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_8, LocalizationKey.Script_3_Neutrals_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.completeOnCheck(_ => movedToStash === true, 0.1),
+        tg.immediate(_ => goalStash.complete()),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_9, LocalizationKey.Script_3_Neutrals_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_10, LocalizationKey.Script_3_Neutrals_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_11, LocalizationKey.Script_3_Neutrals_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_12, LocalizationKey.Script_3_Neutrals_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ];
 
-    const chaseRiki = () => {
-        return [
-            tg.seq([
-                tg.immediate((_) => {
-                    goalMoveToRiki.start();
-                }),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Neutrals_1,
-                    LocalizationKey.Script_3_Neutrals_1,
-                    (ctx) => ctx[CustomNpcKeys.Riki],
-                    3
-                ),
-                tg.audioDialog(
-                    LocalizationKey.Script_3_Neutrals_14,
-                    LocalizationKey.Script_3_Neutrals_14,
-                    (ctx) => ctx[CustomNpcKeys.SlacksMudGolem],
-                    3
-                ),
-            ]),
-        ];
-    };
+    const chaseRiki = () => [
+        tg.immediate(_ => goalMoveToRiki.start()),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, ctx => ctx[CustomNpcKeys.Riki]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+    ];
 
-    graph = tg.withGoals(
-        (_) => goalTracker.getGoals(),
-        tg.seq([
-            ...goToCamp(),
-            ...spawnAndKillFirstRound(),
-            ...pressAlt(),
-            ...moveOutSpawnBox(),
-            ...stackCreepsPractice(),
-            ...stackCreepsMultiple(),
-            ...killStackedCamp(),
-            ...pickUpItems(),
-            ...killThirdSpawn(),
-            ...stashItem(),
-            ...chaseRiki(),
-        ])
-    );
+    graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
+        ...goToCamp(),
+        ...spawnAndKillFirstRound(),
+        ...respawnCreepsInitially(),
+        ...pressAlt(),
+        ...stackCreepsPractice(),
+        ...stackCreepsMultiple(),
+        ...killStackedCamp(),
+        ...pickUpItems(),
+        ...killThirdSpawn(),
+        ...stashItem(),
+        ...chaseRiki(),
+    ]));
 
     graph.start(GameRules.Addon.context, () => {
-        print("Completed", "Section CH3 Opening");
+        print("Completed", SectionName.Chapter3_Opening);
         complete();
     });
 };
@@ -740,14 +346,13 @@ const onStop = () => {
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
-        GameRules.Addon.customTimeManager.unRegisterCallBackOnTime(
-            timeManagerResetTimeId
-        );
-        GameRules.Addon.customTimeManager.unRegisterCallBackOnTime(
-            timeManagerZeroTimeId
-        );
+        GameRules.Addon.customTimeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
+        GameRules.Addon.customTimeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
         GameRules.Addon.customTimeManager.customTimeEnabled = false;
-        getPlayerHero()?.RemoveModifierByName("modifier_deal_no_damage");
+        const hero = getPlayerHero()
+        if (hero && IsValidEntity(hero)) {
+            hero.RemoveModifierByName("modifier_deal_no_damage");
+        }
     }
 };
 
