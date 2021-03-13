@@ -50,7 +50,7 @@ function onStart(complete: () => void) {
                 kunkka.AddItemByName("item_invis_sword");
                 kunkka.AddItemByName("item_armlet");
                 kunkka.AddItemByName("item_phase_boots");
-                kunkka.AddItemByName("item_heart");
+                kunkka.AddItemByName("item_blade_mail");
                 kunkka.AddItemByName("item_monkey_king_bar");
             }),
 
