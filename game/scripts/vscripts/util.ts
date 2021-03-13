@@ -458,6 +458,9 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
     }
 }
 
+/**
+ * Centers the camera on the player's hero. Does not lock the camera.
+ */
 export function centerCameraOnHero() {
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
     CenterCameraOnUnit(playerHero.GetPlayerOwnerID(), playerHero);
