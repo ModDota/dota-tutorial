@@ -458,6 +458,11 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
     }
 }
 
+/**
+ * Sets the player's respawn settings.
+ * @param respawnLocation The location the player should respawn at.
+ * @param respawnTime How long it should take the player to respawn.
+ */
 export function setRespawnSettings(respawnLocation: Vector, respawnTime: number) {
     if (respawnListener) {
         StopListeningToGameEvent(respawnListener)
