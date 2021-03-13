@@ -35,6 +35,7 @@ declare const enum LocalizationKey {
     Script_1_Leveling_2 = "Script_1_Leveling_2",
     Script_1_Leveling_3 = "Script_1_Leveling_3",
     Script_1_Leveling_4 = "Script_1_Leveling_4",
+    Script_1_Leveling_4_2 = "Script_1_Leveling_4_2",
     Script_1_Leveling_5 = "Script_1_Leveling_5",
     Script_1_Leveling_6 = "Script_1_Leveling_6",
     Script_1_Leveling_7 = "Script_1_Leveling_7",
