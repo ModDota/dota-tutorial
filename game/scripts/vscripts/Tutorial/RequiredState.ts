@@ -37,6 +37,10 @@ export type RequiredState = {
 
     // Chapter 5 bounty runes
     requireBountyRunes?: boolean
+
+    // Respawn positions for unintended deaths
+    respawnLocation?: Vector
+    respawnTime?: number
 }
 
 /**
@@ -79,5 +83,9 @@ export const defaultRequiredState: FilledRequiredState = {
     blockades: [],
 
     // Chapter 5 bounty runes
-    requireBountyRunes: false
+    requireBountyRunes: false,
+
+    // Respawn positions for unintended deaths
+    respawnLocation: Vector(-6700, -6700, 384),
+    respawnTime: 10,
 }
