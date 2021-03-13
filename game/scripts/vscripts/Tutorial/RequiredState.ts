@@ -34,6 +34,10 @@ export type RequiredState = {
 
     // Chapter 5 bounty runes
     requireBountyRunes?: boolean
+
+    // Roshan
+    requireRoshan?: boolean
+    roshanHitsLikeATruck?: boolean
 }
 
 /**
@@ -73,5 +77,9 @@ export const defaultRequiredState: FilledRequiredState = {
     blockades: [],
 
     // Chapter 5 bounty runes
-    requireBountyRunes: false
+    requireBountyRunes: false,
+
+    // Roshan
+    requireRoshan: false,
+    roshanHitsLikeATruck: false
 }

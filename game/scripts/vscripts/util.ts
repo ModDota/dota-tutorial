@@ -423,3 +423,18 @@ export function highlight(props: HighlightProps): ParticleID[] {
 
     return particles
 }
+
+/**
+ * Removes hero entities if they are still valid and alive.
+ * @param heroesInfoArray Array of objects that contain a hero's name
+ */
+export function disposeHeroes(heroesInfoArray: { name: CustomNpcKeys }[]) {
+    for (const friendlyHero of heroesInfoArray) {
+        let hero: CDOTA_BaseNPC_Hero | undefined = GameRules.Addon.context[friendlyHero.name];
+        if (unitIsValidAndAlive(hero)) {
+            hero!.RemoveSelf();
+        }
+
+        GameRules.Addon.context[friendlyHero.name] = undefined;
+    }
+}

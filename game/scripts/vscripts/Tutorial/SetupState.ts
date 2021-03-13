@@ -1,8 +1,9 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
+import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
-import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
+import { roshanLocations, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
+import { modifier_custom_roshan_attack_speed } from "../modifiers/modifier_custom_roshan_attack_speed"
 
 // Keep track of spawned blockades so we can remove them again.
 const spawnedBlockades = new Set<Blockade>()
@@ -24,6 +25,7 @@ export const setupState = (stateReq: RequiredState): void => {
     handleUnits(state)
     handleFountainTrees(state)
     handleBlockades(state)
+    handleRoshan(state)
 
     handleMisc(state, hero)
 }
@@ -196,7 +198,7 @@ function handleRequiredAbilities(state: FilledRequiredState, hero: CDOTA_BaseNPC
             })
         }
     }
-    
+
     // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
     remainingAbilityPoints = getRemainingAbilityPoints()
     if (remainingAbilityPoints < 0) {
@@ -265,6 +267,51 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
         const currentItemCount = currentItems[itemName] ?? 0
         for (let i = 0; i < requiredItemCount - currentItemCount; i++) {
             hero.AddItemByName(itemName)
+        }
+    }
+}
+
+function handleRoshan(state: FilledRequiredState) {
+    let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
+    const itemAegis = "item_aegis"
+    if (state.requireRoshan) {
+        if (!unitIsValidAndAlive(roshan)) {
+            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocations.spawn, true, undefined, undefined, DotaTeam.NEUTRALS)
+            roshan.AddItemByName(itemAegis)
+        }
+
+        if (roshanLocations.spawn.__sub(roshan.GetAbsOrigin()).Length2D() > 0) {
+            roshan.Stop()
+            roshan.SetAbsOrigin(roshanLocations.spawn)
+        }
+
+        roshan.FaceTowards(roshanLocations.lairExit)
+
+        // Remove standard rosh modifiers so he doesn't grow stronger as time passes
+        roshan.RemoveModifierByName("modifier_roshan_inherent_buffs")
+        roshan.RemoveModifierByName("modifier_roshan_devotion")
+        roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
+        // Add modifier since attack speed is part of the devotion modifier, and his attacks don't look genuine without this
+        roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
+
+        if (state.roshanHitsLikeATruck)
+            roshan.SetBaseDamageMin(600)
+        else
+            roshan.SetBaseDamageMin(75) // Standard Rosh base dmg, patch 7.28c
+    } else {
+        if (unitIsValidAndAlive(roshan))
+            roshan.Destroy()
+    }
+
+    // Clear  Aegis boxes left on the ground, if any
+    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+
+    if (droppedItems) {
+        for (const droppedItem of droppedItems) {
+            const itemEntity = droppedItem.GetContainedItem()
+            if (itemEntity.GetAbilityName() === itemAegis) {
+                droppedItem.Destroy()
+            }
         }
     }
 }

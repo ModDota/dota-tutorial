@@ -20,3 +20,9 @@ export const runeSpawnsLocations = {
     direAncientsBountyPos: Vector(3151.963379, -463.924164, 304),
     topPowerUpRunePos: Vector(-1640, 984, 48)
 }
+
+export const roshanLocations = {
+    spawn: Vector(-2919, 2315, 32),
+    lairExit: Vector(-2140, 1740, 0)
+}
+

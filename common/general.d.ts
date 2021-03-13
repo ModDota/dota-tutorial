@@ -32,9 +32,14 @@ declare const enum CustomNpcKeys {
     DireTopT1Tower = "npc_dota_badguys_tower1_top",
     Sniper = "npc_dota_hero_sniper",
     Juggernaut = "npc_dota_hero_juggernaut",
-    Zeus = "npc_dota_hero_zuus",
+    Zuus = "npc_dota_hero_zuus",
     CrystalMaiden = "npc_dota_hero_crystal_maiden",
-    MiranaIllusions = "mirana_illusions"
+    Lion = "npc_dota_hero_lion",
+    StormSpirit = "npc_dota_hero_storm_spirit",
+    MiranaIllusionOne = "mirana_illusion_one",
+    MiranaIllusionTwo = "mirana_illusion_two",
+    Tidehunter = "npc_dota_hero_tidehunter",
+    Roshan = "npc_dota_roshan",
 }
 
 declare const enum CustomEntityKeys {
