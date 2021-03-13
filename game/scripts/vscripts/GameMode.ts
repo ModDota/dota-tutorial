@@ -272,6 +272,11 @@ export class GameMode {
                     }
                 });
             }
+
+            // Neutral creeps (Check for neutral team too not remove Slacks etc)
+            if (unit.IsNeutralUnitType() && unit.GetTeam() == DotaTeam.NEUTRALS && this.tutorial.currentSection && this.tutorial.currentSection.name !== SectionName.Chapter3_Opening) {
+                UTIL_Remove(unit)
+            }
         }
     }
 
