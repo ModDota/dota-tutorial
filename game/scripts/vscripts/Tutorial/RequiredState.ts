@@ -43,7 +43,7 @@ export type RequiredState = {
     requireBountyRunes?: boolean
 
     // Respawn positions for unintended deaths
-    respawnLocation?: Vector
+    respawnLocation?: Vector | "heroLocation"
     respawnTime?: number
 }
 
@@ -94,6 +94,6 @@ export const defaultRequiredState: FilledRequiredState = {
     requireBountyRunes: false,
 
     // Respawn positions for unintended deaths
-    respawnLocation: Vector(-6700, -6700, 384),
+    respawnLocation: "heroLocation",
     respawnTime: 10,
 }

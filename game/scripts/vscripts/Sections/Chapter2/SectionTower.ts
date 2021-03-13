@@ -40,8 +40,6 @@ const requiredState: RequiredState = {
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
     ],
-    respawnLocation: Vector(-6130, 4860, 128),
-    respawnTime: 5,
     centerCameraOnHero: true,
 }
 
