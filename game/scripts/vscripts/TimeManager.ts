@@ -48,7 +48,9 @@ export class CustomTimeManager {
     }
 
     unregisterCallBackOnTime(index: number) {
-        if (this.callbacks.has(index)) {
+        // Didn't seem like this worked with has() (maybe tstl bug) so using get() instead.
+        const callback = this.callbacks.get(index);
+        if (callback) {
             this.callbacks.delete(index);
         }
     }
