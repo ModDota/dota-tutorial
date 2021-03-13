@@ -68,7 +68,7 @@ function onStart(complete: () => void) {
                 luna.FaceTowards(playerHero.GetAbsOrigin());
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Communication_1, ctx => ctx[lunaName], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_1, LocalizationKey.Script_4_Communication_1, ctx => ctx[lunaName]),
             tg.setCameraTarget(undefined),
             tg.audioDialog(LocalizationKey.Script_4_Communication_2, LocalizationKey.Script_4_Communication_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_3, LocalizationKey.Script_4_Communication_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -95,7 +95,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalChatWheelWP.complete()),
             tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), context => context[lunaName].GetAbsOrigin(), 1),
             tg.setCameraTarget(context => context[lunaName]),
-            tg.textDialog(LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName]),
             tg.moveUnit(context => context[lunaName], allyHeroStartLocation),
 
             tg.setCameraTarget(context => context[kunkkaName]),
