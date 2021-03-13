@@ -145,14 +145,14 @@ function onStart(complete: () => void) {
             tg.moveUnit(context => context[kunkkaName], allyHeroStartLocation),
             tg.immediate(context => context[kunkkaName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.setCameraTarget(playerHero),
+            tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => goalGoToTopBountyRune.start()),
             tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
-            tg.goToLocation(bountyRuneLocation, [Vector(-3700, 3300)]),
+            tg.goToLocation(bountyRuneLocation, [], false),
             tg.immediate(_ => goalGoToTopBountyRune.complete()),
         ])
     )
