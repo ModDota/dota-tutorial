@@ -151,7 +151,7 @@ const onStart = (complete: () => void) => {
                 playerHero.SetAbsOrigin(teleportAfterRespawnLocation)
                 freezePlayerHero(false)
             }),
-            tg.panCameraExponential(_ => fountainLocation, playerHero.GetAbsOrigin(), 0.9),
+            tg.panCameraExponential(_ => fountainLocation, _ => playerHero.GetAbsOrigin(), 0.9),
             tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => []),
             tg.immediate(() => {
                 goalGetBackToTopTowerPosition.complete()
@@ -184,7 +184,7 @@ const onStart = (complete: () => void) => {
                 ]),
                 tg.seq([
                     tg.audioDialog(LocalizationKey.Script_2_Tower_9, LocalizationKey.Script_2_Tower_9, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.panCameraLinear(_ => direTopTower.GetAbsOrigin(), playerHero.GetAbsOrigin(), 1),
+                    tg.panCameraLinear(_ => direTopTower.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
                     tg.immediate(() => {
                         goalSneakThroughTower.start()
                         freezePlayerHero(false)

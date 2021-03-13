@@ -3,7 +3,7 @@ import { isShopOpen } from "../../Shop";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
 import { chapter2Blockades } from "./shared";
 import { modifier_courier_chapter_2_ms_bonus } from "../../modifiers/modifier_courier_chapter_2_ms_bonus";
 
@@ -193,7 +193,7 @@ const onStart = (complete: () => void) => {
             removeHighlight(deliverItemsUIPath)
             freezePlayerHero(true)
         }),
-        tg.panCameraLinear(playerHero.GetAbsOrigin(), playerCourier.GetAbsOrigin(), 0.5),
+        tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerCourier.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerCourier),
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(daedalusName)

@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { chapter5Blockades, runeSpawnsLocations } from "./Shared";
-import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { modifier_custom_roshan_attack_speed } from "../../modifiers/modifier_custom_roshan_attack_speed";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
@@ -101,7 +101,7 @@ function onStart(complete: () => void) {
                     tg.goToLocation(roshPitGoalPosition),
                 ]),
                 tg.seq([
-                    tg.panCameraLinear(playerHero.GetOrigin(), roshPitGoalPosition, 2),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 2),
                     tg.wait(2),
                     tg.immediate(() => canPlayerIssueOrders = true),
                     tg.setCameraTarget(undefined),
