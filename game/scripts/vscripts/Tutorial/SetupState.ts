@@ -46,6 +46,9 @@ function handleMisc(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
     } else {
         removeBountyRunes()
     }
+
+    // Focus or unlock all cameras
+    findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, state.lockCameraOnHero ? hero : undefined))
 }
 
 function handleFountainTrees(state: FilledRequiredState) {
@@ -140,10 +143,6 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
     // Level the hero to the desired level. 1 experience per level as defined in GameMode.
     hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
 
-    // Focus all cameras on the hero
-    const playerIds = findAllPlayersID()
-    playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, hero))
-
     // Move the hero if not within tolerance
     if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
         hero.Stop()
@@ -192,12 +191,12 @@ function handleRequiredAbilities(state: FilledRequiredState, hero: CDOTA_BaseNPC
     if (state.heroHasDoubleDamage) {
         if (!hero.HasModifier("modifier_rune_doubledamage")) {
             hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", {
-                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c                
+                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c
                 duration: 45
             })
         }
     }
-    
+
     // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
     remainingAbilityPoints = getRemainingAbilityPoints()
     if (remainingAbilityPoints < 0) {

@@ -335,7 +335,7 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @param attachPoint Optional parameter for where and how to attach the particle.
  * @returns The created particle.
  */
- export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
+export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
     const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
     const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
     if (modifier) {
@@ -454,4 +454,9 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
             }
         }
     }
+}
+
+export function centerCameraOnHero() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    CenterCameraOnUnit(playerHero.GetPlayerOwnerID(), playerHero);
 }

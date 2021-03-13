@@ -3,7 +3,7 @@ import { isShopOpen } from "../../Shop";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
 import { chapter2Blockades } from "./shared";
 import { modifier_courier_chapter_2_ms_bonus } from "../../modifiers/modifier_courier_chapter_2_ms_bonus";
 
@@ -90,10 +90,7 @@ const onStart = (complete: () => void) => {
     const goalMoveToFinalPosition = goalTracker.addBoolean("Move into the Dire jungle.")
 
     graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
-        tg.wait(FrameTime()),
-        tg.setCameraTarget(playerHero),
-        tg.wait(FrameTime()),
-        tg.setCameraTarget(undefined),
+        tg.immediate(_ => centerCameraOnHero()),
         tg.immediate(() => freezePlayerHero(true)),
         tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),

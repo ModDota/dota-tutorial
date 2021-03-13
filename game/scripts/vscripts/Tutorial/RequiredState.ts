@@ -11,10 +11,13 @@ export type RequiredState = {
     heroLocation?: Vector
     heroLocationTolerance?: number // How far the hero can be from heroLocation without getting teleported
     heroGold?: number
-    heroAbilityMinLevels?: [number, number, number, number],
-    heroItems?: Record<string, number>, // Items (and how many of them) the hero must have in his inventory.
-    removeUnrequiredItems?: boolean,  // If true, remove any items not specified in heroItems. (Default true)
+    heroAbilityMinLevels?: [number, number, number, number]
+    heroItems?: Record<string, number> // Items (and how many of them) the hero must have in his inventory.
+    removeUnrequiredItems?: boolean  // If true, remove any items not specified in heroItems. (Default true)
     heroHasDoubleDamage?: boolean
+
+    // Camera
+    lockCameraOnHero?: boolean
 
     // Golems
     requireSunsfanGolem?: boolean
@@ -58,6 +61,9 @@ export const defaultRequiredState: FilledRequiredState = {
     heroItems: {},
     removeUnrequiredItems: true,
     heroHasDoubleDamage: false,
+
+    // Camera
+    lockCameraOnHero: false,
 
     // Golems
     requireSunsfanGolem: false,

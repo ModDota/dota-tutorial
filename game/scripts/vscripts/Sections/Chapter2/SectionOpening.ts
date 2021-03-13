@@ -61,7 +61,6 @@ const onStart = (complete: () => void) => {
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
             tg.wait(FrameTime()),
-            tg.setCameraTarget(undefined),
             tg.immediate(context => {
                 goalMoveNextToBarracks.start(),
                     freezePlayerHero(false)

@@ -16,6 +16,7 @@ const requiredState: RequiredState = {
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 };
 
 let waitingForPlayerToPurchaseTango = false;
@@ -134,7 +135,6 @@ const onStart = (complete: () => void) => {
                     tg.immediate(_ => blockadeRadiantBaseMid.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(middleMidPoint, _ => playerHero.GetAbsOrigin(), 4),
-                    tg.setCameraTarget(undefined),
                 ])
             ]),
 

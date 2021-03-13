@@ -13,6 +13,7 @@ const requiredState: RequiredState = {
     slacksLocation: slacksFountainLocation,
     heroLevel: 2,
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 }
 
 const pugnaLocation = Vector(-6700, -6300, 384)
