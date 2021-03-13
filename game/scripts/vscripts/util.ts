@@ -4,6 +4,8 @@ import "./modifiers/modifier_dummy"
 import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
 
+let respawnListener: EventListenerID | undefined
+
 /**
  * Get a list of all valid players currently in the game.
  */
@@ -459,4 +461,26 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
 export function centerCameraOnHero() {
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
     CenterCameraOnUnit(playerHero.GetPlayerOwnerID(), playerHero);
+}
+
+/**
+ * Sets the player's respawn settings.
+ * @param respawnLocation The location the player should respawn at.
+ * @param respawnTime How long it should take the player to respawn.
+ */
+export function setRespawnSettings(respawnLocation: Vector, respawnTime: number) {
+    if (respawnListener) {
+        StopListeningToGameEvent(respawnListener)
+        respawnListener = undefined;
+    }
+
+    respawnListener = ListenToGameEvent("entity_killed", event => {
+        const hero = getPlayerHero()
+        const killed = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC_Hero
+
+        if (killed === hero) {
+            killed.SetRespawnPosition(respawnLocation)
+            killed.SetTimeUntilRespawn(respawnTime)
+        }
+    }, GameRules.Addon)
 }

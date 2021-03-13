@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
+import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist } from "../util"
 import { Blockade } from "../Blockade"
 import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
@@ -20,6 +20,7 @@ export const setupState = (stateReq: RequiredState): void => {
     const hero = handleHeroCreationAndLevel(state)
     handleRequiredAbilities(state, hero)
     handleRequiredItems(state, hero)
+    handleRequiredRespawn(state)
 
     handleUnits(state)
     handleFountainTrees(state)
@@ -283,6 +284,10 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
         UTIL_Remove(direTop)
     }
+}
+
+function handleRequiredRespawn(state: FilledRequiredState) {
+    setRespawnSettings(state.respawnLocation, state.respawnTime)
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {

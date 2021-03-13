@@ -10,7 +10,7 @@ interface DialogData {
 }
 
 class DialogController {
-    private voiceVolume = 1.2;
+    private voiceVolume = 3;
     private currentLine: DialogData | undefined;
     private onDialogEndedCallback: (() => void) | undefined = undefined;
     private playing = false;
