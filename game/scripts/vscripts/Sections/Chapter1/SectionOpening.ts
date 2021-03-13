@@ -12,6 +12,7 @@ const requiredState: RequiredState = {
     slacksLocation: slacksInitialLocation,
     sunsFanLocation: sunsfanFountainLocation,
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 }
 
 const onStart = (complete: () => void) => {
@@ -20,7 +21,6 @@ const onStart = (complete: () => void) => {
 
     graph = tg.seq([
         tg.immediate(() => canPlayerIssueOrders = false),
-        tg.setCameraTarget(() => playerHero),
         tg.fork([
             tg.seq([
                 tg.moveUnit(context => context[CustomNpcKeys.SlacksMudGolem], slacksFountainLocation),
@@ -57,7 +57,7 @@ const onStart = (complete: () => void) => {
             }
         ),
         tg.panCameraExponential(Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.5),
-        tg.setCameraTarget(() => playerHero),
+        tg.setCameraTarget(playerHero),
     ])
 
     graph.start(GameRules.Addon.context, () => {

@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { findRealPlayerID, getOrError, getPlayerHero } from "../../util";
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerHero } from "../../util";
 import { chapter5Blockades, runeSpawnsLocations } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
@@ -91,7 +91,8 @@ function onStart(complete: () => void) {
                 tg.seq([
                     tg.panCameraLinear(playerHero.GetAbsOrigin(), runeSpawnsLocations.topPowerUpRunePos, 2),
                     tg.wait(1),
-                    tg.setCameraTarget(playerHero),
+                    tg.setCameraTarget(undefined),
+                    tg.immediate(_ => centerCameraOnHero()),
                     tg.immediate((ctx) => {
                         canPlayerIssueOrders = true
                         goalMoveToRune.start()
@@ -114,7 +115,7 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(runeSpawnsLocations.topPowerUpRunePos, RuneType.DOUBLEDAMAGE)
             }),
             tg.wait(1),
-            tg.setCameraTarget(playerHero),
+            tg.immediate(_ => centerCameraOnHero()),
             tg.textDialog(LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
             tg.immediate(ctx => {
                 canPlayerIssueOrders = true

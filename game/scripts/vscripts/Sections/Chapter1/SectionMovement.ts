@@ -14,6 +14,7 @@ const requiredState: RequiredState = {
     sunsFanLocation: sunsfanFountainLocation,
     slacksLocation: slacksFountainLocation,
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 }
 
 const onStart = (complete: () => void) => {

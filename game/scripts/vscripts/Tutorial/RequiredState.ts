@@ -11,10 +11,13 @@ export type RequiredState = {
     heroLocation?: Vector
     heroLocationTolerance?: number // How far the hero can be from heroLocation without getting teleported
     heroGold?: number
-    heroAbilityMinLevels?: [number, number, number, number],
-    heroItems?: Record<string, number>, // Items (and how many of them) the hero must have in his inventory.
-    removeUnrequiredItems?: boolean,  // If true, remove any items not specified in heroItems. (Default true)
+    heroAbilityMinLevels?: [number, number, number, number]
+    heroItems?: Record<string, number> // Items (and how many of them) the hero must have in his inventory.
+    removeUnrequiredItems?: boolean  // If true, remove any items not specified in heroItems. (Default true)
     heroHasDoubleDamage?: boolean
+
+    // Camera
+    lockCameraOnHero?: boolean
 
     // Golems
     requireSunsfanGolem?: boolean
@@ -37,6 +40,10 @@ export type RequiredState = {
 
     // Chapter 5 bounty runes
     requireBountyRunes?: boolean
+
+    // Respawn positions for unintended deaths
+    respawnLocation?: Vector
+    respawnTime?: number
 }
 
 /**
@@ -59,6 +66,9 @@ export const defaultRequiredState: FilledRequiredState = {
     removeUnrequiredItems: true,
     heroHasDoubleDamage: false,
 
+    // Camera
+    lockCameraOnHero: false,
+
     // Golems
     requireSunsfanGolem: false,
     sunsFanLocation: Vector(0, 0, 256),
@@ -79,5 +89,9 @@ export const defaultRequiredState: FilledRequiredState = {
     blockades: [],
 
     // Chapter 5 bounty runes
-    requireBountyRunes: false
+    requireBountyRunes: false,
+
+    // Respawn positions for unintended deaths
+    respawnLocation: Vector(-6700, -6700, 384),
+    respawnTime: 10,
 }
