@@ -13,10 +13,21 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     currentStage: LastHitStages = LastHitStages.LAST_HIT
     private successLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_5, LocalizationKey.Script_2_Creeps_6, LocalizationKey.Script_2_Creeps_7]
     private missLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_8, LocalizationKey.Script_2_Creeps_9, LocalizationKey.Script_2_Creeps_10]
+    dialogFinishedPlaying: boolean = false
 
-    OnCreated() {
+    lastHits?: number
+    lastHitBreatheFire?: number
+    denies?: number
+
+    OnCreated(keys: { lastHits: number, lastHitBreatheFire: number, denies: number }) {
         if (!IsServer()) return;
         this.SetStackCount(0);
+
+        if (keys) {
+            this.lastHits = keys.lastHits
+            this.lastHitBreatheFire = keys.lastHitBreatheFire
+            this.denies = keys.denies
+        }
     }
 
     OnRefresh() {
@@ -58,6 +69,9 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     }
 
     LastHit(event: ModifierAttackEvent) {
+        // Ignore if we already reached the maximum
+        if (this.lastHits && this.GetStackCount() === this.lastHits) return;
+
         if (event.attacker != this.GetParent()) {
             // Check if killer is on DK's team
             if (event.attacker.GetTeamNumber() == this.GetParent().GetTeamNumber()) {
@@ -82,12 +96,24 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
 
         // Play "nice hit!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
         const chosenLocalizationKey = this.successLocalizationKeys[RandomInt(0, this.successLocalizationKeys.length - 1)]
-        dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+
+        // Only the last dialog tags dialogFinishedPlaying
+        if (this.lastHits && this.lastHits - 1 === this.GetStackCount()) {
+            dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3, () => {
+                this.dialogFinishedPlaying = true
+            })
+        }
+        else {
+            dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+        }
 
         this.IncrementStackCount();
     }
 
     LastHitBreathFire(event: ModifierAttackEvent) {
+        // Ignore if we already reached the maximum
+        if (this.lastHitBreatheFire && this.lastHitBreatheFire === this.GetStackCount()) return;
+
         if (event.attacker != this.GetParent()) return;
         if (event.inflictor != this.GetParent().FindAbilityByName("dragon_knight_breathe_fire")) return
 
@@ -100,6 +126,9 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     }
 
     LastHitDeny(event: ModifierAttackEvent) {
+        // Ignore if we already reached the maximum
+        if (this.denies && this.denies === this.GetStackCount()) return
+
         if (event.attacker != this.GetParent()) return;
 
         if (event.unit) {
