@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist } from "../util"
+import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist } from "../util"
 import { Blockade } from "../Blockade"
 import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
@@ -26,7 +26,18 @@ export const setupState = (stateReq: RequiredState): void => {
     handleFountainTrees(state)
     handleBlockades(state)
 
+    handleCamera(state, hero)
     handleMisc(state, hero)
+}
+
+function handleCamera(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
+    // Focus or unlock all cameras
+    findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, state.lockCameraOnHero ? hero : undefined))
+
+    // Center camera on the hero
+    if (state.centerCameraOnHero) {
+        centerCameraOnHero()
+    }
 }
 
 function handleMisc(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
@@ -47,9 +58,6 @@ function handleMisc(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
     } else {
         removeBountyRunes()
     }
-
-    // Focus or unlock all cameras
-    findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, state.lockCameraOnHero ? hero : undefined))
 }
 
 function handleFountainTrees(state: FilledRequiredState) {

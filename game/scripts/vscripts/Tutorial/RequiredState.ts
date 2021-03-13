@@ -18,6 +18,7 @@ export type RequiredState = {
 
     // Camera
     lockCameraOnHero?: boolean
+    centerCameraOnHero?: boolean // Whether to center the camera on the hero (not locking) when starting the section
 
     // Golems
     requireSunsfanGolem?: boolean
@@ -68,6 +69,7 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Camera
     lockCameraOnHero: false,
+    centerCameraOnHero: false,
 
     // Golems
     requireSunsfanGolem: false,

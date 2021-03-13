@@ -42,6 +42,7 @@ const requiredState: RequiredState = {
     ],
     respawnLocation: Vector(-6130, 4860, 128),
     respawnTime: 5,
+    centerCameraOnHero: true,
 }
 
 // UI Highlighting Paths
@@ -88,7 +89,6 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
-            tg.immediate(_ => centerCameraOnHero()),
             tg.immediate(context => {
                 freezePlayerHero(true);
                 playerMustOrderTrainUltimate = false;
