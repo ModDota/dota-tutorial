@@ -87,5 +87,5 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Respawn positions for unintended deaths
     respawnLocation: Vector(-6700, -6700, 384),
-    respawnTime: 10
+    respawnTime: 10,
 }

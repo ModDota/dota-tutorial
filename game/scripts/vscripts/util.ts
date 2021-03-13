@@ -470,10 +470,10 @@ export function setRespawnSettings(respawnLocation: Vector, respawnTime: number)
     }
 
     respawnListener = ListenToGameEvent("entity_killed", event => {
-        const hero = getOrError(getPlayerHero())
-        const killed = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC
+        const hero = getPlayerHero()
+        const killed = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC_Hero
 
-        if (killed.IsRealHero() && killed === hero) {
+        if (killed === hero) {
             killed.SetRespawnPosition(respawnLocation)
             killed.SetTimeUntilRespawn(respawnTime)
         }

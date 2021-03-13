@@ -19,6 +19,7 @@ let hasPlayerOrderedGlyphWhenMust = false
 let playerOrderMustCastUltimate = false
 let radiantCreepTimer: string | undefined;
 const deathConversations = [LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_6]
+const deathDuration = deathConversations.map(getSoundDuration).reduce((accumulator, current) => accumulator + current + 0.5, 0)
 
 const requiredState: RequiredState = {
     heroLocation: Vector(-6130, 4860, 128),
@@ -40,7 +41,7 @@ const requiredState: RequiredState = {
         chapter2Blockades.direTopDividerCliff
     ],
     respawnLocation: Vector(-6130, 4860, 128),
-    respawnTime: 5
+    respawnTime: 5,
 }
 
 // UI Highlighting Paths
@@ -107,7 +108,6 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(() => {
                 // Calculate how long you should be dead while Slacks and Sunsfan explain death
-                const deathDuration = deathConversations.map(getSoundDuration).reduce((accumulator, current) => accumulator + current + 0.5, 0)
                 setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
                 freezePlayerHero(false)
                 goalAttemptToAttackTower.start()

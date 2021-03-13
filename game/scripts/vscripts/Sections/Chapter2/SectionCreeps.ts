@@ -30,7 +30,7 @@ const requiredState: RequiredState = {
         chapter2Blockades.direTopDividerCliff
     ],
     respawnLocation: Vector(-6270, 2722, 128),
-    respawnTime: 5
+    respawnTime: 5,
 }
 
 let lastHitTimer: string | undefined;
