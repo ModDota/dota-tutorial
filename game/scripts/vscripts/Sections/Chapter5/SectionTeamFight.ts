@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import * as shared from "./Shared"
-import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, printEventTable } from "../../util";
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero } from "../../util";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
 
@@ -160,7 +160,11 @@ function orderFilter(event: ExecuteOrderFilterEvent) {
         if (ability.GetAbilityName() === "item_tpscroll") {
             // Record when the player uses their tp while we're waiting for it.
             if (waitingForPlayerTp) {
-                playerUsedTp = true
+                if (Vector(event.position_x, event.position_y).__sub(radiantFountainLocation).Length2D() < 1000) {
+                    playerUsedTp = true
+                } else {
+                    displayDotaErrorMessage("Teleport to your fountain by double-tapping the Town Portal Scroll.")
+                }
             }
 
             return false
