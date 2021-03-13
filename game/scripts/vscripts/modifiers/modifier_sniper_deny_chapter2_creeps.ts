@@ -1,5 +1,5 @@
 import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
-import { getPlayerHero, isCustomLaneCreepUnit } from "../util";
+import { CalculateDirectionToPosition, CalculateDistance2D, getPlayerHero, isCustomLaneCreepUnit } from "../util";
 
 @registerModifier()
 export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
@@ -9,6 +9,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
 
     sniperDenyingOwnCreeps: boolean = true;
     isSniperActive = false
+    anchorPoint = Vector(-5700, 5555, 128)
 
     OnCreated() {
         if (!IsServer()) return;
@@ -31,16 +32,12 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
                 FindOrder.CLOSEST,
                 false)
 
-            alliedCreeps = alliedCreeps.filter(creep => creep.GetHealthPercent() <= 50);
+            const denyableCreeps = alliedCreeps.filter(creep => creep.GetHealthPercent() <= 50);
 
-            if (alliedCreeps.length <= 0) {
-                if (this.GetParent().IsMoving()) {
-                    this.GetParent().Stop()
-                }
-            }
-            else {
-                const closestCreep = alliedCreeps[0];
-                const distance = ((closestCreep.GetAbsOrigin() - this.GetParent().GetAbsOrigin()) as Vector).Length2D()
+            if (denyableCreeps.length > 0) {
+                const closestCreep = denyableCreeps[0];
+
+                const distance = CalculateDistance2D(closestCreep.GetAbsOrigin(), this.GetParent().GetAbsOrigin())
                 if (distance > this.GetParent().Script_GetAttackRange())
                     ExecuteOrderFromTable(
                         {
@@ -49,12 +46,46 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
                             TargetIndex: closestCreep.entindex(),
                         })
                 else {
-                    ExecuteOrderFromTable(
-                        {
-                            OrderType: UnitOrder.ATTACK_TARGET,
+                    ExecuteOrderFromTable({
+                        OrderType: UnitOrder.ATTACK_TARGET,
+                        UnitIndex: this.GetParent().entindex(),
+                        TargetIndex: closestCreep.entindex(),
+                    })
+                }
+            }
+            else {
+                if (alliedCreeps.length > 0) {
+                    const closestCreep = alliedCreeps[0]
+
+                    // Calculate the position Sniper should move behind enemy lines
+                    const direction = CalculateDirectionToPosition(closestCreep.GetAbsOrigin(), this.anchorPoint)
+                    const position = (closestCreep.GetAbsOrigin() + direction * 300) as Vector
+
+                    if (CalculateDistance2D(this.GetParent().GetAbsOrigin(), position) > 100) {
+                        ExecuteOrderFromTable(
+                            {
+                                OrderType: UnitOrder.MOVE_TO_POSITION,
+                                UnitIndex: this.GetParent().entindex(),
+                                Position: position
+                            }
+                        )
+                    }
+                }
+                else {
+
+                    if (CalculateDistance2D(this.GetParent().GetAbsOrigin(), this.anchorPoint) > 100) {
+                        ExecuteOrderFromTable({
+                            OrderType: UnitOrder.MOVE_TO_POSITION,
                             UnitIndex: this.GetParent().entindex(),
-                            TargetIndex: closestCreep.entindex(),
+                            Position: this.anchorPoint
                         })
+                    }
+                    else {
+                        const playerHero = getPlayerHero()
+                        if (playerHero) {
+                            this.GetParent().FaceTowards(playerHero.GetAbsOrigin())
+                        }
+                    }
                 }
             }
         }
@@ -62,12 +93,11 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
             const attackTarget = this.GetParent().GetAttackTarget()
             const playerHero = getPlayerHero();
             if (playerHero && attackTarget != playerHero) {
-                ExecuteOrderFromTable(
-                    {
-                        OrderType: UnitOrder.ATTACK_TARGET,
-                        UnitIndex: this.GetParent().entindex(),
-                        TargetIndex: playerHero.entindex()
-                    })
+                ExecuteOrderFromTable({
+                    OrderType: UnitOrder.ATTACK_TARGET,
+                    UnitIndex: this.GetParent().entindex(),
+                    TargetIndex: playerHero.entindex()
+                })
             }
         }
     }
@@ -82,27 +112,32 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
 
     DeclareFunctions(): ModifierFunction[] {
         return [ModifierFunction.PREATTACK_BONUS_DAMAGE,
+        ModifierFunction.ATTACKSPEED_BONUS_CONSTANT,
         ModifierFunction.ON_DEATH]
     }
 
     OnDeath(event: ModifierAttackEvent) {
         if (!IsServer()) return;
-        if (this.GetStackCount() == 1) return;
 
         if (event.attacker != this.GetParent()) return;
 
         if (event.unit) {
             if (!isCustomLaneCreepUnit(event.unit)) return;
             if (event.unit.GetTeamNumber() != this.GetParent().GetTeamNumber()) return;
-        }
 
-        this.SetStackCount(1);
+            SendOverheadEventMessage(undefined, OverheadAlert.DENY, event.unit, 0, undefined)
+        }
     }
 
     GetModifierPreAttack_BonusDamage(): number {
         if (!IsServer()) return 0
 
-        if (this.sniperDenyingOwnCreeps) return 600
+        if (this.sniperDenyingOwnCreeps) return 100
         else return -600;
+    }
+
+    GetModifierAttackSpeedBonus_Constant(): number {
+        if (this.sniperDenyingOwnCreeps) return 50;
+        return 0;
     }
 }

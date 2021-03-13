@@ -26,7 +26,35 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
 
     DeclareFunctions(): ModifierFunction[] {
         return [ModifierFunction.ON_DEATH,
-        ModifierFunction.MANA_REGEN_CONSTANT]
+        ModifierFunction.MANA_REGEN_CONSTANT,
+        ModifierFunction.ON_ATTACK_LANDED,
+        ModifierFunction.PREATTACK_BONUS_DAMAGE]
+    }
+
+    OnAttackLanded(event: ModifierAttackEvent): void {
+        if (!IsServer()) return;
+        if (event.attacker != this.GetParent()) return;
+        if (!isCustomLaneCreepUnit(event.target)) return
+
+        if (this.currentStage === LastHitStages.LAST_HIT && event.target.GetTeamNumber() === this.GetParent().GetTeamNumber()) {
+            return
+        }
+        else if (this.currentStage === LastHitStages.LAST_HIT_BREATHE_FIRE) {
+            return
+        }
+        else if (this.currentStage === LastHitStages.LAST_HIT_DENY && event.target.GetTeamNumber() !== this.GetParent().GetTeamNumber()) {
+            return
+        }
+
+        Timers.CreateTimer(FrameTime(), () => {
+            if (event.target.IsAlive() && event.target.GetHealthPercent() < 8) {
+                SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_EARLY, event.target, 500, undefined)
+            }
+        })
+    }
+
+    GetModifierPreAttack_BonusDamage(): number {
+        return 25;
     }
 
     GetModifierConstantManaRegen(): number {
@@ -68,6 +96,8 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
                         // Play "you missed!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
                         const chosenLocalizaionKey = this.missLocalizationKeys[RandomInt(0, this.missLocalizationKeys.length - 1)];
                         dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+
+                        SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_MISS, event.unit, 0, undefined)
                     }
                 }
             }
