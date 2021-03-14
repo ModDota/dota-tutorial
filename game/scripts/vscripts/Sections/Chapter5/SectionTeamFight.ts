@@ -31,6 +31,7 @@ const requiredState: RequiredState = {
 }
 
 const radiantFountainLocation = Vector(-6850, -6500, 384)
+const totalEnemyCount = shared.enemyHeroesInfo.length
 
 let playerUsedTp = false
 let waitingForPlayerTp = false
@@ -40,7 +41,7 @@ function onStart(complete: () => void) {
 
     const goalTracker = new GoalTracker()
     const goalSpotEnemies = goalTracker.addBoolean("Find out what awaits you outside the pit")
-    const goalKillEnemyHeroes = goalTracker.addNumeric("Kill all enemy heroes", 5)
+    const goalKillEnemyHeroes = goalTracker.addNumeric("Kill all enemy heroes", totalEnemyCount)
     const goalPromiseCarryTp = goalTracker.addBoolean("Use voice-chat (default 'V') to promise you will always carry a tp.")
 
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero")
@@ -85,10 +86,10 @@ function onStart(complete: () => void) {
             // Wait for every enemy to die
             // TODO: Add logic for if the player dies (although not a disaster atm. either since they just respawn)
             tg.loop(ctx => shared.getLivingEnemyHeroes(ctx).length > 0, ctx => tg.seq([
-                tg.immediate(_ => goalKillEnemyHeroes.setValue(5 - shared.getLivingEnemyHeroes(ctx).length)),
+                tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount - shared.getLivingEnemyHeroes(ctx).length)),
                 tg.wait(1),
             ])),
-            tg.immediate(_ => goalKillEnemyHeroes.setValue(5)),
+            tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount)),
             tg.immediate(_ => goalKillEnemyHeroes.complete()),
 
             // Play win dialog
