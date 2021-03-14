@@ -117,34 +117,26 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
 }
 
 /**
- * Creates a tutorial step that fires multiple moveUnit steps in parallel.
+ * Creates a tutorial step that returns a fork of multiple moveUnit steps.
  * @param unit The unit to move.
  * @param moveLocations Array of locations the unit should move through.
- * @param completeIfUnitInvalid Optional param that controls whether step should complete if provided unit is invalid or dead. Default value is false
+ * @param completeIfUnitInvalid Optional param that controls whether steps should complete if provided unit is invalid or dead. Default value is false
  */
-export const moveUnitSequence = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocations: tg.StepArgument<Vector[]>, completeIfUnitInvalid: boolean = false, completeOnIdle: boolean = true): tg.TutorialStep => {
-    let moveUnitSteps: tg.TutorialStep[] = []
+export const moveUnitSequence = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocations: tg.StepArgument<Vector[]>, completeIfUnitInvalid: boolean = false): tg.TutorialStep => {
 
-    return tg.step((context, onComplete) => {
+    const steps = (context: tg.TutorialContext) => {
+        const moveUnitSteps: tg.TutorialStep[] = []
         const actualUnit = tg.getArg(unit, context)
         const actualMoveLocations = tg.getArg(moveLocations, context)
 
         for (const moveLocation of actualMoveLocations) {
-            moveUnitSteps.push(moveUnit(actualUnit, moveLocation))
+            moveUnitSteps.push(moveUnit(actualUnit, moveLocation, completeIfUnitInvalid))
         }
 
-        const stepsCompleted = moveUnitSteps.map(s => false)
+        return moveUnitSteps
+    }
 
-        for (let i = 0; i < moveUnitSteps.length; i++) {
-            const stepIndex = i
-            moveUnitSteps[stepIndex].start(context, () => {
-                stepsCompleted[stepIndex] = true
-                if (stepsCompleted.every(c => c)) {
-                    onComplete()
-                }
-            })
-        }
-    })
+    return tg.fork(steps)
 }
 
 /**

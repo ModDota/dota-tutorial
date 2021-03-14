@@ -1,7 +1,7 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
 import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
-import { outsidePitLocation, roshanLocation, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
+import { itemAegis, outsidePitLocation, roshanLocation, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
 import { modifier_custom_roshan_attack_speed } from "../modifiers/modifier_custom_roshan_attack_speed"
 
@@ -303,7 +303,7 @@ function handleRequiredRespawn(state: FilledRequiredState) {
 
 function handleRoshan(state: FilledRequiredState) {
     let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
-    const itemAegis = "item_aegis"
+
     if (state.requireRoshan) {
         if (!unitIsValidAndAlive(roshan)) {
             roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
@@ -333,7 +333,7 @@ function handleRoshan(state: FilledRequiredState) {
             roshan.Destroy()
     }
 
-    // Clear  Aegis boxes left on the ground, if any
+    // Clear Aegis boxes left on the ground, if any
     const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
 
     if (droppedItems) {

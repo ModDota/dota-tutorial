@@ -5,7 +5,6 @@ import { GoalTracker } from "../../Goals";
 import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
 import * as shared from "./Shared"
 import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
-import { modifier_custom_roshan_attack_speed } from "../../modifiers/modifier_custom_roshan_attack_speed";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
@@ -49,12 +48,6 @@ function onStart(complete: () => void) {
 
     const playerHero = getOrError(getPlayerHero())
 
-    const itemDaedalus = "item_greater_crit"
-    const itemAC = "item_assault"
-    const itemPowerTreads = "item_power_treads"
-    const itemHeart = "item_heart"
-    const itemAegis = "item_aegis"
-
     let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
 
     // DK lvl 25 talents
@@ -73,7 +66,7 @@ function onStart(complete: () => void) {
                     tg.goToLocation(roshPitGoalPosition),
                 ]),
                 tg.seq([
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 2),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 1),
                     tg.wait(2),
                     tg.immediate(() => canPlayerIssueOrders = true),
                     tg.setCameraTarget(undefined),
@@ -87,8 +80,7 @@ function onStart(complete: () => void) {
                 // Lvl up to 25, assuming 1 xp per level
                 playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
                 shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
-                // Reapply DD rune for infinite duration
-                playerHero.RemoveModifierByName("modifier_rune_doubledamage")
+                // Apply DD rune with infinite duration
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
                 maxLevelAbilities(playerHero)
             }),
