@@ -15,36 +15,39 @@
 }
 
 .QuestsTitleIcon {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
 
     background-image: url("file://{images}/custom_game/quests/QuestsTitleIcon.png");
     background-size: 100% 100%;
     margin-left: 10px;
+    margin-top: -5px;
     wash-color: #cdf;
 }
 
 .QuestsTitle {
     color: #cdf;
     text-align: center;
-    text-shadow: 1px 1px 2px 2 #00000011;
+    text-shadow: 1px 1px 2px 3.0 #000000;
     text-transform: uppercase;
 
-    font-weight: semi-bold;
-    font-family: Radiance, FZKai-Z03, TH Sarabun New, YDYGO 540;
+    font-weight: bold;
+    font-family: titleFont;
     font-size: 24px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     margin-left: 40px;
-    margin-top: -2px;
+    margin-top: -4px;
 }
 
 .Divider {
     background-color: #cdf;
     width: 44%;
-    height: 1px;
+    height: 3px;
     margin-left: 10px;
     margin-top: 32px;
     brightness: 0.6;
+    border-radius: 5px;
+    box-shadow: #000000ff 0px 0px 16px 0px;
 }
 
 #QuestsPanelContainer {
@@ -86,17 +89,17 @@
     color: #cdf;
     margin-top: 3px;
     font-weight: bold;
-    text-shadow: 1px 1px 0px 2 #000000;
     font-family: Radiance, FZKai-Z03, TH Sarabun New, YDYGO 540;
     font-size: 15px;
+    text-shadow: 1px 1px 2px 4.0 #000000;
 }
 
 .QuestCompletedText {
     color: gray;
     margin-top: 3px;
     font-weight: bold;
-    text-shadow: 1px 1px 0px 2 #000000;
     font-family: Radiance, FZKai-Z03, TH Sarabun New, YDYGO 540;
     font-size: 15px;
     text-decoration: line-through;
+    text-shadow: 1px 1px 2px 4.0 #000000;
 }

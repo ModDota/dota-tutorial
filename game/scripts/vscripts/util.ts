@@ -540,4 +540,16 @@ export function removeNeutralSpawners() {
         }
         
     }
+
+/**
+ * Returns a random item from an array
+ * @param choices Array to choose from.
+ * @returns Randomly chosen item from the given array.
+ */
+export function randomChoice<T>(choices: T[]) {
+    if (choices.length === 0) {
+        error("randomChoice called with empty array")
+    }
+
+    return choices[RandomInt(0, choices.length - 1)]
 }
