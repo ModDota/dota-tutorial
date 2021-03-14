@@ -145,14 +145,6 @@ function GuidesClose() {
     Game.EmitSound("ui_chat_slide_out");
 }
 
-//** Credits Panel */
-function ToggleCreditsMenu() {
-    $.Msg("ToggleCreditsMenu");
-
-    //**$("#CreditsMenu").ToggleClass("Visible");*/
-    Game.EmitSound("ui_chat_slide_in");
-}
-
 function CreditsClose() {
     $.Msg("CreditsClose");
 

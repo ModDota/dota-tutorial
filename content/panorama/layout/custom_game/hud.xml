@@ -18,7 +18,6 @@
             <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
             <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleChaptersMenu();" onmouseover="UIShowTextTooltip('#Chapters')" onmouseout="UIHideTextTooltip()" />
             <Button id="GuidesButton" class="TopLeftMenuButton" onactivate="ToggleGuidesMenu();" onmouseover="UIShowTextTooltip('#Guides')" onmouseout="UIHideTextTooltip()" />
-            <Button id="CreditsButton" class="TopLeftMenuButton" onactivate="ToggleCreditsMenu();" onmouseover="UIShowTextTooltip('#Credits')" onmouseout="UIHideTextTooltip()" />
         </Panel>
 
         <Panel id="DialogLog" hittest="false">
@@ -149,54 +148,6 @@
                 <Panel class="GuideContainer" id="Guide7" />
                 <Panel class="GuideContainer" id="Guide8" />
                 <Panel class="GuideContainer" id="Guide9" />
-            </Panel>
-        </Panel>
-
-        <Panel id="CreditsMenu" hittest="false">
-            <Panel class="BlurBackground" hittest="false" />
-            <Panel class="CreditsMainPanel">
-                <Panel class="CreditsHeader">
-                    <Label class="CreditsHeaderTitle" text="#Credits" hittest="false"/>
-                    <Button class="ChaptersCloseButton" onactivate="CreditsClose()" onmouseover="UIShowTextTooltip('#Close')" onmouseout="UIHideTextTooltip()"/>
-                </Panel>
-                <Panel class="CreditsContents">
-                    <Panel class="Personalities">
-                        <Label class="CreditsTitle" id="Personalities" text="#Personalities" hittest="false"/>
-                        <Label class="CreditsLabel" id="Slacks" text="#SirActionSlacks" hittest="false"/>
-                        <Label class="CreditsLabel" id="SUNSfan" text="#SUNSfan" hittest="false"/>
-                        <Label class="CreditsLabel" id="Purge" text="#Purge" hittest="false"/>
-                        <Label class="CreditsLabel" id="GoDz" text="#GoDz" hittest="false"/>
-                        <Label class="CreditsLabel" id="ODPixel" text="ODPixel" hittest="false"/>
-                        <Label class="CreditsLabel" id="Sheever" text="Sheever" hittest="false"/>
-                    </Panel>
-                    <Panel class="Modders">
-                        <Label class="CreditsTitle" id="Modders" text="#Modders" hittest="false"/>
-                        <Label class="CreditsLabel" id="Flam3s" text="Flam3s" hittest="false"/>
-                        <Label class="CreditsLabel" id="Shush" text="Shush" hittest="false"/>
-                        <Label class="CreditsLabel" id="Tora" text="Tora" hittest="false"/>
-                        <Label class="CreditsLabel" id="Yoyo" text="Yoyo" hittest="false"/>
-                        <Label class="CreditsLabel" id="Perry" text="Perry" hittest="false"/>
-                        <Label class="CreditsLabel" id="DoctorGester" text="DoctorGester" hittest="false"/>
-                        <Label class="CreditsLabel" id="_qc3.0" text="_qc3.0" hittest="false"/>
-                        <Label class="CreditsLabel" id="Pongping" text="Pongping" hittest="false"/>
-                        <Label class="CreditsLabel" id="SinZ" text="SinZ" hittest="false"/>
-                        <Label class="CreditsLabel" id="SmashtheState" text="SmashtheState" hittest="false"/>
-                        <Label class="CreditsLabel" id="VicFrank" text="VicFrank" hittest="false"/>
-                    </Panel>
-                    <Panel class="Volunteers">
-                        <Label class="CreditsTitle" id="Volunteers" text="#Volunteers" hittest="false"/>
-                        <Label class="CreditsLabel" id="Volunteer1" text="Me" hittest="false"/>
-                        <Label class="CreditsLabel" id="Volunteer2" text="Myself" hittest="false"/>
-                        <Label class="CreditsLabel" id="Volunteer3" text="I" hittest="false"/>
-                    </Panel>
-
-                    <Panel class="Donators">
-                        <Label class="CreditsTitle" id="Donators" text="#Donators" hittest="false"/>
-                        <Label class="CreditsLabel" id="Donator1" text="Inferno" hittest="false"/>
-                        <Label class="CreditsLabel" id="Donator2" text="Purgatorio" hittest="false"/>
-                        <Label class="CreditsLabel" id="Donator3" text="Paradiso" hittest="false"/>
-                    </Panel>
-                </Panel>
             </Panel>
         </Panel>
     </Panel>

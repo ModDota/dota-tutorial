@@ -1,0 +1,145 @@
+@keyframes 'Scroll'
+{
+    0%
+    {
+        transform: translateY(0);
+        opacity: 0;
+    }
+    2%
+    {
+        opacity: 1;
+    }
+    90%
+    {
+        opacity: 1;
+    }
+    92%
+    {
+        opacity: 0;
+    }
+    100%
+    {
+        transform: translateY(-720%);
+        opacity: 0;
+    }
+}
+
+#CreditsMenu {
+    width: 100%;
+    height: 100%;
+    align: center center;
+
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+    transition-property: opacity, transform;
+    transition-duration: 0.3s;
+    z-index: 5;
+    border-radius: 5px;
+}
+
+#CreditsMenu.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+.CreditsMainPanel {
+    width: 70%;
+    height: 70%;
+    align: center center;
+    background-color: #111920ff;
+    border-radius: 5px;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+}
+
+.CreditsHeaderTitle {
+    text-transform: uppercase;
+    color: #ffffffdd;
+    font-weight: bold;
+    font-size: 25px;
+    letter-spacing: 2px;
+    background-color: #bb5c2c;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-radius: 2px;
+    width: 26%;
+    align: left top;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.CreditsHeader {
+    width: 100%;
+    height: 10%;
+}
+
+.CreditsContents {
+    width: 100%;
+    height: 100%;
+    vertical-align: bottom;
+    flow-children: down;
+    overflow: noclip;
+}
+
+.Personalities,
+.Modders,
+.Volunteers,
+.Donators {
+    width: 100%;
+    height: fit-children;
+    flow-children: down;
+    animation-delay: 0.25s;
+    animation-duration: 59.02s;
+    animation-name: Scroll;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.CreditsLabel {
+    align: center top;
+    text-align: center;
+    font-size: 30;
+    color: white;
+}
+
+.CreditsTitle {
+    text-align: center;
+    align: center top;
+    text-transform: uppercase;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) )
+    text-shadow: 0px 0px 3px 5.0 #000000;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 45px;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+.BlurBackground {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    saturation: 0.5;
+    opacity: 0.966;
+}
+
+.CreditsCloseButton {
+    horizontal-align: right;
+    width: 30px;
+    height: 30px;
+
+    background-size: 100%;
+    background-color: #444;
+    background-image: url("file://{images}/custom_game/skip_section/close_icon.png");
+    background-repeat: no-repeat;
+
+    margin-top: 8px;
+    margin-right: 19px;
+    brightness: 1;
+    transition-property: brightness;
+    transition-duration: 0.2s;
+
+    border-radius: 2px;
+}
+
+.CreditsCloseButton:hover {
+    brightness: 1.5;
+}
