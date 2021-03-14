@@ -30,9 +30,9 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalPressVoiceChatButton = goalTracker.addBoolean("Press the team voice key (default 'V') and say hello.");
-    const goalChatWheelWP = goalTracker.addBoolean("Use your chat wheel (default 'Y').");
-    const goalGoToTopBountyRune = goalTracker.addBoolean("Go to the marked location.");
+    const goalPressVoiceChatButton = goalTracker.addBoolean(LocalizationKey.Goal_4_Communication_1);
+    const goalChatWheelWP = goalTracker.addBoolean(LocalizationKey.Goal_4_Communication_2);
+    const goalGoToTopBountyRune = goalTracker.addBoolean(LocalizationKey.Goal_4_Communication_3);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 

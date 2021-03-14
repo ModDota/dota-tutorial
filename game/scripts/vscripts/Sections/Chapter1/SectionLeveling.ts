@@ -28,9 +28,9 @@ const start = (complete: () => void) => {
     const hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
     const goalTracker = new GoalTracker()
-    const goalKillPurge = goalTracker.addBoolean("Stun Pugna Purge using your Dragon Tail ability to stop his monologue.")
-    const goalLevelDragonTail = goalTracker.addBoolean("Level up your Dragon Tail ability.")
-    const goalLevelBreatheFire = goalTracker.addBoolean("Level up your Breathe Fire ability.")
+    const goalKillPurge = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_1)
+    const goalLevelDragonTail = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_2)
+    const goalLevelBreatheFire = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_3)
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(_ => learnAbilityAllowedName = abilNameDragonTail),

@@ -61,8 +61,8 @@ function onStart(complete: () => void) {
     const fasterCameraSpeedFunc = () => 5000
 
     const goalTracker = new GoalTracker();
-    const goalMoveToRune = goalTracker.addBoolean("Move to the marker near the power rune spawn.");
-    const goalWatchRangers = goalTracker.addBoolean("Watch and learn from the Power Rune Rangers!");
+    const goalMoveToRune = goalTracker.addBoolean(LocalizationKey.Goal_5_Opening_1);
+    const goalWatchRangers = goalTracker.addBoolean(LocalizationKey.Goal_5_Opening_2);
 
     const powerRangerSpawnLocation = Vector(-1760, 1850, 0)
 

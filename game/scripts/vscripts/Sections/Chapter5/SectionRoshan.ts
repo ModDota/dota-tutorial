@@ -38,11 +38,11 @@ const roshanMusic = "valve_ti10.music.roshan"
 function onStart(complete: () => void) {
     print("Starting", sectionName);
     const goalTracker = new GoalTracker();
-    const goalEnterRoshPit = goalTracker.addBoolean("Walk into Roshan's pit.");
-    const goalUpgradeTalents = goalTracker.addBoolean("Choose and pick between the available talents.")
-    const goalDefeatRoshan = goalTracker.addBoolean("Defeat Roshan!");
-    const goalPickupAegis = goalTracker.addBoolean("Pick up the Aegis of the Immortal.")
-    const goalLeaveRoshPit = goalTracker.addBoolean("Leave Roshan's pit and move to the next marker.")
+    const goalEnterRoshPit = goalTracker.addBoolean(LocalizationKey.Goal_5_Roshan_1);
+    const goalUpgradeTalents = goalTracker.addBoolean(LocalizationKey.Goal_5_Roshan_2)
+    const goalDefeatRoshan = goalTracker.addBoolean(LocalizationKey.Goal_5_Roshan_3);
+    const goalPickupAegis = goalTracker.addBoolean(LocalizationKey.Goal_5_Roshan_4)
+    const goalLeaveRoshPit = goalTracker.addBoolean(LocalizationKey.Goal_5_Roshan_5)
 
     const roshPitGoalPosition = Vector(-2600, 2200, 28)
 
