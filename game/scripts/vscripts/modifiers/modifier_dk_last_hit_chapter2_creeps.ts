@@ -38,11 +38,9 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
 
         if (this.currentStage === LastHitStages.LAST_HIT && event.target.GetTeamNumber() === this.GetParent().GetTeamNumber()) {
             return
-        }
-        else if (this.currentStage === LastHitStages.LAST_HIT_BREATHE_FIRE) {
+        } else if (this.currentStage === LastHitStages.LAST_HIT_BREATHE_FIRE) {
             return
-        }
-        else if (this.currentStage === LastHitStages.LAST_HIT_DENY && event.target.GetTeamNumber() !== this.GetParent().GetTeamNumber()) {
+        } else if (this.currentStage === LastHitStages.LAST_HIT_DENY && event.target.GetTeamNumber() !== this.GetParent().GetTeamNumber()) {
             return
         }
 

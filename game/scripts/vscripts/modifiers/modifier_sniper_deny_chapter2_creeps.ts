@@ -1,5 +1,5 @@
 import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
-import { CalculateDirectionToPosition, CalculateDistance2D, getPlayerHero, isCustomLaneCreepUnit } from "../util";
+import { DirectionToPosition, Distance2D, getPlayerHero, isCustomLaneCreepUnit } from "../util";
 
 @registerModifier()
 export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
@@ -37,15 +37,14 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
             if (denyableCreeps.length > 0) {
                 const closestCreep = denyableCreeps[0];
 
-                const distance = CalculateDistance2D(closestCreep.GetAbsOrigin(), this.GetParent().GetAbsOrigin())
-                if (distance > this.GetParent().Script_GetAttackRange())
-                    ExecuteOrderFromTable(
-                        {
-                            OrderType: UnitOrder.MOVE_TO_TARGET,
-                            UnitIndex: this.GetParent().entindex(),
-                            TargetIndex: closestCreep.entindex(),
-                        })
-                else {
+                const distance = Distance2D(closestCreep.GetAbsOrigin(), this.GetParent().GetAbsOrigin())
+                if (distance > this.GetParent().Script_GetAttackRange()) {
+                    ExecuteOrderFromTable({
+                        OrderType: UnitOrder.MOVE_TO_TARGET,
+                        UnitIndex: this.GetParent().entindex(),
+                        TargetIndex: closestCreep.entindex(),
+                    })
+                } else {
                     ExecuteOrderFromTable({
                         OrderType: UnitOrder.ATTACK_TARGET,
                         UnitIndex: this.GetParent().entindex(),
@@ -58,29 +57,25 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
                     const closestCreep = alliedCreeps[0]
 
                     // Calculate the position Sniper should move behind enemy lines
-                    const direction = CalculateDirectionToPosition(closestCreep.GetAbsOrigin(), this.anchorPoint)
+                    const direction = DirectionToPosition(closestCreep.GetAbsOrigin(), this.anchorPoint)
                     const position = (closestCreep.GetAbsOrigin() + direction * 300) as Vector
 
-                    if (CalculateDistance2D(this.GetParent().GetAbsOrigin(), position) > 100) {
-                        ExecuteOrderFromTable(
-                            {
-                                OrderType: UnitOrder.MOVE_TO_POSITION,
-                                UnitIndex: this.GetParent().entindex(),
-                                Position: position
-                            }
-                        )
+                    if (Distance2D(this.GetParent().GetAbsOrigin(), position) > 100) {
+                        ExecuteOrderFromTable({
+                            OrderType: UnitOrder.MOVE_TO_POSITION,
+                            UnitIndex: this.GetParent().entindex(),
+                            Position: position
+                        })
                     }
-                }
-                else {
+                } else {
 
-                    if (CalculateDistance2D(this.GetParent().GetAbsOrigin(), this.anchorPoint) > 100) {
+                    if (Distance2D(this.GetParent().GetAbsOrigin(), this.anchorPoint) > 100) {
                         ExecuteOrderFromTable({
                             OrderType: UnitOrder.MOVE_TO_POSITION,
                             UnitIndex: this.GetParent().entindex(),
                             Position: this.anchorPoint
                         })
-                    }
-                    else {
+                    } else {
                         const playerHero = getPlayerHero()
                         if (playerHero) {
                             this.GetParent().FaceTowards(playerHero.GetAbsOrigin())
@@ -88,8 +83,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
                     }
                 }
             }
-        }
-        else {
+        } else {
             const attackTarget = this.GetParent().GetAttackTarget()
             const playerHero = getPlayerHero();
             if (playerHero && attackTarget != playerHero) {

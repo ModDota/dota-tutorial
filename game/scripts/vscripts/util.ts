@@ -513,7 +513,7 @@ export function setRespawnSettings(respawnLocation: Vector, respawnTime: number)
  * Calculates the distance in 2D between two points.
  * @returns The distance between the two points.
  */
-export function CalculateDistance2D(point1: Vector, point2: Vector): number {
+export function Distance2D(point1: Vector, point2: Vector): number {
     return ((point1 - point2) as Vector).Length2D()
 }
 
@@ -523,6 +523,6 @@ export function CalculateDistance2D(point1: Vector, point2: Vector): number {
  * @param towards_pos The position where the vector should point.
  * @returns The normalized vector pointing towards the second vector argument.
  */
-export function CalculateDirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
+export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
     return ((towards_pos - origin_pos) as Vector).Normalized();
 }
