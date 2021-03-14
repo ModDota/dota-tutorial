@@ -33,11 +33,11 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalPickupDust = goalTracker.addBoolean("Pick up the dust.");
-    const goalGoToLastLocationSawRiki = goalTracker.addBoolean("Go to the last position you saw Riki.");
-    const goalUseDust = goalTracker.addBoolean("Use the dust.");
-    const goalTakeOutpost = goalTracker.addBoolean("Right click on the enemy outpost to take it.");
-    const goalKillRiki = goalTracker.addBoolean("Take down Riki.");
+    const goalPickupDust = goalTracker.addBoolean(LocalizationKey.Goal_4_Outpost_1);
+    const goalGoToLastLocationSawRiki = goalTracker.addBoolean(LocalizationKey.Goal_4_Outpost_2);
+    const goalUseDust = goalTracker.addBoolean(LocalizationKey.Goal_4_Outpost_3);
+    const goalTakeOutpost = goalTracker.addBoolean(LocalizationKey.Goal_4_Outpost_4);
+    const goalKillRiki = goalTracker.addBoolean(LocalizationKey.Goal_4_Outpost_5);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
     // TODO: Give ranged in dragon form

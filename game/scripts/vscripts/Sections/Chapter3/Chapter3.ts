@@ -66,18 +66,18 @@ const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Chapter3_Opening, });
 
     const goalTracker = new GoalTracker();
-    const goalMoveToCamp = goalTracker.addBoolean("Move to the neutral creep camp");
-    const goalKillFirstSpawn = goalTracker.addBoolean("Kill the neutral creeps");
-    const goalMoveToTarget = goalTracker.addBoolean("Move to the marked location");
-    const goalPressAlt = goalTracker.addBoolean("Press 'ALT' to see the spawn box");
-    const goalStackCreeps = goalTracker.addBoolean("Stack the creeps");
-    const goalTryStackCreeps = goalTracker.addNumeric("Try to stack the creeps again, do it successfully at least once", 5);
-    const goalOptionalStackCreeps = goalTracker.addNumeric("(Optional) Successfully stack the creeps again", 5);
-    const goalKillStackedCreeps = goalTracker.addBoolean("Kill the stacked creeps");
-    const goalPickupItem = goalTracker.addBoolean("Pickup the dropped item");
-    const goalKillThirdSpawn = goalTracker.addBoolean("Kill the neutral creeps");
-    const goalStash = goalTracker.addBoolean("Put the item in the neutral stash");
-    const goalMoveToRiki = goalTracker.addBoolean("Move to riki");
+    const goalMoveToCamp = goalTracker.addBoolean(LocalizationKey.Goal_3_1);
+    const goalKillFirstSpawn = goalTracker.addBoolean(LocalizationKey.Goal_3_2);
+    const goalMoveToTarget = goalTracker.addBoolean(LocalizationKey.Goal_3_3);
+    const goalPressAlt = goalTracker.addBoolean(LocalizationKey.Goal_3_4);
+    const goalStackCreeps = goalTracker.addBoolean(LocalizationKey.Goal_3_5);
+    const goalTryStackCreeps = goalTracker.addNumeric(LocalizationKey.Goal_3_6, 5);
+    const goalOptionalStackCreeps = goalTracker.addNumeric(LocalizationKey.Goal_3_7, 5);
+    const goalKillStackedCreeps = goalTracker.addBoolean(LocalizationKey.Goal_3_8);
+    const goalPickupItem = goalTracker.addBoolean(LocalizationKey.Goal_3_9);
+    const goalKillThirdSpawn = goalTracker.addBoolean(LocalizationKey.Goal_3_10);
+    const goalStash = goalTracker.addBoolean(LocalizationKey.Goal_3_11);
+    const goalMoveToRiki = goalTracker.addBoolean(LocalizationKey.Goal_3_12);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 

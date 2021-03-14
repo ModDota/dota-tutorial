@@ -347,7 +347,6 @@ export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_B
 
     return particleID;
 }
-
 export type HighlightType = "circle" | "arrow" | "arrow_enemy"
 
 type HighlightParticleDescriptor = {

@@ -28,22 +28,22 @@ export const outsidePitLocation = Vector(-2000, 1800, 0)
 export const enemyLocation = Vector(-1400, 700, 0)
 
 export type HeroInfo = {
-    name: string
+    name: CustomNpcKeys
 }
 
 export const friendlyHeroesInfo: HeroInfo[] = [
-    { name: "npc_dota_hero_tidehunter" },
-    { name: "npc_dota_hero_juggernaut" },
-    { name: "npc_dota_hero_mirana" },
-    { name: "npc_dota_hero_lion" },
+    { name: CustomNpcKeys.Tidehunter },
+    { name: CustomNpcKeys.Juggernaut },
+    { name: CustomNpcKeys.Mirana },
+    { name: CustomNpcKeys.Lion },
 ]
 
 export const enemyHeroesInfo: HeroInfo[] = [
-    { name: "npc_dota_hero_antimage" },
-    { name: "npc_dota_hero_lina" },
-    { name: "npc_dota_hero_visage" },
-    { name: "npc_dota_hero_pudge" },
-    { name: "npc_dota_hero_wisp" },
+    { name: CustomNpcKeys.Antimage },
+    { name: CustomNpcKeys.Lina },
+    { name: CustomNpcKeys.Visage },
+    { name: CustomNpcKeys.Pudge },
+    { name: CustomNpcKeys.Wisp },
 ]
 
 export const itemAegis = "item_aegis"
@@ -80,8 +80,8 @@ export function spawnEnemyHeroes(location: Vector) {
     return spawnHeroesIfNeeded(location, enemyHeroesInfo, DotaTeam.BADGUYS)
 }
 
-export function disposeHeroes(context: tg.TutorialContext) {
-    for (const { name } of allHeroesInfo) {
+export function disposeHeroes(context: tg.TutorialContext, heroesInfo: HeroInfo[]) {
+    for (const { name } of heroesInfo) {
         removeContextEntityIfExists(context, name)
     }
 }

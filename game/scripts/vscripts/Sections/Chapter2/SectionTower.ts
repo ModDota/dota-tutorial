@@ -69,19 +69,19 @@ const onStart = (complete: () => void) => {
     const direTopTower = getOrError(getDireTopTower());
 
     const goalTracker = new GoalTracker()
-    const goalAttemptToAttackTower = goalTracker.addBoolean("Attack the enemy's top tower.")
-    const goalwaitToRespawn = goalTracker.addBoolean("Wait to respawn.")
-    const goalGetBackToTopTowerPosition = goalTracker.addBoolean("Move to position close to the tower.")
-    const goalHoldAltToSeeTowerRadius = goalTracker.addBoolean("Hold the Alt key to see the tower's radius.")
-    const goalSneakThroughTower = goalTracker.addNumeric("Follow through the points shown", 4)
-    const goalSneakBackAgain = goalTracker.addNumeric("Follow points to your starting position", 4)
-    const goalAttackTowerWeak = goalTracker.addBoolean("Attack the enemy's top tower.")
-    const goalTrainUltimate = goalTracker.addBoolean("Train your ultimate ability.")
-    const goalTrainAbilities = goalTracker.addBoolean("Spend remaining ability points on the rest of your abilities.")
-    const goalUseUltimate = goalTracker.addBoolean("Use your ultimate ability.")
-    const goalAttackTowerStrong = goalTracker.addBoolean("Attack the enemy's top tower.")
-    const goalUseGlyph = goalTracker.addBoolean("Use your own Glyph.")
-    const goalDestroyTower = goalTracker.addBoolean("Destroy the enemy's top tower.")
+    const goalAttemptToAttackTower = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_1)
+    const goalwaitToRespawn = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_2)
+    const goalGetBackToTopTowerPosition = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_3)
+    const goalHoldAltToSeeTowerRadius = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_4)
+    const goalSneakThroughTower = goalTracker.addNumeric(LocalizationKey.Goal_2_Tower_5, 4)
+    const goalSneakBackAgain = goalTracker.addNumeric(LocalizationKey.Goal_2_Tower_6, 4)
+    const goalAttackTowerWeak = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_7)
+    const goalTrainUltimate = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_8)
+    const goalTrainAbilities = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_9)
+    const goalUseUltimate = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_10)
+    const goalAttackTowerStrong = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_11)
+    const goalUseGlyph = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_12)
+    const goalDestroyTower = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_13)
 
     let radiantCreeps: CDOTA_BaseNPC[] = []
 

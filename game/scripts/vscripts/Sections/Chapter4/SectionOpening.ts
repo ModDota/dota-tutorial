@@ -2,7 +2,7 @@ import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
 import * as dg from "../../Dialog"
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, centerCameraOnHero, getPlayerCameraLocation } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, centerCameraOnHero, getPlayerCameraLocation, createParticleAttachedToUnit, createParticleAtLocation, setUnitPacifist, setUnitVisibilityThroughFogOfWar } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { TutorialContext } from "../../TutorialGraph/index";
@@ -44,10 +44,10 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalListenDialog = goalTracker.addBoolean("Listen to the dialog explaining vision provided by friendly units.");
-    const goalWatchJuke = goalTracker.addBoolean("Watch this EPIC JUKE!");
-    const goalScanFailed = goalTracker.addBoolean("Click on scan with leftmouse button, then click on the target place.");
-    const goalScanSucceed = goalTracker.addBoolean("Scan on the next target position.");
+    const goalListenDialog = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_1);
+    const goalWatchJuke = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_2);
+    const goalScanFailed = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_3);
+    const goalScanSucceed = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_4);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
@@ -99,17 +99,54 @@ function onStart(complete: () => void) {
                 tg.seq([
                     tg.immediate(context => context[miranaName].SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
                     tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(600, -3700), undefined)),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2200, -3500), undefined)),
+                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(1600, -3280), undefined)),
+                    tg.immediate(context => {
+                        const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
+                        setUnitVisibilityThroughFogOfWar(mirana, true);
+                        // Miiiiiiiirana: TODO maybe get a better voice line here?
+                        EmitSoundOn("Script_1_Movement_9_1", mirana);
+                    }),
+                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
+                    tg.immediate(context => {
+                        const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
+                        setUnitVisibilityThroughFogOfWar(mirana, false);
+                    }),
 
                 ]),
 
                 tg.seq([
-                    tg.completeOnCheck(context => {
+                    tg.wait(2), // Give slark some time to hit and follow mirana
+                    // Take over control
+                    tg.immediate(context => setUnitPacifist(context[slarkName], true)),
+                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(1050, -3680), undefined)),
+                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3800), undefined)),
+                    // Show ??? particle
+                    tg.immediate(context => {
                         const slark: CDOTA_BaseNPC_Hero = context[slarkName];
-                        return slark.IsIdle()
-                    }, 0.5),
-                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3700), undefined)),
-                ])
+                        const particle = createParticleAtLocation(ParticleName.QuestionMarks, slark.GetAbsOrigin());
+                        ParticleManager.ReleaseParticleIndex(particle);
+                    }),
+                    tg.wait(5)
+                ]),
+
+                // Reveal riki for a short time, otherwise the successful scan later won't show up
+                // because of a Dota bug. Hope the player won't notice!
+                tg.seq([
+                    tg.immediate(ctx => {
+                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                        const backstab = riki.FindAbilityByName("riki_backstab")
+                        backstab!.SetLevel(0)
+                        riki.RemoveModifierByName("modifier_invisible")
+                        riki.RemoveModifierByName("modifier_riki_backstab")
+                    }),
+                    tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
+                    tg.wait(0.1),
+                    tg.immediate(ctx => {
+                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                        const backstab = riki.FindAbilityByName("riki_backstab")
+                        backstab!.SetLevel(1)
+                    }),
+                ]),
             ]),
 
             tg.setCameraTarget(undefined),

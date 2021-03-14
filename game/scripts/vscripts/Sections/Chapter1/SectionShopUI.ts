@@ -45,10 +45,10 @@ const onStart = (complete: () => void) => {
     const tangoInGuideUIPath = getPathToItemInGuideByID(tangoItemID)
 
     const goalTracker = new GoalTracker();
-    const goalOpenShop = goalTracker.addBoolean("Open the shop.");
-    const goalBuyTango = goalTracker.addBoolean("Use the gold provided to purchase a Tango.");
-    const goalEatTree = goalTracker.addBoolean("Use tango to eat a tree and escape.");
-    const goalMoveOut = goalTracker.addBoolean("Move to the target location.");
+    const goalOpenShop = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_1);
+    const goalBuyTango = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_2);
+    const goalEatTree = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_3);
+    const goalMoveOut = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_4);
 
     waitingForPlayerToPurchaseTango = false;
     playerBoughtTango = false;
