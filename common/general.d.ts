@@ -84,6 +84,7 @@ declare const enum ParticleName {
     HighlightRedArrow = "particles/tutorial_arrow_attack.vpcf",
     HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
+    QuestionMarks = "particles/tutorial_question_marks.vpcf",
 }
 
 type VideoName = "guides" | "muting"
