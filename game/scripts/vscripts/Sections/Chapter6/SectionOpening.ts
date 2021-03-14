@@ -17,10 +17,10 @@ const requiredState: RequiredState = {
     heroItems: { "item_greater_crit": 1 },
 };
 
-const axeName = "npc_dota_hero_axe";
-const centaurName = "npc_dota_hero_centaur";
-const invokerName = "npc_dota_hero_invoker";
-const paName = "npc_dota_hero_phantom_assassin";
+const axeName = CustomNpcKeys.Axe;
+const centaurName = CustomNpcKeys.Centaur;
+const invokerName = CustomNpcKeys.Invoker;
+const paName = CustomNpcKeys.PhantomAssassin;
 const showcaseHeroLocation = Vector(-6700, -6300, 384);
 const dummyLocation = Vector(-6200, -5800, 128);
 
