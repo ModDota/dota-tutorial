@@ -135,7 +135,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => playerHero.RemoveItem(getOrError(playerHero.FindItemInInventory("item_tpscroll"), "Could not find tp scroll"))),
             tg.immediate(_ => playerHero.SetAbsOrigin(radiantFountainLocation)),
             tg.panCameraExponential(_ => getPlayerCameraLocation(), radiantFountainLocation, 2),
-            tg.immediate(ctx => shared.disposeHeroes(ctx)),
+            tg.immediate(ctx => shared.disposeHeroes(ctx, shared.allHeroesInfo)),
             tg.immediate(_ => freezePlayerHero(false)),
         ])
     )
@@ -149,7 +149,7 @@ function onStart(complete: () => void) {
 function onStop() {
     print("Stopping", sectionName)
 
-    shared.disposeHeroes(GameRules.Addon.context)
+    shared.disposeHeroes(GameRules.Addon.context, shared.allHeroesInfo)
 
     if (graph) {
         graph.stop(GameRules.Addon.context)
