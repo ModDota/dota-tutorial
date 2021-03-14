@@ -507,3 +507,22 @@ export function setRespawnSettings(respawnLocation: Vector, respawnTime: number)
         }
     }, GameRules.Addon)
 }
+
+
+/**
+ * Calculates the distance in 2D between two points.
+ * @returns The distance between the two points.
+ */
+export function Distance2D(point1: Vector, point2: Vector): number {
+    return ((point1 - point2) as Vector).Length2D()
+}
+
+/**
+ * Calculates the direction from the first position to the second.
+ * @param origin_pos The position where the vector should originate from.
+ * @param towards_pos The position where the vector should point.
+ * @returns The normalized vector pointing towards the second vector argument.
+ */
+export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
+    return ((towards_pos - origin_pos) as Vector).Normalized();
+}
