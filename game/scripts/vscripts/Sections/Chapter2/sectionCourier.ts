@@ -82,13 +82,13 @@ const onStart = (complete: () => void) => {
     const playerCourier = getOrError(getPlayerCourier())
 
     const goalTracker = new GoalTracker()
-    const goalMoveToSecretShop = goalTracker.addBoolean("Move to Radiant's secret shop.")
-    const goalOpenShop = goalTracker.addBoolean("Open the shop")
-    const goalBuyDemonEdge = goalTracker.addBoolean("Buy a Demon Edge with the gold provided.")
-    const goalBuyCrystalisAndRecipe = goalTracker.addNumeric("Buy Crystalis and the Daedalus Recipe.", 2)
-    const goalRequestItemsToBeDeliveredFromCourier = goalTracker.addBoolean("Request courier to deliver the items to you.")
-    const goalWaitToCourierToDeliverItems = goalTracker.addBoolean("Wait for the courier to deliver the items to you.")
-    const goalMoveToFinalPosition = goalTracker.addBoolean("Move into the Dire jungle.")
+    const goalMoveToSecretShop = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_1)
+    const goalOpenShop = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_2)
+    const goalBuyDemonEdge = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_3)
+    const goalBuyCrystalisAndRecipe = goalTracker.addNumeric(LocalizationKey.Goal_2_Courier_4, 2)
+    const goalRequestItemsToBeDeliveredFromCourier = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_5)
+    const goalWaitToCourierToDeliverItems = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_6)
+    const goalMoveToFinalPosition = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_7)
 
     graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
         tg.immediate(() => freezePlayerHero(true)),

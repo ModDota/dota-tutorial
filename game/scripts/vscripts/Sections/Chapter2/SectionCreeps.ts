@@ -57,10 +57,10 @@ const onStart = (complete: () => void) => {
     const denyCount = 3;
 
     const goalTracker = new GoalTracker()
-    const goalLastHitCreeps = goalTracker.addNumeric(`Last hit enemy creeps`, lastHitCount);
-    const goalLastHitCreepsWithBreatheFire = goalTracker.addNumeric(`Last hit enemy creeps using Breath Fire`, lastHitBreathFireCount);
-    const goalDenyOwnCreeps = goalTracker.addNumeric(`Deny friendly creeps`, denyCount);
-    const goalKillSniper = goalTracker.addBoolean("Kill Sniper.");
+    const goalLastHitCreeps = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_1, lastHitCount);
+    const goalLastHitCreepsWithBreatheFire = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_2, lastHitBreathFireCount);
+    const goalDenyOwnCreeps = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_3, denyCount);
+    const goalKillSniper = goalTracker.addBoolean(LocalizationKey.Goal_2_Creeps_4);
 
     if (!radiantCreeps) {
         radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, true);

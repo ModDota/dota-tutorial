@@ -44,10 +44,10 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalListenDialog = goalTracker.addBoolean("Listen to the dialog explaining vision provided by friendly units.");
-    const goalWatchJuke = goalTracker.addBoolean("Watch this EPIC JUKE!");
-    const goalScanFailed = goalTracker.addBoolean("Click on scan with leftmouse button, then click on the target place.");
-    const goalScanSucceed = goalTracker.addBoolean("Scan on the next target position.");
+    const goalListenDialog = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_1);
+    const goalWatchJuke = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_2);
+    const goalScanFailed = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_3);
+    const goalScanSucceed = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_4);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
