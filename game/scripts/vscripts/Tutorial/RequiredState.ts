@@ -45,6 +45,10 @@ export type RequiredState = {
     // Respawn positions for unintended deaths
     respawnLocation?: Vector | "heroLocation"
     respawnTime?: number
+    
+    // Roshan
+    requireRoshan?: boolean
+    roshanHitsLikeATruck?: boolean
 }
 
 /**
@@ -96,4 +100,8 @@ export const defaultRequiredState: FilledRequiredState = {
     // Respawn positions for unintended deaths
     respawnLocation: "heroLocation",
     respawnTime: 10,
+    
+    // Roshan
+    requireRoshan: false,
+    roshanHitsLikeATruck: false
 }

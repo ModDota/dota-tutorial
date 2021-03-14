@@ -1,8 +1,9 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist } from "../util"
+import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
-import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
+import { itemAegis, outsidePitLocation, roshanLocation, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
+import { modifier_custom_roshan_attack_speed } from "../modifiers/modifier_custom_roshan_attack_speed"
 
 // Keep track of spawned blockades so we can remove them again.
 const spawnedBlockades = new Set<Blockade>()
@@ -25,6 +26,7 @@ export const setupState = (stateReq: RequiredState): void => {
     handleUnits(state)
     handleFountainTrees(state)
     handleBlockades(state)
+    handleRoshan(state)
 
     handleCamera(state, hero)
     handleMisc(state, hero)
@@ -297,6 +299,51 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
 function handleRequiredRespawn(state: FilledRequiredState) {
     const respawnLocation = state.respawnLocation === "heroLocation" ? state.heroLocation : state.respawnLocation
     setRespawnSettings(respawnLocation, state.respawnTime)
+}
+
+function handleRoshan(state: FilledRequiredState) {
+    let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
+
+    if (state.requireRoshan) {
+        if (!unitIsValidAndAlive(roshan)) {
+            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+            roshan.AddItemByName(itemAegis)
+        }
+
+        if (roshanLocation.__sub(roshan.GetAbsOrigin()).Length2D() > 0) {
+            roshan.Stop()
+            roshan.SetAbsOrigin(roshanLocation)
+        }
+
+        roshan.FaceTowards(outsidePitLocation)
+
+        // Remove standard rosh modifiers so he doesn't grow stronger as time passes
+        roshan.RemoveModifierByName("modifier_roshan_inherent_buffs")
+        roshan.RemoveModifierByName("modifier_roshan_devotion")
+        roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
+        // Add modifier since attack speed is part of the devotion modifier, and his attacks don't look genuine without this
+        roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
+
+        if (state.roshanHitsLikeATruck)
+            roshan.SetBaseDamageMin(600)
+        else
+            roshan.SetBaseDamageMin(75) // Standard Rosh base dmg, patch 7.28c
+    } else {
+        if (unitIsValidAndAlive(roshan))
+            roshan.Destroy()
+    }
+
+    // Clear Aegis boxes left on the ground, if any
+    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+
+    if (droppedItems) {
+        for (const droppedItem of droppedItems) {
+            const itemEntity = droppedItem.GetContainedItem()
+            if (itemEntity.GetAbilityName() === itemAegis) {
+                droppedItem.Destroy()
+            }
+        }
+    }
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {

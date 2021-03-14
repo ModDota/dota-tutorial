@@ -5,7 +5,6 @@ import { GoalTracker } from "../../Goals";
 import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
 import * as shared from "./Shared"
 import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
-import { modifier_custom_roshan_attack_speed } from "../../modifiers/modifier_custom_roshan_attack_speed";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
@@ -18,10 +17,9 @@ const requiredState: RequiredState = {
     slacksLocation: Vector(-5906, -3892, 256),
     sunsFanLocation: Vector(-5500, -4170, 256),
     heroLocation: runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-200, 0, -48)),
-    heroLocationTolerance: 800,
+    heroLocationTolerance: 2000,
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    heroHasDoubleDamage: true,
     blockades: [
         chapter5Blockades.direJungleLowgroundRiver,
         chapter5Blockades.topLaneRiver,
@@ -32,6 +30,7 @@ const requiredState: RequiredState = {
         chapter5Blockades.direMidTopRiver,
         chapter5Blockades.midRiverTopSide,
     ],
+    requireRoshan: true
 };
 
 const roshanMusic = "valve_ti10.music.roshan"
@@ -49,27 +48,7 @@ function onStart(complete: () => void) {
 
     const playerHero = getOrError(getPlayerHero())
 
-    let roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
-
-    if (!roshan) {
-        roshan = CreateUnitByName("npc_dota_roshan", shared.roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
-        roshan.FaceTowards(shared.outsidePitLocation)
-        roshan.AddItemByName(shared.itemAegis)
-    }
-
-    setupRoshanModifiers(roshan)
-
-    // Clear any Aegis boxes left on the ground
-    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
-
-    if (droppedItems) {
-        for (const droppedItem of droppedItems) {
-            const itemEntity = droppedItem.GetContainedItem()
-            if (itemEntity.GetAbilityName() === shared.itemAegis) {
-                droppedItem.Destroy()
-            }
-        }
-    }
+    let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
 
     // DK lvl 25 talents
     const dragonBlood25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight")
@@ -87,7 +66,7 @@ function onStart(complete: () => void) {
                     tg.goToLocation(roshPitGoalPosition),
                 ]),
                 tg.seq([
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 2),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 1),
                     tg.wait(2),
                     tg.immediate(() => canPlayerIssueOrders = true),
                     tg.setCameraTarget(undefined),
@@ -101,8 +80,7 @@ function onStart(complete: () => void) {
                 // Lvl up to 25, assuming 1 xp per level
                 playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
                 shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
-                // Reapply DD rune for infinite duration
-                playerHero.RemoveModifierByName("modifier_rune_doubledamage")
+                // Apply DD rune with infinite duration
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
                 maxLevelAbilities(playerHero)
             }),
@@ -195,12 +173,6 @@ function onStop() {
 
     StopGlobalSound(roshanMusic)
 
-    const roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
-
-    if (roshan) {
-        roshan.Destroy()
-    }
-
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
@@ -230,12 +202,4 @@ function maxLevelAbilities(heroUnit: CDOTA_BaseNPC_Hero) {
         if (ability)
             ability.SetLevel(ability.GetMaxLevel())
     }
-}
-
-// Setup Roshan's modifiers
-function setupRoshanModifiers(roshan: CDOTA_BaseNPC) {
-    roshan.RemoveModifierByName("modifier_roshan_inherent_buffs")
-    roshan.RemoveModifierByName("modifier_roshan_devotion")
-    roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
-    roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
 }
