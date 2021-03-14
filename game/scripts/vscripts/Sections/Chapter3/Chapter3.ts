@@ -250,14 +250,14 @@ const onStart = (complete: () => void) => {
                     }
                     tryCount++;
                 });
-                playerHero.AddNewModifier(undefined, undefined, "modifier_keep_hero_alive", undefined);
+                //playerHero.AddNewModifier(undefined, undefined, "modifier_keep_hero_alive", undefined);
                 playerHero.AddNewModifier(undefined, undefined, "modifier_deal_no_damage", undefined);
                 let odPixel = ctx[CustomNpcKeys.ODPixelMudGolem] as CDOTA_BaseNPC;
                 odPixel.SetAbsOrigin(GetGroundPosition(markerLocation, undefined));
                 setUnitPacifist(odPixel, true);
             }),
             tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
-            tg.loop(_ => tryCount < 5, _ => {
+            tg.loop(_ => tryCount < 1, _ => { // Set this back to 5 // Remove the hardcoding
                 goalTryStackCreeps.setValue(tryCount);
                 goalOptionalStackCreeps.setValue(stackCount);
 
@@ -321,10 +321,11 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalKillThirdSpawn.start();
             creepPhase = 3;
-            DestroyNeutrals()
+            //DestroyNeutrals()
 
         }),
-        //tg.wait(0),
+        tg.goToLocation(markerLocation),
+        tg.wait(FrameTime()),
         tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
         //tg.wait(0),
         tg.immediate(_ => creepArr = getAllNeutralCreeps()),
@@ -368,9 +369,9 @@ const onStart = (complete: () => void) => {
                 riki.Hold();
                 setUnitPacifist(riki,true);
             }),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.moveUnit((ctx) => ctx[CustomNpcKeys.Riki], location),
             tg.goToLocation(location),
-            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
         ];
     };
 
@@ -406,7 +407,7 @@ const onStop = () => {
         const hero = getPlayerHero()
         if (hero && IsValidEntity(hero)) {
             hero.RemoveModifierByName("modifier_deal_no_damage");
-            hero.RemoveModifierByName("modifier_keep_hero_alive");
+            //hero.RemoveModifierByName("modifier_keep_hero_alive");
         }
 
         DestroyNeutrals();
