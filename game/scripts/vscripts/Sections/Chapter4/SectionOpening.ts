@@ -103,8 +103,8 @@ function onStart(complete: () => void) {
                     tg.immediate(context => {
                         const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
                         setUnitVisibilityThroughFogOfWar(mirana, true);
-                        // Play mirana laughter
-                        //EmitSoundOn("Mirana", mirana);
+                        // Miiiiiiiirana: TODO maybe get a better voice line here?
+                        EmitSoundOn("Script_1_Movement_9_1", mirana);
                     }),
                     tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
                     tg.immediate(context => {
