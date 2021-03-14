@@ -11,7 +11,7 @@ let graph: tg.TutorialStep | undefined = undefined
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    heroLocation: Vector(-6200, -6300, 384),
+    heroLocation: Vector(-6850, -6500, 384),
     heroLevel: 25,
     heroAbilityMinLevels: [4, 4, 4, 3],
     heroItems: {
