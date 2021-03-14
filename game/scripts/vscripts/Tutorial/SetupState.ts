@@ -1,7 +1,7 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
 import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
-import { roshanLocations, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
+import { outsidePitLocation, roshanLocation, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
 import { modifier_custom_roshan_attack_speed } from "../modifiers/modifier_custom_roshan_attack_speed"
 
@@ -306,16 +306,16 @@ function handleRoshan(state: FilledRequiredState) {
     const itemAegis = "item_aegis"
     if (state.requireRoshan) {
         if (!unitIsValidAndAlive(roshan)) {
-            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocations.spawn, true, undefined, undefined, DotaTeam.NEUTRALS)
+            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
             roshan.AddItemByName(itemAegis)
         }
 
-        if (roshanLocations.spawn.__sub(roshan.GetAbsOrigin()).Length2D() > 0) {
+        if (roshanLocation.__sub(roshan.GetAbsOrigin()).Length2D() > 0) {
             roshan.Stop()
-            roshan.SetAbsOrigin(roshanLocations.spawn)
+            roshan.SetAbsOrigin(roshanLocation)
         }
 
-        roshan.FaceTowards(roshanLocations.lairExit)
+        roshan.FaceTowards(outsidePitLocation)
 
         // Remove standard rosh modifiers so he doesn't grow stronger as time passes
         roshan.RemoveModifierByName("modifier_roshan_inherent_buffs")

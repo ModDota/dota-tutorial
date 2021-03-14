@@ -16,6 +16,7 @@ declare const enum SectionName {
     Chapter4_Communication = "Chapter4_Communication",
     Chapter5_Opening = "Chapter5_Opening",
     Chapter5_Roshan = "Chapter5_Roshan",
+    Chapter5_TeamFight = "Chapter5_TeamFight",
 }
 
 declare const enum CustomNpcKeys {
@@ -41,6 +42,11 @@ declare const enum CustomNpcKeys {
     MiranaIllusionOne = "mirana_illusion_one",
     MiranaIllusionTwo = "mirana_illusion_two",
     Tidehunter = "npc_dota_hero_tidehunter",
+    Antimage = "npc_dota_hero_antimage",
+    Lina = "npc_dota_hero_lina",
+    Visage = "npc_dota_hero_visage",
+    Pudge = "npc_dota_hero_pudge",
+    Wisp = "npc_dota_hero_wisp",
     Roshan = "npc_dota_roshan",
 }
 

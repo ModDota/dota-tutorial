@@ -2,8 +2,8 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { centerCameraOnHero, disposeHeroes, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
-import { chapter5Blockades, roshanLocations, runeSpawnsLocations } from "./Shared";
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
+import { chapter5Blockades, disposeHeroes, HeroInfo, outsidePitLocation, roshanLocation, runeSpawnsLocations } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
 
@@ -35,7 +35,7 @@ const requiredState: RequiredState = {
     roshanHitsLikeATruck: true,
 };
 
-const powerRuneRangersInfo = [
+const powerRuneRangersInfo: HeroInfo[] = [
     { name: CustomNpcKeys.Juggernaut },
     { name: CustomNpcKeys.Mirana },
     { name: CustomNpcKeys.MiranaIllusionOne },
@@ -46,7 +46,7 @@ const powerRuneRangersInfo = [
     { name: CustomNpcKeys.StormSpirit },
 ];
 
-const othersInfo = [
+const othersInfo: HeroInfo[] = [
     { name: CustomNpcKeys.Sniper }
 ]
 
@@ -269,6 +269,7 @@ function onStart(complete: () => void) {
             tg.immediate((ctx) => {
                 ctx[CustomNpcKeys.StormSpirit].SetHealth(100)
                 ctx[CustomNpcKeys.StormSpirit].SetMana(150)
+                // Lvl up to 6
                 ctx[CustomNpcKeys.StormSpirit].AddExperience(5, ModifyXpReason.UNSPECIFIED, false, false)
             }),
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.StormSpirit]),
@@ -324,11 +325,11 @@ function onStart(complete: () => void) {
                     tg.fork(powerRuneRangersInfo.map((powerRuneRanger) =>
                         tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[powerRuneRanger.name]), 2)
                     )),
-                    tg.moveUnit(roshan, roshanLocations.spawn),
-                    tg.faceTowards(roshan, roshanLocations.lairExit),
+                    tg.moveUnit(roshan, roshanLocation),
+                    tg.faceTowards(roshan, outsidePitLocation),
                 ]),
             ]),
-            tg.immediate(() => disposeHeroes(powerRuneRangersInfo.concat(othersInfo))),
+            tg.immediate((ctx) => disposeHeroes(ctx, powerRuneRangersInfo.concat(othersInfo))),
             tg.wait(1)
         ])
     )
@@ -342,7 +343,7 @@ function onStart(complete: () => void) {
 function onStop() {
     print("Stopping", sectionName);
 
-    disposeHeroes(powerRuneRangersInfo.concat(othersInfo))
+    disposeHeroes(GameRules.Addon.context, powerRuneRangersInfo.concat(othersInfo))
 
     if (graph) {
         graph.stop(GameRules.Addon.context);

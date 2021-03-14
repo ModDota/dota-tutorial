@@ -442,21 +442,6 @@ export function highlight(props: HighlightProps): ParticleID[] {
 }
 
 /**
- * Removes hero entities if they are still valid and alive.
- * @param heroesInfoArray Array of objects that contain a hero's name
- */
-export function disposeHeroes(heroesInfoArray: { name: CustomNpcKeys }[]) {
-    for (const friendlyHero of heroesInfoArray) {
-        let hero: CDOTA_BaseNPC_Hero | undefined = GameRules.Addon.context[friendlyHero.name];
-        if (unitIsValidAndAlive(hero)) {
-            hero!.RemoveSelf();
-        }
-
-        GameRules.Addon.context[friendlyHero.name] = undefined;
-    }
-}
-
-/**
  * Removes all attached particle modifiers from the supplied units.
  * @param units The units to remove the particle modifiers from.
  */
@@ -521,4 +506,23 @@ export function setRespawnSettings(respawnLocation: Vector, respawnTime: number)
             killed.SetTimeUntilRespawn(respawnTime)
         }
     }, GameRules.Addon)
+}
+
+
+/**
+ * Calculates the distance in 2D between two points.
+ * @returns The distance between the two points.
+ */
+export function Distance2D(point1: Vector, point2: Vector): number {
+    return ((point1 - point2) as Vector).Length2D()
+}
+
+/**
+ * Calculates the direction from the first position to the second.
+ * @param origin_pos The position where the vector should originate from.
+ * @param towards_pos The position where the vector should point.
+ * @returns The normalized vector pointing towards the second vector argument.
+ */
+export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
+    return ((towards_pos - origin_pos) as Vector).Normalized();
 }
