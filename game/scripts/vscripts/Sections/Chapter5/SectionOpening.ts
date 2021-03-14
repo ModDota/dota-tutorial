@@ -315,7 +315,10 @@ function onStart(complete: () => void) {
                 tg.moveUnit(roshan, shared.runeSpawnsLocations.topPowerUpRunePos),
                 tg.setCameraTarget(roshan),
             ]),
-            tg.immediate((ctx) => roshan.MoveToPositionAggressive(ctx[CustomNpcKeys.Juggernaut].GetAbsOrigin())),
+            tg.immediate((ctx) => {
+                setUnitPacifist(roshan, false)
+                roshan.MoveToPositionAggressive(ctx[CustomNpcKeys.Juggernaut].GetAbsOrigin())
+            }),
             tg.fork(powerRuneRangersInfo.map((powerRuneRanger) => {
                 return tg.immediate((ctx) => {
                     if (unitIsValidAndAlive(ctx[powerRuneRanger.name]))
