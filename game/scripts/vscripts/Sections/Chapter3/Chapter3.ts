@@ -11,10 +11,10 @@ let graph: tg.TutorialStep | undefined = undefined;
 let movedToStash = false;
 const markerLocation = Vector(-3250, 4917);
 const creepCampBox = [
-    Vector(-2915, 4388),
-    Vector(-2915, 5203),
-    Vector(-2141, 5203),
-    Vector(-2141, 4388),
+    Vector(-2911, 4373),
+    Vector(-2911, 5196),
+    Vector(-2142, 5203),
+    Vector(-2142, 4373),
 ];
 let creepPhase = 0;
 
@@ -37,6 +37,9 @@ const GetUnitsInsidePolygon = (polygon: Vector[], radius?: number, midPoint?: Ve
 
     return units.filter(unit => isPointInsidePolygon(unit.GetAbsOrigin(), polygon));
 };
+
+const getAllNeutralCreeps = () => Entities.FindAllByClassname("npc_dota_creep_neutral").filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS && x.IsBaseNPC() && !x.IsInvulnerable()) as CDOTA_BaseNPC[];
+
 
 const requiredState: RequiredState = {
     heroLevel: 6,
@@ -62,6 +65,9 @@ const requiredState: RequiredState = {
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Chapter3_Opening, });
 
+
+    GameRules.Addon.Game.SetFogOfWarDisabled(true);
+
     const goalTracker = new GoalTracker();
     const goalMoveToCamp = goalTracker.addBoolean("Move to the neutral creep camp");
     const goalKillFirstSpawn = goalTracker.addBoolean("Kill the neutral creeps");
@@ -81,7 +87,7 @@ const onStart = (complete: () => void) => {
     movedToStash = false;
     let creepArr: CDOTA_BaseNPC[] = [];
 
-    let itemsToDrop = [giveAwayItemName, dropInStashItemName];
+    const itemsToDrop = [giveAwayItemName, dropInStashItemName];
 
     entityKilledListenerId = ListenToGameEvent("entity_killed",(event) => {
             const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
@@ -112,14 +118,19 @@ const onStart = (complete: () => void) => {
                 goalKillFirstSpawn.start();
 
                 // Make sure the creep spawn box is empty (Hero can't be in there since he's at the marker)
-                const units = GetUnitsInsidePolygon(creepCampBox);
+                const units = getAllNeutralCreeps();
+                print("XXX", units.length)
                 units.forEach(unit => {
-                    if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
+                    print("chec!k", unit.GetUnitName(), unit.IsOutOfGame(),unit.IsInvulnerable(),unit.IsInvisible(), unit.IsNull())
+                    if (!unit.IsInvulnerable()) {
+                        print( "Removing",unit.GetUnitName())
                         UTIL_Remove(unit);
+                        
                     }
+                    
                 });
             }),
-            tg.wait(0),
+            tg.wait(0.1),
             tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
             tg.audioDialog(LocalizationKey.Script_3_Opening_1, LocalizationKey.Script_3_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_2, LocalizationKey.Script_3_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -127,7 +138,10 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_3_Opening_4, LocalizationKey.Script_3_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_6, LocalizationKey.Script_3_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(_ => units = GetUnitsInsidePolygon(creepCampBox).filter(x => x.IsBaseNPC() && x.IsNeutralUnitType()) as CDOTA_BaseNPC[]),
+            tg.immediate(_ => units = getAllNeutralCreeps().filter(x => x.IsBaseNPC() && x.IsNeutralUnitType())),
+            tg.immediate(_ => print(units.length, !units.some(unitIsValidAndAlive))),
+            tg.immediate(_ => print("OUTOFGAME!!",units.filter(x => x.IsInvulnerable()).length)),
+           
             // Check if they are killed
             tg.completeOnCheck(_ => units.length === 0 || !units.some(unitIsValidAndAlive), 1),
             tg.immediate(_ => goalKillFirstSpawn.complete()),
@@ -161,6 +175,7 @@ const onStart = (complete: () => void) => {
     const stackCreepsPractice = () => {
         let stackCount = 0;
         let tryCount = 0;
+        let creepCount = 0;
         const timeManager = GameRules.Addon.customTimeManager;
         return [
             tg.immediate(_ => {
@@ -168,18 +183,26 @@ const onStart = (complete: () => void) => {
 
                 goalStackCreeps.start();
                 GameRules.SpawnNeutralCreeps();
+                creepCount = getAllNeutralCreeps().length;
+                print("creepCount!!",creepCount)
                 timeManager.customTimeEnabled = true;
                 timeManager.time = 45;
                 timeManagerResetTimeId = timeManager.registerCallBackOnTime(5, () => timeManager.time = 40);
                 timeManagerZeroTimeId = timeManager.registerCallBackOnTime(0, () => {
-                    if (GetUnitsInsidePolygon(creepCampBox).length === 0) {
+                    GameRules.SpawnNeutralCreeps();
+                    if (creepCount !== getAllNeutralCreeps().length) {
                         stackCount++;
                     }
-                    GameRules.SpawnNeutralCreeps();
                     tryCount++;
+                    
                 });
 
                 playerHero.Hold();
+            }),
+            tg.wait(0),
+            tg.immediate(_ => {
+                
+                
             }),
 
             tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -231,17 +254,11 @@ const onStart = (complete: () => void) => {
                 timeManager.customTimeEnabled = true;
                 timeManagerResetTimeId = timeManager.registerCallBackOnTime(3, () => timeManager.time = 43);
                 timeManagerZeroTimeId = timeManager.registerCallBackOnTime(0, () => {
-                    if (GetUnitsInsidePolygon(creepCampBox).length === 0) {
+                    let creepCount = getAllNeutralCreeps().length;
+                    GameRules.SpawnNeutralCreeps();
+                    if (creepCount !== getAllNeutralCreeps().length) {
                         stackCount++;
                     }
-                    GameRules.SpawnNeutralCreeps();
-
-                    GetUnitsInsidePolygon(creepCampBox).forEach(unit => {
-                        if (!creepArr.includes(unit)) {
-                            creepArr.push(unit);
-                        }
-                    });
-
                     tryCount++;
                 });
                 playerHero.AddNewModifier(undefined, undefined, "modifier_keep_hero_alive", undefined);
@@ -289,6 +306,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalKillStackedCreeps.start();
             creepPhase = 2;
+            creepArr = getAllNeutralCreeps();
         }),
         // itemdrop handled in entity_killed event
         tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(x => x.IsNull() || !x.IsAlive()), 0.1),
@@ -315,19 +333,16 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalKillThirdSpawn.start();
             creepPhase = 3;
-            GetUnitsInsidePolygon(creepCampBox).forEach(unit => {
-                if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
-                    UTIL_Remove(unit);
-                }
-            });
+            DestroyNeutrals()
+
         }),
-        tg.wait(0),
+        //tg.wait(0),
         tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
+        //tg.wait(0),
+        tg.immediate(_ => creepArr = getAllNeutralCreeps()),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_4, LocalizationKey.Script_3_Neutrals_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.wait(0),
-        tg.immediate(_ => creepArr = GetUnitsInsidePolygon(creepCampBox).filter((x) => x.IsNeutralUnitType())),
-        tg.wait(0),
+        
         tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(unit => !unit || unit.IsNull() || !unit.IsAlive()), 1),
         tg.immediate(_ => goalKillThirdSpawn.complete()),
         tg.immediate(_ => goalPickupItem.start()),

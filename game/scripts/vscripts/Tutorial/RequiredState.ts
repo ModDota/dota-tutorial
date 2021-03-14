@@ -79,7 +79,7 @@ export const defaultRequiredState: FilledRequiredState = {
     requireSlacksGolem: false,
     slacksLocation: Vector(-7000, 600, 128),
     requireODPixelGolem: false,
-    odPixelLocation: Vector(0, 0, 256),
+    odPixelLocation: Vector(-7000, 600, 128),
     
 
 

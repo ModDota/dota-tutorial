@@ -459,6 +459,7 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
     }
 }
 
+
 /**
  * Returns the current camera location (technically the target, not the origin) of the player.
  * @returns Current camera location of the player.
@@ -526,4 +527,17 @@ export function Distance2D(point1: Vector, point2: Vector): number {
  */
 export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
     return ((towards_pos - origin_pos) as Vector).Normalized();
+}
+
+export function removeNeutralSpawners() {
+    //const creepSpawnLocationToKeep = Entities.FindAllByClassnameWithin("npc_dota_neutral_spawner",Vector(-2464,4816,170),500)[0];
+    const spawners = Entities.FindAllByClassname("npc_dota_neutral_spawner");
+    for (const spawner of spawners)
+    {
+        let normal = spawner.GetAbsOrigin()-Vector(-2464,4816,170) as Vector
+        if (normal.Length2D() > 100) {
+            UTIL_Remove(spawner);
+        }
+        
+    }
 }
