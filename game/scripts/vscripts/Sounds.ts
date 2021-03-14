@@ -18,7 +18,7 @@ export function getSoundDuration(soundName: string) {
     if (duration > 0) {
         soundDurations[soundName] = duration
     } else {
-        Warning(`GetSoundDuration() returned 0 for sound ${soundName}. Returning default duration of 3 seconds.`)
+        Warning(`GetSoundDuration() returned 0 for sound ${soundName}.`)
     }
 
     return duration

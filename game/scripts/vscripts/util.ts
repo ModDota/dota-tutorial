@@ -526,3 +526,16 @@ export function Distance2D(point1: Vector, point2: Vector): number {
 export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
     return ((towards_pos - origin_pos) as Vector).Normalized();
 }
+
+/**
+ * Returns a random item from an array
+ * @param choices Array to choose from.
+ * @returns Randomly chosen item from the given array.
+ */
+export function randomChoice<T>(choices: T[]) {
+    if (choices.length === 0) {
+        error("randomChoice called with empty array")
+    }
+
+    return choices[RandomInt(0, choices.length - 1)]
+}
