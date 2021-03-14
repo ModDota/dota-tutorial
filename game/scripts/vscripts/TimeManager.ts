@@ -2,6 +2,7 @@ export class CustomTimeManager {
     time = 0;
     customTimeEnabled = false;
     index = 0;
+
     callbacks: Map<number, CallBackRow> = new Map();
 
     constructor() {
@@ -19,15 +20,15 @@ export class CustomTimeManager {
             }
             this.SetClockValue(this.time, undefined);
         } else {
-            let dotatime = GameRules.GetDOTATime(false, false);
-            let seconds = Math.floor(dotatime % 60);
-            let minutes = Math.floor(dotatime / 60);
+            const dotaTime = GameRules.GetDOTATime(false, false);
+            const seconds = Math.floor(dotaTime % 60);
+            const minutes = Math.floor(dotaTime / 60);
             this.time == seconds;
             this.SetClockValue(seconds, minutes);
         }
 
-        this.callbacks.forEach((x) => {
-            if (x.seconds == this.time) {
+        this.callbacks.forEach(x => {
+            if (x.seconds === this.time) {
                 x.fn();
             }
         });
@@ -46,11 +47,12 @@ export class CustomTimeManager {
         return this.index - 1;
     }
 
-    unRegisterCallBackOnTime(index: number) {
-        if (this.callbacks.has(index)) {
+    unregisterCallBackOnTime(index: number) {
+        // Didn't seem like this worked with has() (maybe tstl bug) so using get() instead.
+        const callback = this.callbacks.get(index);
+        if (callback) {
             this.callbacks.delete(index);
         }
-        
     }
 }
 

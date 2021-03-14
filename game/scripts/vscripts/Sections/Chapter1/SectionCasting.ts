@@ -14,13 +14,14 @@ const requiredState: RequiredState = {
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 };
 
 const start = (complete: () => void) => {
     print("Started section casting");
 
     const goalTracker = new GoalTracker();
-    const goalKillSlacks = goalTracker.addBoolean("Kill Slacks using your Breathe Fire ability.");
+    const goalKillSlacks = goalTracker.addBoolean(LocalizationKey.Goal_1_BreatheFire_1);
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(ctx => {

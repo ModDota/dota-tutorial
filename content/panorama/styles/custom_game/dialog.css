@@ -156,7 +156,7 @@
 #DialogPanel {
     horizontal-align: center;
     vertical-align: bottom;
-    margin-bottom: 300px;
+    margin-bottom: 130px;
     min-width: 500px;
     min-height: 180px;
     transition-property: pre-transform-scale2d, transform, opacity;

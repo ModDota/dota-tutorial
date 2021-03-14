@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { freezePlayerHero, getOrError, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Communication;
@@ -30,9 +30,9 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalPressVoiceChatButton = goalTracker.addBoolean("Press the team voice key (default 'V') and say hello.");
-    const goalChatWheelWP = goalTracker.addBoolean("Use your chat wheel (default 'Y').");
-    const goalGoToTopBountyRune = goalTracker.addBoolean("Go to the marked location.");
+    const goalPressVoiceChatButton = goalTracker.addBoolean(LocalizationKey.Goal_4_Communication_1);
+    const goalChatWheelWP = goalTracker.addBoolean(LocalizationKey.Goal_4_Communication_2);
+    const goalGoToTopBountyRune = goalTracker.addBoolean(LocalizationKey.Goal_4_Communication_3);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
@@ -50,7 +50,7 @@ function onStart(complete: () => void) {
                 kunkka.AddItemByName("item_invis_sword");
                 kunkka.AddItemByName("item_armlet");
                 kunkka.AddItemByName("item_phase_boots");
-                kunkka.AddItemByName("item_heart");
+                kunkka.AddItemByName("item_blade_mail");
                 kunkka.AddItemByName("item_monkey_king_bar");
             }),
 
@@ -68,7 +68,7 @@ function onStart(complete: () => void) {
                 luna.FaceTowards(playerHero.GetAbsOrigin());
             }),
 
-            tg.textDialog(LocalizationKey.Script_4_Communication_1, ctx => ctx[lunaName], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_1, LocalizationKey.Script_4_Communication_1, ctx => ctx[lunaName]),
             tg.setCameraTarget(undefined),
             tg.audioDialog(LocalizationKey.Script_4_Communication_2, LocalizationKey.Script_4_Communication_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_3, LocalizationKey.Script_4_Communication_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -93,9 +93,9 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalChatWheelWP.start()),
             tg.waitForChatWheel(),
             tg.immediate(_ => goalChatWheelWP.complete()),
-            tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), context => context[lunaName].GetAbsOrigin(), 1),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[lunaName].GetAbsOrigin(), 1),
             tg.setCameraTarget(context => context[lunaName]),
-            tg.textDialog(LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName], 3),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName]),
             tg.moveUnit(context => context[lunaName], allyHeroStartLocation),
 
             tg.setCameraTarget(context => context[kunkkaName]),
@@ -144,15 +144,16 @@ function onStart(complete: () => void) {
             tg.immediate(context => context[kunkkaName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.moveUnit(context => context[kunkkaName], allyHeroStartLocation),
             tg.immediate(context => context[kunkkaName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
+
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.setCameraTarget(playerHero),
+            tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => goalGoToTopBountyRune.start()),
             tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
-            tg.goToLocation(bountyRuneLocation, [Vector(-3700, 3300)]),
+            tg.goToLocation(bountyRuneLocation, [], false),
             tg.immediate(_ => goalGoToTopBountyRune.complete()),
         ])
     )

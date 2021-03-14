@@ -1,7 +1,7 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
-import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist, getPlayerCameraLocation } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -56,11 +56,11 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalFetchWard = goalTracker.addBoolean("Go pick those up and come back here.");
-    const goalPlaceObserverWard = goalTracker.addBoolean("Lets put an observer ward on this high ground.");
-    const goalPlaceSentryWard = goalTracker.addBoolean("Lets put a sentry ward on this high ground.");
-    const goalAttackRiki = goalTracker.addBoolean("Go attack Riki with right mouse click on him.");
-    const goalHoldAlt = goalTracker.addBoolean("Hold Alt button to check sentry range.");
+    const goalFetchWard = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_1);
+    const goalPlaceObserverWard = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_2);
+    const goalPlaceSentryWard = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_3);
+    const goalAttackRiki = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_4);
+    const goalHoldAlt = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_5);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
@@ -70,7 +70,6 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.setCameraTarget(playerHero),
             tg.immediate(_ => setUnitPacifist(playerHero, true)),
             tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name, true))),
 
@@ -78,9 +77,15 @@ function onStart(complete: () => void) {
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     hero.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
-                    hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
                     hero.FaceTowards(playerHero.GetAbsOrigin());
                     setUnitPacifist(hero, true);
+
+                    // For some reason this modifier does not make heroes semi-transparent?
+                    //hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
+                    // Riki ult does
+                    const ability = hero.AddAbility("riki_permanent_invisibility");
+                    ability.SetLevel(1);
+                    ability.SetHidden(true);
                 }
             }),
 
@@ -106,7 +111,7 @@ function onStart(complete: () => void) {
 
             tg.fork([
                 tg.seq([
-                    tg.panCamera(playerHero.GetAbsOrigin(), cliffLocation1, _ => cameraSpeed),
+                    tg.panCamera(_ => getPlayerCameraLocation(), cliffLocation1, _ => cameraSpeed),
                     tg.wait(1),
                     tg.panCamera(cliffLocation1, cliffLocation2, _ => cameraSpeed),
                     tg.wait(1),
@@ -114,7 +119,7 @@ function onStart(complete: () => void) {
                     tg.wait(1),
                     tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
                     tg.wait(1),
-                    tg.panCamera(cliffLocation4, playerHero.GetAbsOrigin(), _ => cameraSpeed),
+                    tg.panCamera(cliffLocation4, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),

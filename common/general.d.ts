@@ -16,6 +16,7 @@ declare const enum SectionName {
     Chapter4_Communication = "Chapter4_Communication",
     Chapter5_Opening = "Chapter5_Opening",
     Chapter5_Roshan = "Chapter5_Roshan",
+    Chapter5_TeamFight = "Chapter5_TeamFight",
     Chapter6_Opening = "Chapter6_Opening",
 }
 
@@ -23,6 +24,7 @@ declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
     GodzMudGolem = "npc_mud_golem_godz",
+    ODPixelMudGolem = "npc_mud_golem_sunsfan",
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
@@ -32,7 +34,21 @@ declare const enum CustomNpcKeys {
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
     DireTopT1Tower = "npc_dota_badguys_tower1_top",
-    Sniper = "npc_dota_hero_sniper"
+    Sniper = "npc_dota_hero_sniper",
+    Juggernaut = "npc_dota_hero_juggernaut",
+    Zuus = "npc_dota_hero_zuus",
+    CrystalMaiden = "npc_dota_hero_crystal_maiden",
+    Lion = "npc_dota_hero_lion",
+    StormSpirit = "npc_dota_hero_storm_spirit",
+    MiranaIllusionOne = "mirana_illusion_one",
+    MiranaIllusionTwo = "mirana_illusion_two",
+    Tidehunter = "npc_dota_hero_tidehunter",
+    Antimage = "npc_dota_hero_antimage",
+    Lina = "npc_dota_hero_lina",
+    Visage = "npc_dota_hero_visage",
+    Pudge = "npc_dota_hero_pudge",
+    Wisp = "npc_dota_hero_wisp",
+    Roshan = "npc_dota_roshan",
 }
 
 declare const enum CustomEntityKeys {
@@ -69,6 +85,7 @@ declare const enum ParticleName {
     HighlightRedArrow = "particles/tutorial_arrow_attack.vpcf",
     HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
+    QuestionMarks = "particles/tutorial_question_marks.vpcf",
 }
 
 type VideoName = "guides" | "muting"

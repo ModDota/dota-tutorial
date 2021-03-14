@@ -36,6 +36,7 @@ export class GameMode {
         chapters.chapter4.sectionCommunication,
         chapters.chapter5.sectionOpening,
         chapters.chapter5.sectionRoshan,
+        chapters.chapter5.sectionTeamFight,
         chapters.chapter6.sectionOpening,
     ]);
 

@@ -10,7 +10,7 @@ const isPlayerHeroNearby = (location: Vector, radius: number) => getOrError(getP
  * @param location Target location
  * @param visualIntermediateLocations Locations to use for the visual path between the current and end location.
  */
-export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations?: tg.StepArgument<Vector[]>) => {
+export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations: tg.StepArgument<Vector[]> = [], showPathParticle: tg.StepArgument<boolean> = true) => {
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
     let actualLocation: Vector | undefined = undefined
@@ -34,13 +34,16 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
     return tg.step((context, complete) => {
         actualLocation = tg.getArg(location, context)
-        const actualVisualIntermediateLocations = tg.getOptionalArg(visualIntermediateLocations, context) ?? []
+        const actualVisualIntermediateLocations = tg.getArg(visualIntermediateLocations, context)
+        const actualShowPathParticle = tg.getArg(showPathParticle, context)
 
         const hero = getOrError(getPlayerHero())
 
         MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
 
-        pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        if (actualShowPathParticle) {
+            pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        }
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
@@ -111,6 +114,29 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
         shouldGetRemoved = true
         cleanupUnit(context)
     })
+}
+
+/**
+ * Creates a tutorial step that returns a fork of multiple moveUnit steps.
+ * @param unit The unit to move.
+ * @param moveLocations Array of locations the unit should move through.
+ * @param completeIfUnitInvalid Optional param that controls whether steps should complete if provided unit is invalid or dead. Default value is false
+ */
+export const moveUnitSequence = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocations: tg.StepArgument<Vector[]>, completeIfUnitInvalid: boolean = false): tg.TutorialStep => {
+
+    const steps = (context: tg.TutorialContext) => {
+        const moveUnitSteps: tg.TutorialStep[] = []
+        const actualUnit = tg.getArg(unit, context)
+        const actualMoveLocations = tg.getArg(moveLocations, context)
+
+        for (const moveLocation of actualMoveLocations) {
+            moveUnitSteps.push(moveUnit(actualUnit, moveLocation, completeIfUnitInvalid))
+        }
+
+        return moveUnitSteps
+    }
+
+    return tg.fork(steps)
 }
 
 /**

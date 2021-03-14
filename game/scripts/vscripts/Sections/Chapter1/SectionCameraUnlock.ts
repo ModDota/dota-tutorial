@@ -21,13 +21,11 @@ const onStart = (complete: () => void) => {
     const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"))
 
     const goalTracker = new GoalTracker()
-    const goalMoveCamera = goalTracker.addBoolean("Move your camera by dragging the cursor to the edge of your screen.")
-    const goalKillDummy = goalTracker.addBoolean("Attack and destroy the target dummy by right-clicking it.")
-    const goalKillSunsfan = goalTracker.addBoolean("Attack SUNSfan.")
+    const goalMoveCamera = goalTracker.addBoolean(LocalizationKey.Goal_1_Camera_1)
+    const goalKillDummy = goalTracker.addBoolean(LocalizationKey.Goal_1_Camera_2)
+    const goalKillSunsfan = goalTracker.addBoolean(LocalizationKey.Goal_1_Camera_3)
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        // Unlock player camera and wait for player to move their camera a bit
-        tg.setCameraTarget(() => undefined),
         tg.immediate(_ => goalMoveCamera.start()),
         tg.waitForCameraMovement(),
         tg.immediate(_ => goalMoveCamera.complete()),

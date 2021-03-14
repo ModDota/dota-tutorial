@@ -102,4 +102,11 @@
         "ItemDroppable"					"0"
         "ItemKillable"					"0"
     }
+
+    "item_tango"
+    {
+        "ItemSellable"					"0"
+        "ItemDroppable"					"0"
+        "ItemKillable"					"0"
+    }
 }

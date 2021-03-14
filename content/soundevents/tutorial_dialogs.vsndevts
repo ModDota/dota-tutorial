@@ -120,11 +120,29 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_9.vsnd" ]
     }
+    "Script_1_Movement_9_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_9_1.vsnd" ]
+    }
     "Script_1_Movement_10" =
     {
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_10.vsnd" ]
+    }
+    "Script_1_Movement_10_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_10_1.vsnd" ]
+    }
+    "Script_1_Movement_10_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Movement_10_2.vsnd" ]
     }
     "Script_1_Movement_11" =
     {
@@ -215,6 +233,12 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_4.vsnd" ]
+    }
+    "Script_1_Leveling_4_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_4_2.vsnd" ]
     }
     "Script_1_Leveling_5" =
     {
@@ -888,6 +912,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_3_Opening_20.vsnd" ]
     }
+    "Script_3_Opening_20_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_3_Opening_20_1.vsnd" ]
+    }
     "Script_3_Opening_21" =
     {
         type = "dota_src1_2d"
@@ -917,6 +947,12 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_3_Opening_25.vsnd" ]
+    }
+    "Script_3_Opening_25_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_3_Opening_25_1.vsnd" ]
     }
     "Script_3_Opening_26" =
     {

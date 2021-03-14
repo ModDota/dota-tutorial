@@ -2,10 +2,11 @@ import { GoalTracker } from "../../Goals";
 import { modifier_dk_attack_tower_chapter2 } from "../../modifiers/modifier_dk_attack_tower_chapter2";
 import { modifier_dk_death_chapter2_tower } from "../../modifiers/modifier_dk_death_chapter2_tower";
 import { modifier_nodamage_chapter2_tower } from "../../modifiers/modifier_nodamage_chapter2_tower";
+import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -17,6 +18,8 @@ let playerMustOrderGlyph = false
 let hasPlayerOrderedGlyphWhenMust = false
 let playerOrderMustCastUltimate = false
 let radiantCreepTimer: string | undefined;
+const deathConversations = [LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_6]
+const deathDuration = deathConversations.map(getSoundDuration).reduce((accumulator, current) => accumulator + current + 0.5, 0)
 
 const requiredState: RequiredState = {
     heroLocation: Vector(-6130, 4860, 128),
@@ -37,6 +40,7 @@ const requiredState: RequiredState = {
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
     ],
+    centerCameraOnHero: true,
 }
 
 // UI Highlighting Paths
@@ -65,28 +69,24 @@ const onStart = (complete: () => void) => {
     const direTopTower = getOrError(getDireTopTower());
 
     const goalTracker = new GoalTracker()
-    const goalAttemptToAttackTower = goalTracker.addBoolean("Attack the enemy's top tower.")
-    const goalwaitToRespawn = goalTracker.addBoolean("Wait to respawn.")
-    const goalGetBackToTopTowerPosition = goalTracker.addBoolean("Move to position close to the tower.")
-    const goalHoldAltToSeeTowerRadius = goalTracker.addBoolean("Hold the Alt key to see the tower's radius.")
-    const goalSneakThroughTower = goalTracker.addNumeric("Follow through the points shown", 4)
-    const goalSneakBackAgain = goalTracker.addNumeric("Follow points to your starting position", 4)
-    const goalAttackTowerWeak = goalTracker.addBoolean("Attack the enemy's top tower.")
-    const goalTrainUltimate = goalTracker.addBoolean("Train your ultimate ability.")
-    const goalTrainAbilities = goalTracker.addBoolean("Spend remaining ability points on the rest of your abilities.")
-    const goalUseUltimate = goalTracker.addBoolean("Use your ultimate ability.")
-    const goalAttackTowerStrong = goalTracker.addBoolean("Attack the enemy's top tower.")
-    const goalUseGlyph = goalTracker.addBoolean("Use your own Glyph.")
-    const goalDestroyTower = goalTracker.addBoolean("Destroy the enemy's top tower.")
+    const goalAttemptToAttackTower = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_1)
+    const goalwaitToRespawn = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_2)
+    const goalGetBackToTopTowerPosition = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_3)
+    const goalHoldAltToSeeTowerRadius = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_4)
+    const goalSneakThroughTower = goalTracker.addNumeric(LocalizationKey.Goal_2_Tower_5, 4)
+    const goalSneakBackAgain = goalTracker.addNumeric(LocalizationKey.Goal_2_Tower_6, 4)
+    const goalAttackTowerWeak = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_7)
+    const goalTrainUltimate = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_8)
+    const goalTrainAbilities = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_9)
+    const goalUseUltimate = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_10)
+    const goalAttackTowerStrong = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_11)
+    const goalUseGlyph = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_12)
+    const goalDestroyTower = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_13)
 
     let radiantCreeps: CDOTA_BaseNPC[] = []
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
-            tg.wait(FrameTime()),
-            tg.setCameraTarget(playerHero),
-            tg.wait(FrameTime()),
-            tg.setCameraTarget(undefined),
             tg.immediate(context => {
                 freezePlayerHero(true);
                 playerMustOrderTrainUltimate = false;
@@ -102,6 +102,8 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_1, LocalizationKey.Script_2_Tower_1, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(() => {
+                // Calculate how long you should be dead while Slacks and Sunsfan explain death
+                setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
                 freezePlayerHero(false)
                 goalAttemptToAttackTower.start()
                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
@@ -128,12 +130,18 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_5, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_6, LocalizationKey.Script_2_Tower_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
+            tg.immediate(() => {
+                if (!playerHero.IsAlive()) playerHero.RespawnHero(false, false)
+            }),
             tg.completeOnCheck(() => {
                 const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
                 if (!modifier) error("The modifier does not exists")
                 return modifier.dkRespawned
             }, 0.5),
-            tg.immediate(() => goalwaitToRespawn.complete()),
+            tg.immediate(() => {
+                goalwaitToRespawn.complete()
+                setRespawnSettings(Vector(-6130, 4860, 128), 5)
+            }),
             tg.audioDialog(LocalizationKey.Script_2_Tower_7, LocalizationKey.Script_2_Tower_7, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(() => {
                 playerHero.RemoveModifierByName(modifier_dk_death_chapter2_tower.name)
@@ -141,7 +149,7 @@ const onStart = (complete: () => void) => {
                 playerHero.SetAbsOrigin(teleportAfterRespawnLocation)
                 freezePlayerHero(false)
             }),
-            tg.panCameraExponential(_ => fountainLocation, playerHero.GetAbsOrigin(), 0.9),
+            tg.panCameraExponential(_ => fountainLocation, _ => playerHero.GetAbsOrigin(), 0.9),
             tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => []),
             tg.immediate(() => {
                 goalGetBackToTopTowerPosition.complete()
@@ -174,7 +182,7 @@ const onStart = (complete: () => void) => {
                 ]),
                 tg.seq([
                     tg.audioDialog(LocalizationKey.Script_2_Tower_9, LocalizationKey.Script_2_Tower_9, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.panCameraLinear(_ => direTopTower.GetAbsOrigin(), playerHero.GetAbsOrigin(), 1),
+                    tg.panCameraLinear(_ => direTopTower.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
                     tg.immediate(() => {
                         goalSneakThroughTower.start()
                         freezePlayerHero(false)

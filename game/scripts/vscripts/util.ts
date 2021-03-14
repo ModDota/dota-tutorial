@@ -4,6 +4,8 @@ import "./modifiers/modifier_dummy"
 import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
 
+let respawnListener: EventListenerID | undefined
+
 /**
  * Get a list of all valid players currently in the game.
  */
@@ -335,7 +337,7 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @param attachPoint Optional parameter for where and how to attach the particle.
  * @returns The created particle.
  */
- export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
+export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
     const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
     const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
     if (modifier) {
@@ -344,7 +346,6 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
 
     return particleID;
 }
-
 export type HighlightType = "circle" | "arrow" | "arrow_enemy"
 
 type HighlightParticleDescriptor = {
@@ -454,4 +455,86 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
             }
         }
     }
+}
+
+/**
+ * Returns the current camera location (technically the target, not the origin) of the player.
+ * @returns Current camera location of the player.
+ */
+export function getPlayerCameraLocation() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    const owner = playerHero.GetOwner();
+    if (!owner || !IsValidEntity(owner)) {
+        error("Could not get player hero owner");
+    }
+
+    const cameraOrigin = owner.GetAbsOrigin();
+    const cameraForward = owner.GetAngles().Forward();
+
+    // Assume fixed camera distance stored in dota_camera_distance
+    const cameraDistance = cvar_getf("dota_camera_distance");
+
+    return GetGroundPosition(cameraOrigin.__add(cameraForward.__mul(cameraDistance)), undefined);
+}
+
+/**
+ * Centers the camera on the player's hero. Does not lock the camera.
+ */
+export function centerCameraOnHero() {
+    const playerHero = getOrError(getPlayerHero(), "Could not get player hero");
+    CenterCameraOnUnit(playerHero.GetPlayerOwnerID(), playerHero);
+}
+
+/**
+ * Sets the player's respawn settings.
+ * @param respawnLocation The location the player should respawn at.
+ * @param respawnTime How long it should take the player to respawn.
+ */
+export function setRespawnSettings(respawnLocation: Vector, respawnTime: number) {
+    if (respawnListener) {
+        StopListeningToGameEvent(respawnListener)
+        respawnListener = undefined;
+    }
+
+    respawnListener = ListenToGameEvent("entity_killed", event => {
+        const hero = getPlayerHero()
+        const killed = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC_Hero
+
+        if (killed === hero) {
+            killed.SetRespawnPosition(respawnLocation)
+            killed.SetTimeUntilRespawn(respawnTime)
+        }
+    }, GameRules.Addon)
+}
+
+
+/**
+ * Calculates the distance in 2D between two points.
+ * @returns The distance between the two points.
+ */
+export function Distance2D(point1: Vector, point2: Vector): number {
+    return ((point1 - point2) as Vector).Length2D()
+}
+
+/**
+ * Calculates the direction from the first position to the second.
+ * @param origin_pos The position where the vector should originate from.
+ * @param towards_pos The position where the vector should point.
+ * @returns The normalized vector pointing towards the second vector argument.
+ */
+export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
+    return ((towards_pos - origin_pos) as Vector).Normalized();
+}
+
+/**
+ * Returns a random item from an array
+ * @param choices Array to choose from.
+ * @returns Randomly chosen item from the given array.
+ */
+export function randomChoice<T>(choices: T[]) {
+    if (choices.length === 0) {
+        error("randomChoice called with empty array")
+    }
+
+    return choices[RandomInt(0, choices.length - 1)]
 }

@@ -4,7 +4,7 @@ import { modifier_sniper_deny_chapter2_creeps } from "../../modifiers/modifier_s
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, freezePlayerHero, getPlayerHero, highlight, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlight, removeContextEntityIfExists, setUnitPacifist } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
@@ -28,7 +28,7 @@ const requiredState: RequiredState = {
         chapter2Blockades.radiantBaseBottom,
         chapter2Blockades.direTopDividerRiver,
         chapter2Blockades.direTopDividerCliff
-    ]
+    ],
 }
 
 let lastHitTimer: string | undefined;
@@ -57,18 +57,16 @@ const onStart = (complete: () => void) => {
     const denyCount = 3;
 
     const goalTracker = new GoalTracker()
-    const goalLastHitCreeps = goalTracker.addNumeric(`Last hit enemy creeps`, lastHitCount);
-    const goalLastHitCreepsWithBreatheFire = goalTracker.addNumeric(`Last hit enemy creeps using Breath Fire`, lastHitBreathFireCount);
-    const goalDenyOwnCreeps = goalTracker.addNumeric(`Deny friendly creeps`, denyCount);
-    const goalKillSniper = goalTracker.addBoolean("Kill Sniper.");
+    const goalLastHitCreeps = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_1, lastHitCount);
+    const goalLastHitCreepsWithBreatheFire = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_2, lastHitBreathFireCount);
+    const goalDenyOwnCreeps = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_3, denyCount);
+    const goalKillSniper = goalTracker.addBoolean(LocalizationKey.Goal_2_Creeps_4);
 
     if (!radiantCreeps) {
-        radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, false);
+        radiantCreeps = createLaneCreeps(radiantCreepsNames, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, true);
     }
 
-    if (!direCreeps) {
-        direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, false);
-    }
+    direCreeps = createLaneCreeps(direCreepNames, direCreepsSpawnLocation, DotaTeam.BADGUYS, true);
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
@@ -78,12 +76,6 @@ const onStart = (complete: () => void) => {
                 if (radiantCreeps) {
                     for (const radiantCreep of radiantCreeps) {
                         SendCreepToFight(radiantCreep);
-                    }
-                }
-
-                if (direCreeps) {
-                    for (const direCreep of direCreeps) {
-                        SendCreepToFight(direCreep)
                     }
                 }
             }),
@@ -148,7 +140,7 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.setCameraTarget(context => context[CustomNpcKeys.GodzMudGolem]),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
-                    tg.panCameraLinear(context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), playerHero.GetAbsOrigin(), 1),
+                    tg.panCameraLinear(context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
                     tg.immediate(() => freezePlayerHero(false)),
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
@@ -160,13 +152,15 @@ const onStart = (complete: () => void) => {
                                 units: direCreeps
                             })
                         }
-                        const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, {}) as modifier_dk_last_hit_chapter2_creeps
+                        const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
                         if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT);
                     }),
                     tg.completeOnCheck(_ => {
-                        const currentLastHits = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
+                        const lastHitModifier = getOrError(playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name)) as modifier_dk_last_hit_chapter2_creeps
+                        const currentLastHits = lastHitModifier.GetStackCount()
+                        const lastDialogEnded = lastHitModifier.dialogFinishedPlaying
                         goalLastHitCreeps.setValue(currentLastHits)
-                        return currentLastHits >= lastHitCount;
+                        return currentLastHits >= lastHitCount && lastDialogEnded;
                     }, 0.1),
                     tg.immediate(() => {
                         goalLastHitCreeps.complete()
@@ -177,7 +171,7 @@ const onStart = (complete: () => void) => {
                             if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
                             else {
                                 // Technically, this section of code should never happen. But you never know. Programming is black magic sometimes.
-                                const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, {}) as modifier_dk_last_hit_chapter2_creeps
+                                const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
                                 if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
                             }
                         }
@@ -245,7 +239,7 @@ const onStart = (complete: () => void) => {
                             if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_DENY)
                             else {
                                 // Technically, this section of code should never happen. But you never know. Programming is black magic sometimes.
-                                const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, {}) as modifier_dk_last_hit_chapter2_creeps
+                                const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
                                 if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_DENY)
                             }
                         }

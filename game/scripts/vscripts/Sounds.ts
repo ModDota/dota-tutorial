@@ -18,7 +18,7 @@ export function getSoundDuration(soundName: string) {
     if (duration > 0) {
         soundDurations[soundName] = duration
     } else {
-        Warning(`GetSoundDuration() returned 0 for sound ${soundName}. Returning default duration of 3 seconds.`)
+        Warning(`GetSoundDuration() returned 0 for sound ${soundName}.`)
     }
 
     return duration
@@ -45,6 +45,11 @@ export const soundDurations: Record<string, number> = {
     "Script_1_Movement_6": 4.727300,
     "Script_1_Movement_7": 2.067200,
     "Script_1_Movement_8": 7.833200,
+    "Script_1_Movement_9": 2.066937,
+    "Script_1_Movement_9_1": 2.588188,
+    "Script_1_Movement_10": 2.040875,
+    "Script_1_Movement_10_1": 1.337187,
+    "Script_1_Movement_10_2": 1.649938,
     "Script_1_Movement_11": 13.288100,
     "Script_1_Camera_1": 5.715200,
     "Script_1_Camera_2": 13.731800,
@@ -57,8 +62,12 @@ export const soundDurations: Record<string, number> = {
     "Script_1_Leveling_1": 27.651200,
     "Script_1_Leveling_2": 14.514800,
     "Script_1_Leveling_3": 4.153100,
+    "Script_1_Leveling_4": 6.345500,
+    "Script_1_Leveling_4_2": 185.443700,
     "Script_1_Leveling_5": 7.989800,
     "Script_1_Leveling_6": 10.851200,
+    "Script_1_Leveling_7": 1.438700,
+    "Script_1_Leveling_8": 1.125500,
     "Script_1_Leveling_9": 8.772800,
     "Script_1_Leveling_10": 14.567000,
     "Script_1_BreatheFire_1": 1.587200,
@@ -153,6 +162,15 @@ export const soundDurations: Record<string, number> = {
     "Script_3_Opening_16": 4.443200,
     "Script_3_Opening_17": 17.020400,
     "Script_3_Opening_18": 24.123200,
+    "Script_3_Opening_19": 8.295875,
+    "Script_3_Opening_20": 3.917375,
+    "Script_3_Opening_20_1": 5.689625,
+    "Script_3_Opening_21": 2.588188,
+    "Script_3_Opening_22": 3.500375,
+    "Script_3_Opening_23": 3.005187,
+    "Script_3_Opening_24": 2.353625,
+    "Script_3_Opening_25": 13.769000,
+    "Script_3_Opening_25_1": 16.010375,
     "Script_3_Opening_26": 11.187200,
     "Script_3_Neutrals_1": 13.653500,
     "Script_3_Neutrals_2": 14.306000,
@@ -210,11 +228,13 @@ export const soundDurations: Record<string, number> = {
     "Script_4_Outpost_9": 2.163200,
     "Script_4_Outpost_10": 3.866000,
     "Script_4_Outpost_11": 14.499200,
+    "Script_4_Communication_1": 5.246562,
     "Script_4_Communication_2": 6.371600,
     "Script_4_Communication_3": 7.107200,
     "Script_4_Communication_4": 5.019200,
     "Script_4_Communication_5": 8.851100,
     "Script_4_Communication_6": 2.787200,
+    "Script_4_Communication_7": 2.744562,
     "Script_4_Communication_9": 3.605000,
     "Script_4_Communication_10": 14.043200,
     "Script_4_Communication_11": 17.464100,
@@ -231,6 +251,7 @@ export const soundDurations: Record<string, number> = {
     "Script_5_Opening_5": 10.131200,
     "Script_5_Opening_6": 5.092700,
     "Script_5_Opening_7": 20.883200,
+    "Script_5_Opening_9": 1.400000,
     "Script_5_Opening_16": 28.843700,
     "Script_5_Roshan_1": 7.659200,
     "Script_5_Roshan_2": 19.291100,

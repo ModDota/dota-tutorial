@@ -3,7 +3,7 @@ import { isShopOpen } from "../../Shop";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
 import { chapter2Blockades } from "./shared";
 import { modifier_courier_chapter_2_ms_bonus } from "../../modifiers/modifier_courier_chapter_2_ms_bonus";
 
@@ -29,7 +29,8 @@ const requiredState: RequiredState = {
         chapter2Blockades.aboveRoshanBlocker,
         chapter2Blockades.belowRoshanBlocker
     ],
-    topDireT1TowerStanding: false
+    topDireT1TowerStanding: false,
+    centerCameraOnHero: true,
 }
 
 let playerOrderMustBuyDemonEdge = false
@@ -81,19 +82,15 @@ const onStart = (complete: () => void) => {
     const playerCourier = getOrError(getPlayerCourier())
 
     const goalTracker = new GoalTracker()
-    const goalMoveToSecretShop = goalTracker.addBoolean("Move to Radiant's secret shop.")
-    const goalOpenShop = goalTracker.addBoolean("Open the shop")
-    const goalBuyDemonEdge = goalTracker.addBoolean("Buy a Demon Edge with the gold provided.")
-    const goalBuyCrystalisAndRecipe = goalTracker.addNumeric("Buy Crystalis and the Daedalus Recipe.", 2)
-    const goalRequestItemsToBeDeliveredFromCourier = goalTracker.addBoolean("Request courier to deliver the items to you.")
-    const goalWaitToCourierToDeliverItems = goalTracker.addBoolean("Wait for the courier to deliver the items to you.")
-    const goalMoveToFinalPosition = goalTracker.addBoolean("Move into the Dire jungle.")
+    const goalMoveToSecretShop = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_1)
+    const goalOpenShop = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_2)
+    const goalBuyDemonEdge = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_3)
+    const goalBuyCrystalisAndRecipe = goalTracker.addNumeric(LocalizationKey.Goal_2_Courier_4, 2)
+    const goalRequestItemsToBeDeliveredFromCourier = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_5)
+    const goalWaitToCourierToDeliverItems = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_6)
+    const goalMoveToFinalPosition = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_7)
 
     graph = tg.withGoals(context => goalTracker.getGoals(), tg.seq([
-        tg.wait(FrameTime()),
-        tg.setCameraTarget(playerHero),
-        tg.wait(FrameTime()),
-        tg.setCameraTarget(undefined),
         tg.immediate(() => freezePlayerHero(true)),
         tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
@@ -195,7 +192,7 @@ const onStart = (complete: () => void) => {
             removeHighlight(deliverItemsUIPath)
             freezePlayerHero(true)
         }),
-        tg.panCameraLinear(playerHero.GetAbsOrigin(), playerCourier.GetAbsOrigin(), 0.5),
+        tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerCourier.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerCourier),
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(daedalusName)

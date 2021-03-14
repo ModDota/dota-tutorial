@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight, getPlayerCameraLocation } from "../../util";
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 import { Blockade } from "../../Blockade";
@@ -16,6 +16,7 @@ const requiredState: RequiredState = {
     heroLevel: 3,
     heroAbilityMinLevels: [1, 1, 1, 0],
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 };
 
 let waitingForPlayerToPurchaseTango = false;
@@ -44,10 +45,10 @@ const onStart = (complete: () => void) => {
     const tangoInGuideUIPath = getPathToItemInGuideByID(tangoItemID)
 
     const goalTracker = new GoalTracker();
-    const goalOpenShop = goalTracker.addBoolean("Open the shop.");
-    const goalBuyTango = goalTracker.addBoolean("Use the gold provided to purchase a Tango.");
-    const goalEatTree = goalTracker.addBoolean("Use tango to eat a tree and escape.");
-    const goalMoveOut = goalTracker.addBoolean("Move to the target location.");
+    const goalOpenShop = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_1);
+    const goalBuyTango = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_2);
+    const goalEatTree = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_3);
+    const goalMoveOut = goalTracker.addBoolean(LocalizationKey.Goal_1_Shop_4);
 
     waitingForPlayerToPurchaseTango = false;
     playerBoughtTango = false;
@@ -127,14 +128,13 @@ const onStart = (complete: () => void) => {
                 tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
                     tg.wait(2.5),
-                    tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), bottomMidPoint, 4),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseBottom.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(bottomMidPoint, middleMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseMid.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(middleMidPoint, _ => playerHero.GetAbsOrigin(), 4),
-                    tg.setCameraTarget(undefined),
                 ])
             ]),
 
