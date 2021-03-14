@@ -73,7 +73,6 @@ function onStart(complete: () => void) {
             basicAbilities.forEach(ab => ab.SetLevel(4));
             ultAbility.SetLevel(3);
         }),
-        tg.wait(0.1),
         tg.seq([
             tg.wait(2),
             castNoTarget(centaurName, 5),
