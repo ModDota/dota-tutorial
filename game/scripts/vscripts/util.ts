@@ -145,8 +145,8 @@ export function setGoalsUI(goals: Goal[]) {
  * Destroy all neutrals on the map
 */
 export function DestroyNeutrals() {
-    const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
-    units.filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS);
+    const units = Entities.FindAllByClassname("npc_dota_creep_neutral") as CDOTA_BaseNPC[];
+    units.filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS && !x.IsInvulnerable());
     units.forEach(x => x.Destroy());
 }
 

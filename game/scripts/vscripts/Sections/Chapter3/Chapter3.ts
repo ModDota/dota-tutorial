@@ -65,9 +65,6 @@ const requiredState: RequiredState = {
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Chapter3_Opening, });
 
-
-    GameRules.Addon.Game.SetFogOfWarDisabled(true);
-
     const goalTracker = new GoalTracker();
     const goalMoveToCamp = goalTracker.addBoolean("Move to the neutral creep camp");
     const goalKillFirstSpawn = goalTracker.addBoolean("Kill the neutral creeps");
@@ -92,12 +89,22 @@ const onStart = (complete: () => void) => {
     entityKilledListenerId = ListenToGameEvent("entity_killed",(event) => {
             const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
             if (unit.IsNeutralUnitType()) {
-                if (itemsToDrop.includes(giveAwayItemName) && creepPhase === 2) {
-                    DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
-                    itemsToDrop.splice(itemsToDrop.indexOf(giveAwayItemName), 1);
-                } else if (itemsToDrop.includes(dropInStashItemName) && creepPhase === 3) {
-                    DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
-                    itemsToDrop.splice(itemsToDrop.indexOf(dropInStashItemName), 1);
+                if (creepPhase === 2 && itemsToDrop.indexOf(giveAwayItemName)) {
+                    // Use a timer to make sure this event doesn't trigger twice without changing the array
+                    Timers.CreateTimer(FrameTime(),()=> {
+                        if (itemsToDrop.includes(giveAwayItemName)) {
+                            DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+                            itemsToDrop.splice(itemsToDrop.indexOf(giveAwayItemName), 1);
+                        }
+                    })
+                } else if (creepPhase === 3 && itemsToDrop.indexOf(dropInStashItemName)) {
+                    // Use a timer to make sure this event doesn't trigger twice without changing the array
+                    Timers.CreateTimer(FrameTime(),()=> {
+                        if (itemsToDrop.includes(dropInStashItemName)) {
+                            DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+                            itemsToDrop.splice(itemsToDrop.indexOf(dropInStashItemName), 1);
+                        }
+                    })
                 }
             }
         },
@@ -119,15 +126,11 @@ const onStart = (complete: () => void) => {
 
                 // Make sure the creep spawn box is empty (Hero can't be in there since he's at the marker)
                 const units = getAllNeutralCreeps();
-                print("XXX", units.length)
                 units.forEach(unit => {
-                    print("chec!k", unit.GetUnitName(), unit.IsOutOfGame(),unit.IsInvulnerable(),unit.IsInvisible(), unit.IsNull())
+                    // Dota prespawns units and makes them invulnerable, dont remove those
                     if (!unit.IsInvulnerable()) {
-                        print( "Removing",unit.GetUnitName())
                         UTIL_Remove(unit);
-                        
                     }
-                    
                 });
             }),
             tg.wait(0.1),
@@ -139,9 +142,6 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_6, LocalizationKey.Script_3_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => units = getAllNeutralCreeps().filter(x => x.IsBaseNPC() && x.IsNeutralUnitType())),
-            tg.immediate(_ => print(units.length, !units.some(unitIsValidAndAlive))),
-            tg.immediate(_ => print("OUTOFGAME!!",units.filter(x => x.IsInvulnerable()).length)),
-           
             // Check if they are killed
             tg.completeOnCheck(_ => units.length === 0 || !units.some(unitIsValidAndAlive), 1),
             tg.immediate(_ => goalKillFirstSpawn.complete()),
@@ -184,7 +184,6 @@ const onStart = (complete: () => void) => {
                 goalStackCreeps.start();
                 GameRules.SpawnNeutralCreeps();
                 creepCount = getAllNeutralCreeps().length;
-                print("creepCount!!",creepCount)
                 timeManager.customTimeEnabled = true;
                 timeManager.time = 45;
                 timeManagerResetTimeId = timeManager.registerCallBackOnTime(5, () => timeManager.time = 40);
@@ -194,21 +193,11 @@ const onStart = (complete: () => void) => {
                         stackCount++;
                     }
                     tryCount++;
-                    
                 });
-
                 playerHero.Hold();
             }),
-            tg.wait(0),
-            tg.immediate(_ => {
-                
-                
-            }),
-
             tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
             tg.immediate(_ => freezePlayerHero(false)),
-
             tg.loop(_ => stackCount < 1, _ => {
                 if (tryCount === 1) {
                     tryCount = 0;
@@ -275,7 +264,6 @@ const onStart = (complete: () => void) => {
                 // Do something if a try was done.
                 if (tryCount !== previousTryCount) {
                     previousTryCount = tryCount;
-
                     if (stackCount === 0) {
                         // Reset try count if we failed the first stack
                         tryCount = 0;
@@ -309,7 +297,7 @@ const onStart = (complete: () => void) => {
             creepArr = getAllNeutralCreeps();
         }),
         // itemdrop handled in entity_killed event
-        tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(x => x.IsNull() || !x.IsAlive()), 0.1),
+        tg.completeOnCheck(_ => creepArr.length === 0 || !creepArr.some(unitIsValidAndAlive), 0.1),
         tg.immediate(_ => goalKillStackedCreeps.complete()),
     ];
 
@@ -343,7 +331,7 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_4, LocalizationKey.Script_3_Neutrals_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         
-        tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(unit => !unit || unit.IsNull() || !unit.IsAlive()), 1),
+        tg.completeOnCheck(_ => creepArr.length === 0 || !creepArr.some(unitIsValidAndAlive), 1),
         tg.immediate(_ => goalKillThirdSpawn.complete()),
         tg.immediate(_ => goalPickupItem.start()),
         tg.completeOnCheck(_ => playerHero.HasItemInInventory(dropInStashItemName), 0.1),
@@ -376,12 +364,13 @@ const onStart = (complete: () => void) => {
                 let backstab = riki.FindAbilityByName("riki_backstab");
                 backstab!.SetLevel(0);
                 riki.RemoveModifierByName("modifier_invisible");
-                riki.RemoveModifierByName("modifier_riki_backstab")
+                riki.RemoveModifierByName("modifier_riki_backstab");
                 riki.Hold();
+                setUnitPacifist(riki,true);
             }),
             tg.moveUnit((ctx) => ctx[CustomNpcKeys.Riki], location),
-            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.goToLocation(location),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
         ];
     };
 
