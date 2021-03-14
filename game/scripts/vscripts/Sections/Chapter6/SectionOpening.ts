@@ -28,9 +28,9 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalWatchCW = goalTracker.addBoolean("Watch Centuar Warrunner(Strength Hero) skill showcase.");
-    const goalWatchPA = goalTracker.addBoolean("Watch Phantom Assassin(Agility Hero) skill showcase.");
-    const goalWatchInvoker = goalTracker.addBoolean("Watch Invoker(Intelligence Hero) skill showcase.");
+    const goalWatchCW = goalTracker.addBoolean(LocalizationKey.Goal_6_Opening_1);
+    const goalWatchPA = goalTracker.addBoolean(LocalizationKey.Goal_6_Opening_2);
+    const goalWatchInvoker = goalTracker.addBoolean(LocalizationKey.Goal_6_Opening_3);
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([

@@ -125,6 +125,9 @@
         "Goal_5_5v5_2" "Kill all enemy heroes"
         "Goal_5_5v5_3" "Teleport to the fountain by double-tapping your tp scroll"
         "Goal_5_5v5_4" "Use voice-chat (default 'V') to promise you will always carry a tp"
+        "Goal_6_Opening_1" "Watch Centaur Warrunner's (Strength) skill showcase."
+        "Goal_6_Opening_2" "Watch Phantom Assassin's (Agility) skill showcase."
+        "Goal_6_Opening_3" "Watch Invoker's (Intelligence) skill showcase."
 
         "Script_1_Opening_1" "Oh look at this! New blood! The dragon knight himself!"
         "Script_1_Opening_2" "Fresh from the Netflix anime are you? Welcome to the world of dota 2! We are here to teach you how to navigate the best game ever made."
