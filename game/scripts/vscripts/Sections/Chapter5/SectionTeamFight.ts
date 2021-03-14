@@ -40,10 +40,10 @@ function onStart(complete: () => void) {
     print("Starting", sectionName)
 
     const goalTracker = new GoalTracker()
-    const goalSpotEnemies = goalTracker.addBoolean("Find out what awaits you outside the pit")
-    const goalKillEnemyHeroes = goalTracker.addNumeric("Kill all enemy heroes", totalEnemyCount)
-    const goalUseTp = goalTracker.addBoolean("Teleport to the fountain by double-tapping your tp scroll")
-    const goalPromiseCarryTp = goalTracker.addBoolean("Use voice-chat (default 'V') to promise you will always carry a tp")
+    const goalSpotEnemies = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_1)
+    const goalKillEnemyHeroes = goalTracker.addNumeric(LocalizationKey.Goal_5_5v5_2, totalEnemyCount)
+    const goalUseTp = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_3)
+    const goalPromiseCarryTp = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_4)
 
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero")
 

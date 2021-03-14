@@ -56,11 +56,11 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalFetchWard = goalTracker.addBoolean("Go pick those up and come back here.");
-    const goalPlaceObserverWard = goalTracker.addBoolean("Lets put an observer ward on this high ground.");
-    const goalPlaceSentryWard = goalTracker.addBoolean("Lets put a sentry ward on this high ground.");
-    const goalAttackRiki = goalTracker.addBoolean("Go attack Riki with right mouse click on him.");
-    const goalHoldAlt = goalTracker.addBoolean("Hold Alt button to check sentry range.");
+    const goalFetchWard = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_1);
+    const goalPlaceObserverWard = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_2);
+    const goalPlaceSentryWard = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_3);
+    const goalAttackRiki = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_4);
+    const goalHoldAlt = goalTracker.addBoolean(LocalizationKey.Goal_4_Wards_5);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 

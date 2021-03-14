@@ -50,12 +50,12 @@ const onStart = (complete: () => void) => {
     if (!playerHero) error("Could not find the player's hero.");
 
     const goalTracker = new GoalTracker()
-    const goalMoveNextToBarracks = goalTracker.addBoolean("Move to the marked location next to the top barracks.")
-    const goalListenToSunsfanAndSlacks = goalTracker.addBoolean("Listen to SUNSfan and Slacks.")
-    const goalWaitForCreepsToPrepareToMove = goalTracker.addBoolean("Wait for the creeps to prepare for the assault.")
-    const goalPrepareToMove = goalTracker.addBoolean("Move behind the creeps and prepare to move.")
-    const goalWaitForCreepsToPrepareToAttack = goalTracker.addBoolean("Wait for the creeps to reach combat positions.")
-    const goalMoveBehindCreepsToAttack = goalTracker.addBoolean("Move behind the creeps and prepare for combat.")
+    const goalMoveNextToBarracks = goalTracker.addBoolean(LocalizationKey.Goal_2_Opening_1)
+    const goalListenToSunsfanAndSlacks = goalTracker.addBoolean(LocalizationKey.Goal_2_Opening_2)
+    const goalWaitForCreepsToPrepareToMove = goalTracker.addBoolean(LocalizationKey.Goal_2_Opening_3)
+    const goalPrepareToMove = goalTracker.addBoolean(LocalizationKey.Goal_2_Opening_4)
+    const goalWaitForCreepsToPrepareToAttack = goalTracker.addBoolean(LocalizationKey.Goal_2_Opening_5)
+    const goalMoveBehindCreepsToAttack = goalTracker.addBoolean(LocalizationKey.Goal_2_Opening_6)
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([

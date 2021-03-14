@@ -44,10 +44,10 @@ function onStart(complete: () => void) {
     print("Starting", sectionName);
 
     const goalTracker = new GoalTracker();
-    const goalListenDialog = goalTracker.addBoolean("Listen to the dialog explaining vision provided by friendly units.");
-    const goalWatchJuke = goalTracker.addBoolean("Watch this EPIC JUKE!");
-    const goalScanFailed = goalTracker.addBoolean("Click on scan with leftmouse button, then click on the target place.");
-    const goalScanSucceed = goalTracker.addBoolean("Scan on the next target position.");
+    const goalListenDialog = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_1);
+    const goalWatchJuke = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_2);
+    const goalScanFailed = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_3);
+    const goalScanSucceed = goalTracker.addBoolean(LocalizationKey.Goal_4_Opening_4);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
@@ -127,7 +127,26 @@ function onStart(complete: () => void) {
                         ParticleManager.ReleaseParticleIndex(particle);
                     }),
                     tg.wait(5)
-                ])
+                ]),
+
+                // Reveal riki for a short time, otherwise the successful scan later won't show up
+                // because of a Dota bug. Hope the player won't notice!
+                tg.seq([
+                    tg.immediate(ctx => {
+                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                        const backstab = riki.FindAbilityByName("riki_backstab")
+                        backstab!.SetLevel(0)
+                        riki.RemoveModifierByName("modifier_invisible")
+                        riki.RemoveModifierByName("modifier_riki_backstab")
+                    }),
+                    tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
+                    tg.wait(0.1),
+                    tg.immediate(ctx => {
+                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                        const backstab = riki.FindAbilityByName("riki_backstab")
+                        backstab!.SetLevel(1)
+                    }),
+                ]),
             ]),
 
             tg.setCameraTarget(undefined),
