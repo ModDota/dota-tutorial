@@ -26,8 +26,6 @@ const onStart = (complete: () => void) => {
     const goalKillSunsfan = goalTracker.addBoolean("Attack SUNSfan.")
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        // Unlock player camera and wait for player to move their camera a bit
-        tg.setCameraTarget(() => undefined),
         tg.immediate(_ => goalMoveCamera.start()),
         tg.waitForCameraMovement(),
         tg.immediate(_ => goalMoveCamera.complete()),

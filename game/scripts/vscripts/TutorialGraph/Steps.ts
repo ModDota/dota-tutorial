@@ -10,7 +10,7 @@ const isPlayerHeroNearby = (location: Vector, radius: number) => getOrError(getP
  * @param location Target location
  * @param visualIntermediateLocations Locations to use for the visual path between the current and end location.
  */
-export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations?: tg.StepArgument<Vector[]>) => {
+export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations: tg.StepArgument<Vector[]> = [], showPathParticle: tg.StepArgument<boolean> = true) => {
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
     let actualLocation: Vector | undefined = undefined
@@ -34,13 +34,16 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
     return tg.step((context, complete) => {
         actualLocation = tg.getArg(location, context)
-        const actualVisualIntermediateLocations = tg.getOptionalArg(visualIntermediateLocations, context) ?? []
+        const actualVisualIntermediateLocations = tg.getArg(visualIntermediateLocations, context)
+        const actualShowPathParticle = tg.getArg(showPathParticle, context)
 
         const hero = getOrError(getPlayerHero())
 
         MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
 
-        pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        if (actualShowPathParticle) {
+            pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        }
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {

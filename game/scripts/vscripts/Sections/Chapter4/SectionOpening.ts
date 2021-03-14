@@ -2,7 +2,7 @@ import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
 import * as dg from "../../Dialog"
-import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, centerCameraOnHero, getPlayerCameraLocation } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { TutorialContext } from "../../TutorialGraph/index";
@@ -55,13 +55,10 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.setCameraTarget(playerHero),
-            tg.wait(2),
-
             tg.audioDialog(LocalizationKey.Script_4_Opening_1, LocalizationKey.Script_4_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Opening_2, LocalizationKey.Script_4_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             //Part0: The camera pans to an empty part of the map
-            tg.panCameraExponential(playerHero.GetAbsOrigin(), outpostHighgroundCenter, 0.9),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), outpostHighgroundCenter, 0.9),
             tg.audioDialog(LocalizationKey.Script_4_Opening_3, LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             //Part1: Creep wave explains vision
             tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),
@@ -81,7 +78,9 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_4_Opening_4, LocalizationKey.Script_4_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]),
 
-            tg.setCameraTarget(playerHero),
+            tg.setCameraTarget(undefined),
+            tg.immediate(_ => centerCameraOnHero()),
+
             tg.audioDialog(LocalizationKey.Script_4_Opening_5, LocalizationKey.Script_4_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Opening_6, LocalizationKey.Script_4_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => {
@@ -113,7 +112,9 @@ function onStart(complete: () => void) {
                 ])
             ]),
 
-            tg.setCameraTarget(playerHero),
+            tg.setCameraTarget(undefined),
+            tg.immediate(_ => centerCameraOnHero()),
+
             tg.immediate(_ => disposeHeroes()),
             tg.immediate(_ => goalWatchJuke.complete()),
 

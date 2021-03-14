@@ -78,6 +78,7 @@
         "Script_1_Leveling_2" "Feel free to hover over your skills at any time, to learn more about them. Probably best not to do this during the game though as other people might laugh at you. You can also read up on all the hero skills in the heroes tab, which is in the main menu of Dota."
         "Script_1_Leveling_3" "oh no, here comes pugna. He's so annoying"
         "Script_1_Leveling_4" "yellow everybody this is pugna and i'm here to talk to you today about the difference between strength, agility, and intelligence"
+        "Script_1_Leveling_4_2" "LONG MONOLOGUE"
         "Script_1_Leveling_5" "oh god make him stop! Use your ability! Press the w key or hover over the icon and select the skill you want to use."
         "Script_1_Leveling_6" "good! Now hover the mouse over the enemy unit and left click them! Your hero will automatically walk toward the enemy until the spell is in range, and then they will automatically cast it!"
         "Script_1_Leveling_7" "Please don’t interrupt me. Now let me begin again."

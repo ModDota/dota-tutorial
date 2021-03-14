@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { findRealPlayerID, getOrError, getPlayerHero } from "../../util";
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero } from "../../util";
 import { chapter5Blockades, runeSpawnsLocations } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
@@ -52,8 +52,7 @@ function onStart(complete: () => void) {
                 tg.textDialog(LocalizationKey.Script_5_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 15),
                 // Pan camera over bounty rune spawns
                 tg.seq([
-                    tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.RadiantTopBountyRune]),
-                    tg.wait(1),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), runeSpawnsLocations.radiantTopBountyPos, 1),
                     tg.panCameraLinear(runeSpawnsLocations.radiantTopBountyPos, runeSpawnsLocations.radiantAncientsBountyPos, 2),
                     // Slightly correct panCamera targeting
                     tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.RadiantAncientsBountyRune]),
@@ -83,15 +82,16 @@ function onStart(complete: () => void) {
             // Return camera to player
             tg.fork([
                 tg.textDialog(LocalizationKey.Script_5_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 6),
-                tg.panCameraLinear(runeSpawnsLocations.direAncientsBountyPos, playerHero.GetAbsOrigin(), 3),
+                tg.panCameraLinear(runeSpawnsLocations.direAncientsBountyPos, _ => playerHero.GetAbsOrigin(), 3),
             ]),
             tg.textDialog(LocalizationKey.Script_5_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4),
             tg.textDialog(LocalizationKey.Script_5_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
             tg.fork([
                 tg.seq([
-                    tg.panCameraLinear(playerHero.GetAbsOrigin(), runeSpawnsLocations.topPowerUpRunePos, 2),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), runeSpawnsLocations.topPowerUpRunePos, 2),
                     tg.wait(1),
-                    tg.setCameraTarget(playerHero),
+                    tg.setCameraTarget(undefined),
+                    tg.immediate(_ => centerCameraOnHero()),
                     tg.immediate((ctx) => {
                         canPlayerIssueOrders = true
                         goalMoveToRune.start()
@@ -114,7 +114,7 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(runeSpawnsLocations.topPowerUpRunePos, RuneType.DOUBLEDAMAGE)
             }),
             tg.wait(1),
-            tg.setCameraTarget(playerHero),
+            tg.immediate(_ => centerCameraOnHero()),
             tg.textDialog(LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
             tg.immediate(ctx => {
                 canPlayerIssueOrders = true

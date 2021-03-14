@@ -2,8 +2,9 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { chapter5Blockades, runeSpawnsLocations } from "./Shared";
-import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
+import * as shared from "./Shared"
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { modifier_custom_roshan_attack_speed } from "../../modifiers/modifier_custom_roshan_attack_speed";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
@@ -33,14 +34,6 @@ const requiredState: RequiredState = {
     ],
 };
 
-// Move to state when implementing final section of CH5
-const friendlyHeroesInfo = [
-    { name: "npc_dota_hero_tidehunter", loc: Vector(-2192, 1718, 0) }, // Offlane, tank
-    { name: "npc_dota_hero_juggernaut", loc: Vector(-2026, 1550, 0) }, // Carry
-    { name: "npc_dota_hero_mirana", loc: Vector(-2074, 1465, 0) }, // Position 4
-    { name: "npc_dota_hero_lion", loc: Vector(-2282, 1462, 0) }, // Position 5
-];
-
 const roshanMusic = "valve_ti10.music.roshan"
 
 function onStart(complete: () => void) {
@@ -53,22 +46,15 @@ function onStart(complete: () => void) {
     const goalLeaveRoshPit = goalTracker.addBoolean("Leave Roshan's pit and move to the next marker.")
 
     const roshPitGoalPosition = Vector(-2600, 2200, 28)
-    const leaveRoshPitGoalPosition = Vector(-2140, 1740, 0)
 
     const playerHero = getOrError(getPlayerHero())
-
-    const itemDaedalus = "item_greater_crit"
-    const itemAC = "item_assault"
-    const itemPowerTreads = "item_power_treads"
-    const itemHeart = "item_heart"
-    const itemAegis = "item_aegis"
 
     let roshan = Entities.FindAllByName("npc_dota_roshan")[0] as CDOTA_BaseNPC
 
     if (!roshan) {
-        roshan = CreateUnitByName("npc_dota_roshan", Vector(-2919, 2315, 32), true, undefined, undefined, DotaTeam.NEUTRALS)
-        roshan.FaceTowards(leaveRoshPitGoalPosition)
-        roshan.AddItemByName(itemAegis)
+        roshan = CreateUnitByName("npc_dota_roshan", shared.roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+        roshan.FaceTowards(shared.outsidePitLocation)
+        roshan.AddItemByName(shared.itemAegis)
     }
 
     setupRoshanModifiers(roshan)
@@ -79,7 +65,7 @@ function onStart(complete: () => void) {
     if (droppedItems) {
         for (const droppedItem of droppedItems) {
             const itemEntity = droppedItem.GetContainedItem()
-            if (itemEntity.GetAbilityName() === itemAegis) {
+            if (itemEntity.GetAbilityName() === shared.itemAegis) {
                 droppedItem.Destroy()
             }
         }
@@ -101,12 +87,11 @@ function onStart(complete: () => void) {
                     tg.goToLocation(roshPitGoalPosition),
                 ]),
                 tg.seq([
-                    tg.panCameraLinear(playerHero.GetOrigin(), roshPitGoalPosition, 2),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 2),
                     tg.wait(2),
                     tg.immediate(() => canPlayerIssueOrders = true),
-                    tg.setCameraTarget(playerHero),
-                    tg.wait(1),
                     tg.setCameraTarget(undefined),
+                    tg.immediate(_ => centerCameraOnHero()),
                 ]),
             ]),
             tg.immediate(() => goalEnterRoshPit.complete()),
@@ -115,10 +100,7 @@ function onStart(complete: () => void) {
             tg.immediate(() => {
                 // Lvl up to 25, assuming 1 xp per level
                 playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
-                playerHero.AddItemByName(itemPowerTreads)
-                playerHero.AddItemByName(itemAC)
-                playerHero.AddItemByName(itemDaedalus)
-                playerHero.AddItemByName(itemHeart)
+                shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
                 // Reapply DD rune for infinite duration
                 playerHero.RemoveModifierByName("modifier_rune_doubledamage")
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
@@ -146,12 +128,7 @@ function onStart(complete: () => void) {
             tg.completeOnCheck(() => {
                 return roshan.IsAttacking()
             }, 0.5),
-            tg.fork(friendlyHeroesInfo.map(hero =>
-                tg.seq([
-                    tg.spawnUnit(hero.name, hero.loc, DotaTeam.GOODGUYS, hero.name),
-                    tg.immediate((ctx) => ctx[hero.name].AddExperience(24, ModifyXpReason.UNSPECIFIED, true, false))
-                ])
-            )),
+            shared.spawnFriendlyHeroes(Vector(-2000, 1550, 0)),
             tg.wait(1),
             tg.immediate(context => {
                 for (const friendlyHero of friendlyHeroesInfo) {
@@ -161,9 +138,8 @@ function onStart(complete: () => void) {
             }),
             tg.setCameraTarget(context => context[friendlyHeroesInfo[0].name]),
             tg.wait(1),
-            tg.setCameraTarget(playerHero),
-            tg.wait(1),
             tg.setCameraTarget(undefined),
+            tg.immediate(_ => centerCameraOnHero()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_6, LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.completeOnCheck(() => {
                 return !roshan.IsAlive()
@@ -183,25 +159,26 @@ function onStart(complete: () => void) {
             // Move units assuming offlane -> carry -> pos 4 -> pos 5 ordering in friendlyHeroesInfo
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_5_Roshan_7, LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], roshPitGoalPosition.__add(Vector(500, -800, 0)), true),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], roshPitGoalPosition.__add(Vector(500, -600, 0)), true),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], roshPitGoalPosition.__add(Vector(300, -500, 0)), true),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], roshPitGoalPosition.__add(Vector(100, -500, 0)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
             ]),
             tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0, 0, 0)))),
             tg.immediate(() => {
                 goalPickupAegis.start()
                 canPlayerIssueOrders = true
             }),
-            tg.completeOnCheck(() => playerHero.HasItemInInventory(itemAegis), 2),
+            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 2),
             tg.immediate(() => goalPickupAegis.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
+            // Spawn enemies and make our heroes leave the pit
+            shared.spawnEnemyHeroes(shared.enemyLocation),
             tg.immediate(() => goalLeaveRoshPit.start()),
-            tg.goToLocation(leaveRoshPitGoalPosition),
+            tg.goToLocation(shared.outsidePitLocation),
             tg.immediate(() => {
                 goalLeaveRoshPit.complete()
-                // Move to requiredState when last section of CH5 is being implemented
-                disposeHeroes()
             }),
             tg.wait(1)
         ])
@@ -223,8 +200,6 @@ function onStop() {
     if (roshan) {
         roshan.Destroy()
     }
-
-    disposeHeroes()
 
     if (graph) {
         graph.stop(GameRules.Addon.context);
@@ -254,19 +229,6 @@ function maxLevelAbilities(heroUnit: CDOTA_BaseNPC_Hero) {
     for (const ability of abilities) {
         if (ability)
             ability.SetLevel(ability.GetMaxLevel())
-    }
-}
-
-// Similar func used in Chapter 4 in two sections, maybe refactor as util function at some point
-function disposeHeroes() {
-    for (const friendlyHero of friendlyHeroesInfo) {
-        let hero: CDOTA_BaseNPC_Hero | undefined = GameRules.Addon.context[friendlyHero.name];
-        if (unitIsValidAndAlive(hero)) {
-            hero = hero as CDOTA_BaseNPC_Hero
-            hero.RemoveSelf();
-        }
-
-        GameRules.Addon.context[friendlyHero.name] = undefined;
     }
 }
 

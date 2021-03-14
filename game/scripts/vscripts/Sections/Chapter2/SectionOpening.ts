@@ -3,7 +3,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import { findRealPlayerID, freezePlayerHero, getPlayerHero, removeContextEntityIfExists } from "../../util";
-import { chapter2Blockades, Chapter2SpecificKeys, direCreepNames, radiantCreepsNames } from "./shared";
+import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Opening
 let graph: tg.TutorialStep | undefined = undefined
@@ -11,7 +11,6 @@ let graph: tg.TutorialStep | undefined = undefined
 const inFrontOfBarracksLocation = Vector(-6589, -4468, 259)
 const moveNextToBarracksLocation = Vector(-6574, -3742, 256)
 const radiantCreepsSpawnLocation = Vector(-6795, -3474, 256)
-const direCreepsSpawnLocation = Vector(-5911, 5187, 128)
 const radiantCreepsMoveToPrepareLaunchAssaultLocation = Vector(-6600, -2425, 128)
 const moveToPrepareToLaunchAssaultLocation = Vector(-6600, -2745, 128)
 const radiantCreepsPrepareToAttackLocation = Vector(-6288, 3280, 128)
@@ -61,7 +60,6 @@ const onStart = (complete: () => void) => {
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
             tg.wait(FrameTime()),
-            tg.setCameraTarget(undefined),
             tg.immediate(context => {
                 goalMoveNextToBarracks.start(),
                     freezePlayerHero(false)
@@ -118,7 +116,6 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Opening_13, LocalizationKey.Script_2_Opening_13, context => context[CustomNpcKeys.SlacksMudGolem]),
 
             tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, undefined, true))),
-            tg.fork(_ => direCreepNames.map(unit => tg.spawnUnit(unit, direCreepsSpawnLocation, DotaTeam.BADGUYS, undefined, true))),
             tg.immediate(context => {
                 // Group radiant creeps
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
