@@ -12,9 +12,15 @@ const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     heroLocation: Vector(-6200, -6300, 384),
-    heroLevel: 6,
-    heroAbilityMinLevels: [1, 1, 1, 1],
-    heroItems: { "item_greater_crit": 1 },
+    heroLevel: 25,
+    heroAbilityMinLevels: [4, 4, 4, 3],
+    heroItems: {
+        "item_greater_crit": 1,
+        "item_assault": 1,
+        "item_power_treads": 1,
+        "item_heart": 1,
+        "item_aegis": 1,
+    },
 };
 
 const axeName = CustomNpcKeys.Axe;
