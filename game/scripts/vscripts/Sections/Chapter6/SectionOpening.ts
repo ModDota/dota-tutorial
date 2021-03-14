@@ -249,6 +249,8 @@ function onStop() {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
     }
+
+    Entities.FindAllByClassname("npc_dota_invoker_forged_spirit").forEach(forgedSpirit => forgedSpirit.RemoveSelf())
 }
 
 function castNoTarget(casterName: string, index: number, wait = 0.1) {
