@@ -42,7 +42,8 @@ function onStart(complete: () => void) {
     const goalTracker = new GoalTracker()
     const goalSpotEnemies = goalTracker.addBoolean("Find out what awaits you outside the pit")
     const goalKillEnemyHeroes = goalTracker.addNumeric("Kill all enemy heroes", totalEnemyCount)
-    const goalPromiseCarryTp = goalTracker.addBoolean("Use voice-chat (default 'V') to promise you will always carry a tp.")
+    const goalUseTp = goalTracker.addBoolean("Teleport to the fountain by double-tapping your tp scroll")
+    const goalPromiseCarryTp = goalTracker.addBoolean("Use voice-chat (default 'V') to promise you will always carry a tp")
 
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero")
 
@@ -103,8 +104,10 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_5_5v5_8, LocalizationKey.Script_5_5v5_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             // Wait for player to try to use the tp
+            tg.immediate(_ => goalUseTp.start()),
             tg.immediate(_ => waitingForPlayerTp = true),
             tg.completeOnCheck(_ => playerUsedTp, 0.1),
+            tg.immediate(_ => goalUseTp.complete()),
 
             // More dialog about importance of tps and bait player into using voice
             tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
