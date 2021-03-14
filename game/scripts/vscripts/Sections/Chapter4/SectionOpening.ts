@@ -109,7 +109,26 @@ function onStart(complete: () => void) {
                         return slark.IsIdle()
                     }, 0.5),
                     tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3700), undefined)),
-                ])
+                ]),
+
+                // Reveal riki for a short time, otherwise the successful scan later won't show up
+                // because of a Dota bug. Hope the player won't notice!
+                tg.seq([
+                    tg.immediate(ctx => {
+                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                        const backstab = riki.FindAbilityByName("riki_backstab")
+                        backstab!.SetLevel(0)
+                        riki.RemoveModifierByName("modifier_invisible")
+                        riki.RemoveModifierByName("modifier_riki_backstab")
+                    }),
+                    tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
+                    tg.wait(0.1),
+                    tg.immediate(ctx => {
+                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                        const backstab = riki.FindAbilityByName("riki_backstab")
+                        backstab!.SetLevel(1)
+                    }),
+                ]),
             ]),
 
             tg.setCameraTarget(undefined),
