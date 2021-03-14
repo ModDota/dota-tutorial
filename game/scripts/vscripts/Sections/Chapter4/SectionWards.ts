@@ -77,9 +77,15 @@ function onStart(complete: () => void) {
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     hero.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
-                    hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
                     hero.FaceTowards(playerHero.GetAbsOrigin());
                     setUnitPacifist(hero, true);
+
+                    // For some reason this modifier does not make heroes semi-transparent?
+                    //hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
+                    // Riki ult does
+                    const ability = hero.AddAbility("riki_permanent_invisibility");
+                    ability.SetLevel(1);
+                    ability.SetHidden(true);
                 }
             }),
 
