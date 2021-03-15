@@ -19,6 +19,10 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     lastHitBreatheFire?: number
     denies?: number
 
+    private lastHitMessageParticleName = "particles/last_hit_message.vpcf"
+    private msgSize = 80
+    private greatMsgIndex = 3 // "Great"
+
     OnCreated(keys: { lastHits: number, lastHitBreatheFire: number, denies: number }) {
         if (!IsServer()) return;
         this.SetStackCount(0);
@@ -135,6 +139,13 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
         }
 
+        const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
+        ParticleManager.SetParticleControl(fxIndex, 0, (event.attacker.GetAbsOrigin().__add(Vector(0, 150, 0))))
+        ParticleManager.SetParticleControl(fxIndex, 1, Vector(this.greatMsgIndex, this.msgSize, 0))
+        ParticleManager.SetParticleControl(fxIndex, 15, Vector(220, 170, 30)) // color
+        ParticleManager.SetParticleControl(fxIndex, 16, Vector(1, 0, 0)) // whether to use color
+        ParticleManager.ReleaseParticleIndex(fxIndex)
+
         this.IncrementStackCount();
     }
 
@@ -150,6 +161,13 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             if (event.unit.GetTeamNumber() == this.GetParent().GetTeamNumber()) return;
         }
 
+        const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
+        ParticleManager.SetParticleControl(fxIndex, 0, (event.attacker.GetAbsOrigin()))
+        ParticleManager.SetParticleControl(fxIndex, 1, Vector(this.greatMsgIndex, this.msgSize, 0))
+        ParticleManager.SetParticleControl(fxIndex, 15, Vector(220, 170, 30)) // color
+        ParticleManager.SetParticleControl(fxIndex, 16, Vector(1, 0, 0)) // whether to use color
+        ParticleManager.ReleaseParticleIndex(fxIndex)
+
         this.IncrementStackCount();
     }
 
@@ -163,6 +181,14 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             if (!isCustomLaneCreepUnit(event.unit)) return;
             if (event.unit.GetTeamNumber() != this.GetParent().GetTeamNumber()) return;
         }
+
+
+        const nFXIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
+        ParticleManager.SetParticleControl(nFXIndex, 0, (event.attacker.GetAbsOrigin()))
+        ParticleManager.SetParticleControl(nFXIndex, 1, Vector(1, this.msgSize, 0))
+        ParticleManager.SetParticleControl(nFXIndex, 15, Vector(220, 170, 30)) // color
+        ParticleManager.SetParticleControl(nFXIndex, 16, Vector(1, 0, 0)) // whether to use color
+        ParticleManager.ReleaseParticleIndex(nFXIndex)
 
         this.IncrementStackCount();
     }
