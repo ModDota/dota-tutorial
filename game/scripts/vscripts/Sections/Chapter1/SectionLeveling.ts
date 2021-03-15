@@ -57,7 +57,6 @@ const start = (complete: () => void) => {
                 tg.immediate(ctx => {
                     const pugna = getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC)
                     pugna.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
-                    pugna.SetMoveCapability(UnitMoveCapability.GROUND)
                     setUnitPacifist(pugna, true)
                 }),
                 tg.moveUnit(context => context[CustomNpcKeys.PurgePugna], pugnaMoveToLocation)
