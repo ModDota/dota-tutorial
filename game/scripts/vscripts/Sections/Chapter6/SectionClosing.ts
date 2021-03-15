@@ -103,7 +103,7 @@ class ClosingNpc {
 }
 
 const npcs = [
-    new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6500, 384), LocalizationKey.Script_6_Opening_8, LocalizationKey.Script_6_Opening_8),
+    new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6500, 384), LocalizationKey.Script_6_Purge, LocalizationKey.Script_6_Purge),
     new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7250, -6800, 384), LocalizationKey.Script_6_Opening_9, LocalizationKey.Script_6_Opening_9),
 ]
 
