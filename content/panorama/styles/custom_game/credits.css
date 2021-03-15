@@ -12,6 +12,14 @@
     border-bottom-right-radius: 5px;
 
     flow-children: right;
+
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+}
+
+#CreditsContainer.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
 }
 
 .CreditsContainerLeft {
