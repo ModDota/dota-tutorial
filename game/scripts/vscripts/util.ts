@@ -145,7 +145,8 @@ export function setGoalsUI(goals: Goal[]) {
  * Destroy all neutrals on the map
 */
 export function DestroyNeutrals() {
-    const units = Entities.FindAllByClassname("npc_dota_creep_neutral");
+    const units = Entities.FindAllByClassname("npc_dota_creep_neutral") as CDOTA_BaseNPC[];
+    units.filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS && !x.IsInvulnerable());
     units.forEach(x => x.Destroy());
 }
 
@@ -180,8 +181,49 @@ export function highlightUiElement(path: string, duration?: number) {
  * Manually removes a highlighted panel, along the path, if it exists
  * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
  */
-export function removeHighlight(path: string) {
+ export function removeHighlight(path: string) {
     CustomGameEventManager.Send_ServerToAllClients("remove_highlight", { path });
+}
+
+function getItemInventoryPathString(item:CDOTA_Item): string|undefined {
+    const hero = getPlayerHero()
+    let slot = undefined;
+
+    if (hero?.GetItemInSlot(InventorySlot.NEUTRAL_SLOT) === item ) {
+        return "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot";
+    }
+
+    for (let i = 0; i < DOTA_ITEM_INVENTORY_SIZE; i++) {
+        if (hero!.GetItemInSlot(i) === item) {
+            slot = i;
+            break;
+        }
+    }
+    
+    if (slot === undefined) {
+        return;
+    }
+    if (slot <= InventorySlot.SLOT_3) {
+        return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_" + slot;
+    } else if (slot <= InventorySlot.SLOT_6) {
+        return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list2/inventory_slot_" + slot;
+    } else if (slot <= InventorySlot.SLOT_9) {
+        return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_backpack_list/inventory_slot_" + slot;
+    }
+}
+
+/**
+ * Highlights the slot of an item if it exists, returns the string for you to remove later
+ * @param item the item you want to highlight
+ */
+export function highlightIteminUi(item:CDOTA_Item) {
+    let pathString = getItemInventoryPathString(item);
+    print("pathString",pathString)
+    if (pathString !== undefined) {
+        highlightUiElement(pathString!);
+    }
+    
+    return pathString
 }
 
 /**
@@ -457,6 +499,7 @@ export function clearAttachedHighlightParticlesFromUnits(units: CDOTA_BaseNPC[])
     }
 }
 
+
 /**
  * Returns the current camera location (technically the target, not the origin) of the player.
  * @returns Current camera location of the player.
@@ -524,6 +567,19 @@ export function Distance2D(point1: Vector, point2: Vector): number {
  */
 export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
     return ((towards_pos - origin_pos) as Vector).Normalized();
+}
+
+export function removeNeutralSpawners() {
+    //const creepSpawnLocationToKeep = Entities.FindAllByClassnameWithin("npc_dota_neutral_spawner",Vector(-2464,4816,170),500)[0];
+    const spawners = Entities.FindAllByClassname("npc_dota_neutral_spawner");
+    for (const spawner of spawners)
+    {
+        let normal = spawner.GetAbsOrigin()-Vector(-2464,4816,170) as Vector
+        if (normal.Length2D() > 100) {
+            UTIL_Remove(spawner);
+        }
+        
+    }
 }
 
 /**
