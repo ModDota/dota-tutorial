@@ -139,6 +139,7 @@ function handleUnits(state: FilledRequiredState) {
                 rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
                 rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
                 rikiHero.AddItemByName("item_lotus_orb")
+                rikiHero.AddItemByName("item_sange_and_yasha")
             }
         })
     } else {
