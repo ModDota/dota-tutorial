@@ -47,9 +47,7 @@ const start = (complete: () => void) => {
         // Spawn purge and freeze player during initial dialog
         tg.immediate(_ => freezePlayerHero(true)),
         tg.fork([
-            tg.seq([
-                tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // here comes pugna
-            ]),
+            tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // here comes pugna
             tg.seq([
                 tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna, true),
                 tg.setCameraTarget(context => context[CustomNpcKeys.PurgePugna]),
