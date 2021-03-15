@@ -108,19 +108,19 @@ function onStart(complete: () => void) {
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_4_Wards_1, LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.withHighlights(tg.seq([
-                tg.immediate(_ => {
-                    CreateItemOnPositionSync(wardLocationObs, observerWardItem);
-                }),
+                    tg.immediate(_ => {
+                        CreateItemOnPositionSync(wardLocationObs, observerWardItem);
+                    }),
 
-                tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser") || playerHero.HasItemInInventory(observerWardName), 0.2),
-            ]), {type: "arrow", locations: [wardLocationObs]}),
+                    tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser") || playerHero.HasItemInInventory(observerWardName), 0.2),
+                ]), { type: "arrow", locations: [wardLocationObs] }),
                 tg.withHighlights(tg.seq([
                     tg.immediate(_ => {
                         CreateItemOnPositionSync(wardLocationSentry, sentryWardItem);
                     }),
 
                     tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser") || playerHero.HasItemInInventory(sentryWardName), 0.2),
-                ]), {type: "arrow", locations: [wardLocationSentry]}),
+                ]), { type: "arrow", locations: [wardLocationSentry] }),
             ]),
 
             tg.immediate(_ => goalFetchWard.complete()),
