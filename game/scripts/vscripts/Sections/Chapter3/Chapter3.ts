@@ -26,6 +26,8 @@ const neutralSlotUIPath =
     "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot";
 const inventorySlot6UIPath =
     "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel";
+const clockUIPath =
+    "HUDElements/topbar/TimeOfDay";
 
 let timeManagerZeroTimeId: number;
 let timeManagerResetTimeId: number;
@@ -195,7 +197,9 @@ const onStart = (complete: () => void) => {
                     tryCount++;
                 });
                 playerHero.Hold();
+                highlightUiElement(clockUIPath);
             }),
+            
             tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => freezePlayerHero(false)),
             tg.loop(_ => stackCount < 1, _ => {
@@ -211,6 +215,7 @@ const onStart = (complete: () => void) => {
                 timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
                 timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
                 playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                removeHighlight(clockUIPath);
                 goalStackCreeps.complete();
             }),
         ];
