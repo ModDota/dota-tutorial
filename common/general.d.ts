@@ -54,6 +54,25 @@ declare const enum CustomNpcKeys {
     Centaur = "npc_dota_hero_centaur",
     Invoker = "npc_dota_hero_invoker",
     PhantomAssassin = "npc_dota_hero_phantom_assassin",
+
+    // Guides / Personalities
+    DotaU = "npc_dota_tutorial_dotau",
+    Liquipedia = "npc_dota_tutorial_liquipedia",
+
+    // Modders (have no personalities apparently)
+    Flam3s = "npc_dota_tutorial_flam3s",
+    Perry = "npc_dota_tutorial_perry",
+    PongPing = "npc_dota_tutorial_pongping",
+    Shush = "npc_dota_tutorial_shush",
+    SinZ = "npc_dota_tutorial_sinz",
+    SmashTheState = "npc_dota_tutorial_smashthestate",
+    Tora = "npc_dota_tutorial_tora",
+    Toyoka = "npc_dota_tutorial_toyoka",
+    VicFrank = "npc_dota_tutorial_vicfrank",
+    Yoyo = "npc_dota_tutorial_yoyo",
+
+    // Helpers
+    ValkyrjaRuby = "npc_dota_hero_templar_assassin",
 }
 
 declare const enum CustomEntityKeys {

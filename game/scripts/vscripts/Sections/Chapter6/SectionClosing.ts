@@ -4,6 +4,7 @@ import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { centerCameraOnHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
 
@@ -12,8 +13,8 @@ let graph: tg.TutorialStep | undefined = undefined
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-6980, -6000, 384),
-    sunsFanLocation: Vector(-6250, -5950, 256),
+    slacksLocation: Vector(-6100, -5700, 256),
+    sunsFanLocation: Vector(-5900, -5750, 256),
 
     heroLocation: Vector(-6850, -6500, 384),
     heroLocationTolerance: 2000,
@@ -37,7 +38,7 @@ class ClosingNpc {
     private interacting = false
     private dialogToken: DialogToken | undefined
 
-    constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName: string) {
+    constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName?: string) {
 
     }
 
@@ -54,6 +55,7 @@ class ClosingNpc {
 
         CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
             this._unit = unit
+            unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
 
             // destroy() could have been called before this callback was called
             if (!this.spawned) {
@@ -99,7 +101,11 @@ class ClosingNpc {
                 if (distance <= this.interactDistance) {
                     // Play dialog
                     this.interacting = true
-                    this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
+                    if (this.soundName) {
+                        this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
+                    } else {
+                        this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
+                    }
                 }
             }
         }
@@ -107,8 +113,28 @@ class ClosingNpc {
 }
 
 const npcs = [
-    new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6500, 384), LocalizationKey.Script_6_Purge, LocalizationKey.Script_6_Purge),
-    new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7250, -6800, 384), LocalizationKey.Script_6_Opening_9, LocalizationKey.Script_6_Opening_9),
+    // TODO: Pass in the actual text and sound keys once we have them
+
+    // Personalities / Guides
+    new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6400, 384), LocalizationKey.Script_6_Purge, LocalizationKey.Script_6_Purge),
+    new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7200, -6750, 384), LocalizationKey.Script_6_Opening_9, LocalizationKey.Script_6_Opening_9),
+    new ClosingNpc(CustomNpcKeys.DotaU, Vector(-6900, -7050, 384), LocalizationKey.Script_6_DotaU, LocalizationKey.Script_6_DotaU),
+    new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-6650, -6900, 384), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
+
+    // Modders
+    new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -4400, 256), CustomNpcKeys.Flam3s),
+    new ClosingNpc(CustomNpcKeys.Perry, Vector(-7050, -4700, 256), CustomNpcKeys.Perry),
+    new ClosingNpc(CustomNpcKeys.PongPing, Vector(-6750, -4400, 256), CustomNpcKeys.PongPing),
+    new ClosingNpc(CustomNpcKeys.Shush, Vector(-6450, -4400, 256), CustomNpcKeys.Shush),
+    new ClosingNpc(CustomNpcKeys.SinZ,Vector(-6150, -4400, 256), CustomNpcKeys.SinZ),
+    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5850, -4700, 256), CustomNpcKeys.SmashTheState),
+    new ClosingNpc(CustomNpcKeys.Tora, Vector(-5850, -5000, 256), CustomNpcKeys.Tora),
+    new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-7050, -5000, 256), CustomNpcKeys.Toyoka),
+    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-7050, -5300, 256), CustomNpcKeys.VicFrank),
+    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-7050, -5600, 256), CustomNpcKeys.Yoyo),
+
+    // Helpers
+    new ClosingNpc(CustomNpcKeys.ValkyrjaRuby, Vector(-6250, -5500, 256), LocalizationKey.Script_6_valkyrjaRuby),
 ]
 
 const spawnNpcs = () => npcs.forEach(npc => npc.spawn())

@@ -298,4 +298,5 @@ export const soundDurations: Record<string, number> = {
     "Script_6_Purge": 260.352750,
     "Script_6_Tsunami": 24.793437,
     "Script_6_DotaU": 23.698812,
+    "Script_6_Liquipedia": 15.267120,
 }

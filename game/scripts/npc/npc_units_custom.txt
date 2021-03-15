@@ -629,4 +629,124 @@
         "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_FLY"
         "AbilityLayout"				"4"
 	}
+
+    "npc_dota_tutorial_dotau"
+	{
+		"Model"						"models/items/invoker/forge_spirit/infernus/infernus.vmdl"
+        "ModelScale" 				"1.5"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_liquipedia"
+	{
+		"Model"						"models/items/courier/blue_lightning_horse/blue_lightning_horse.vmdl"
+		"ModelScale" 				"1.5"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_tora"
+	{
+		"Model"						"models/creeps/neutral_creeps/n_creep_dragonspawn_a/n_creep_dragonspawn_a.vmdl"
+        "ModelScale" 				"1.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_shush"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_perry"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_yoyo"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_pongping"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_sinz"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_smashthestate"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_vicfrank"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_toyoka"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
+
+    "npc_dota_tutorial_flam3s"
+	{
+		"Model"						"models/props_gameplay/dummy/dummy.vmdl"
+        "ModelScale" 				"5.0"
+		"BaseClass"					"npc_dota_creature"
+		"AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+		"UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+	}
 }
