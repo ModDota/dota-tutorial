@@ -26,6 +26,7 @@ const dustName = "item_dust";
 const dustLocation = Vector(-1700, 3800, 256);
 const outpostLocation = Vector(-2000, 4300);
 const lastSawRikiLocation = Vector(-1300, 4200);
+const rikiName = "npc_dota_hero_riki";
 // UI Highlighting Paths
 const inventorySlot1UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_1"
 
@@ -83,17 +84,16 @@ function onStart(complete: () => void) {
                 setUnitPacifist(playerHero, false);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_4, LocalizationKey.Script_4_Outpost_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 const smokeScreen = riki.GetAbilityByIndex(0);
                 if (smokeScreen) {
-                    riki.CastAbilityOnPosition(riki.GetAbsOrigin(), smokeScreen, 0);
+                    riki.CastAbilityOnPosition(playerHero.GetAbsOrigin().__add(Vector(100, 100)), smokeScreen, 0);
                 }
             }),
-            tg.wait(1),
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_foundme, LocalizationKey.Script_4_RTZ_foundme, ctx => ctx[rikiName]),
+            tg.audioDialog(LocalizationKey.Script_4_Outpost_4, LocalizationKey.Script_4_Outpost_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
@@ -103,7 +103,7 @@ function onStart(complete: () => void) {
                 }
             }),
             tg.wait(0.5),
-
+            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 const tricksOfTheTrade = riki.GetAbilityByIndex(2);
@@ -111,9 +111,8 @@ function onStart(complete: () => void) {
                     riki.CastAbilityOnPosition(riki.GetAbsOrigin().__add(Vector(-200, 100)), tricksOfTheTrade, 0);
                 }
             }),
-            tg.wait(3),
-
-            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_getaway, LocalizationKey.Script_4_RTZ_getaway, ctx => ctx[rikiName]),
+            tg.wait(2),
             tg.audioDialog(LocalizationKey.Script_4_Outpost_5, LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.withHighlights(tg.seq([
@@ -163,9 +162,9 @@ function onStart(complete: () => void) {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 return !IsValidEntity(riki) || !riki.IsAlive();
             }, 1),
-
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_pain, LocalizationKey.Script_4_RTZ_pain, ctx => ctx[rikiName]),
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_death, LocalizationKey.Script_4_RTZ_death, ctx => ctx[rikiName]),
             tg.immediate(_ => goalKillRiki.complete()),
-
             tg.audioDialog(LocalizationKey.Script_4_Outpost_10, LocalizationKey.Script_4_Outpost_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Outpost_11, LocalizationKey.Script_4_Outpost_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         ])

@@ -163,6 +163,7 @@ function onStart(complete: () => void) {
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_foundme, LocalizationKey.Script_4_RTZ_foundme, ctx => ctx[rikiName]),
 
             tg.immediate(context => {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
@@ -187,7 +188,9 @@ function onStart(complete: () => void) {
                 const runDirection = riki.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                 riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
             }),
-            tg.wait(3),
+
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_cya, LocalizationKey.Script_4_RTZ_cya, ctx => ctx[rikiName]),
+            tg.wait(2),
             tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
             tg.audioDialog(LocalizationKey.Script_4_Wards_15, LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
