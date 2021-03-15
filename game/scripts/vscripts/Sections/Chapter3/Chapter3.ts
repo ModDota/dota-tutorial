@@ -1,25 +1,34 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { freezePlayerHero, getOrError, getPlayerHero, isPointInsidePolygon, unitIsValidAndAlive } from "../../util";
+import { DestroyNeutrals, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
+import { Blockade } from "../../Blockade";
 
 let graph: tg.TutorialStep | undefined = undefined;
 
 let movedToStash = false;
 const markerLocation = Vector(-3250, 4917);
 const creepCampBox = [
-    Vector(-2915, 4388),
-    Vector(-2915, 5203),
-    Vector(-2141, 5203),
-    Vector(-2141, 4388),
+    Vector(-2911, 4373),
+    Vector(-2911, 5196),
+    Vector(-2142, 5203),
+    Vector(-2142, 4373),
 ];
 let creepPhase = 0;
 
+const stackTryCount = 5;
 const giveAwayItemName = "item_arcane_ring";
 const dropInStashItemName = "item_mysterious_hat";
 const keepItemName = "item_possessed_mask";
+
+const neutralSlotUIPath =
+    "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot";
+const inventorySlot6UIPath =
+    "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel";
+const clockUIPath =
+    "HUDElements/topbar/TimeOfDay";
 
 let timeManagerZeroTimeId: number;
 let timeManagerResetTimeId: number;
@@ -32,13 +41,28 @@ const GetUnitsInsidePolygon = (polygon: Vector[], radius?: number, midPoint?: Ve
     return units.filter(unit => isPointInsidePolygon(unit.GetAbsOrigin(), polygon));
 };
 
+const getAllNeutralCreeps = () => Entities.FindAllByClassname("npc_dota_creep_neutral").filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS && x.IsBaseNPC() && !x.IsInvulnerable()) as CDOTA_BaseNPC[];
+
+
 const requiredState: RequiredState = {
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
     heroLocation: GetGroundPosition(Vector(-3500, 4500), undefined),
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
+    requireODPixelGolem: true,
+
     requireRiki: true,
+    heroItems: { item_greater_crit: 1 },
+    blockades: [
+        new Blockade(Vector(-1550, 3600), Vector(-1550, 4800)),
+        new Blockade(Vector(-1550, 4800), Vector(-2600, 6400)),
+        new Blockade(Vector(-2600, 6400), Vector(-3700, 6400)),
+        new Blockade(Vector(-3700, 6400), Vector(-4100, 5200)),
+        new Blockade(Vector(-4100, 5200), Vector(-4600, 4800)),
+        new Blockade(Vector(-4600, 4800), Vector(-4000, 3800)),
+        new Blockade(Vector(-4000, 3800), Vector(-1550, 3600)),
+    ],
 };
 
 const onStart = (complete: () => void) => {
@@ -63,17 +87,32 @@ const onStart = (complete: () => void) => {
     movedToStash = false;
     let creepArr: CDOTA_BaseNPC[] = [];
 
-    entityKilledListenerId = ListenToGameEvent("entity_killed", event => {
-        const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
+    const itemsToDrop = [giveAwayItemName, dropInStashItemName];
 
-        if (creepArr.includes(unit)) {
-            if (creepArr.filter((x) => IsValidEntity(x) && x.IsAlive()).length === 1 && creepPhase === 2) {
-                DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
-            } else if (creepArr.filter((x) => IsValidEntity(x) && x.IsAlive()).length === 1 && creepPhase === 3) {
-                DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+    entityKilledListenerId = ListenToGameEvent("entity_killed",(event) => {
+            const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
+            if (unit.IsNeutralUnitType()) {
+                if (creepPhase === 2 && itemsToDrop.indexOf(giveAwayItemName)) {
+                    // Use a timer to make sure this event doesn't trigger twice without changing the array
+                    Timers.CreateTimer(FrameTime(),()=> {
+                        if (itemsToDrop.includes(giveAwayItemName)) {
+                            DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+                            itemsToDrop.splice(itemsToDrop.indexOf(giveAwayItemName), 1);
+                        }
+                    })
+                } else if (creepPhase === 3 && itemsToDrop.indexOf(dropInStashItemName)) {
+                    // Use a timer to make sure this event doesn't trigger twice without changing the array
+                    Timers.CreateTimer(FrameTime(),()=> {
+                        if (itemsToDrop.includes(dropInStashItemName)) {
+                            DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+                            itemsToDrop.splice(itemsToDrop.indexOf(dropInStashItemName), 1);
+                        }
+                    })
+                }
             }
-        }
-    }, undefined);
+        },
+        undefined
+    );
 
     const goToCamp = () => [
         tg.immediate(_ => goalMoveToCamp.start()),
@@ -89,14 +128,15 @@ const onStart = (complete: () => void) => {
                 goalKillFirstSpawn.start();
 
                 // Make sure the creep spawn box is empty (Hero can't be in there since he's at the marker)
-                const units = GetUnitsInsidePolygon(creepCampBox);
+                const units = getAllNeutralCreeps();
                 units.forEach(unit => {
-                    if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
+                    // Dota prespawns units and makes them invulnerable, dont remove those
+                    if (!unit.IsInvulnerable()) {
                         UTIL_Remove(unit);
                     }
                 });
             }),
-            tg.wait(0),
+            tg.wait(0.1),
             tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
             tg.audioDialog(LocalizationKey.Script_3_Opening_1, LocalizationKey.Script_3_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_2, LocalizationKey.Script_3_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -104,7 +144,7 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_3_Opening_4, LocalizationKey.Script_3_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_6, LocalizationKey.Script_3_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(_ => units = GetUnitsInsidePolygon(creepCampBox).filter(x => x.IsBaseNPC() && x.IsNeutralUnitType()) as CDOTA_BaseNPC[]),
+            tg.immediate(_ => units = getAllNeutralCreeps().filter(x => x.IsBaseNPC() && x.IsNeutralUnitType())),
             // Check if they are killed
             tg.completeOnCheck(_ => units.length === 0 || !units.some(unitIsValidAndAlive), 1),
             tg.immediate(_ => goalKillFirstSpawn.complete()),
@@ -138,6 +178,7 @@ const onStart = (complete: () => void) => {
     const stackCreepsPractice = () => {
         let stackCount = 0;
         let tryCount = 0;
+        let creepCount = 0;
         const timeManager = GameRules.Addon.customTimeManager;
         return [
             tg.immediate(_ => {
@@ -145,24 +186,23 @@ const onStart = (complete: () => void) => {
 
                 goalStackCreeps.start();
                 GameRules.SpawnNeutralCreeps();
+                creepCount = getAllNeutralCreeps().length;
                 timeManager.customTimeEnabled = true;
                 timeManager.time = 45;
                 timeManagerResetTimeId = timeManager.registerCallBackOnTime(5, () => timeManager.time = 40);
                 timeManagerZeroTimeId = timeManager.registerCallBackOnTime(0, () => {
-                    if (GetUnitsInsidePolygon(creepCampBox).length === 0) {
+                    GameRules.SpawnNeutralCreeps();
+                    if (creepCount !== getAllNeutralCreeps().length) {
                         stackCount++;
                     }
-                    GameRules.SpawnNeutralCreeps();
                     tryCount++;
                 });
-
                 playerHero.Hold();
+                highlightUiElement(clockUIPath);
             }),
-
+            
             tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
             tg.immediate(_ => freezePlayerHero(false)),
-
             tg.loop(_ => stackCount < 1, _ => {
                 if (tryCount === 1) {
                     tryCount = 0;
@@ -176,6 +216,7 @@ const onStart = (complete: () => void) => {
                 timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
                 timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
                 playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                removeHighlight(clockUIPath);
                 goalStackCreeps.complete();
             }),
         ];
@@ -199,7 +240,7 @@ const onStart = (complete: () => void) => {
         const timeManager = GameRules.Addon.customTimeManager;
         return [
             tg.audioDialog(LocalizationKey.Script_3_Opening_18, LocalizationKey.Script_3_Opening_18, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(_ => {
+            tg.immediate(ctx => {
                 goalOptionalStackCreeps.start();
                 goalTryStackCreeps.start();
                 GameRules.SpawnNeutralCreeps();
@@ -208,38 +249,44 @@ const onStart = (complete: () => void) => {
                 timeManager.customTimeEnabled = true;
                 timeManagerResetTimeId = timeManager.registerCallBackOnTime(3, () => timeManager.time = 43);
                 timeManagerZeroTimeId = timeManager.registerCallBackOnTime(0, () => {
-                    if (GetUnitsInsidePolygon(creepCampBox).length === 0) {
+                    let creepCount = getAllNeutralCreeps().length;
+                    GameRules.SpawnNeutralCreeps();
+                    if (creepCount !== getAllNeutralCreeps().length) {
                         stackCount++;
                     }
-                    GameRules.SpawnNeutralCreeps();
-
-                    GetUnitsInsidePolygon(creepCampBox).forEach(unit => {
-                        if (!creepArr.includes(unit)) {
-                            creepArr.push(unit);
-                        }
-                    });
-
                     tryCount++;
                 });
+                //playerHero.AddNewModifier(undefined, undefined, "modifier_keep_hero_alive", undefined);
                 playerHero.AddNewModifier(undefined, undefined, "modifier_deal_no_damage", undefined);
+                let odPixel = ctx[CustomNpcKeys.ODPixelMudGolem] as CDOTA_BaseNPC;
+                odPixel.SetAbsOrigin(GetGroundPosition(markerLocation, undefined));
+                setUnitPacifist(odPixel, true);
             }),
-            tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.loop(_ => tryCount < 5, _ => {
+            tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
+            tg.loop(_ => tryCount <= stackTryCount, _ => { 
                 goalTryStackCreeps.setValue(tryCount);
                 goalOptionalStackCreeps.setValue(stackCount);
+
+                // Play the final dialog
+                if (tryCount == stackTryCount) {
+                    tryCount++;
+                    return tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.ODPixelMudGolem]);
+                }
 
                 // Do something if a try was done.
                 if (tryCount !== previousTryCount) {
                     previousTryCount = tryCount;
-
                     if (stackCount === 0) {
                         // Reset try count if we failed the first stack
+                        if (tryCount === 0) {
+                            return tg.audioDialog(LocalizationKey.Script_3_Opening_20, LocalizationKey.Script_3_Opening_20, ctx => ctx[CustomNpcKeys.ODPixelMudGolem])
+                        }
                         tryCount = 0;
-                        return tg.audioDialog(LocalizationKey.Script_3_Opening_20, LocalizationKey.Script_3_Opening_20, ctx => ctx[CustomNpcKeys.SunsFanMudGolem])
+                        return tg.wait(0);
                     } else if (playedDialogStacks !== stackCount) {
                         // Play dialog if we didn't play it yet for the stack count
                         playedDialogStacks = stackCount;
-                        return tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.SunsFanMudGolem]);
+                        return tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.ODPixelMudGolem]);
                     }
                 }
 
@@ -262,40 +309,40 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalKillStackedCreeps.start();
             creepPhase = 2;
+            creepArr = getAllNeutralCreeps();
         }),
         // itemdrop handled in entity_killed event
-        tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(x => x.IsNull() || !x.IsAlive()), 0.1),
+        tg.completeOnCheck(_ => creepArr.length === 0 || !creepArr.some(unitIsValidAndAlive), 0.1),
         tg.immediate(_ => goalKillStackedCreeps.complete()),
     ];
 
     const pickUpItems = () => [
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
         tg.immediate(_ => goalPickupItem.start()),
         tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1),
-        tg.immediate(_ => goalPickupItem.complete()),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.immediate(_ => highlightUiElement(neutralSlotUIPath)),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.immediate(_ => {
+            goalPickupItem.complete();
+            removeHighlight(neutralSlotUIPath);
+        }),
     ];
 
     const killThirdSpawn = () => [
         tg.immediate(_ => {
             goalKillThirdSpawn.start();
             creepPhase = 3;
-            GetUnitsInsidePolygon(creepCampBox).forEach(unit => {
-                if (unit.IsBaseNPC() && unit.IsNeutralUnitType()) {
-                    UTIL_Remove(unit);
-                }
-            });
+
         }),
-        tg.wait(0),
+        tg.goToLocation(markerLocation),
+        tg.wait(FrameTime()),
         tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
+        tg.immediate(_ => creepArr = getAllNeutralCreeps()),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_4, LocalizationKey.Script_3_Neutrals_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.wait(0),
-        tg.immediate(_ => creepArr = GetUnitsInsidePolygon(creepCampBox).filter((x) => x.IsNeutralUnitType())),
-        tg.wait(0),
-        tg.completeOnCheck(_ => creepArr.length === 0 || creepArr.every(unit => !unit || unit.IsNull() || !unit.IsAlive()), 1),
+        
+        tg.completeOnCheck(_ => creepArr.length === 0 || !creepArr.some(unitIsValidAndAlive), 1),
         tg.immediate(_ => goalKillThirdSpawn.complete()),
         tg.immediate(_ => goalPickupItem.start()),
         tg.completeOnCheck(_ => playerHero.HasItemInInventory(dropInStashItemName), 0.1),
@@ -304,22 +351,39 @@ const onStart = (complete: () => void) => {
 
     const stashItem = () => [
         tg.immediate(_ => goalStash.start()),
+        tg.immediate(_ => highlightUiElement(inventorySlot6UIPath)),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_6, LocalizationKey.Script_3_Neutrals_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_7, LocalizationKey.Script_3_Neutrals_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_8, LocalizationKey.Script_3_Neutrals_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.completeOnCheck(_ => movedToStash === true, 0.1),
         tg.immediate(_ => goalStash.complete()),
+        tg.immediate(_ => removeHighlight(inventorySlot6UIPath)),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_9, LocalizationKey.Script_3_Neutrals_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_10, LocalizationKey.Script_3_Neutrals_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_11, LocalizationKey.Script_3_Neutrals_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_12, LocalizationKey.Script_3_Neutrals_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ];
 
-    const chaseRiki = () => [
-        tg.immediate(_ => goalMoveToRiki.start()),
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, ctx => ctx[CustomNpcKeys.Riki]),
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-    ];
+    const chaseRiki = () => {
+        const location = GetGroundPosition(Vector(-2250, 3850), undefined);
+        return [
+            tg.immediate((ctx) => {
+                goalMoveToRiki.start();
+                let riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                riki.SetAbsOrigin(GetGroundPosition(Vector(-2700, 4200), undefined));
+                let backstab = riki.FindAbilityByName("riki_backstab");
+                backstab!.SetLevel(0);
+                riki.RemoveModifierByName("modifier_invisible");
+                riki.RemoveModifierByName("modifier_riki_backstab");
+                riki.Hold();
+                setUnitPacifist(riki,true);
+            }),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, (ctx) => ctx[CustomNpcKeys.Riki]),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.moveUnit((ctx) => ctx[CustomNpcKeys.Riki], location),
+            tg.goToLocation(location),
+        ];
+    };
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         ...goToCamp(),
@@ -353,7 +417,10 @@ const onStop = () => {
         const hero = getPlayerHero()
         if (hero && IsValidEntity(hero)) {
             hero.RemoveModifierByName("modifier_deal_no_damage");
+            //hero.RemoveModifierByName("modifier_keep_hero_alive");
         }
+
+        DestroyNeutrals();
     }
 };
 
@@ -418,17 +485,31 @@ class modifier_deal_no_damage extends BaseModifier {
     }
 
     DeclareFunctions() {
-        return [
-            //ModifierFunction.DAMAGEOUTGOING_PERCENTAGE,
-            ModifierFunction.TOTALDAMAGEOUTGOING_PERCENTAGE,
-        ];
+        return [ModifierFunction.TOTALDAMAGEOUTGOING_PERCENTAGE];
     }
 
     GetModifierTotalDamageOutgoing_Percentage() {
         return -1000;
     }
+}
 
-    GetModifierDamageOutgoing_Percentage() {
-        return -1000;
+@registerModifier()
+class modifier_keep_hero_alive extends BaseModifier {
+    IsHidden() {
+        return !IsInToolsMode();
+    }
+
+    DeclareFunctions() {
+        return [ModifierFunction.INCOMING_DAMAGE_PERCENTAGE];
+    }
+
+    GetModifierIncomingDamage_Percentage() {
+        let parent = this.GetParent();
+        let healthPct = parent.GetHealthPercent();
+        if (healthPct > 5) {
+            return 0;
+        }
+
+        return -(100 - healthPct);
     }
 }

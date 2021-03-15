@@ -24,7 +24,7 @@ declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
     GodzMudGolem = "npc_mud_golem_godz",
-    ODPixelMudGolem = "npc_mud_golem_sunsfan",
+    ODPixelMudGolem = "npc_mud_golem_odpixel",
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
