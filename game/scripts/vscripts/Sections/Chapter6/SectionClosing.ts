@@ -122,16 +122,16 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-6650, -6900, 384), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
 
     // Modders
-    new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -4400, 256), CustomNpcKeys.Flam3s),
-    new ClosingNpc(CustomNpcKeys.Perry, Vector(-7050, -4700, 256), CustomNpcKeys.Perry),
-    new ClosingNpc(CustomNpcKeys.PongPing, Vector(-6750, -4400, 256), CustomNpcKeys.PongPing),
-    new ClosingNpc(CustomNpcKeys.Shush, Vector(-6450, -4400, 256), CustomNpcKeys.Shush),
-    new ClosingNpc(CustomNpcKeys.SinZ,Vector(-6150, -4400, 256), CustomNpcKeys.SinZ),
-    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5850, -4700, 256), CustomNpcKeys.SmashTheState),
-    new ClosingNpc(CustomNpcKeys.Tora, Vector(-5850, -5000, 256), CustomNpcKeys.Tora),
-    new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-7050, -5000, 256), CustomNpcKeys.Toyoka),
-    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-7050, -5300, 256), CustomNpcKeys.VicFrank),
-    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-7050, -5600, 256), CustomNpcKeys.Yoyo),
+    new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -4400, 256), LocalizationKey.Script_6_Flam3s),
+    new ClosingNpc(CustomNpcKeys.Perry, Vector(-7050, -4700, 256), LocalizationKey.Script_6_Perry),
+    new ClosingNpc(CustomNpcKeys.PongPing, Vector(-6750, -4400, 256), LocalizationKey.Script_6_PongPing),
+    new ClosingNpc(CustomNpcKeys.Shush, Vector(-6450, -4400, 256), LocalizationKey.Script_6_Shush),
+    new ClosingNpc(CustomNpcKeys.SinZ,Vector(-6150, -4400, 256), LocalizationKey.Script_6_SinZ),
+    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5850, -4700, 256), LocalizationKey.Script_6_SmashTheState),
+    new ClosingNpc(CustomNpcKeys.Tora, Vector(-5850, -5000, 256), LocalizationKey.Script_6_Tora),
+    new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-7050, -5000, 256), LocalizationKey.Script_6_Toyoka),
+    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-7050, -5300, 256), LocalizationKey.Script_6_VicFrank),
+    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-7050, -5600, 256), LocalizationKey.Script_6_Yoyo),
 
     // Helpers
     new ClosingNpc(CustomNpcKeys.ValkyrjaRuby, Vector(-6250, -5500, 256), LocalizationKey.Script_6_valkyrjaRuby),
