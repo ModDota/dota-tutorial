@@ -44,7 +44,9 @@ declare const enum CustomNpcKeys {
     MiranaIllusionTwo = "mirana_illusion_two",
     Tidehunter = "npc_dota_hero_tidehunter",
     Antimage = "npc_dota_hero_antimage",
+    Luna = "npc_dota_hero_luna",
     Lina = "npc_dota_hero_lina",
+    Jakiro = "npc_dota_hero_jakiro",
     Visage = "npc_dota_hero_visage",
     Pudge = "npc_dota_hero_pudge",
     Wisp = "npc_dota_hero_wisp",
@@ -53,6 +55,7 @@ declare const enum CustomNpcKeys {
     Centaur = "npc_dota_hero_centaur",
     Invoker = "npc_dota_hero_invoker",
     PhantomAssassin = "npc_dota_hero_phantom_assassin",
+    Windrunner = "npc_dota_hero_windrunner",
 }
 
 declare const enum CustomEntityKeys {
