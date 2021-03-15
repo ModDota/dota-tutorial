@@ -10,6 +10,7 @@ const dialogLabel = $("#DialogLabel") as LabelPanel;
 let dialogAdvanceTime = -1;
 let currentCharacter = 0;
 let pendingDialog: string | undefined = undefined;
+let currentToken: DialogToken | undefined = undefined;
 
 function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     dialogPanel.SetHasClass("Visible", true);
@@ -27,6 +28,8 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     dialogAdvanceTime = Game.GetGameTime() + data.DialogAdvanceTime;
     pendingDialog = $.Localize(data.DialogText);
     dialogLabelSizer.text = pendingDialog;
+
+    currentToken = data.Token;
 
     $.Schedule(characterAdvanceRate, AdvanceDialogThink);
 }
@@ -51,6 +54,7 @@ function handleSpecialUnitPortrait(unitName: string): boolean {
 function AdvanceDialogThink() {
     // Check if we have no dialog
     if (!pendingDialog) {
+        currentToken = undefined;
         dialogPanel.SetHasClass("Visible", false);
         return;
     }
@@ -58,7 +62,9 @@ function AdvanceDialogThink() {
     // Check if dialog is over
     if (Game.GetGameTime() > dialogAdvanceTime) {
         dialogPanel.SetHasClass("Visible", false);
-        GameEvents.SendCustomGameEventToServer("dialog_complete", {});
+        const token = currentToken;
+        currentToken = undefined;
+        GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
         return;
     }
 
@@ -80,15 +86,20 @@ function OnAdvanceDialogButtonPressed() {
     }
 }
 
-function HideDialog() {
-    pendingDialog = undefined;
-    dialogPanel.SetHasClass("Visible", false);
+function HideDialog(event: DialogClearEvent) {
+    if (currentToken === event.Token) {
+        pendingDialog = undefined;
+        currentToken = undefined;
+        dialogPanel.SetHasClass("Visible", false);
+    }
 }
 
 function OnCloseDialogButtonPressed() {
     pendingDialog = undefined;
+    const token = currentToken;
+    currentToken = undefined;
     $("#DialogPanel").SetHasClass("Visible", false);
-    GameEvents.SendCustomGameEventToServer("dialog_complete", {});
+    GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
 }
 
 GameEvents.Subscribe("dialog", OnDialogReceived);

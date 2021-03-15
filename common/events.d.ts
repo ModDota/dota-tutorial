@@ -14,6 +14,15 @@ interface DialogReceivedEvent {
     DialogText: string;
     DialogEntIndex: EntityIndex;
     DialogAdvanceTime: number;
+    Token: DialogToken;
+}
+
+interface DialogClearEvent {
+    Token?: DialogToken;
+}
+
+interface DialogCompleteEvent {
+    Token: DialogToken;
 }
 
 interface DetectCommandEvent {
@@ -61,9 +70,9 @@ interface PlayVideoEvent {
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
-    dialog_complete: {};
+    dialog_complete: DialogCompleteEvent;
     dialog: DialogReceivedEvent;
-    dialog_clear: {};
+    dialog_clear: DialogClearEvent;
     ui_loaded: {};
     detect_camera_movement: {};
     camera_movement_detected: {};

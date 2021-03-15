@@ -695,14 +695,24 @@ export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep)
 export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
     const defaultExtraDelaySeconds = 0.5
 
+    let dialogToken: DialogToken | undefined
+
     return tg.step((context, complete) => {
         const actualSoundName = tg.getArg(soundName, context)
         const actualUnit = tg.getArg(unit, context)
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, complete)
-    }, _ => dg.stop())
+        dialogToken = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, () => {
+            dialogToken = undefined
+            complete()
+        })
+    }, _ => {
+        if (dialogToken !== undefined) {
+            dg.stop(dialogToken)
+            dialogToken = undefined
+        }
+    })
 }
 
 /**
@@ -712,13 +722,23 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  * @param waitSeconds Time to wait for in seconds.
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
+    let dialogToken: DialogToken | undefined
+
     return tg.step((context, complete) => {
         const actualText = tg.getArg(text, context)
         const actualUnit = tg.getArg(unit, context)
         const actualWaitSeconds = tg.getArg(waitSeconds, context)
 
-        dg.playText(actualText, actualUnit, actualWaitSeconds, complete)
-    }, _ => dg.stop())
+        dialogToken = dg.playText(actualText, actualUnit, actualWaitSeconds, () => {
+            dialogToken = undefined
+            complete()
+        })
+    }, _ => {
+        if (dialogToken !== undefined) {
+            dg.stop(dialogToken)
+            dialogToken = undefined
+        }
+    })
 }
 
 /**
