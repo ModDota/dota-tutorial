@@ -54,6 +54,7 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
             shared.spawnFriendlyHeroes(shared.outsidePitLocation),
             shared.spawnEnemyHeroes(shared.enemyLocation),
 
@@ -95,10 +96,10 @@ function onStart(complete: () => void) {
                     UnitIndex: hero.entindex(),
                 })
             })),
+            // TODO: Add logic for if the player dies (although not a disaster atm. either since they just respawn)
             tg.fork([
                 tg.seq([
                     // Wait for every enemy to die
-                    // TODO: Add logic for if the player dies (although not a disaster atm. either since they just respawn)
                     tg.loop(ctx => shared.getLivingEnemyHeroes(ctx).length > 0, ctx => tg.seq([
                         tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount - shared.getLivingEnemyHeroes(ctx).length)),
                         tg.wait(1),
