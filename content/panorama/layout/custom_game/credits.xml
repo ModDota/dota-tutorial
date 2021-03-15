@@ -10,7 +10,7 @@
     <snippets>
 
     </snippets>
-    <Panel hittest="false" id="CreditsRoot">
+    <Panel hittest="false" class="CreditsRoot">
         <Panel id="CreditsContainer">
             <Panel class="CreditsContainerLeft">
                 <Panel class="AvatarContainer">
