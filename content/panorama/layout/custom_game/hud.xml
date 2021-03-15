@@ -1,6 +1,7 @@
 <root>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/hud.js" />
+        <include src="file://{resources}/scripts/custom_game/fade-screen.js" />
         <include src="s2r://panorama/scripts/custom_game/dialog_log.vjs_c" />
     </scripts>
     <styles>
@@ -14,6 +15,8 @@
 
     </snippets>
     <Panel hittest="false" class="MainHud">
+        <Panel hittest="false" id="FadeScreenContainer" />
+
         <Panel hittest="false" class="TopLeftMenu">
             <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
             <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleChaptersMenu();" onmouseover="UIShowTextTooltip('#Chapters')" onmouseout="UIHideTextTooltip()" />
