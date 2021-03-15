@@ -1,8 +1,9 @@
 import * as tut from "../../Tutorial/Core"
 import * as tg from "../../TutorialGraph/index"
+import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
-import { centerCameraOnHero, getOrError, getPlayerHero, removeContextEntityIfExists } from "../../util"
+import { centerCameraOnHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
 
@@ -27,17 +28,88 @@ const requiredState: RequiredState = {
     },
 }
 
-const npcInfo = [
-    //{ name: CustomNpcKeys.ODPixelMudGolem, location: Vector(-7250, -6300, 384) },
-    { name: CustomNpcKeys.PurgePugna, location: Vector(-7250, -6500, 384) },
-    { name: CustomNpcKeys.GodzMudGolem, location: Vector(-7250, -6700, 384) },
+class ClosingNpc {
+    private _unit: CDOTA_BaseNPC | undefined
+
+    private spawned = false
+
+    private interactDistance = 200
+    private interacting = false
+    private dialogPlaying = false
+
+    constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName: string) {
+
+    }
+
+    public get unit() {
+        return this._unit
+    }
+
+    spawn() {
+        this.spawned = true
+
+        CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
+            this._unit = unit
+
+            // destroy() could have been called before this callback was called
+            if (!this.spawned) {
+                if (unitIsValidAndAlive(this._unit)) {
+                    this._unit.RemoveSelf()
+                }
+
+                this._unit = undefined
+            }
+        })
+    }
+
+    destroy() {
+        this.spawned = false
+
+        if (this._unit) {
+            if (unitIsValidAndAlive(this._unit)) {
+                this._unit.RemoveSelf()
+            }
+
+            this._unit = undefined
+        }
+    }
+
+    update() {
+        if (this.spawned && this.unit && unitIsValidAndAlive(this.unit)) {
+            const hero = getOrError(getPlayerHero(), "Can not get player hero")
+
+            const distance = hero.GetAbsOrigin().__sub(this.location).Length2D()
+
+            if (this.interacting) {
+                // Player leaves
+                if (distance > this.interactDistance) {
+                    // Stop dialog if it was still in progress
+                    this.interacting = false
+                    if (this.dialogPlaying) {
+                        dg.stop()
+                    }
+                }
+            } else {
+                // Player enters
+                if (distance <= this.interactDistance) {
+                    // Play dialog
+                    this.interacting = true
+                    this.dialogPlaying = true
+                    dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogPlaying = false)
+                }
+            }
+        }
+    }
+}
+
+const npcs = [
+    new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6500, 384), LocalizationKey.Script_6_Opening_8, LocalizationKey.Script_6_Opening_8),
+    new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7250, -6800, 384), LocalizationKey.Script_6_Opening_9, LocalizationKey.Script_6_Opening_9),
 ]
 
-const getNpcs = (ctx: tg.TutorialContext): CDOTA_BaseNPC[] => npcInfo.map(info => ctx[info.name])
-
-const spawnNpcs = () => tg.fork(npcInfo.map(info => tg.spawnUnit(info.name, info.location, DotaTeam.GOODGUYS, info.name, true)))
-
-const clearNpcs = (ctx: tg.TutorialContext) => npcInfo.forEach(info => removeContextEntityIfExists(ctx, info.name))
+const spawnNpcs = () => npcs.forEach(npc => npc.spawn())
+const waitNpcsSpawned = () => tg.completeOnCheck(_ => npcs.every(npc => npc.unit !== undefined), 0.1)
+const clearNpcs = () => npcs.forEach(npc => npc.destroy())
 
 function onStart(complete: () => void) {
     print("Starting", sectionName)
@@ -59,13 +131,16 @@ function onStart(complete: () => void) {
         tg.wait(1.5),
 
         // Spawn our NPCs and make Slacks and SUNSfan visible again
-        spawnNpcs(),
+        tg.immediate(_ => spawnNpcs()),
         tg.immediate(_ => slacks.RemoveNoDraw()),
         tg.immediate(_ => sunsFan.RemoveNoDraw()),
         tg.immediate(_ => centerCameraOnHero()),
 
         // Wait to fade back in
         tg.wait(2),
+
+        // Hopefully every npc will be spawned by now and this completes immediately
+        waitNpcsSpawned(),
 
         // Main logic
         tg.fork([
@@ -77,16 +152,21 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
             ]),
 
+            tg.loop(true, tg.seq([
+                tg.immediate(_ => npcs.forEach(npc => npc.update())),
+                tg.wait(0.1),
+            ])),
+
             // Make everyone stare at you, little bit creepy
             tg.loop(true, tg.seq([
                 tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
-                tg.immediate(ctx => getNpcs(ctx).forEach(npc => npc.FaceTowards(playerHero.GetAbsOrigin()))),
+                tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
                 tg.wait(0.1),
             ])),
         ]),
 
         // Should never happen currently
-        tg.immediate(ctx => clearNpcs(ctx)),
+        tg.immediate(_ => clearNpcs()),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
@@ -108,6 +188,8 @@ function onStop() {
 
     slacks.RemoveNoDraw()
     sunsFan.RemoveNoDraw()
+
+    clearNpcs()
 }
 
 export const sectionClosing = new tut.FunctionalSection(
