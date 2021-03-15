@@ -26,9 +26,9 @@ const dustName = "item_dust";
 const dustLocation = Vector(-1700, 3800, 256);
 const outpostLocation = Vector(-2000, 4300);
 const lastSawRikiLocation = Vector(-1300, 4200);
-const rikiName = "npc_dota_hero_riki";
+const rikiName = CustomNpcKeys.Riki;
 // UI Highlighting Paths
-const inventorySlot1UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_1"
+const inventorySlot1UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_1";
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -111,8 +111,7 @@ function onStart(complete: () => void) {
                     riki.CastAbilityOnPosition(riki.GetAbsOrigin().__add(Vector(-200, 100)), tricksOfTheTrade, 0);
                 }
             }),
-            tg.audioDialog(LocalizationKey.Script_4_RTZ_getaway, LocalizationKey.Script_4_RTZ_getaway, ctx => ctx[rikiName]),
-            tg.wait(2),
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_getaway, LocalizationKey.Script_4_RTZ_getaway, ctx => ctx[rikiName], 2.5),
             tg.audioDialog(LocalizationKey.Script_4_Outpost_5, LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.withHighlights(tg.seq([
