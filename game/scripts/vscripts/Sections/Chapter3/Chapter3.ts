@@ -257,17 +257,26 @@ const onStart = (complete: () => void) => {
                 setUnitPacifist(odPixel, true);
             }),
             tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
-            tg.loop(_ => tryCount < 1, _ => { // Set this back to 5 // Remove the hardcoding
+            tg.loop(_ => tryCount <= 5, _ => { // Set this back to 5 // Remove the hardcoding
                 goalTryStackCreeps.setValue(tryCount);
                 goalOptionalStackCreeps.setValue(stackCount);
+
+                // Play the final dialog
+                if (tryCount == 5) {
+                    tryCount++;
+                    return tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.ODPixelMudGolem]);
+                }
 
                 // Do something if a try was done.
                 if (tryCount !== previousTryCount) {
                     previousTryCount = tryCount;
                     if (stackCount === 0) {
                         // Reset try count if we failed the first stack
+                        if (tryCount === 0) {
+                            return tg.audioDialog(LocalizationKey.Script_3_Opening_20, LocalizationKey.Script_3_Opening_20, ctx => ctx[CustomNpcKeys.ODPixelMudGolem])
+                        }
                         tryCount = 0;
-                        return tg.audioDialog(LocalizationKey.Script_3_Opening_20, LocalizationKey.Script_3_Opening_20, ctx => ctx[CustomNpcKeys.ODPixelMudGolem])
+                        return tg.wait(0);
                     } else if (playedDialogStacks !== stackCount) {
                         // Play dialog if we didn't play it yet for the stack count
                         playedDialogStacks = stackCount;
@@ -277,6 +286,7 @@ const onStart = (complete: () => void) => {
 
                 return tg.wait(0);
             }),
+            tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
             tg.immediate(_ => {
                 timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
                 timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
@@ -357,7 +367,6 @@ const onStart = (complete: () => void) => {
     const chaseRiki = () => {
         const location = GetGroundPosition(Vector(-2250, 3850), undefined);
         return [
-            tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, (ctx) => ctx[CustomNpcKeys.Riki]),
             tg.immediate((ctx) => {
                 goalMoveToRiki.start();
                 let riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
@@ -369,6 +378,7 @@ const onStart = (complete: () => void) => {
                 riki.Hold();
                 setUnitPacifist(riki,true);
             }),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, (ctx) => ctx[CustomNpcKeys.Riki]),
             tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.moveUnit((ctx) => ctx[CustomNpcKeys.Riki], location),
             tg.goToLocation(location),
