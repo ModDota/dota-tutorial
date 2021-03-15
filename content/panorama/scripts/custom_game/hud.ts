@@ -99,8 +99,11 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
         highlightPanel.hittest = false; // Dont block interactions
         highlightPanel.AddClass("UIHighlightScalingAnimation")
         $.Schedule(0.5, () => {
-            highlightPanel.RemoveClass("UIHighlightScalingAnimation")
-            highlightPanel.AddClass("UIHighlight");
+            if (highlightPanel.IsValid())
+            {
+                highlightPanel.RemoveClass("UIHighlightScalingAnimation")
+                highlightPanel.AddClass("UIHighlight");
+            }
         })
 
         highlightPanel.SetParent(hudRoot);
