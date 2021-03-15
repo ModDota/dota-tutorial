@@ -153,7 +153,7 @@ const onStart = (complete: () => void) => {
                     tg.panCameraExponential(bottomMidPoint, middleMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseMid.spawn()),
                     tg.wait(1.5),
-                    tg.panCameraExponential(_ => middleMidPoint, topMidPoint, 4),
+                    tg.panCameraExponential(middleMidPoint, topMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseTop.spawn()),
                     tg.wait(1.5),
                     tg.panCameraExponential(topMidPoint, _ => playerHero.GetAbsOrigin(), 4),
