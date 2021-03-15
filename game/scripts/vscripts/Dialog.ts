@@ -9,16 +9,24 @@ interface DialogData {
     sound?: string;
 }
 
+function generateDialogToken() {
+    return RandomInt(1, 100000000)
+}
+
 class DialogController {
     private voiceVolume = 3;
     private currentLine: DialogData | undefined;
+    private currentToken: DialogToken | undefined;
     private onDialogEndedCallback: (() => void) | undefined = undefined;
     private playing = false;
 
     constructor() {
-        CustomGameEventManager.RegisterListener("dialog_complete", _ => this.onEnded());
+        CustomGameEventManager.RegisterListener("dialog_complete", (source, event) => this.onEnded(event));
     }
 
+    /**
+     * Stops the currently playing sound.
+     */
     private stopSound() {
         if (this.currentLine && this.currentLine.speaker && this.currentLine.sound && IsValidEntity(this.currentLine.speaker)) {
             this.currentLine.speaker.StopSound(this.currentLine.sound);
@@ -27,19 +35,25 @@ class DialogController {
 
     /**
      * Forces the dialog to stop. Clears the dialog UI and stops the current sound.
+     * @param token Optional token for the dialog to stop. If undefined cancels any currently playing dialog.
      */
-    public stop() {
-        this.stopSound();
-        this.playing = false;
-        CustomGameEventManager.Send_ServerToAllClients("dialog_clear", {});
+    public stop(token?: DialogToken) {
+        if (token === undefined || token === this.currentToken) {
+            this.stopSound();
+            this.playing = false;
+            this.currentLine = undefined;
+            this.currentToken = undefined;
+            CustomGameEventManager.Send_ServerToAllClients("dialog_clear", { Token: token });
+        }
     }
 
     /**
      * Plays a dialog.
      * @param dialog Data for the dialog to be played.
      * @param onEnded Optional callback for when the dialog was completed (either actually completed or skipped on the client side).
+     * @return Token for the dialog that can be used to stop it early.
      */
-    public play(dialog: DialogData, onEnded?: () => void) {
+    public play(dialog: DialogData, onEnded?: () => void): DialogToken {
         if (this.playing) {
             this.stopSound();
         }
@@ -65,24 +79,32 @@ class DialogController {
             speaker.EmitSoundParams(sound, 0, this.voiceVolume, 0);
         }
 
+        this.currentToken = generateDialogToken();
+
         CustomGameEventManager.Send_ServerToAllClients("dialog", {
             DialogEntIndex: speaker.entindex(),
             DialogText: text,
             DialogAdvanceTime: advanceTime,
+            Token: this.currentToken,
         });
+
+        return this.currentToken;
     }
 
     /**
      * Called when the dialog ends naturally from the client (ie. not from a stop() call on the server).
      */
-    private onEnded() {
-        this.stopSound();
-        this.playing = false;
+    private onEnded(event: DialogCompleteEvent) {
+        if (event.Token === this.currentToken) {
+            this.stopSound();
+            this.playing = false;
+            this.currentToken = undefined;
 
-        const dialogEndedCallback = this.onDialogEndedCallback
-        if (dialogEndedCallback) {
-            this.onDialogEndedCallback = undefined
-            dialogEndedCallback()
+            const dialogEndedCallback = this.onDialogEndedCallback;
+            if (dialogEndedCallback) {
+                this.onDialogEndedCallback = undefined;
+                dialogEndedCallback();
+            }
         }
     }
 }
@@ -107,7 +129,7 @@ function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, onEnded
         sound: soundName,
     }
 
-    getOrError(dialogController).play(dialog, onEnded);
+    return getOrError(dialogController).play(dialog, onEnded);
 }
 
 /**
@@ -116,10 +138,11 @@ function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, onEnded
  * @param text Text to show.
  * @param unit Unit that is speaking.
  * @param extraDuration Extra time to add on top of the sound duration.
+ * @return Token for the dialog that can be used to stop it early.
  */
 export function playAudio(soundName: string, text: string, unit: CDOTA_BaseNPC, extraDuration?: number, onEnded?: () => void) {
     const duration = getSoundDuration(soundName) + (extraDuration === undefined ? 0 : extraDuration);
-    playCommon(text, unit, duration, onEnded, soundName);
+    return playCommon(text, unit, duration, onEnded, soundName);
 }
 
 /**
@@ -127,14 +150,16 @@ export function playAudio(soundName: string, text: string, unit: CDOTA_BaseNPC, 
  * @param text Text to show.
  * @param unit Unit that is speaking.
  * @param duration Time to show the dialog for.
+ * @return Token for the dialog that can be used to stop it early.
  */
 export function playText(text: string, unit: CDOTA_BaseNPC, duration: number, onEnded?: () => void) {
-    playCommon(text, unit, duration, onEnded);
+    return playCommon(text, unit, duration, onEnded);
 }
 
 /**
  * Clears the dialog queue and stops all current dialog.
+ * @param token Optional token for the dialog to stop. If undefined cancels any currently playing dialog.
  */
-export function stop() {
-    getOrError(dialogController).stop();
+export function stop(token?: DialogToken) {
+    return getOrError(dialogController).stop(token);
 }

@@ -93,3 +93,5 @@ declare const enum ParticleName {
 }
 
 type VideoName = "guides" | "muting"
+
+type DialogToken = number
