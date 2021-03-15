@@ -38,6 +38,7 @@ export class GameMode {
         chapters.chapter5.sectionRoshan,
         chapters.chapter5.sectionTeamFight,
         chapters.chapter6.sectionOpening,
+        chapters.chapter6.sectionClosing,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;

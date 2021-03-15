@@ -89,4 +89,5 @@ interface CustomGameEventDeclarations {
     play_video: PlayVideoEvent;
     hide_video: {};
     play_video_continue: {};
+    fade_screen: {};
 }

@@ -1770,4 +1770,88 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_DotaU.vsnd" ]
     }
+    "Script_6_Liquipedia" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Liquipedia.vsnd" ]
+    }
+    "Script_6_Flam3s" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Flam3s.vsnd" ]
+    }
+    "Script_6_Perry" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Perry.vsnd" ]
+    }
+    "Script_6_PongPing" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_PongPing.vsnd" ]
+    }
+    "Script_6_Shush" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Shush.vsnd" ]
+    }
+    "Script_6_SinZ" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_SinZ.vsnd" ]
+    }
+    "Script_6_SmashTheState" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_SmashTheState.vsnd" ]
+    }
+    "Script_6_Tora" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Tora.vsnd" ]
+    }
+    "Script_6_Toyoka" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Toyoka.vsnd" ]
+    }
+    "Script_6_VicFrank" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_VicFrank.vsnd" ]
+    }
+    "Script_6_Yoyo" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Yoyo.vsnd" ]
+    }
+    "Script_6_Slacks" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Slacks.vsnd" ]
+    }
+    "Script_6_SUNSfan" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_SUNSfan.vsnd" ]
+    }
+    "Script_6_valkyrjaRuby" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_valkyrjaRuby.vsnd" ]
+    }
 }
