@@ -18,6 +18,7 @@ const creepCampBox = [
 ];
 let creepPhase = 0;
 
+const stackTryCount = 5;
 const giveAwayItemName = "item_arcane_ring";
 const dropInStashItemName = "item_mysterious_hat";
 const keepItemName = "item_possessed_mask";
@@ -262,12 +263,12 @@ const onStart = (complete: () => void) => {
                 setUnitPacifist(odPixel, true);
             }),
             tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
-            tg.loop(_ => tryCount <= 5, _ => { // Set this back to 5 // Remove the hardcoding
+            tg.loop(_ => tryCount <= stackTryCount, _ => { 
                 goalTryStackCreeps.setValue(tryCount);
                 goalOptionalStackCreeps.setValue(stackCount);
 
                 // Play the final dialog
-                if (tryCount == 5) {
+                if (tryCount == stackTryCount) {
                     tryCount++;
                     return tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.ODPixelMudGolem]);
                 }
