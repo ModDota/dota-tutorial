@@ -3,7 +3,8 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import * as shared from "./Shared"
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero } from "../../util";
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
+import { custom_mirana_arrow } from "../../abilities/custom_mirana_arrow";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
 
@@ -57,6 +58,15 @@ function onStart(complete: () => void) {
             shared.spawnFriendlyHeroes(shared.outsidePitLocation),
             shared.spawnEnemyHeroes(shared.enemyLocation),
 
+            // Setup positions, items and abilities
+            tg.immediate(ctx => ctx[CustomNpcKeys.Pudge].SetAbsOrigin(Vector(-1825, 750, 0))),
+            tg.immediate(ctx => setupEnemyHeroes(ctx)),
+
+            // Pacify everyone so they dont aggro before the fight starts
+            tg.fork(shared.allHeroesInfo.map((heroInfo) => {
+                return tg.immediate(ctx => setUnitPacifist(ctx[heroInfo.name], true))
+            })),
+
             // Pan to enemies and back while dialog is playing
             tg.immediate(_ => GameRules.SetTimeOfDay(0.5)),
             tg.immediate(_ => goalSpotEnemies.start()),
@@ -76,6 +86,9 @@ function onStart(complete: () => void) {
             tg.immediate(_ => freezePlayerHero(false)),
 
             // Start teamfight
+            tg.fork(shared.allHeroesInfo.map((heroInfo) => {
+                return tg.immediate(ctx => setUnitPacifist(ctx[heroInfo.name], false))
+            })),
             tg.immediate(ctx => shared.getLivingHeroes(ctx).forEach(hero => {
                 ExecuteOrderFromTable({
                     OrderType: UnitOrder.ATTACK_MOVE,
@@ -83,15 +96,57 @@ function onStart(complete: () => void) {
                     UnitIndex: hero.entindex(),
                 })
             })),
+            tg.fork([
+                tg.seq([
+                    // Wait for every enemy to die
+                    // TODO: Add logic for if the player dies (although not a disaster atm. either since they just respawn)
+                    tg.loop(ctx => shared.getLivingEnemyHeroes(ctx).length > 0, ctx => tg.seq([
+                        tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount - shared.getLivingEnemyHeroes(ctx).length)),
+                        tg.wait(1),
+                    ])),
+                    tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount)),
+                    tg.immediate(_ => goalKillEnemyHeroes.complete()),
+                ]),
 
-            // Wait for every enemy to die
-            // TODO: Add logic for if the player dies (although not a disaster atm. either since they just respawn)
-            tg.loop(ctx => shared.getLivingEnemyHeroes(ctx).length > 0, ctx => tg.seq([
-                tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount - shared.getLivingEnemyHeroes(ctx).length)),
-                tg.wait(1),
-            ])),
-            tg.immediate(_ => goalKillEnemyHeroes.setValue(totalEnemyCount)),
-            tg.immediate(_ => goalKillEnemyHeroes.complete()),
+                // Friendlies teamfight logic
+                tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", UnitOrder.CAST_POSITION),
+                tg.seq([
+                    tg.fork(shared.friendlyHeroesInfo.map(friendlyHeroInfo => {
+                        return tg.completeOnCheck(ctx => ctx[friendlyHeroInfo.name].IsAttacking(), 1)
+                    })),
+                    tg.forkAny([
+                        tg.completeOnCheck(ctx => shared.getLivingEnemyHeroes(ctx).length === 0, 1),
+                        tg.seq([
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", UnitOrder.CAST_NO_TARGET),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", UnitOrder.CAST_NO_TARGET),
+                            tg.completeOnCheck(ctx => !ctx[CustomNpcKeys.Windrunner].IsStunned(), 1),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", UnitOrder.CAST_TARGET),
+                            tg.wait(2),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_voodoo", UnitOrder.CAST_TARGET),
+                        ]),
+                    ])
+                ]),
+
+                // Enemies teamfight logic
+                tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Pudge], _ => playerHero.GetAbsOrigin(), "pudge_meat_hook", UnitOrder.CAST_POSITION),
+                tg.seq([
+                    tg.forkAny([
+                        tg.completeOnCheck(ctx => shared.getLivingEnemyHeroes(ctx).length === 0, 1),
+                        tg.seq([
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Wisp], "wisp_overcharge", UnitOrder.CAST_NO_TARGET),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Luna], "wisp_tether", UnitOrder.CAST_TARGET),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_ice_path", UnitOrder.CAST_POSITION),
+                            tg.wait(1),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_macropyre", UnitOrder.CAST_POSITION),
+                            tg.wait(1),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Luna], ctx => ctx[CustomNpcKeys.Luna], "luna_eclipse", UnitOrder.CAST_NO_TARGET),
+                            tg.wait(1),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], ctx => ctx[CustomNpcKeys.Tidehunter], "windrunner_shackleshot", UnitOrder.CAST_TARGET),
+                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], _ => playerHero, "windrunner_focusfire", UnitOrder.CAST_TARGET)
+                        ]),
+                    ])
+                ])
+            ]),
 
             // Play win dialog
             tg.immediate(ctx => shared.getLivingFriendlyHeroes(ctx).forEach(hero => hero.StartGesture(GameActivity.DOTA_VICTORY))),
@@ -185,3 +240,56 @@ export const sectionTeamFight = new tut.FunctionalSection(
     onStop,
     orderFilter,
 );
+
+function setupEnemyHeroes(context: tg.TutorialContext) {
+    const luna = context[CustomNpcKeys.Luna] as CDOTA_BaseNPC_Hero
+
+    luna.AddItemByName("item_butterfly")
+    luna.AddItemByName("item_manta")
+    const eclipse = luna.FindAbilityByName("luna_eclipse")
+
+    if (eclipse)
+        eclipse.SetLevel(2)
+
+    context[CustomNpcKeys.Wisp].AddItemByName("item_mekansm")
+    context[CustomNpcKeys.Wisp].AddItemByName("item_spirit_vessel")
+    const overcharge = context[CustomNpcKeys.Wisp].FindAbilityByName("wisp_overcharge")
+
+    if (overcharge)
+        overcharge.SetLevel(4)
+
+    context[CustomNpcKeys.Jakiro].AddItemByName("item_ghost")
+    context[CustomNpcKeys.Jakiro].AddItemByName("item_glimmer_cape")
+    const macroPyre = context[CustomNpcKeys.Jakiro].FindAbilityByName("jakiro_macropyre")
+
+    if (macroPyre)
+        macroPyre.SetLevel(2)
+
+    context[CustomNpcKeys.Pudge].AddItemByName("item_pipe")
+    context[CustomNpcKeys.Pudge].AddItemByName("item_vanguard")
+
+    context[CustomNpcKeys.Windrunner].AddItemByName("item_ultimate_scepter")
+    context[CustomNpcKeys.Windrunner].AddItemByName("item_lesser_crit")
+    const focusFire = context[CustomNpcKeys.Windrunner].FindAbilityByName("windrunner_focusfire")
+
+    if (focusFire)
+        focusFire.SetLevel(2)
+}
+
+function executeFriendlyFightLogic(context: tg.TutorialContext) {
+    const tideHunter = context[CustomNpcKeys.Tidehunter] as CDOTA_BaseNPC_Hero
+    const lion = context[CustomNpcKeys.Lion] as CDOTA_BaseNPC_Hero
+    const mirana = context[CustomNpcKeys.Mirana] as CDOTA_BaseNPC_Hero
+    const juggernaut = context[CustomNpcKeys.Juggernaut] as CDOTA_BaseNPC_Hero
+
+    // shared.friendlyHeroesInfo.entries()
+    if (unitIsValidAndAlive(tideHunter)) {
+        useAbility(tideHunter, tideHunter, "tidehunter_ravage", UnitOrder.CAST_NO_TARGET)
+    }
+
+    if (unitIsValidAndAlive(lion)) {
+        useAbility(lion, context[CustomNpcKeys.Antimage], "lion_impale", UnitOrder.CAST_TARGET)
+    }
+
+}
+
