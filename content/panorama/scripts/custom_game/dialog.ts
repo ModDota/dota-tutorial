@@ -64,7 +64,9 @@ function AdvanceDialogThink() {
         dialogPanel.SetHasClass("Visible", false);
         const token = currentToken;
         currentToken = undefined;
-        GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
+        if (token) {
+            GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
+        }
         return;
     }
 
@@ -99,7 +101,9 @@ function OnCloseDialogButtonPressed() {
     const token = currentToken;
     currentToken = undefined;
     $("#DialogPanel").SetHasClass("Visible", false);
-    GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
+    if (token) {
+        GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
+    }
 }
 
 GameEvents.Subscribe("dialog", OnDialogReceived);
