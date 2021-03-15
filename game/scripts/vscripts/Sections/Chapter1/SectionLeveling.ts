@@ -93,7 +93,7 @@ const start = (complete: () => void) => {
                     tg.loop(ctx => unitIsValidAndAlive(ctx[CustomNpcKeys.PurgePugna]), tg.audioDialog(LocalizationKey.Script_1_Leveling_4_2, LocalizationKey.Script_1_Leveling_4_2, ctx => ctx[CustomNpcKeys.PurgePugna])),
                     // Stop long dialog when we get attacked but not stunned. Let purge speak for at least a few seconds too.
                     tg.seq([
-                        tg.wait(0.1),
+                        tg.wait(2),
                         tg.completeOnCheck(ctx => {
                             const purge = ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC_Hero
                             return !purge.IsStunned() && purge.GetHealthDeficit() > 0
