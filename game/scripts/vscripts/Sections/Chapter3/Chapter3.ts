@@ -55,13 +55,13 @@ const requiredState: RequiredState = {
     requireRiki: true,
     heroItems: { item_greater_crit: 1 },
     blockades: [
-        new Blockade(Vector(-1550, 3600), Vector(-1550, 4800)),
         new Blockade(Vector(-1550, 4800), Vector(-2600, 6400)),
         new Blockade(Vector(-2600, 6400), Vector(-3700, 6400)),
         new Blockade(Vector(-3700, 6400), Vector(-4100, 5200)),
-        new Blockade(Vector(-4100, 5200), Vector(-4600, 4800)),
-        new Blockade(Vector(-4600, 4800), Vector(-4000, 3800)),
-        new Blockade(Vector(-4000, 3800), Vector(-1550, 3600)),
+        new Blockade(Vector(-4000, 3104), Vector(-3545, 3062)), // River
+        new Blockade(Vector(-4223, 5043), Vector(-4480, 4630)),
+        new Blockade(Vector(-4480, 4630), Vector(-4597, 3497)),
+        new Blockade(Vector(-1450, 4600), Vector(-1500, 3300)),
     ],
 };
 
@@ -89,30 +89,28 @@ const onStart = (complete: () => void) => {
 
     const itemsToDrop = [giveAwayItemName, dropInStashItemName];
 
-    entityKilledListenerId = ListenToGameEvent("entity_killed",(event) => {
-            const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
-            if (unit.IsNeutralUnitType()) {
-                if (creepPhase === 2 && itemsToDrop.indexOf(giveAwayItemName)) {
-                    // Use a timer to make sure this event doesn't trigger twice without changing the array
-                    Timers.CreateTimer(FrameTime(),()=> {
-                        if (itemsToDrop.includes(giveAwayItemName)) {
-                            DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
-                            itemsToDrop.splice(itemsToDrop.indexOf(giveAwayItemName), 1);
-                        }
-                    })
-                } else if (creepPhase === 3 && itemsToDrop.indexOf(dropInStashItemName)) {
-                    // Use a timer to make sure this event doesn't trigger twice without changing the array
-                    Timers.CreateTimer(FrameTime(),()=> {
-                        if (itemsToDrop.includes(dropInStashItemName)) {
-                            DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
-                            itemsToDrop.splice(itemsToDrop.indexOf(dropInStashItemName), 1);
-                        }
-                    })
-                }
+    entityKilledListenerId = ListenToGameEvent("entity_killed", (event) => {
+        const unit = EntIndexToHScript(event.entindex_killed) as CDOTA_BaseNPC;
+        if (unit.IsNeutralUnitType()) {
+            if (creepPhase === 2 && itemsToDrop.indexOf(giveAwayItemName)) {
+                // Use a timer to make sure this event doesn't trigger twice without changing the array
+                Timers.CreateTimer(FrameTime(), () => {
+                    if (itemsToDrop.includes(giveAwayItemName)) {
+                        DropNeutralItemAtPositionForHero(giveAwayItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+                        itemsToDrop.splice(itemsToDrop.indexOf(giveAwayItemName), 1);
+                    }
+                })
+            } else if (creepPhase === 3 && itemsToDrop.indexOf(dropInStashItemName)) {
+                // Use a timer to make sure this event doesn't trigger twice without changing the array
+                Timers.CreateTimer(FrameTime(), () => {
+                    if (itemsToDrop.includes(dropInStashItemName)) {
+                        DropNeutralItemAtPositionForHero(dropInStashItemName, unit.GetAbsOrigin(), playerHero, 0, true);
+                        itemsToDrop.splice(itemsToDrop.indexOf(dropInStashItemName), 1);
+                    }
+                })
             }
-        },
-        undefined
-    );
+        }
+    }, undefined);
 
     const goToCamp = () => [
         tg.immediate(_ => goalMoveToCamp.start()),
@@ -200,7 +198,7 @@ const onStart = (complete: () => void) => {
                 playerHero.Hold();
                 highlightUiElement(clockUIPath);
             }),
-            
+
             tg.audioDialog(LocalizationKey.Script_3_Opening_15, LocalizationKey.Script_3_Opening_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => freezePlayerHero(false)),
             tg.loop(_ => stackCount < 1, _ => {
@@ -263,7 +261,7 @@ const onStart = (complete: () => void) => {
                 setUnitPacifist(odPixel, true);
             }),
             tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
-            tg.loop(_ => tryCount <= stackTryCount, _ => { 
+            tg.loop(_ => tryCount <= stackTryCount, _ => {
                 goalTryStackCreeps.setValue(tryCount);
                 goalOptionalStackCreeps.setValue(stackCount);
 
@@ -341,7 +339,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => creepArr = getAllNeutralCreeps()),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_4, LocalizationKey.Script_3_Neutrals_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        
+
         tg.completeOnCheck(_ => creepArr.length === 0 || !creepArr.some(unitIsValidAndAlive), 1),
         tg.immediate(_ => goalKillThirdSpawn.complete()),
         tg.immediate(_ => goalPickupItem.start()),
@@ -376,7 +374,7 @@ const onStart = (complete: () => void) => {
                 riki.RemoveModifierByName("modifier_invisible");
                 riki.RemoveModifierByName("modifier_riki_backstab");
                 riki.Hold();
-                setUnitPacifist(riki,true);
+                setUnitPacifist(riki, true);
             }),
             tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, (ctx) => ctx[CustomNpcKeys.Riki]),
             tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
