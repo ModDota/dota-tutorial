@@ -99,8 +99,7 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
         highlightPanel.hittest = false; // Dont block interactions
         highlightPanel.AddClass("UIHighlightScalingAnimation")
         $.Schedule(0.5, () => {
-            if (highlightPanel.IsValid())
-            {
+            if (highlightPanel.IsValid()) {
                 highlightPanel.RemoveClass("UIHighlightScalingAnimation")
                 highlightPanel.AddClass("UIHighlight");
             }
