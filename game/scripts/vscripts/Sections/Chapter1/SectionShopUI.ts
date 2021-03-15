@@ -27,11 +27,25 @@ const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierCont
 const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
 const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
+// Blockades
 const blockadeRadiantBaseMid = new Blockade(Vector(-4793, -3550, 256), Vector(-4061, -4212, 256))
 const blockadeRadiantBaseBottom = new Blockade(Vector(-3612, -5557, 256), Vector(-3584, -6567, 256))
+const blockadeRadiantBaseTop = new Blockade(Vector(-6124, -3100, 256), Vector(-7067, -3099, 256))
+
 const getMidPoint = (a: Vector, b: Vector) => a.__mul(0.5).__add(b.__mul(0.5))
 const middleMidPoint = getMidPoint(blockadeRadiantBaseMid.startLocation, blockadeRadiantBaseMid.endLocation)
 const bottomMidPoint = getMidPoint(blockadeRadiantBaseBottom.startLocation, blockadeRadiantBaseBottom.endLocation)
+const topMidPoint = getMidPoint(blockadeRadiantBaseTop.startLocation, blockadeRadiantBaseTop.endLocation)
+
+// Locations
+const radiantBaseBotExitSide1 = Vector(-3781, -6488, 256)
+const radiantBaseBotExitSide2 = Vector(-3799, -5634, 256)
+const radiantBaseMidExitSide1 = Vector(-4110, -4338, 256)
+const radiantBaseMidExitSide2 = Vector(-4861, -3671, 256)
+const radiantBaseTopExitSide1 = Vector(-6085, -3257, 256)
+const radiantBaseTopExitSide2 = Vector(-7079, -3242, 256)
+const midPositionBeforeTrapLocation = Vector(-4904, -4385, 256)
+const inFrontOfBarracksLocation = Vector(-6589, -4468, 259)
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -120,7 +134,12 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => goalMoveOut.start()),
 
             // Wait for player to move outside the fountain into the base
-            tg.goToLocation(GetGroundPosition(Vector(-4350, -5450), undefined), [GetGroundPosition(Vector(-5250, -6100), undefined)]),
+            tg.forkAny([
+                tg.goToLocation(midPositionBeforeTrapLocation, [GetGroundPosition(Vector(-6218, -5764), undefined), GetGroundPosition(Vector(-5553, -5640), undefined), GetGroundPosition(Vector(-5564, -5036), undefined)]),
+                tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseBotExitSide1, radiantBaseBotExitSide2), 0.1),
+                tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseMidExitSide1, radiantBaseMidExitSide2), 0.1),
+                tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseTopExitSide1, radiantBaseTopExitSide2), 0.1)
+            ]),
 
             // Spawn blockades to guide player upwards while dialog is playing.
             tg.immediate(_ => freezePlayerHero(true)),
@@ -134,22 +153,26 @@ const onStart = (complete: () => void) => {
                     tg.panCameraExponential(bottomMidPoint, middleMidPoint, 4),
                     tg.immediate(_ => blockadeRadiantBaseMid.spawn()),
                     tg.wait(1.5),
-                    tg.panCameraExponential(middleMidPoint, _ => playerHero.GetAbsOrigin(), 4),
+                    tg.panCameraExponential(middleMidPoint, topMidPoint, 4),
+                    tg.immediate(_ => blockadeRadiantBaseTop.spawn()),
+                    tg.wait(1.5),
+                    tg.panCameraExponential(topMidPoint, _ => playerHero.GetAbsOrigin(), 4),
                 ])
             ]),
 
             // Tell player to escape and wait for them to move to the top.
+            tg.immediate(_ => freezePlayerHero(false)),
             tg.fork([
                 tg.seq([
                     tg.audioDialog(LocalizationKey.Script_1_Closing_6, LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(_ => freezePlayerHero(false)),
                 ]),
-                tg.goToLocation(GetGroundPosition(Vector(-5750, -3900), undefined), [GetGroundPosition(Vector(-4600, -5000), undefined)]),
+                tg.goToLocation(inFrontOfBarracksLocation),
             ]),
             tg.immediate(_ => {
                 goalMoveOut.complete();
                 blockadeRadiantBaseMid.destroy();
                 blockadeRadiantBaseBottom.destroy();
+                blockadeRadiantBaseTop.destroy();
             }),
         ])
     )
@@ -167,6 +190,7 @@ function onStop() {
     removeHighlight(inventorySlot0UIPath);
     blockadeRadiantBaseMid.destroy();
     blockadeRadiantBaseBottom.destroy();
+    blockadeRadiantBaseTop.destroy();
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
@@ -199,4 +223,10 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     }
 
     return true;
+}
+
+
+function checkPlayerHeroTryingToEscape(startPos: Vector, endPos: Vector): boolean {
+    const heroesTryingToEscape = FindUnitsInLine(DotaTeam.GOODGUYS, startPos, endPos, undefined, 180, UnitTargetTeam.FRIENDLY, UnitTargetType.HERO, UnitTargetFlags.NONE)
+    return heroesTryingToEscape.length > 0
 }

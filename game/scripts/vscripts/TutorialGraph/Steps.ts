@@ -352,7 +352,8 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
             const distance = actualEndLocation.__sub(currentLocation).Length2D()
 
             // Stop when we are close enough.
-            if (distance > 10) {
+            // Exactly zero distance does seem to actually happen so this check works fine.
+            if (distance > 0.1) {
                 // Query the speed for the current location.
                 const speed = getSpeed(actualStartLocation, actualEndLocation, currentLocation)
 
@@ -363,8 +364,14 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
                 cameraTimer = Timers.CreateTimer(updateInterval, () => updateDummy())
             } else {
                 cameraDummy.SetAbsOrigin(actualEndLocation)
-                cleanup()
-                complete()
+
+                // Delay cleanup, otherwise the player camera doesn't update exactly.
+                // Could fail if this step is called again before the callback is executed (ie. called twice in the same frame)
+                // as then we would clean up and complete the new camera movement, but we will take that chance.
+                Timers.CreateTimer(FrameTime(), () => {
+                    cleanup()
+                    complete()
+                })
             }
         }
 
@@ -688,14 +695,24 @@ export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep)
 export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
     const defaultExtraDelaySeconds = 0.5
 
+    let dialogToken: DialogToken | undefined
+
     return tg.step((context, complete) => {
         const actualSoundName = tg.getArg(soundName, context)
         const actualUnit = tg.getArg(unit, context)
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, complete)
-    }, _ => dg.stop())
+        dialogToken = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, () => {
+            dialogToken = undefined
+            complete()
+        })
+    }, _ => {
+        if (dialogToken !== undefined) {
+            dg.stop(dialogToken)
+            dialogToken = undefined
+        }
+    })
 }
 
 /**
@@ -705,13 +722,23 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  * @param waitSeconds Time to wait for in seconds.
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
+    let dialogToken: DialogToken | undefined
+
     return tg.step((context, complete) => {
         const actualText = tg.getArg(text, context)
         const actualUnit = tg.getArg(unit, context)
         const actualWaitSeconds = tg.getArg(waitSeconds, context)
 
-        dg.playText(actualText, actualUnit, actualWaitSeconds, complete)
-    }, _ => dg.stop())
+        dialogToken = dg.playText(actualText, actualUnit, actualWaitSeconds, () => {
+            dialogToken = undefined
+            complete()
+        })
+    }, _ => {
+        if (dialogToken !== undefined) {
+            dg.stop(dialogToken)
+            dialogToken = undefined
+        }
+    })
 }
 
 /**

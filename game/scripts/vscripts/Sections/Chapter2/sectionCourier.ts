@@ -12,7 +12,7 @@ let graph: tg.TutorialStep | undefined = undefined
 
 const requiredState: RequiredState = {
     heroLocation: Vector(-4941, 5874, 128),
-    heroLocationTolerance: 1000,
+    heroLocationTolerance: 1800, // prevent teleportations if you're still in the vicinity
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     slacksLocation: Vector(-5495, 2930, 128),
@@ -37,6 +37,7 @@ let playerOrderMustBuyDemonEdge = false
 let playerOrderMustBuyRecipeAndCrystalis = false
 let playerOrderMustDeliverItemsFromCourier = false
 let hasPlayerRequestedToDeliverFromCourier = false
+let requiredItemCount = 0;
 
 const demonEdgeName = "item_demon_edge"
 const recipeName = "item_recipe_greater_crit"
@@ -53,7 +54,7 @@ const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
 
     const radiantSecretShopLocation = Vector(-5082, 2011, 128)
-    const direSecretShopLocation = Vector(4804, 1304, 128)
+    const direSecretShopLocation = Vector(4804, -1304, 128)
     const inFrontOfTheRiverLocation = Vector(-3661, 3761, 128)
     const insideRiverLocation = Vector(-4106, 2298, 0)
     const inFrontOfRadiantSecretShopLocation = Vector(-4840, 1822, 128)
@@ -70,6 +71,7 @@ const onStart = (complete: () => void) => {
     const crystalisGuideUIPath = getPathToItemInGuideByID(149)
     const daedalusGuideUIPath = getPathToItemInGuideByID(140)
     const deliverItemsUIPath = "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton"
+    requiredItemCount = 0;
 
     playerOrderMustBuyDemonEdge = false
     playerOrderMustBuyRecipeAndCrystalis = false
@@ -85,7 +87,7 @@ const onStart = (complete: () => void) => {
     const goalMoveToSecretShop = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_1)
     const goalOpenShop = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_2)
     const goalBuyDemonEdge = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_3)
-    const goalBuyCrystalisAndRecipe = goalTracker.addNumeric(LocalizationKey.Goal_2_Courier_4, 2)
+    const goalBuyCrystalisAndRecipe = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_4)
     const goalRequestItemsToBeDeliveredFromCourier = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_5)
     const goalWaitToCourierToDeliverItems = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_6)
     const goalMoveToFinalPosition = goalTracker.addBoolean(LocalizationKey.Goal_2_Courier_7)
@@ -134,38 +136,25 @@ const onStart = (complete: () => void) => {
         }, 0.2),
         tg.immediate(() => {
             playerOrderMustBuyDemonEdge = false
+            freezePlayerHero(true)
             removeHighlight(demonEdgeGuideUIPath)
             goalBuyDemonEdge.complete()
         }),
         tg.audioDialog(LocalizationKey.Script_2_Courier_5, LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(() => {
+            freezePlayerHero(false)
             playerOrderMustBuyRecipeAndCrystalis = true
             highlightUiElement(crystalisGuideUIPath);
             highlightUiElement(daedalusGuideUIPath);
             goalBuyCrystalisAndRecipe.start()
-            goalBuyCrystalisAndRecipe.setValue(0)
         }),
         tg.completeOnCheck(() => {
-            let requiredItemCount = 0;
-            for (let index = DOTA_ITEM_STASH_MIN; index < DOTA_ITEM_STASH_MAX; index++) {
-                const item = playerHero.GetItemInSlot(index)
-                if (item) {
-                    if (item.GetAbilityName() === recipeName) {
-                        requiredItemCount++
-                        removeHighlight(daedalusGuideUIPath);
-                    }
-                    if (item.GetAbilityName() === crystalisName) {
-                        requiredItemCount++
-                        removeHighlight(crystalisGuideUIPath);
-                    }
-                }
-            }
-            goalBuyCrystalisAndRecipe.setValue(requiredItemCount)
-
-            return requiredItemCount === 2
+            return requiredItemCount === 4
         }, 0.2),
         tg.immediate(() => {
             goalBuyCrystalisAndRecipe.complete()
+            removeHighlight(crystalisGuideUIPath)
+            removeHighlight(daedalusGuideUIPath)
             playerOrderMustBuyRecipeAndCrystalis = false
             freezePlayerHero(true)
         }),
@@ -210,7 +199,7 @@ const onStart = (complete: () => void) => {
             freezePlayerHero(false)
             goalMoveToFinalPosition.start()
         }),
-        tg.goToLocation(finalMovementPositionLocation, _ => [insideRiverLocation, inFrontOfTheRiverLocation]),
+        tg.goToLocation(finalMovementPositionLocation, _ => [insideRiverLocation]),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )
@@ -225,8 +214,27 @@ const onStop = () => {
     print("Stopping", sectionName);
 
     const courier = getOrError(getPlayerCourier())
-    if (courier && courier.HasModifier(modifier_courier_chapter_2_ms_bonus.name)) {
-        courier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
+    if (courier) {
+        // Clear items from the courier
+        for (let index = 0; index < DOTA_ITEM_MAX; index++) {
+            const item = courier.GetItemInSlot(index)
+            if (item) {
+                courier.RemoveItem(item)
+            }
+        }
+
+        if (courier.HasModifier(modifier_courier_chapter_2_ms_bonus.name)) {
+            courier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
+        }
+    }
+
+    // Clear stash if skipped
+    const playerHero = getOrError(getPlayerHero())
+    for (let index = DOTA_ITEM_STASH_MIN; index < DOTA_ITEM_STASH_MAX; index++) {
+        const item = playerHero.GetItemInSlot(index)
+        if (item) {
+            playerHero.RemoveItem(item)
+        }
     }
 
     if (graph) {
@@ -271,6 +279,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
         }
 
         allowedItems.delete(event.shop_item_name)
+        requiredItemCount++;
         return true
     }
 
