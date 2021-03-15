@@ -291,7 +291,6 @@ const onStart = (complete: () => void) => {
 
                 return tg.wait(0);
             }),
-            tg.audioDialog(stackDialogKeys[stackCount], stackDialogKeys[stackCount], ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
             tg.immediate(_ => {
                 timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
                 timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
@@ -317,15 +316,12 @@ const onStart = (complete: () => void) => {
     ];
 
     const pickUpItems = () => [
+        tg.immediate(_ => goalPickupItem.start()),
+        tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.immediate(_ => highlightUiElement(neutralSlotUIPath)),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.immediate(_ => {
-            goalPickupItem.start();
-            highlightUiElement(neutralSlotUIPath);
-        }),
-        
-        tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1),
         tg.immediate(_ => {
             goalPickupItem.complete();
             removeHighlight(neutralSlotUIPath);
@@ -336,13 +332,11 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             goalKillThirdSpawn.start();
             creepPhase = 3;
-            //DestroyNeutrals()
 
         }),
         tg.goToLocation(markerLocation),
         tg.wait(FrameTime()),
         tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
-        //tg.wait(0),
         tg.immediate(_ => creepArr = getAllNeutralCreeps()),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_4, LocalizationKey.Script_3_Neutrals_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
