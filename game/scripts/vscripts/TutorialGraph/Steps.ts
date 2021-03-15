@@ -352,7 +352,8 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
             const distance = actualEndLocation.__sub(currentLocation).Length2D()
 
             // Stop when we are close enough.
-            if (distance > 10) {
+            // Exactly zero distance does seem to actually happen so this check works fine.
+            if (distance > 0.1) {
                 // Query the speed for the current location.
                 const speed = getSpeed(actualStartLocation, actualEndLocation, currentLocation)
 
@@ -363,8 +364,14 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
                 cameraTimer = Timers.CreateTimer(updateInterval, () => updateDummy())
             } else {
                 cameraDummy.SetAbsOrigin(actualEndLocation)
-                cleanup()
-                complete()
+
+                // Delay cleanup, otherwise the player camera doesn't update exactly.
+                // Could fail if this step is called again before the callback is executed (ie. called twice in the same frame)
+                // as then we would clean up and complete the new camera movement, but we will take that chance.
+                Timers.CreateTimer(FrameTime(), () => {
+                    cleanup()
+                    complete()
+                })
             }
         }
 
