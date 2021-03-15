@@ -98,6 +98,9 @@ function HideDialog(event: DialogClearEvent) {
 
 function OnCloseDialogButtonPressed() {
     pendingDialog = undefined;
+
+    // Store current token in case SendCustomGameEventToServer directly calls the
+    // server function which could start a new dialog rather than sending a network message.
     const token = currentToken;
     currentToken = undefined;
     $("#DialogPanel").SetHasClass("Visible", false);
