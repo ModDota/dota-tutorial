@@ -35,10 +35,14 @@ class ClosingNpc {
 
     private interactDistance = 200
     private interacting = false
-    private dialogPlaying = false
+    private dialogToken: DialogToken | undefined
 
     constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName: string) {
 
+    }
+
+    public get playing() {
+        return this.dialogToken !== undefined
     }
 
     public get unit() {
@@ -85,8 +89,9 @@ class ClosingNpc {
                 if (distance > this.interactDistance) {
                     // Stop dialog if it was still in progress
                     this.interacting = false
-                    if (this.dialogPlaying) {
-                        dg.stop()
+                    if (this.dialogToken !== undefined) {
+                        dg.stop(this.dialogToken)
+                        this.dialogToken = undefined
                     }
                 }
             } else {
@@ -94,8 +99,7 @@ class ClosingNpc {
                 if (distance <= this.interactDistance) {
                     // Play dialog
                     this.interacting = true
-                    this.dialogPlaying = true
-                    dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogPlaying = false)
+                    this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
                 }
             }
         }
