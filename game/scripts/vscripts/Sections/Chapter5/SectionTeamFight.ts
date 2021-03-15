@@ -3,8 +3,7 @@ import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import * as shared from "./Shared"
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
-import { custom_mirana_arrow } from "../../abilities/custom_mirana_arrow";
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
 
@@ -62,7 +61,7 @@ function onStart(complete: () => void) {
             tg.immediate(ctx => ctx[CustomNpcKeys.Pudge].SetAbsOrigin(Vector(-1825, 750, 0))),
             tg.immediate(ctx => setupEnemyHeroes(ctx)),
 
-            // Pacify everyone so they dont aggro before the fight starts
+            // Pacify everyone so they don't aggro before the fight starts
             tg.fork(shared.allHeroesInfo.map((heroInfo) => {
                 return tg.immediate(ctx => setUnitPacifist(ctx[heroInfo.name], true))
             })),
@@ -109,7 +108,7 @@ function onStart(complete: () => void) {
                 ]),
 
                 // Friendlies teamfight logic
-                tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", UnitOrder.CAST_POSITION),
+                useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", UnitOrder.CAST_POSITION),
                 tg.seq([
                     tg.fork(shared.friendlyHeroesInfo.map(friendlyHeroInfo => {
                         return tg.completeOnCheck(ctx => ctx[friendlyHeroInfo.name].IsAttacking(), 1)
@@ -117,32 +116,34 @@ function onStart(complete: () => void) {
                     tg.forkAny([
                         tg.completeOnCheck(ctx => shared.getLivingEnemyHeroes(ctx).length === 0, 1),
                         tg.seq([
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", UnitOrder.CAST_NO_TARGET),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", UnitOrder.CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", UnitOrder.CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", UnitOrder.CAST_NO_TARGET),
                             tg.completeOnCheck(ctx => !ctx[CustomNpcKeys.Windrunner].IsStunned(), 1),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", UnitOrder.CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", UnitOrder.CAST_TARGET),
                             tg.wait(2),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_voodoo", UnitOrder.CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_voodoo", UnitOrder.CAST_TARGET),
                         ]),
                     ])
                 ]),
 
                 // Enemies teamfight logic
-                tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Pudge], _ => playerHero.GetAbsOrigin(), "pudge_meat_hook", UnitOrder.CAST_POSITION),
+                useAbilityStep(ctx => ctx[CustomNpcKeys.Pudge], _ => playerHero.GetAbsOrigin(), "pudge_meat_hook", UnitOrder.CAST_POSITION),
                 tg.seq([
                     tg.forkAny([
                         tg.completeOnCheck(ctx => shared.getLivingEnemyHeroes(ctx).length === 0, 1),
-                        tg.seq([
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Wisp], "wisp_overcharge", UnitOrder.CAST_NO_TARGET),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Luna], "wisp_tether", UnitOrder.CAST_TARGET),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_ice_path", UnitOrder.CAST_POSITION),
+                        tg.fork([
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Wisp], "wisp_overcharge", UnitOrder.CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Luna], "wisp_tether", UnitOrder.CAST_TARGET),
+                            tg.seq([
+                                useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_ice_path", UnitOrder.CAST_POSITION),
+                                tg.wait(1),
+                                useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_macropyre", UnitOrder.CAST_POSITION),
+                                tg.wait(1),
+                                useAbilityStep(ctx => ctx[CustomNpcKeys.Luna], ctx => ctx[CustomNpcKeys.Luna], "luna_eclipse", UnitOrder.CAST_NO_TARGET),
+                            ]),
                             tg.wait(1),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_macropyre", UnitOrder.CAST_POSITION),
-                            tg.wait(1),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Luna], ctx => ctx[CustomNpcKeys.Luna], "luna_eclipse", UnitOrder.CAST_NO_TARGET),
-                            tg.wait(1),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], ctx => ctx[CustomNpcKeys.Tidehunter], "windrunner_shackleshot", UnitOrder.CAST_TARGET),
-                            tg.useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], _ => playerHero, "windrunner_focusfire", UnitOrder.CAST_TARGET)
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], ctx => ctx[CustomNpcKeys.Tidehunter], "windrunner_shackleshot", UnitOrder.CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], _ => playerHero, "windrunner_focusfire", UnitOrder.CAST_TARGET)
                         ]),
                     ])
                 ])
@@ -242,54 +243,111 @@ export const sectionTeamFight = new tut.FunctionalSection(
 );
 
 function setupEnemyHeroes(context: tg.TutorialContext) {
-    const luna = context[CustomNpcKeys.Luna] as CDOTA_BaseNPC_Hero
+    if (unitIsValidAndAlive(context[CustomNpcKeys.Luna])) {
+        context[CustomNpcKeys.Luna].AddItemByName("item_butterfly")
+        context[CustomNpcKeys.Luna].AddItemByName("item_manta")
+        const eclipse = context[CustomNpcKeys.Luna].FindAbilityByName("luna_eclipse")
 
-    luna.AddItemByName("item_butterfly")
-    luna.AddItemByName("item_manta")
-    const eclipse = luna.FindAbilityByName("luna_eclipse")
-
-    if (eclipse)
-        eclipse.SetLevel(2)
-
-    context[CustomNpcKeys.Wisp].AddItemByName("item_mekansm")
-    context[CustomNpcKeys.Wisp].AddItemByName("item_spirit_vessel")
-    const overcharge = context[CustomNpcKeys.Wisp].FindAbilityByName("wisp_overcharge")
-
-    if (overcharge)
-        overcharge.SetLevel(4)
-
-    context[CustomNpcKeys.Jakiro].AddItemByName("item_ghost")
-    context[CustomNpcKeys.Jakiro].AddItemByName("item_glimmer_cape")
-    const macroPyre = context[CustomNpcKeys.Jakiro].FindAbilityByName("jakiro_macropyre")
-
-    if (macroPyre)
-        macroPyre.SetLevel(2)
-
-    context[CustomNpcKeys.Pudge].AddItemByName("item_pipe")
-    context[CustomNpcKeys.Pudge].AddItemByName("item_vanguard")
-
-    context[CustomNpcKeys.Windrunner].AddItemByName("item_ultimate_scepter")
-    context[CustomNpcKeys.Windrunner].AddItemByName("item_lesser_crit")
-    const focusFire = context[CustomNpcKeys.Windrunner].FindAbilityByName("windrunner_focusfire")
-
-    if (focusFire)
-        focusFire.SetLevel(2)
-}
-
-function executeFriendlyFightLogic(context: tg.TutorialContext) {
-    const tideHunter = context[CustomNpcKeys.Tidehunter] as CDOTA_BaseNPC_Hero
-    const lion = context[CustomNpcKeys.Lion] as CDOTA_BaseNPC_Hero
-    const mirana = context[CustomNpcKeys.Mirana] as CDOTA_BaseNPC_Hero
-    const juggernaut = context[CustomNpcKeys.Juggernaut] as CDOTA_BaseNPC_Hero
-
-    // shared.friendlyHeroesInfo.entries()
-    if (unitIsValidAndAlive(tideHunter)) {
-        useAbility(tideHunter, tideHunter, "tidehunter_ravage", UnitOrder.CAST_NO_TARGET)
+        if (eclipse)
+            eclipse.SetLevel(2)
     }
 
-    if (unitIsValidAndAlive(lion)) {
-        useAbility(lion, context[CustomNpcKeys.Antimage], "lion_impale", UnitOrder.CAST_TARGET)
+    if (unitIsValidAndAlive(context[CustomNpcKeys.Wisp])) {
+        context[CustomNpcKeys.Wisp].AddItemByName("item_mekansm")
+        context[CustomNpcKeys.Wisp].AddItemByName("item_spirit_vessel")
+        const overcharge = context[CustomNpcKeys.Wisp].FindAbilityByName("wisp_overcharge")
+
+        if (overcharge)
+            overcharge.SetLevel(4)
     }
 
+    if (unitIsValidAndAlive(context[CustomNpcKeys.Jakiro])) {
+        context[CustomNpcKeys.Jakiro].AddItemByName("item_ghost")
+        context[CustomNpcKeys.Jakiro].AddItemByName("item_glimmer_cape")
+        const macroPyre = context[CustomNpcKeys.Jakiro].FindAbilityByName("jakiro_macropyre")
+
+        if (macroPyre)
+            macroPyre.SetLevel(2)
+    }
+
+    if (unitIsValidAndAlive(context[CustomNpcKeys.Pudge])) {
+        context[CustomNpcKeys.Pudge].AddItemByName("item_pipe")
+        context[CustomNpcKeys.Pudge].AddItemByName("item_vanguard")
+    }
+
+    if (unitIsValidAndAlive(context[CustomNpcKeys.Windrunner])) {
+        context[CustomNpcKeys.Windrunner].AddItemByName("item_ultimate_scepter")
+        context[CustomNpcKeys.Windrunner].AddItemByName("item_lesser_crit")
+        const focusFire = context[CustomNpcKeys.Windrunner].FindAbilityByName("windrunner_focusfire")
+
+        if (focusFire)
+            focusFire.SetLevel(2)
+    }
 }
 
+/**
+ * Creates a tutorial step that orders a unit to use an ability. Completes on ability cast.
+ * @param unit Unit casting the ability.
+ * @param target Target of the ability, entity or Vector position.
+ * @param abilityName Name of the ability
+ * @param orderType Order type used for casting the ability
+ */
+const useAbilityStep = (unit: tg.StepArgument<CDOTA_BaseNPC>, target: tg.StepArgument<CDOTA_BaseNPC | Vector>, abilityName: tg.StepArgument<string>, orderType: tg.StepArgument<UnitOrder>) => {
+    let checkTimer: string | undefined = undefined
+
+    const cleanup = () => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+    }
+
+    return tg.step((context, complete) => {
+        const actualUnit = tg.getArg(unit, context)
+        const actualTarget = tg.getArg(target, context)
+        const actualAbilityName = tg.getArg(abilityName, context)
+        const actualOrderType = tg.getArg(orderType, context)
+
+        const ability = actualUnit.FindAbilityByName(actualAbilityName)
+
+        let order: ExecuteOrderOptions;
+        if (ability) {
+            if (ability.GetLevel() === 0)
+                ability.SetLevel(1)
+
+            order = {
+                UnitIndex: actualUnit.GetEntityIndex(),
+                OrderType: actualOrderType,
+                AbilityIndex: ability.GetEntityIndex(),
+            }
+        } else {
+            error("Invalid ability name " + abilityName + " for hero " + actualUnit.GetName())
+        }
+
+        if (typeof actualTarget === typeof CDOTA_BaseNPC) {
+            if (orderType === UnitOrder.CAST_TARGET)
+                order.TargetIndex = (actualTarget as CDOTA_BaseNPC).GetEntityIndex()
+            else
+                order.Position = (actualTarget as CDOTA_BaseNPC).GetAbsOrigin()
+        } else {
+            order.Position = (actualTarget as Vector)
+        }
+
+        if (ability.IsCooldownReady())
+            ExecuteOrderFromTable(order)
+        else
+            error("Ability is on cooldown, cannot execute order.")
+
+        // The check for complete is not sufficient and doesn't cover the cases of an invalid/dead caster or target. Can add this later so it can be used as a general purpose step
+        const checkAbilityUsed = () => {
+            if (!ability.IsCooldownReady()) {
+                cleanup()
+                complete()
+            } else {
+                checkTimer = Timers.CreateTimer(0.1, () => checkAbilityUsed())
+            }
+        }
+
+        checkAbilityUsed()
+    }, _ => cleanup())
+}
