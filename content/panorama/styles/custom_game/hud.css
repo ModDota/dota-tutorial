@@ -3,15 +3,47 @@
     height: 100%;
 }
 
+.UIHighlightScalingAnimation
+{
+    animation-name: scalingAnimationUI;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+}
+
+@keyframes 'scalingAnimationUI' {
+    0% {
+        box-shadow: 0 0 5px gold;
+        transform: translate3d( 25px, -620px, -0px );
+        pre-transform-scale2d: 5, 5;
+    }
+    25% {
+        box-shadow: 0 0 10px gold;
+        pre-transform-scale2d: 4, 4;
+    }
+    50% {
+        box-shadow: 0 0 20px gold;
+        pre-transform-scale2d: 3, 3;
+    }
+    75% {
+        box-shadow: 0 0 10px gold;
+        pre-transform-scale2d: 2, 2;
+    }
+    100% {
+        box-shadow: 0 0 5px gold;
+        pre-transform-scale2d: 1, 1;
+    }
+}
+
 .UIHighlight {
     z-index: 100;
-    animation-name: glow;
+    animation-name: highlightGlow;
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 }
 
-@keyframes 'glow' {
+@keyframes 'highlightGlow' {
     0% {
         box-shadow: 0 0 5px gold;
     }
@@ -19,7 +51,7 @@
         box-shadow: 0 0 10px gold;
     }
     50% {
-        box-shadow: 0 0 20px gold;
+        box-shadow: 0 0 30px gold;
     }
     75% {
         box-shadow: 0 0 10px gold;
@@ -27,6 +59,13 @@
     100% {
         box-shadow: 0 0 5px gold;
     }
+}
+
+.UIHighlightCourierDeliverButton
+{
+    border: 8px solid    #CFB53B;
+    border-radius: 50%;
+    margin-left: -5px;
 }
 
 #ChaptersMenu {

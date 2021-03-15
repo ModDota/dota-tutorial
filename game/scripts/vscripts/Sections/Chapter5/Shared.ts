@@ -39,9 +39,9 @@ export const friendlyHeroesInfo: HeroInfo[] = [
 ]
 
 export const enemyHeroesInfo: HeroInfo[] = [
-    { name: CustomNpcKeys.Antimage },
-    { name: CustomNpcKeys.Lina },
-    { name: CustomNpcKeys.Visage },
+    { name: CustomNpcKeys.Luna },
+    { name: CustomNpcKeys.Jakiro },
+    { name: CustomNpcKeys.Windrunner },
     { name: CustomNpcKeys.Pudge },
     { name: CustomNpcKeys.Wisp },
 ]

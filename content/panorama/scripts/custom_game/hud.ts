@@ -97,7 +97,14 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
 
         const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
         highlightPanel.hittest = false; // Dont block interactions
-        highlightPanel.AddClass("UIHighlight");
+        highlightPanel.AddClass("UIHighlightScalingAnimation")
+        $.Schedule(0.5, () => {
+            if (highlightPanel.IsValid()) {
+                highlightPanel.RemoveClass("UIHighlightScalingAnimation")
+                highlightPanel.AddClass("UIHighlight");
+            }
+        })
+
         highlightPanel.SetParent(hudRoot);
 
         // Set size/position
@@ -111,10 +118,16 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
             $.Schedule(duration, () => removeHighlight({ path }));
         }
 
+        // Shop guide items
         const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
         if (isShopGuideItem) {
             const needsAdjusting = !Game.IsShopOpen()
             checkShopHighlightItemPanel(highlightPanel, element, needsAdjusting)
+        }
+
+        // Deliver Courier path
+        if (path === "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton") {
+            highlightPanel.AddClass("UIHighlightCourierDeliverButton")
         }
     }
 }
