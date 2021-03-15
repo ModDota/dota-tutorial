@@ -27,16 +27,28 @@ const wardLocationSentry = Vector(-3400, 4000);
 const rikiName = "npc_dota_hero_riki";
 let allowUseItem = false;
 
+//dire jungle top
+const cliffLocation1 = Vector(1023, 4872);
 //dire mid top
-const cliffLocation1 = Vector(-261, 2047);
+const cliffLocation2 = Vector(-261, 2047);
+//dire jungle bot
+const cliffLocation3 = Vector(5115, 785);
+//dire river bot
+const cliffLocation4 = Vector(4861, -2301);
 //dire mid bot
-const cliffLocation2 = Vector(2011, -780);
+const cliffLocation5 = Vector(2011, -780);
+//radiant jungle
+const cliffLocation6 = Vector(1017, -4070)
 //radiant mid bot
-const cliffLocation3 = Vector(770, -2300);
+const cliffLocation7 = Vector(770, -2300);
+//radiant jungle bot
+const cliffLocation8 = Vector(-1787, -4846)
+//radiant jungle
+const cliffLocation9 = Vector(-4347, -1012)
 //radiant toplane
-const cliffLocation4 = Vector(-5503, 2292);
+const cliffLocation10 = Vector(-5503, 2292);
 
-const cameraSpeed = 2000;
+const cameraSpeed = 2500;
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
@@ -64,8 +76,11 @@ function onStart(complete: () => void) {
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
-    const observerWardItem = CreateItem("item_ward_observer", undefined, undefined);
-    const sentryWardItem = CreateItem("item_ward_sentry", undefined, undefined);
+    const observerWardName = "item_ward_observer"
+    const sentryWardName = "item_ward_sentry"
+
+    const observerWardItem = CreateItem(observerWardName, undefined, undefined);
+    const sentryWardItem = CreateItem(sentryWardName, undefined, undefined);
     allowUseItem = false;
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
@@ -89,17 +104,24 @@ function onStart(complete: () => void) {
                 }
             }),
 
-            tg.withHighlights(tg.seq([
+            tg.immediate(_ => goalFetchWard.start()),
+            tg.fork([
+                tg.audioDialog(LocalizationKey.Script_4_Wards_1, LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
                     CreateItemOnPositionSync(wardLocationObs, observerWardItem);
-                    CreateItemOnPositionSync(wardLocationSentry, sentryWardItem);
                 }),
 
-                tg.immediate(_ => goalFetchWard.start()),
-                tg.audioDialog(LocalizationKey.Script_4_Wards_1, LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser") || playerHero.HasItemInInventory(observerWardName), 0.2),
+            ]), {type: "arrow", locations: [wardLocationObs]}),
+                tg.withHighlights(tg.seq([
+                    tg.immediate(_ => {
+                        CreateItemOnPositionSync(wardLocationSentry, sentryWardItem);
+                    }),
 
-                tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser"), 1),
-            ]), { type: "arrow", locations: [wardLocationObs, wardLocationSentry] }),
+                    tg.completeOnCheck(_ => playerHero.HasItemInInventory("item_ward_dispenser") || playerHero.HasItemInInventory(sentryWardName), 0.2),
+                ]), {type: "arrow", locations: [wardLocationSentry]}),
+            ]),
 
             tg.immediate(_ => goalFetchWard.complete()),
             tg.audioDialog(LocalizationKey.Script_4_Wards_2, LocalizationKey.Script_4_Wards_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -112,14 +134,26 @@ function onStart(complete: () => void) {
             tg.fork([
                 tg.seq([
                     tg.panCamera(_ => getPlayerCameraLocation(), cliffLocation1, _ => cameraSpeed),
-                    tg.wait(1),
+                    tg.wait(0.25),
                     tg.panCamera(cliffLocation1, cliffLocation2, _ => cameraSpeed),
-                    tg.wait(1),
+                    tg.wait(0.25),
                     tg.panCamera(cliffLocation2, cliffLocation3, _ => cameraSpeed),
-                    tg.wait(1),
+                    tg.wait(0.25),
                     tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
-                    tg.wait(1),
-                    tg.panCamera(cliffLocation4, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation4, cliffLocation5, _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation5, cliffLocation6, _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation6, cliffLocation7, _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation7, cliffLocation8, _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation8, cliffLocation9, _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation9, cliffLocation10, _ => cameraSpeed),
+                    tg.wait(0.25),
+                    tg.panCamera(cliffLocation10, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
