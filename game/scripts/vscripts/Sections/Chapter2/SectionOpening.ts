@@ -59,6 +59,7 @@ const onStart = (complete: () => void) => {
 
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
+            tg.immediate(_ => chapter2Blockades.radiantBaseTop.spawn()),
             tg.wait(FrameTime()),
             tg.immediate(context => {
                 goalMoveNextToBarracks.start(),
@@ -136,6 +137,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(context => {
                 goalListenToSunsfanAndSlacks.complete()
                 goalWaitForCreepsToPrepareToMove.start()
+                chapter2Blockades.radiantBaseTop.destroy()
             }),
             tg.fork(context => radiantCreeps.map(unit => tg.moveUnit(_ => unit, radiantCreepsMoveToPrepareLaunchAssaultLocation))),
             tg.immediate(context => {
@@ -173,6 +175,8 @@ const onStop = () => {
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
     removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
+
+    chapter2Blockades.radiantBaseTop.destroy()
 
     if (graph) {
         graph.stop(GameRules.Addon.context);

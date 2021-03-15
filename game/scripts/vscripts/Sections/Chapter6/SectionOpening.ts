@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { getOrError, getPlayerHero, setUnitPacifist } from "../../util";
+import { getOrError, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
 
 const sectionName: SectionName = SectionName.Chapter6_Opening;
 
@@ -27,6 +27,8 @@ const axeName = CustomNpcKeys.Axe;
 const centaurName = CustomNpcKeys.Centaur;
 const invokerName = CustomNpcKeys.Invoker;
 const paName = CustomNpcKeys.PhantomAssassin;
+const forgedSpiritName = "npc_dota_invoker_forged_spirit"
+
 const showcaseHeroLocation = Vector(-6700, -6300, 384);
 const dummyLocation = Vector(-6200, -5800, 128);
 
@@ -224,7 +226,7 @@ function onStart(complete: () => void) {
 
             tg.wait(3),
             tg.immediate(context => context[invokerName].RemoveSelf()),
-            tg.immediate(_ => Entities.FindAllByClassname("npc_dota_invoker_forged_spirit").forEach(forgedSpirit => forgedSpirit.RemoveSelf())),
+            tg.immediate(_ => Entities.FindAllByClassname(forgedSpiritName).forEach(forgedSpirit => forgedSpirit.RemoveSelf())),
         ]),
         tg.immediate(_ => goalWatchInvoker.complete()),
 
@@ -232,7 +234,8 @@ function onStart(complete: () => void) {
         tg.audioDialog(LocalizationKey.Script_6_Opening_7, LocalizationKey.Script_6_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_6_Opening_8, LocalizationKey.Script_6_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_6_Opening_9, LocalizationKey.Script_6_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.wait(3),
+
+        tg.immediate(context => removeContextEntityIfExists(context, axeName)),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
@@ -249,7 +252,7 @@ function onStop() {
         graph = undefined;
     }
 
-    Entities.FindAllByClassname("npc_dota_invoker_forged_spirit").forEach(forgedSpirit => forgedSpirit.RemoveSelf())
+    Entities.FindAllByClassname(forgedSpiritName).forEach(forgedSpirit => forgedSpirit.RemoveSelf())
 }
 
 function castNoTarget(casterName: string, index: number, wait = 0.1) {
