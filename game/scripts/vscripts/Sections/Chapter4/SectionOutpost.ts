@@ -19,6 +19,7 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 1],
     heroItems: { "item_greater_crit": 1 },
     blockades: Object.values(shared.blockades),
+    clearWards: false
 };
 
 let allowUseItem = false;

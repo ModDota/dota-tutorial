@@ -22,6 +22,8 @@ export const setupState = (stateReq: RequiredState): void => {
     handleRequiredAbilities(state, hero)
     handleRequiredItems(state, hero)
     handleRequiredRespawn(state)
+    handleItemsOnGround()
+    handlePlantedWards(state)
 
     handleUnits(state)
     handleFountainTrees(state)
@@ -332,18 +334,6 @@ function handleRoshan(state: FilledRequiredState) {
         if (unitIsValidAndAlive(roshan))
             roshan.Destroy()
     }
-
-    // Clear Aegis boxes left on the ground, if any
-    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
-
-    if (droppedItems) {
-        for (const droppedItem of droppedItems) {
-            const itemEntity = droppedItem.GetContainedItem()
-            if (itemEntity.GetAbilityName() === itemAegis) {
-                droppedItem.Destroy()
-            }
-        }
-    }
 }
 
 function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, faceTo?: Vector, onPostCreate?: (unit: CDOTA_BaseNPC, created: boolean) => void) {
@@ -461,5 +451,29 @@ function removeBountyRunes() {
     if (IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
         context[CustomEntityKeys.DireAncientsBountyRune].Destroy()
         context[CustomEntityKeys.DireAncientsBountyRune] = undefined
+    }
+}
+function handleItemsOnGround() {
+    // Clear all items on the ground, if any
+    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+
+    if (droppedItems) {
+        for (const droppedItem of droppedItems) {
+            const itemEntity = droppedItem.GetContainedItem()
+            UTIL_Remove(itemEntity)
+            UTIL_Remove(droppedItem)
+        }
+    }
+}
+function handlePlantedWards(state: FilledRequiredState) {
+    if (state.clearWards) {
+        const obsWards = Entities.FindAllByClassname("npc_dota_ward_base")
+        const wards = obsWards.concat(Entities.FindAllByClassname("npc_dota_ward_base_truesight"))
+
+        for (const ward of wards) {
+            if (IsValidEntity(ward)) {
+                UTIL_Remove(ward)
+            }
+        }
     }
 }

@@ -109,4 +109,9 @@
         "ItemDroppable"					"0"
         "ItemKillable"					"0"
     }
+
+    "item_ward_observer"
+    {
+        "ItemPurchasable"				"0"
+    }
 }
