@@ -28,25 +28,13 @@ const rikiName = "npc_dota_hero_riki";
 let allowUseItem = false;
 
 //dire jungle top
-const cliffLocation1 = Vector(1023, 4872);
+const cliffLocation1 = Vector(1027, 4881);
 //dire mid top
 const cliffLocation2 = Vector(-261, 2047);
-//dire jungle bot
-const cliffLocation3 = Vector(5115, 785);
-//dire river bot
-const cliffLocation4 = Vector(4861, -2301);
-//dire mid bot
-const cliffLocation5 = Vector(2011, -780);
-//radiant jungle
-const cliffLocation6 = Vector(1017, -4070)
-//radiant mid bot
-const cliffLocation7 = Vector(770, -2300);
-//radiant jungle bot
-const cliffLocation8 = Vector(-1787, -4846)
-//radiant jungle
-const cliffLocation9 = Vector(-4347, -1012)
-//radiant toplane
-const cliffLocation10 = Vector(-5503, 2292);
+//radiant jungle top
+const cliffLocation3 = Vector(-4354, -1006);
+//radiant top tower
+const cliffLocation4 = Vector(-5371, 2321);
 
 const cameraSpeed = 2500;
 
@@ -141,19 +129,7 @@ function onStart(complete: () => void) {
                     tg.wait(0.25),
                     tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
                     tg.wait(0.25),
-                    tg.panCamera(cliffLocation4, cliffLocation5, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation5, cliffLocation6, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation6, cliffLocation7, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation7, cliffLocation8, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation8, cliffLocation9, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation9, cliffLocation10, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation10, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
+                    tg.panCamera(cliffLocation4, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
