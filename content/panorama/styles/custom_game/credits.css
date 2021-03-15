@@ -1,3 +1,16 @@
+#CreditsRoot {
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+}
+
+#CreditsRoot.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
 #CreditsContainer {
     width: 480px;
     height: 160px;
@@ -13,13 +26,6 @@
 
     flow-children: right;
 
-    opacity: 0;
-    transform: scale3d(0, 0, 1);
-}
-
-#CreditsContainer.Visible {
-    opacity: 1;
-    transform: scale3d(1, 1, 1);
 }
 
 .CreditsContainerLeft {
