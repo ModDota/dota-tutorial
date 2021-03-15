@@ -17,6 +17,7 @@ declare const enum SectionName {
     Chapter5_Opening = "Chapter5_Opening",
     Chapter5_Roshan = "Chapter5_Roshan",
     Chapter5_TeamFight = "Chapter5_TeamFight",
+    Chapter6_Opening = "Chapter6_Opening",
 }
 
 declare const enum CustomNpcKeys {
@@ -48,6 +49,10 @@ declare const enum CustomNpcKeys {
     Pudge = "npc_dota_hero_pudge",
     Wisp = "npc_dota_hero_wisp",
     Roshan = "npc_dota_roshan",
+    Axe = "npc_dota_hero_axe",
+    Centaur = "npc_dota_hero_centaur",
+    Invoker = "npc_dota_hero_invoker",
+    PhantomAssassin = "npc_dota_hero_phantom_assassin",
 }
 
 declare const enum CustomEntityKeys {
@@ -88,3 +93,5 @@ declare const enum ParticleName {
 }
 
 type VideoName = "guides" | "muting"
+
+type DialogToken = number

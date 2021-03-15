@@ -29,6 +29,7 @@ const sections = {
     "CH5 - Opening": SectionName.Chapter5_Opening,
     "CH5 - Roshan": SectionName.Chapter5_Roshan,
     "CH5 - Team Fight": SectionName.Chapter5_TeamFight,
+    "CH6 - Opening": SectionName.Chapter6_Opening,
 };
 
 // Add a button for each section

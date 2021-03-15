@@ -1410,6 +1410,36 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_4_Communication_17.vsnd" ]
     }
+    "Script_4_RTZ_getaway" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_4_RTZ_getaway.vsnd" ]
+    }
+    "Script_4_RTZ_foundme" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_4_RTZ_foundme.vsnd" ]
+    }
+    "Script_4_RTZ_cya" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_4_RTZ_cya.vsnd" ]
+    }
+    "Script_4_RTZ_death" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_4_RTZ_death.vsnd" ]
+    }
+    "Script_4_RTZ_pain" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_4_RTZ_pain.vsnd" ]
+    }
     "Script_5_Opening_1" =
     {
         type = "dota_src1_2d"
@@ -1709,5 +1739,35 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Closing_4.vsnd" ]
+    }
+    "Script_6_anger" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_anger.vsnd" ]
+    }
+    "Script_6_BSJ" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_BSJ.vsnd" ]
+    }
+    "Script_6_Purge" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Purge.vsnd" ]
+    }
+    "Script_6_Tsunami" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Tsunami.vsnd" ]
+    }
+    "Script_6_DotaU" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_DotaU.vsnd" ]
     }
 }

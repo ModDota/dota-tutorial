@@ -20,7 +20,7 @@
 
 .MovieContainerMuting {
     width: 1050px;
-    height: 670px;
+    height: 703px;
     align: center center;
     background-color: #111920ff;
     border-radius: 5px;
@@ -37,7 +37,7 @@
 
 .CustomMoviePanelMuting {
     width: 1000px;
-    height: 550px;
+    height: 583px;
     align: center center;
     background-size: 100% 100%;
     box-shadow: #000000aa -4px -4px 8px 8px;
@@ -104,7 +104,7 @@
 
 .MovieContainerGuides {
     width: 1150px;
-    height: 770px;
+    height: 972px;
     align: center center;
     background-color: #111920ff;
     border-radius: 5px;
@@ -113,7 +113,7 @@
 
 .CustomMoviePanelGuides {
     width: 1100px;
-    height: 650px;
+    height: 852px;
     align: center center;
     background-size: 100% 100%;
     box-shadow: #000000aa -4px -4px 8px 8px;
