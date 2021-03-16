@@ -45,7 +45,9 @@ const radiantBaseMidExitSide2 = Vector(-4861, -3671, 256)
 const radiantBaseTopExitSide1 = Vector(-6085, -3257, 256)
 const radiantBaseTopExitSide2 = Vector(-7079, -3242, 256)
 const midPositionBeforeTrapLocation = Vector(-4904, -4385, 256)
-const inFrontOfBarracksLocation = Vector(-6589, -4468, 259)
+const rightOfFountain = Vector(-5400, -6400, 256)
+const overFountain = Vector(-6700, -5500, 256)
+const inFrontOfBarracksLocation = Vector(-6200, -4350, 256)
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -135,7 +137,7 @@ const onStart = (complete: () => void) => {
 
             // Wait for player to move outside the fountain into the base
             tg.forkAny([
-                tg.goToLocation(midPositionBeforeTrapLocation, [GetGroundPosition(Vector(-6218, -5764), undefined), GetGroundPosition(Vector(-5553, -5640), undefined), GetGroundPosition(Vector(-5564, -5036), undefined)]),
+                tg.goToLocation(midPositionBeforeTrapLocation, [GetGroundPosition(Vector(-5553, -5640), undefined)]),
                 tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseBotExitSide1, radiantBaseBotExitSide2), 0.1),
                 tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseMidExitSide1, radiantBaseMidExitSide2), 0.1),
                 tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseTopExitSide1, radiantBaseTopExitSide2), 0.1)
@@ -146,27 +148,29 @@ const onStart = (complete: () => void) => {
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
-                    tg.wait(2.5),
-                    tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 4),
+                    tg.wait(1.5),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 2),
                     tg.immediate(_ => blockadeRadiantBaseBottom.spawn()),
-                    tg.wait(1.5),
-                    tg.panCameraExponential(bottomMidPoint, middleMidPoint, 4),
+                    tg.wait(0.4),
+                    tg.panCameraExponential(bottomMidPoint, middleMidPoint, 2),
                     tg.immediate(_ => blockadeRadiantBaseMid.spawn()),
-                    tg.wait(1.5),
-                    tg.panCameraExponential(middleMidPoint, topMidPoint, 4),
+                    tg.wait(0.4),
+                    tg.panCameraExponential(middleMidPoint, topMidPoint, 2),
                     tg.immediate(_ => blockadeRadiantBaseTop.spawn()),
-                    tg.wait(1.5),
-                    tg.panCameraExponential(topMidPoint, _ => playerHero.GetAbsOrigin(), 4),
+                    tg.wait(0.4),
+                    tg.panCameraExponential(topMidPoint, _ => playerHero.GetAbsOrigin(), 2),
                 ])
             ]),
 
             // Tell player to escape and wait for them to move to the top.
             tg.immediate(_ => freezePlayerHero(false)),
             tg.fork([
+                tg.audioDialog(LocalizationKey.Script_1_Closing_6, LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_1_Closing_6, LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.goToLocation(rightOfFountain),
+                    tg.goToLocation(overFountain),
+                    tg.goToLocation(inFrontOfBarracksLocation),
                 ]),
-                tg.goToLocation(inFrontOfBarracksLocation),
             ]),
             tg.immediate(_ => {
                 goalMoveOut.complete();

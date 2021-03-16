@@ -70,7 +70,7 @@
         "Goal_1_Shop_1" "Open the shop."
         "Goal_1_Shop_2" "Use the gold provided to purchase a Tango."
         "Goal_1_Shop_3" "Use tango to eat a tree and escape."
-        "Goal_1_Shop_4" "Move to the target location."
+        "Goal_1_Shop_4" "Move to the marked locations."
         "Goal_2_Opening_1" "Move to the marked location next to the top barracks."
         "Goal_2_Opening_2" "Listen to SUNSfan and Slacks."
         "Goal_2_Opening_3" "Wait for the creeps to prepare for the assault."
