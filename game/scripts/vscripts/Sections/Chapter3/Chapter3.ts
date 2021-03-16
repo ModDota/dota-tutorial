@@ -10,6 +10,7 @@ let graph: tg.TutorialStep | undefined = undefined
 
 let movedToStash = false
 const markerLocation = Vector(-3250, 4917, 128)
+const odPixelLocation = Vector(-3635, 5330, 128)
 
 const creepCampMin = Vector(-2911, 4373)
 const creepCampMax = Vector(-2142, 5203)
@@ -123,6 +124,7 @@ class NeutralDetector {
 }
 
 const respawnNeutrals = (neutralDetector: NeutralDetector) => tg.seq([
+    tg.wait(0),
     tg.immediate(_ => neutralDetector.removeNew = false),
     tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
     tg.completeOnCheck(_ => neutralDetector.neutralCount > 0, 0),
@@ -158,8 +160,7 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
     let previousStacks = 0
     let previousTries = 0
 
-    let resetTimer: number = 0
-    let spawnTimer: number = 0
+    const timers = new Set<number>()
 
     const didTry = () => previousTries < tries
     const didStack = () => previousStacks < stacks
@@ -170,16 +171,28 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
         tg.immediate(_ => {
             timeManager.customTimeEnabled = true
             timeManager.time = stackClockStartTime
-            resetTimer = timeManager.registerCallBackOnTime(stackClockEndTime, () => timeManager.time = stackClockStartTime)
-            spawnTimer = timeManager.registerCallBackOnTime(0, () => {
+
+            // Restart time to shortly before stack time shortly after 0
+            timers.add(timeManager.registerCallBackOnTime(stackClockEndTime, () => timeManager.time = stackClockStartTime))
+
+            // Spawn new neutrals at 0 and increment try count
+            timers.add(timeManager.registerCallBackOnTime(0, () => {
+                neutralDetector.removeNew = false
                 GameRules.SpawnNeutralCreeps()
                 tries++
-            })
-            neutralDetector.onNeutralsAdded = addedNeutrals => {
-                addedNeutrals.forEach(neutral => {
-                    print(neutral.GetUnitName(), neutral.GetAbsOrigin())
-                })
+            }))
 
+            // Remove all newly spawned neutrals when we don't spawn them ourselves at 0
+            timers.add(timeManager.registerCallBackOnTime(59, () => {
+                neutralDetector.removeNew = false
+            }))
+            timers.add(timeManager.registerCallBackOnTime(1, () => {
+                neutralDetector.removeNew = true
+            }))
+            neutralDetector.removeNew = (timeManager.time % 60) > 1 && (timeManager.time % 60) < 59
+
+            // Highlight newly spawned neutrals and increment stack counter
+            neutralDetector.onNeutralsAdded = addedNeutrals => {
                 highlight({
                     units: addedNeutrals,
                     type: "arrow_enemy",
@@ -189,6 +202,7 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
             }
         }),
         tg.loop(_ => !done, _ => tg.seq([
+            // Check if there was a try and the time is shortly after zero (after creeps are supposed to be spawned).
             (didTry() && (timeManager.time % 60) > 0.1 && (timeManager.time % 60) < 59) ? tg.seq([
                 (didStack() ? onStacked(tries, stacks) : onFailure(tries, stacks)),
                 tg.immediate(_ => {
@@ -209,8 +223,8 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
 
         ])),
         tg.immediate(_ => {
-            timeManager.unregisterCallBackOnTime(resetTimer)
-            timeManager.unregisterCallBackOnTime(spawnTimer)
+            timers.forEach(timer => timeManager.unregisterCallBackOnTime(timer))
+            timers.clear()
             timeManager.customTimeEnabled = false
         }),
     ])
@@ -343,7 +357,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => freezePlayerHero(false)),
 
         // Stacking
-        tg.immediate(_ => neutralDetector.removeNew = false),
+        tg.immediate(_ => neutralDetector.removeNew = true),
         stack(1, neutralDetector,
             _ => tg.immediate(_ => print("Stack success")),
             _ => tg.audioDialog(LocalizationKey.Script_3_Opening_16, LocalizationKey.Script_3_Opening_16, ctx => ctx[CustomNpcKeys.SlacksMudGolem])
@@ -382,13 +396,13 @@ const onStart = (complete: () => void) => {
                 playerHero.AddNewModifier(undefined, undefined, modifier_deal_no_damage.name, undefined)
                 playerHero.AddNewModifier(undefined, undefined, modifier_keep_hero_alive.name, undefined)
                 const odPixel = ctx[CustomNpcKeys.ODPixelMudGolem] as CDOTA_BaseNPC
-                odPixel.SetAbsOrigin(GetGroundPosition(markerLocation, undefined))
+                FindClearSpaceForUnit(odPixel, odPixelLocation, false)
                 setUnitPacifist(odPixel, true)
             }),
             tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
 
             // Stacking
-            tg.immediate(_ => neutralDetector.removeNew = false),
+            tg.immediate(_ => neutralDetector.removeNew = true),
             stack(stackTryCount, neutralDetector,
                 (tries, stacks) => tg.seq([
                     tg.immediate(_ => {
