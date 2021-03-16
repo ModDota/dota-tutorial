@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { DestroyNeutrals, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { DestroyNeutrals, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
@@ -33,6 +33,7 @@ const clockUIPath =
 let timeManagerZeroTimeId: number;
 let timeManagerResetTimeId: number;
 let entityKilledListenerId: EventListenerID;
+let fowViewer: ViewerID | undefined
 
 const GetUnitsInsidePolygon = (polygon: Vector[], radius?: number, midPoint?: Vector) => {
     const units = FindUnitsInRadius(DotaTeam.GOODGUYS, midPoint || Vector(), undefined, radius || FIND_UNITS_EVERYWHERE, UnitTargetTeam.BOTH,
@@ -42,7 +43,6 @@ const GetUnitsInsidePolygon = (polygon: Vector[], radius?: number, midPoint?: Ve
 };
 
 const getAllNeutralCreeps = () => Entities.FindAllByClassname("npc_dota_creep_neutral").filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS && x.IsBaseNPC() && !x.IsInvulnerable()) as CDOTA_BaseNPC[];
-
 
 const requiredState: RequiredState = {
     heroLevel: 6,
@@ -363,23 +363,54 @@ const onStart = (complete: () => void) => {
     ];
 
     const chaseRiki = () => {
-        const location = GetGroundPosition(Vector(-2250, 3850), undefined);
+        const belowRamp = GetGroundPosition(Vector(-2500, 4000), undefined);
+        const aboveRamp = GetGroundPosition(Vector(-2250, 3850), undefined);
+        const rikiLocation = GetGroundPosition(Vector(-2700, 4200), undefined);
+
         return [
+            // Spawn Riki and make sure he's visible
             tg.immediate((ctx) => {
                 goalMoveToRiki.start();
                 let riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
-                riki.SetAbsOrigin(GetGroundPosition(Vector(-2700, 4200), undefined));
+                riki.SetAbsOrigin(rikiLocation);
                 let backstab = riki.FindAbilityByName("riki_backstab");
                 backstab!.SetLevel(0);
                 riki.RemoveModifierByName("modifier_invisible");
                 riki.RemoveModifierByName("modifier_riki_backstab");
                 riki.Hold();
                 setUnitPacifist(riki, true);
+
+                // Spawn fow viewer on Riki's location
+                fowViewer = AddFOWViewer(DotaTeam.GOODGUYS, rikiLocation, 800, 30, true);
             }),
-            tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, (ctx) => ctx[CustomNpcKeys.Riki]),
-            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, (ctx) => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.moveUnit((ctx) => ctx[CustomNpcKeys.Riki], location),
-            tg.goToLocation(location),
+
+            // Pan to Riki and play his dialog
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), rikiLocation, 2),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_13, LocalizationKey.Script_3_Neutrals_13, ctx => ctx[CustomNpcKeys.Riki]),
+
+            // Make Riki move away
+            tg.immediate(ctx => {
+                ExecuteOrderFromTable({
+                    UnitIndex: (ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC).GetEntityIndex(),
+                    OrderType: UnitOrder.MOVE_TO_POSITION,
+                    Position: aboveRamp,
+                    Queue: true
+                })
+            }),
+            tg.wait(1),
+
+            // Remove the fow viewer, pan back and play dialog. Wait for player to move to where Riki went.
+            tg.immediate(_ => {
+                if (fowViewer) {
+                    RemoveFOWViewer(DotaTeam.GOODGUYS, fowViewer);
+                    fowViewer = undefined;
+                }
+            }),
+            tg.fork([
+                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
+                tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            ]),
+            tg.goToLocation(belowRamp),
         ];
     };
 
@@ -416,6 +447,11 @@ const onStop = () => {
         if (hero && IsValidEntity(hero)) {
             hero.RemoveModifierByName("modifier_deal_no_damage");
             //hero.RemoveModifierByName("modifier_keep_hero_alive");
+        }
+
+        if (fowViewer) {
+            RemoveFOWViewer(DotaTeam.GOODGUYS, fowViewer);
+            fowViewer = undefined;
         }
 
         DestroyNeutrals();
