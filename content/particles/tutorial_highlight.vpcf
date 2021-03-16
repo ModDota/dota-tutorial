@@ -13,8 +13,5 @@
 		{
 			m_ChildRef = resource:"particles/tutorial_highlight_ring.vpcf"
 		},
-		{
-			m_ChildRef = resource:"particles/tutorial_highlight_sparkles.vpcf"
-		},
 	]
 }

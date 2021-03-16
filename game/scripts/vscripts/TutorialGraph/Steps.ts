@@ -363,7 +363,7 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
 
             // Stop when we are close enough.
             // Exactly zero distance does seem to actually happen so this check works fine.
-            if (distance > 0.1) {
+            if (distance > 10) {
                 // Query the speed for the current location.
                 const speed = getSpeed(actualStartLocation, actualEndLocation, currentLocation)
 

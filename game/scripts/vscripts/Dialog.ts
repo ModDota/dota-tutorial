@@ -1,5 +1,5 @@
 import { getSoundDuration } from "./Sounds";
-import { getOrError, getPlayerHero } from "./util";
+import { getOrError, getPlayerHero, highlight } from "./util";
 
 interface DialogData {
     speaker: CDOTA_BaseNPC;
@@ -19,6 +19,7 @@ class DialogController {
     private currentToken: DialogToken | undefined;
     private onDialogEndedCallback: (() => void) | undefined = undefined;
     private playing = false;
+    private currentParticleIndexArray: ParticleID[] | undefined = undefined
 
     constructor() {
         CustomGameEventManager.RegisterListener("dialog_complete", (source, event) => this.onEnded(event));
@@ -43,6 +44,15 @@ class DialogController {
             this.playing = false;
             this.currentLine = undefined;
             this.currentToken = undefined;
+
+            if (this.currentParticleIndexArray) {
+                for (const particleIndex of this.currentParticleIndexArray) {
+                    ParticleManager.DestroyParticle(particleIndex, false)
+                    ParticleManager.ReleaseParticleIndex(particleIndex)
+                }
+                this.currentParticleIndexArray = undefined
+            }
+
             CustomGameEventManager.Send_ServerToAllClients("dialog_clear", { Token: token });
         }
     }
@@ -69,7 +79,7 @@ class DialogController {
         const { gesture, sound, speaker, advanceTime, text } = dialog;
 
         const hero = getOrError(getPlayerHero());
-        speaker.FaceTowards(hero.GetOrigin());
+        speaker.FaceTowards(hero.GetAbsOrigin());
 
         if (gesture && speaker.IsAlive()) {
             speaker.StartGesture(gesture);
@@ -88,6 +98,15 @@ class DialogController {
             Token: this.currentToken,
         });
 
+        if (speaker.IsAlive()) {
+            this.currentParticleIndexArray = highlight({
+                type: "dialog_circle",
+                attach: true,
+                radius: 90,
+                units: [speaker]
+            })
+        }
+
         return this.currentToken;
     }
 
@@ -99,6 +118,14 @@ class DialogController {
             this.stopSound();
             this.playing = false;
             this.currentToken = undefined;
+
+            if (this.currentParticleIndexArray) {
+                for (const particleIndex of this.currentParticleIndexArray) {
+                    ParticleManager.DestroyParticle(particleIndex, false)
+                    ParticleManager.ReleaseParticleIndex(particleIndex)
+                }
+                this.currentParticleIndexArray = undefined
+            }
 
             const dialogEndedCallback = this.onDialogEndedCallback;
             if (dialogEndedCallback) {

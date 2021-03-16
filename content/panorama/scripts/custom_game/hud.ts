@@ -121,8 +121,7 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
         // Shop guide items
         const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
         if (isShopGuideItem) {
-            const needsAdjusting = !Game.IsShopOpen()
-            checkShopHighlightItemPanel(highlightPanel, element, needsAdjusting)
+            checkShopHighlightItemPanel(highlightPanel, element)
         }
 
         // Deliver Courier path
@@ -132,7 +131,7 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
     }
 }
 
-function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel, needsAdjusting: boolean) {
+function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel) {
     if (!highlightPanel.IsValid()) return
 
     const isShopOpen = Game.IsShopOpen()
@@ -142,20 +141,18 @@ function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel
         highlightPanel.style.visibility = "collapse"
 
     // Adjust position of the panel if needed
-    if (needsAdjusting) {
-        if (!isShopOpen) {
-            $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
-            return;
-        }
-        else {
-            const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
-            const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
-            if (highlightPanel.style.position !== originalPanelPosition)
-                highlightPanel.style.position = originalPanelPosition
-        }
+    if (!isShopOpen) {
+        $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel))
+        return;
+    }
+    else {
+        const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
+        const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
+        if (highlightPanel.style.position !== originalPanelPosition)
+            highlightPanel.style.position = originalPanelPosition
     }
 
-    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel, needsAdjusting))
+    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel))
 }
 
 GameEvents.Subscribe("highlight_element", highlightUiElement);

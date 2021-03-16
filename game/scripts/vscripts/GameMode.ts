@@ -53,6 +53,7 @@ export class GameMode {
         PrecacheResource("particle", ParticleName.HighlightRedCircle, context);
         PrecacheResource("particle", ParticleName.Path, context);
         PrecacheResource("particle", ParticleName.MoveToLocation, context)
+        PrecacheResource("particle", ParticleName.DialogCircle, context)
     }
 
     public static Activate(this: void) {
