@@ -63,6 +63,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => chapter2Blockades.radiantBaseTop.spawn()),
             tg.wait(FrameTime()),
             tg.immediate(_ => goalMoveNextToBarracks.start()),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
             tg.goToLocation(moveNextToBarracksLocation),
             tg.immediate(context => {
                 goalMoveNextToBarracks.complete()
@@ -157,7 +158,12 @@ const onStart = (complete: () => void) => {
                 goalPrepareToMove.start()
             }),
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => []),
+            tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => {
+                if (playerHero.GetAbsOrigin().z < 256)
+                    return []
+                else
+                    return [upBaseTopRamp]
+            }),
             tg.immediate(context => {
                 goalPrepareToMove.complete()
                 goalWaitForCreepsToPrepareToAttack.start()
