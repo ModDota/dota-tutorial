@@ -139,13 +139,15 @@ const onStart = (complete: () => void) => {
             removeHighlight(demonEdgeGuideUIPath)
             goalBuyDemonEdge.complete()
         }),
-        tg.audioDialog(LocalizationKey.Script_2_Courier_5, LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem]),
-        tg.immediate(() => {
-            playerOrderMustBuyRecipeAndCrystalis = true
-            highlightUiElement(crystalisGuideUIPath);
-            highlightUiElement(daedalusGuideUIPath);
-            goalBuyCrystalisAndRecipe.start()
-        }),
+        tg.fork([
+            tg.audioDialog(LocalizationKey.Script_2_Courier_5, LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem]),
+            tg.immediate(() => {
+                playerOrderMustBuyRecipeAndCrystalis = true
+                highlightUiElement(crystalisGuideUIPath);
+                highlightUiElement(daedalusGuideUIPath);
+                goalBuyCrystalisAndRecipe.start()
+            }),
+        ]),
         tg.completeOnCheck(() => {
             return requiredItemCount === 4
         }, 0.2),
@@ -197,7 +199,12 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalMoveToFinalPosition.start()
         }),
-        tg.goToLocation(finalMovementPositionLocation, _ => [upSecretShopRamp, insideRiverLocation, upDireRamp]),
+        tg.goToLocation(finalMovementPositionLocation, _ => {
+            if (playerHero.GetAbsOrigin().z < 10)
+                return [insideRiverLocation, upDireRamp]
+            else
+                return [upSecretShopRamp, insideRiverLocation, upDireRamp]
+        }),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )
