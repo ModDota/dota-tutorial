@@ -13,6 +13,7 @@ const markerLocation = Vector(-3250, 4917, 128);
 
 const creepCampMin = Vector(-2911, 4373);
 const creepCampMax = Vector(-2142, 5203);
+const creepCampCenter = creepCampMin.__add(creepCampMax).__mul(0.5)
 
 const bigCampLocation = Vector(-4300, 3550, 256)
 
@@ -425,9 +426,12 @@ const onStart = (complete: () => void) => {
     ];
 
     const pickUpItems = () => [
-        tg.immediate(_ => DropNeutralItemAtPositionForHero(giveAwayItemName, creepCampMin.__add(creepCampMax).__mul(0.5), playerHero, 0, true)),
+        tg.immediate(_ => DropNeutralItemAtPositionForHero(giveAwayItemName, creepCampCenter, playerHero, 0, true)),
         tg.immediate(_ => goalPickupItem.start()),
-        tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1),
+        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1), {
+            type: "arrow",
+            locations: [creepCampCenter],
+        }),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(_ => highlightUiElement(neutralSlotUIPath)),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -450,11 +454,14 @@ const onStart = (complete: () => void) => {
         tg.completeOnCheck(_ => neutralDetector.neutralCount === 0, 0.1),
         tg.immediate(_ => goalKillThirdSpawn.complete()),
 
-        tg.immediate(_ => DropNeutralItemAtPositionForHero(dropInStashItemName, creepCampMin.__add(creepCampMax).__mul(0.5), playerHero, 0, true)),
+        tg.immediate(_ => DropNeutralItemAtPositionForHero(dropInStashItemName, creepCampCenter, playerHero, 0, true)),
 
         // Wait for player to pick up item
         tg.immediate(_ => goalPickupItem.start()),
-        tg.completeOnCheck(_ => playerHero.HasItemInInventory(dropInStashItemName), 0.1),
+        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(dropInStashItemName), 0.1), {
+            type: "arrow",
+            locations: [creepCampCenter],
+        }),
         tg.immediate(_ => goalPickupItem.complete()),
     ];
 
