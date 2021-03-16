@@ -113,6 +113,7 @@ declare const enum ParticleName {
     HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
     QuestionMarks = "particles/tutorial_question_marks.vpcf",
+    MoveToLocation = "particles/newplayer_fx/npx_moveto_goal.vpcf",
 }
 
 type VideoName = "guides" | "muting"
