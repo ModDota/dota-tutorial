@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { DestroyNeutrals, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { DestroyNeutrals, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, isPointInsidePolygon, removeContextEntityIfExists, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter";
@@ -180,7 +180,7 @@ const onStart = (complete: () => void) => {
         const timeManager = GameRules.Addon.customTimeManager;
         return [
             tg.immediate(_ => {
-                playerHero.AddNewModifier(undefined, undefined, "modifier_deal_no_damage", undefined);
+                playerHero.AddNewModifier(undefined, undefined, modifier_deal_no_damage.name, undefined);
 
                 goalStackCreeps.start();
                 GameRules.SpawnNeutralCreeps();
@@ -213,7 +213,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => {
                 timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
                 timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
-                playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                playerHero.RemoveModifierByName(modifier_deal_no_damage.name);
                 removeHighlight(clockUIPath);
                 goalStackCreeps.complete();
             }),
@@ -255,7 +255,7 @@ const onStart = (complete: () => void) => {
                     tryCount++;
                 });
                 //playerHero.AddNewModifier(undefined, undefined, "modifier_keep_hero_alive", undefined);
-                playerHero.AddNewModifier(undefined, undefined, "modifier_deal_no_damage", undefined);
+                playerHero.AddNewModifier(undefined, undefined, modifier_deal_no_damage.name, undefined);
                 let odPixel = ctx[CustomNpcKeys.ODPixelMudGolem] as CDOTA_BaseNPC;
                 odPixel.SetAbsOrigin(GetGroundPosition(markerLocation, undefined));
                 setUnitPacifist(odPixel, true);
@@ -293,7 +293,8 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => {
                 timeManager.unregisterCallBackOnTime(timeManagerResetTimeId);
                 timeManager.unregisterCallBackOnTime(timeManagerZeroTimeId);
-                playerHero.RemoveModifierByName("modifier_deal_no_damage");
+                GameRules.Addon.customTimeManager.customTimeEnabled = false;
+                playerHero.RemoveModifierByName(modifier_deal_no_damage.name);
                 goalOptionalStackCreeps.setValue(stackCount);
                 goalOptionalStackCreeps.complete();
                 goalTryStackCreeps.setValue(tryCount);
@@ -411,6 +412,8 @@ const onStart = (complete: () => void) => {
                 tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]),
             tg.goToLocation(belowRamp),
+
+            tg.immediate(ctx => removeContextEntityIfExists(ctx, CustomNpcKeys.Riki)),
         ];
     };
 
@@ -445,14 +448,15 @@ const onStop = () => {
         GameRules.Addon.customTimeManager.customTimeEnabled = false;
         const hero = getPlayerHero()
         if (hero && IsValidEntity(hero)) {
-            hero.RemoveModifierByName("modifier_deal_no_damage");
-            //hero.RemoveModifierByName("modifier_keep_hero_alive");
+            hero.RemoveModifierByName(modifier_deal_no_damage.name);
         }
 
         if (fowViewer) {
             RemoveFOWViewer(DotaTeam.GOODGUYS, fowViewer);
             fowViewer = undefined;
         }
+
+        removeContextEntityIfExists(GameRules.Addon.context, CustomNpcKeys.Riki)
 
         DestroyNeutrals();
     }
