@@ -77,7 +77,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalPressVoiceChatButton.start()),
             tg.forkAny([
                 tg.seq([
-                    tg.waitForCommand(37), // Team voice
+                    tg.waitForVoiceChat(),
                     tg.immediate(_ => voicePressed = true),
                     tg.audioDialog(LocalizationKey.Script_4_Communication_4, LocalizationKey.Script_4_Communication_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 ]),

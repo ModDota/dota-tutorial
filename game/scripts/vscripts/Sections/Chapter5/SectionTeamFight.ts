@@ -175,7 +175,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalPromiseCarryTp.start()),
             tg.forkAny([
                 tg.seq([
-                    tg.waitForCommand(37), // Team voice
+                    tg.waitForVoiceChat(),
                     tg.immediate(_ => voicePressed = true),
                     tg.audioDialog(LocalizationKey.Script_5_5v5_12, LocalizationKey.Script_5_5v5_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 ]),

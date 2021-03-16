@@ -25,14 +25,6 @@ interface DialogCompleteEvent {
     Token: DialogToken;
 }
 
-interface DetectCommandEvent {
-    command: number; //DOTAKeybindCommand_t
-}
-
-interface CommandDetectedEvent {
-    command: number; //DOTAKeybindCommand_t
-}
-
 interface DetectModifierKeyEvent {
     key: ModifierKey;
 }
@@ -77,8 +69,6 @@ interface CustomGameEventDeclarations {
     detect_camera_movement: {};
     camera_movement_detected: {};
     set_goals: SetGoalsEvent;
-    detect_command: DetectCommandEvent;
-    command_detected: CommandDetectedEvent;
     detect_modifier_key: DetectModifierKeyEvent;
     modifier_key_detected: ModifierKeyDetectedEvent;
     set_client_clock: ClockTimeEvent;
@@ -90,4 +80,5 @@ interface CustomGameEventDeclarations {
     hide_video: {};
     play_video_continue: {};
     fade_screen: {};
+    voice_chat: {};
 }
