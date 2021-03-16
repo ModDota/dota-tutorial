@@ -55,13 +55,13 @@ const requiredState: RequiredState = {
     requireRiki: true,
     heroItems: { item_greater_crit: 1 },
     blockades: [
-        new Blockade(Vector(-1550, 3600), Vector(-1550, 4800)),
         new Blockade(Vector(-1550, 4800), Vector(-2600, 6400)),
         new Blockade(Vector(-2600, 6400), Vector(-3700, 6400)),
         new Blockade(Vector(-3700, 6400), Vector(-4100, 5200)),
-        new Blockade(Vector(-4100, 5200), Vector(-4600, 4800)),
-        new Blockade(Vector(-4600, 4800), Vector(-4000, 3800)),
-        new Blockade(Vector(-4000, 3800), Vector(-1550, 3600)),
+        new Blockade(Vector(-4000, 3104), Vector(-3545, 3062)), // River
+        new Blockade(Vector(-4223, 5043), Vector(-4480, 4630)),
+        new Blockade(Vector(-4480, 4630), Vector(-4597, 3497)),
+        new Blockade(Vector(-1450, 4600), Vector(-1500, 3300)),
     ],
 };
 
@@ -110,9 +110,7 @@ const onStart = (complete: () => void) => {
                 })
             }
         }
-    },
-        undefined
-    );
+    }, undefined);
 
     const goToCamp = () => [
         tg.immediate(_ => goalMoveToCamp.start()),
@@ -417,7 +415,7 @@ const onStart = (complete: () => void) => {
     };
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        ...goToCamp(),
+        /*...goToCamp(),
         ...spawnAndKillFirstRound(),
         ...respawnCreepsInitially(),
         ...pressAlt(),
@@ -426,7 +424,7 @@ const onStart = (complete: () => void) => {
         ...killStackedCamp(),
         ...pickUpItems(),
         ...killThirdSpawn(),
-        ...stashItem(),
+        ...stashItem(),*/
         ...chaseRiki(),
     ]));
 
