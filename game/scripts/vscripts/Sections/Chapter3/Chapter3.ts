@@ -9,7 +9,7 @@ import { Blockade } from "../../Blockade";
 let graph: tg.TutorialStep | undefined = undefined;
 
 let movedToStash = false;
-const markerLocation = Vector(-3250, 4917);
+const markerLocation = Vector(-3250, 4917, 128);
 const creepCampBox = [
     Vector(-2911, 4373),
     Vector(-2911, 5196),
@@ -47,7 +47,7 @@ const getAllNeutralCreeps = () => Entities.FindAllByClassname("npc_dota_creep_ne
 const requiredState: RequiredState = {
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    heroLocation: GetGroundPosition(Vector(-3500, 4500), undefined),
+    heroLocation: Vector(-3500, 4500, 128),
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     requireODPixelGolem: true,
