@@ -193,7 +193,7 @@ const onStart = (complete: () => void) => {
                     tg.neverComplete()
                 ]),
                 tg.seq([
-                    tg.wait(3),
+                    tg.wait(2),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_9, LocalizationKey.Script_2_Tower_9, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
                     tg.immediate(() => {
