@@ -185,24 +185,6 @@ export function removeHighlight(path: string) {
     CustomGameEventManager.Send_ServerToAllClients("remove_highlight", { path });
 }
 
-/**
- * Checks if a point is inside an array of points
- * @param point The point to check
- * @param polygon The array of points to check against
- */
-export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
-    let inside = false;
-    let j = polygon.length - 1;
-
-    for (let i = 0; i < polygon.length; j = i++) {
-        if (polygon[i].y > point.y != polygon[j].y > point.y &&
-            point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x) {
-            inside = !inside;
-        }
-    }
-    return inside
-}
-
 export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
     if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
         unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
@@ -537,7 +519,7 @@ export function removeNeutralSpawners() {
         if (normal.Length2D() > 100) {
             UTIL_Remove(spawner);
         }
-        
+
     }
 }
 
