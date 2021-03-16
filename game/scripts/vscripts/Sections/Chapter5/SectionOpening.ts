@@ -216,7 +216,7 @@ function onStart(complete: () => void) {
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.CrystalMaiden], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => ctx[CustomNpcKeys.CrystalMaiden].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.CrystalMaiden], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_10, LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.CrystalMaiden]),
             tg.immediate((ctx) => {
                 ctx[CustomNpcKeys.CrystalMaiden].AddNewModifier(ctx[CustomNpcKeys.CrystalMaiden], undefined, "modifier_rune_invis", { duration: runesDuration })
             }),
@@ -231,7 +231,7 @@ function onStart(complete: () => void) {
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Zuus], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => ctx[CustomNpcKeys.Zuus].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_11, ctx => ctx[CustomNpcKeys.Zuus], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_11, LocalizationKey.Script_5_Opening_11, ctx => ctx[CustomNpcKeys.Zuus]),
             tg.immediate((ctx) => {
                 ctx[CustomNpcKeys.Zuus].AddNewModifier(ctx[CustomNpcKeys.Zuus], undefined, "modifier_rune_arcane", { duration: runesDuration })
             }),
@@ -257,7 +257,7 @@ function onStart(complete: () => void) {
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Lion], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => ctx[CustomNpcKeys.Lion].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
             tg.fork([
-                tg.textDialog(LocalizationKey.Script_5_Opening_12, ctx => ctx[CustomNpcKeys.Lion], 8),
+                tg.audioDialog(LocalizationKey.Script_5_Opening_12, LocalizationKey.Script_5_Opening_12, ctx => ctx[CustomNpcKeys.Lion]),
                 tg.immediate((ctx) => {
                     ctx[CustomNpcKeys.Lion].AddNewModifier(ctx[CustomNpcKeys.Lion], undefined, "modifier_rune_haste", { duration: runesDuration })
                 }),
