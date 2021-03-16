@@ -127,6 +127,7 @@ const respawnNeutrals = (neutralDetector: NeutralDetector) => tg.seq([
     tg.wait(0),
     tg.immediate(_ => neutralDetector.removeNew = false),
     tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
+    tg.wait(0),
     tg.completeOnCheck(_ => neutralDetector.neutralCount > 0, 0),
     tg.immediate(_ => neutralDetector.removeNew = true),
 ])
@@ -178,7 +179,13 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
             // Spawn new neutrals at 0 and increment try count
             timers.add(timeManager.registerCallBackOnTime(0, () => {
                 neutralDetector.removeNew = false
-                GameRules.SpawnNeutralCreeps()
+                // Triggered on 0s. Spawns removed after 1s and after 59s.
+                // If game timer is within 1s of our fake timer (ie. between 1s and 59s right here) we don't need to spawn our own camps.
+                // Otherwise we would get two spawns.
+                const realSeconds = GameRules.GetDOTATime(false, false) % 60;
+                if (realSeconds > 1 && realSeconds < 59) {
+                    GameRules.SpawnNeutralCreeps()
+                }
                 tries++
             }))
 
@@ -369,7 +376,6 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => {
             playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
             playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
-            removeHighlight(clockUIPath)
             goalStackCreeps.complete()
         }),
     ]
@@ -424,6 +430,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => neutralDetector.removeNew = true),
 
             tg.immediate(_ => {
+                removeHighlight(clockUIPath)
                 playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
                 playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
                 goalOptionalStackCreeps.complete()
