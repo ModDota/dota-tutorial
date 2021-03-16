@@ -133,7 +133,7 @@ function onStart(complete: () => void) {
     const slacks = (GameRules.Addon.context[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC)
     const sunsFan = (GameRules.Addon.context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC)
 
-    sectionTimer = Timers.CreateTimer(sectionTimerUpdate)
+    sectionTimer = Timers.CreateTimer(() => sectionTimerUpdate())
 
     // Make Slacks and SUNSfan invisible at the start until we fade back in
     slacks.AddNoDraw()
