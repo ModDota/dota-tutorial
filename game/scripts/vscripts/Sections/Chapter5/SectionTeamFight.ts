@@ -28,6 +28,7 @@ const requiredState: RequiredState = {
         shared.chapter5Blockades.midRiverTopSide,
         shared.chapter5Blockades.roshan,
     ],
+    removeElderDragonForm: false
 }
 
 const radiantFountainLocation = Vector(-6850, -6500, 384)
@@ -54,6 +55,10 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
+            tg.immediate(_ => {
+                playerHero.SetHealth(playerHero.GetMaxHealth())
+                playerHero.SetMana(playerHero.GetMaxMana())
+            }),
             tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
             shared.spawnFriendlyHeroes(shared.outsidePitLocation),
             shared.spawnEnemyHeroes(shared.enemyLocation),
