@@ -467,25 +467,20 @@ export const waitForCameraMovement = () => {
 }
 
 /**
- * Waits for a command to be executed. See panorama's DOTAKeybindCommand_t for the commands. Overrides the default behavior for the command so this can only be used if we merely want to detect the hotkey.
- * @param command Command to wait for. See DOTAKeybindCommand_t.
+ * Waits for the player to release their voice hotkey (either team or party).
  */
-export const waitForCommand = (command: number) => {
+export const waitForVoiceChat = () => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
     return tg.step((context, complete) => {
-        listenerId = CustomGameEventManager.RegisterListener("command_detected", (source, event) => {
-            if (event.command === command) {
-                if (listenerId) {
-                    CustomGameEventManager.UnregisterListener(listenerId)
-                    listenerId = undefined
-                }
-
-                complete()
+        listenerId = CustomGameEventManager.RegisterListener("voice_chat", _ => {
+            if (listenerId) {
+                CustomGameEventManager.UnregisterListener(listenerId)
+                listenerId = undefined
             }
-        })
 
-        CustomGameEventManager.Send_ServerToAllClients("detect_command", { command });
+            complete()
+        })
     }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
