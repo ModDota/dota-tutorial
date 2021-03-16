@@ -10,7 +10,7 @@ interface DialogData {
 }
 
 function generateDialogToken() {
-    return RandomInt(1, 100000000)
+    return RandomInt(1, 100000000);
 }
 
 class DialogController {
@@ -19,7 +19,7 @@ class DialogController {
     private currentToken: DialogToken | undefined;
     private onDialogEndedCallback: (() => void) | undefined = undefined;
     private playing = false;
-    private currentParticleIndexArray: ParticleID[] | undefined = undefined
+    private particles: ParticleID[] | undefined = undefined;
 
     constructor() {
         CustomGameEventManager.RegisterListener("dialog_complete", (source, event) => this.onEnded(event));
@@ -35,23 +35,30 @@ class DialogController {
     }
 
     /**
+     * Clears the current particles.
+     */
+    private clearParticles() {
+        if (this.particles !== undefined) {
+            for (const particleIndex of this.particles) {
+                ParticleManager.DestroyParticle(particleIndex, false);
+                ParticleManager.ReleaseParticleIndex(particleIndex);
+            }
+            this.particles = undefined;
+        }
+    }
+
+    /**
      * Forces the dialog to stop. Clears the dialog UI and stops the current sound.
      * @param token Optional token for the dialog to stop. If undefined cancels any currently playing dialog.
      */
     public stop(token?: DialogToken) {
         if (token === undefined || token === this.currentToken) {
             this.stopSound();
+            this.clearParticles();
+
             this.playing = false;
             this.currentLine = undefined;
             this.currentToken = undefined;
-
-            if (this.currentParticleIndexArray) {
-                for (const particleIndex of this.currentParticleIndexArray) {
-                    ParticleManager.DestroyParticle(particleIndex, false)
-                    ParticleManager.ReleaseParticleIndex(particleIndex)
-                }
-                this.currentParticleIndexArray = undefined
-            }
 
             CustomGameEventManager.Send_ServerToAllClients("dialog_clear", { Token: token });
         }
@@ -66,6 +73,7 @@ class DialogController {
     public play(dialog: DialogData, onEnded?: () => void): DialogToken {
         if (this.playing) {
             this.stopSound();
+            this.clearParticles();
         }
 
         this.playing = true;
@@ -79,10 +87,20 @@ class DialogController {
         const { gesture, sound, speaker, advanceTime, text } = dialog;
 
         const hero = getOrError(getPlayerHero());
-        speaker.FaceTowards(hero.GetAbsOrigin());
 
-        if (gesture && speaker.IsAlive()) {
-            speaker.StartGesture(gesture);
+        if (speaker.IsAlive()) {
+            if (gesture) {
+                speaker.StartGesture(gesture);
+            }
+
+            this.particles = highlight({
+                type: "dialog_circle",
+                attach: true,
+                radius: 90,
+                units: [speaker]
+            });
+
+            speaker.FaceTowards(hero.GetAbsOrigin());
         }
 
         if (sound) {
@@ -98,15 +116,6 @@ class DialogController {
             Token: this.currentToken,
         });
 
-        if (speaker.IsAlive()) {
-            this.currentParticleIndexArray = highlight({
-                type: "dialog_circle",
-                attach: true,
-                radius: 90,
-                units: [speaker]
-            })
-        }
-
         return this.currentToken;
     }
 
@@ -116,16 +125,10 @@ class DialogController {
     private onEnded(event: DialogCompleteEvent) {
         if (event.Token === this.currentToken) {
             this.stopSound();
+            this.clearParticles();
+
             this.playing = false;
             this.currentToken = undefined;
-
-            if (this.currentParticleIndexArray) {
-                for (const particleIndex of this.currentParticleIndexArray) {
-                    ParticleManager.DestroyParticle(particleIndex, false)
-                    ParticleManager.ReleaseParticleIndex(particleIndex)
-                }
-                this.currentParticleIndexArray = undefined
-            }
 
             const dialogEndedCallback = this.onDialogEndedCallback;
             if (dialogEndedCallback) {
@@ -154,7 +157,7 @@ function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, onEnded
         advanceTime: duration,
         gesture: GameActivity.DOTA_ATTACK,
         sound: soundName,
-    }
+    };
 
     return getOrError(dialogController).play(dialog, onEnded);
 }
