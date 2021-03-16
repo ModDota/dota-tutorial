@@ -6,7 +6,7 @@ import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -100,7 +100,10 @@ const onStart = (complete: () => void) => {
                 removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
             }),
             tg.audioDialog(LocalizationKey.Script_2_Tower_1, LocalizationKey.Script_2_Tower_1, context => context[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
+            tg.fork([
+                tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => direTopTower.GetAbsOrigin(), 1),
+            ]),
             tg.immediate(() => {
                 // Calculate how long you should be dead while Slacks and Sunsfan explain death
                 setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
@@ -109,18 +112,24 @@ const onStart = (complete: () => void) => {
                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
                 direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
             }),
-            tg.withHighlights(tg.completeOnCheck(() => {
-                const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
-                if (!modifier) error("Dragon Knight death modifier does not exists")
-                return modifier.dkDiedToTower
-            }, 0.5),
-                _ =>
-                ({
-                    type: "arrow_enemy",
-                    units: [direTopTower],
-                    attach: true
-                })
-            ),
+            tg.fork([
+                tg.withHighlights(tg.completeOnCheck(() => {
+                    const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
+                    if (!modifier) error("Dragon Knight death modifier does not exist")
+                    return modifier.dkDiedToTower
+                }, 0.5),
+                    _ =>
+                    ({
+                        type: "arrow_enemy",
+                        units: [direTopTower],
+                        attach: true
+                    })
+                ),
+                tg.seq([
+                    tg.wait(1),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
+                ])
+            ]),
             tg.immediate(() => {
                 goalAttemptToAttackTower.complete()
                 goalwaitToRespawn.start()
@@ -133,9 +142,10 @@ const onStart = (complete: () => void) => {
             tg.immediate(() => {
                 if (!playerHero.IsAlive()) playerHero.RespawnHero(false, false)
             }),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => fountainLocation, 0.9),
             tg.completeOnCheck(() => {
                 const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
-                if (!modifier) error("The modifier does not exists")
+                if (!modifier) error("The modifier does not exist")
                 return modifier.dkRespawned
             }, 0.5),
             tg.immediate(() => {
@@ -157,13 +167,15 @@ const onStart = (complete: () => void) => {
                 freezePlayerHero(true)
             }),
             tg.audioDialog(LocalizationKey.Script_2_Tower_8, LocalizationKey.Script_2_Tower_8, context => context[CustomNpcKeys.SlacksMudGolem]),
+            tg.setCameraTarget(playerHero),
             tg.immediate(() => goalHoldAltToSeeTowerRadius.start()),
             tg.waitForModifierKey(ModifierKey.Alt),
             tg.immediate(() => {
                 goalHoldAltToSeeTowerRadius.complete()
                 radiantCreeps = createRadiantLaneCreeps();
             }),
-            tg.setCameraTarget(direTopTower),
+            tg.wait(1),
+            tg.setCameraTarget(_ => radiantCreeps[0]),
             tg.forkAny([
                 tg.seq([
                     tg.immediate(context => {
@@ -181,8 +193,9 @@ const onStart = (complete: () => void) => {
                     tg.neverComplete()
                 ]),
                 tg.seq([
+                    tg.wait(3),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_9, LocalizationKey.Script_2_Tower_9, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.panCameraLinear(_ => direTopTower.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
                     tg.immediate(() => {
                         goalSneakThroughTower.start()
                         freezePlayerHero(false)
@@ -198,12 +211,10 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalSneakThroughTower.setValue(4)
                         goalSneakThroughTower.complete()
-                        freezePlayerHero(true)
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_10, LocalizationKey.Script_2_Tower_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.immediate(() => {
                         goalSneakBackAgain.start()
-                        freezePlayerHero(false)
                     }),
                     tg.goToLocation(thirdTowerSneakLocation, _ => []),
                     tg.immediate(() => goalSneakBackAgain.setValue(1)),
@@ -289,12 +300,10 @@ const onStart = (complete: () => void) => {
                         items.push(playerHero.AddItemByName("item_rapier"))
                         items.push(playerHero.AddItemByName("item_desolator"))
                         items.push(playerHero.AddItemByName("item_moon_shard"))
-                        freezePlayerHero(true)
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_13, LocalizationKey.Script_2_Tower_13, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_14, LocalizationKey.Script_2_Tower_14, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.immediate(() => {
-                        freezePlayerHero(false)
                         goalUseUltimate.start()
                         playerOrderMustCastUltimate = true
                     }),
@@ -333,15 +342,13 @@ const onStart = (complete: () => void) => {
                                 OrderType: UnitOrder.GLYPH,
                                 UnitIndex: direTopTower.entindex(),
                             })
-
-                        freezePlayerHero(true)
                     }),
+                    tg.wait(1),
+                    tg.immediate(_ => setUnitPacifist(playerHero, true)),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_16, LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(() => {
                         goalUseGlyph.start()
                         highlightUiElement(glyphUIPath)
-                        freezePlayerHero(false)
-                        setUnitPacifist(playerHero, true)
                         playerMustOrderGlyph = true
                         direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
                     }),
@@ -434,7 +441,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     // Allow all orders that aren't done by the player
     if (event.issuer_player_id_const != findRealPlayerID()) return true;
 
-    if (playerMustOrderTrainUltimate) {
+    if (playerMustOrderTrainUltimate && event.order_type != UnitOrder.MOVE_TO_POSITION) {
         if (event.order_type != UnitOrder.TRAIN_ABILITY) {
             displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
             return false
@@ -453,7 +460,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     }
 
     if (playerMustOrderTrainAbilities) {
-        if (event.order_type != UnitOrder.TRAIN_ABILITY) {
+        if (event.order_type != UnitOrder.TRAIN_ABILITY && event.order_type != UnitOrder.MOVE_TO_POSITION) {
             displayDotaErrorMessage("Upgrade the rest of your abilities to continue.")
             return false
         }
@@ -461,18 +468,21 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     }
 
     if (playerMustOrderGlyph) {
-        if (event.order_type != UnitOrder.GLYPH) {
+        if (event.order_type != UnitOrder.GLYPH && event.order_type != UnitOrder.MOVE_TO_POSITION) {
             displayDotaErrorMessage("Please use Glyph next to the minimap.")
             return false
         }
 
-        playerMustOrderGlyph = false
-        hasPlayerOrderedGlyphWhenMust = true
+        if (event.order_type === UnitOrder.GLYPH) {
+            playerMustOrderGlyph = false
+            hasPlayerOrderedGlyphWhenMust = true
+        }
+
         return true
     }
 
     if (playerOrderMustCastUltimate) {
-        if (event.order_type != UnitOrder.CAST_NO_TARGET) {
+        if (event.order_type != UnitOrder.CAST_NO_TARGET && event.order_type != UnitOrder.MOVE_TO_POSITION) {
             displayDotaErrorMessage("Cast your Ultimate first!")
             return false
         }

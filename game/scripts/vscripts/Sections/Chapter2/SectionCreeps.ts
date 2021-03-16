@@ -4,7 +4,7 @@ import { modifier_sniper_deny_chapter2_creeps } from "../../modifiers/modifier_s
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, freezePlayerHero, getOrError, getPlayerHero, highlight, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, highlight, removeContextEntityIfExists, setUnitPacifist } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
@@ -72,7 +72,6 @@ const onStart = (complete: () => void) => {
         tg.seq([
             tg.wait(FrameTime()),
             tg.immediate(_ => {
-                freezePlayerHero(true)
                 if (radiantCreeps) {
                     for (const radiantCreep of radiantCreeps) {
                         SendCreepToFight(radiantCreep);
@@ -116,8 +115,12 @@ const onStart = (complete: () => void) => {
                     tg.neverComplete()
                 ]),
                 tg.seq([
-                    tg.setCameraTarget(radiantCreeps[0]),
-                    tg.wait(3.5),
+                    tg.wait(2.5),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => {
+                        if (radiantCreeps)
+                            return radiantCreeps[0].GetAbsOrigin()
+                        return playerHero.GetAbsOrigin()
+                    }, 1),
                     tg.withHighlights(tg.seq([
                         tg.audioDialog(LocalizationKey.Script_2_Creeps_1, LocalizationKey.Script_2_Creeps_1, context => context[CustomNpcKeys.SlacksMudGolem]),
                         tg.audioDialog(LocalizationKey.Script_2_Creeps_2, LocalizationKey.Script_2_Creeps_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
@@ -138,10 +141,8 @@ const onStart = (complete: () => void) => {
                         const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
                         setUnitPacifist(godzMudGolem, true);
                     }),
-                    tg.setCameraTarget(context => context[CustomNpcKeys.GodzMudGolem]),
+                    tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), 1),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
-                    tg.panCameraLinear(context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
-                    tg.immediate(() => freezePlayerHero(false)),
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
                         currentLastHitStage = LastHitStages.LAST_HIT
@@ -186,8 +187,6 @@ const onStart = (complete: () => void) => {
                         goalLastHitCreepsWithBreatheFire.complete()
                         if (direCreeps) clearAttachedHighlightParticlesFromUnits(direCreeps);
                         currentLastHitStage = undefined;
-                        setUnitPacifist(playerHero, true);
-                        freezePlayerHero(true);
                     }),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.GodzMudGolem], 3),
                     tg.immediate(context => {
@@ -202,7 +201,7 @@ const onStart = (complete: () => void) => {
                         sniper.FaceTowards(playerHero.GetAbsOrigin())
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                     }),
-                    tg.setCameraTarget(context => context[Chapter2SpecificKeys.sniperEnemyHero]),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[Chapter2SpecificKeys.sniperEnemyHero].GetAbsOrigin(), 1),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_13, LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(context => {
                         const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero];
@@ -232,8 +231,6 @@ const onStart = (complete: () => void) => {
                             })
                         }
 
-                        setUnitPacifist(playerHero, false);
-                        freezePlayerHero(false);
                         if (playerHero.HasModifier(modifier_dk_last_hit_chapter2_creeps.name)) {
                             const modifier = playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name) as modifier_dk_last_hit_chapter2_creeps
                             if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_DENY)
