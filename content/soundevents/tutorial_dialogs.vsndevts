@@ -1440,6 +1440,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_4_RTZ_pain.vsnd" ]
     }
+    "Script_4_mason_mad" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_4_mason_mad.vsnd" ]
+    }
     "Script_5_Opening_1" =
     {
         type = "dota_src1_2d"
@@ -1775,6 +1781,24 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Liquipedia.vsnd" ]
+    }
+    "Script_6_Reddit" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Reddit.vsnd" ]
+    }
+    "Script_6_DFZ" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_DFZ.vsnd" ]
+    }
+    "Script_6_Bowie" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Bowie.vsnd" ]
     }
     "Script_6_Flam3s" =
     {
