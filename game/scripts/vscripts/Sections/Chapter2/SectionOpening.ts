@@ -98,10 +98,17 @@ const onStart = (complete: () => void) => {
 
             // Talking about barracks
             tg.fork([
-                tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => Entities.FindAllByClassnameWithin("npc_dota_barracks", moveNextToBarracksLocation, 500)[0].GetAbsOrigin(), 1),
                 tg.setCameraTarget(undefined),
                 tg.withHighlights(tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.fork([
+                        tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.seq([
+                            // Melee rax first
+                            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => Entities.FindAllByClassnameWithin("npc_dota_barracks", moveNextToBarracksLocation, 500)[0].GetAbsOrigin(), 1),
+                            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => Entities.FindAllByClassnameWithin("npc_dota_barracks", moveNextToBarracksLocation, 500)[1].GetAbsOrigin(), 1),
+                            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
+                        ]),
+                    ]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_5, LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_6, LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Opening_7, LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem]),
