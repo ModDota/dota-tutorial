@@ -454,13 +454,13 @@ function fakePickupRune(runeType: RuneType, pickingHero: CDOTA_BaseNPC_Hero) {
 
         case RuneType.HASTE:
             modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_haste", { duration: runesDuration })
-            pickingHero.EmitSound("Rune.Haste")
+            EmitSoundOnLocationForAllies(pickingHero.GetAbsOrigin(), "Rune.Haste", pickingHero)
             particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_haste_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
             modifier.AddParticle(particleFx, false, false, -1, false, false)
             break;
 
         case RuneType.REGENERATION:
-            pickingHero.EmitSound("Rune.Regen")
+            EmitSoundOnLocationForAllies(pickingHero.GetAbsOrigin(), "Rune.Regen", pickingHero)
             modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_regen", { duration: runesDuration })
             particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_regen_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
             modifier.AddParticle(particleFx, false, false, -1, false, false)
@@ -468,19 +468,19 @@ function fakePickupRune(runeType: RuneType, pickingHero: CDOTA_BaseNPC_Hero) {
 
         case RuneType.ARCANE:
             modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_arcane", { duration: runesDuration })
-            pickingHero.EmitSound("Rune.Arcane")
+            EmitSoundOnLocationForAllies(pickingHero.GetAbsOrigin(), "Rune.Arcane", pickingHero)
             particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_arcane_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
             modifier.AddParticle(particleFx, false, false, -1, false, false)
             break;
 
         case RuneType.INVISIBILITY:
             pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_invis", { duration: runesDuration })
-            pickingHero.EmitSound("Rune.Invis")
+            EmitSoundOnLocationForAllies(pickingHero.GetAbsOrigin(), "Rune.Invis", pickingHero)
             break;
 
         case RuneType.ILLUSION:
             CreateIllusions(pickingHero, pickingHero, { outgoing_damage: 35, incoming_damage: 200 }, 2, 96, true, true)
-            pickingHero.EmitSound("Rune.Illusion")
+            EmitSoundOnLocationForAllies(pickingHero.GetAbsOrigin(), "Rune.Illusion", pickingHero)
             break;
 
         default:
