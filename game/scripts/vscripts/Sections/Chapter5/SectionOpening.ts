@@ -5,6 +5,7 @@ import { GoalTracker } from "../../Goals";
 import { centerCameraOnHero, DirectionToPosition, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
 import * as shared from "./Shared"
 import { HeroInfo } from "./Shared";
+import { TutorialContext } from "../../TutorialGraph/index";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
 
@@ -51,6 +52,8 @@ const otherHeroesInfo: HeroInfo[] = [
     { name: CustomNpcKeys.Sniper },
 ]
 
+const runesDuration = 100
+
 function onStart(complete: () => void) {
     print("Starting", sectionName);
 
@@ -71,8 +74,6 @@ function onStart(complete: () => void) {
     const rangerLineEnd = Vector(-1350, 1400, 0)
     const rangerFirstLineDirection = DirectionToPosition(rangerLineStart, rangerMiddlePoint)
     const rangerSecondLineDirection = DirectionToPosition(rangerMiddlePoint, rangerLineEnd)
-
-    const runesDuration = 100
 
     const roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
 
@@ -165,11 +166,8 @@ function onStart(complete: () => void) {
             tg.spawnUnit(CustomNpcKeys.Sniper, rangerLineStart, DotaTeam.BADGUYS, CustomNpcKeys.Sniper, true),
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], true)),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.Juggernaut].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
+            tg.immediate((ctx) => fakePickupRune(RuneType.DOUBLEDAMAGE, ctx[CustomNpcKeys.Juggernaut])),
             tg.textDialog(LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Juggernaut], 2),
-            tg.immediate((ctx) => {
-                ctx[CustomNpcKeys.Juggernaut].AddNewModifier(ctx[CustomNpcKeys.Juggernaut], undefined, "modifier_rune_doubledamage", { duration: runesDuration })
-            }),
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], false)),
             tg.completeOnCheck((ctx) => !unitIsValidAndAlive(ctx[CustomNpcKeys.Sniper]), 1),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], rangerLineStart),
@@ -183,13 +181,12 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.ILLUSION)
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Mirana], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
+            tg.immediate((ctx) => fakePickupRune(RuneType.ILLUSION, ctx[CustomNpcKeys.Mirana])),
             tg.textDialog(LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.Mirana], 2),
             tg.immediate((ctx) => {
-                const miranaEntities = Entities.FindAllByNameWithin(CustomNpcKeys.Mirana, ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), 200) as CDOTA_BaseNPC_Hero[]
+                const miranaEntities = Entities.FindAllByNameWithin(CustomNpcKeys.Mirana, ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), 400) as CDOTA_BaseNPC_Hero[]
                 for (const miranaEntity of miranaEntities) {
                     if (miranaEntity.IsIllusion()) {
-                        miranaEntity.AddNewModifier(miranaEntity, undefined, "modifier_illusion", { duration: runesDuration })
                         if (!ctx[CustomNpcKeys.MiranaIllusionOne])
                             ctx[CustomNpcKeys.MiranaIllusionOne] = miranaEntity
                         else
@@ -215,7 +212,7 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.INVISIBILITY)
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.CrystalMaiden], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.CrystalMaiden].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
+            tg.immediate((ctx) => fakePickupRune(RuneType.INVISIBILITY, ctx[CustomNpcKeys.CrystalMaiden])),
             tg.audioDialog(LocalizationKey.Script_5_Opening_10, LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.CrystalMaiden]),
             tg.immediate((ctx) => {
                 ctx[CustomNpcKeys.CrystalMaiden].AddNewModifier(ctx[CustomNpcKeys.CrystalMaiden], undefined, "modifier_rune_invis", { duration: runesDuration })
@@ -230,7 +227,7 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.ARCANE)
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Zuus], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.Zuus].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
+            tg.immediate((ctx) => fakePickupRune(RuneType.ARCANE, ctx[CustomNpcKeys.Zuus])),
             tg.audioDialog(LocalizationKey.Script_5_Opening_11, LocalizationKey.Script_5_Opening_11, ctx => ctx[CustomNpcKeys.Zuus]),
             tg.immediate((ctx) => {
                 ctx[CustomNpcKeys.Zuus].AddNewModifier(ctx[CustomNpcKeys.Zuus], undefined, "modifier_rune_arcane", { duration: runesDuration })
@@ -255,7 +252,7 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.HASTE)
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Lion], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.Lion].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
+            tg.immediate((ctx) => fakePickupRune(RuneType.HASTE, ctx[CustomNpcKeys.Lion])),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_5_Opening_12, LocalizationKey.Script_5_Opening_12, ctx => ctx[CustomNpcKeys.Lion]),
                 tg.immediate((ctx) => {
@@ -284,7 +281,7 @@ function onStart(complete: () => void) {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.REGENERATION)
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.StormSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => ctx[CustomNpcKeys.StormSpirit].PickupRune(ctx[CustomEntityKeys.TopPowerRune])),
+            tg.immediate((ctx) => fakePickupRune(RuneType.REGENERATION, ctx[CustomNpcKeys.StormSpirit])),
             tg.textDialog(LocalizationKey.Script_5_Opening_14, ctx => ctx[CustomNpcKeys.StormSpirit], 2),
             tg.wait(2),
             tg.immediate((ctx) => {
@@ -303,9 +300,7 @@ function onStart(complete: () => void) {
 
             // Start Roshan sequence
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.CrystalMaiden]),
-            tg.fork([
-                tg.textDialog(LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.CrystalMaiden], 4),
-            ]),
+            tg.textDialog(LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.CrystalMaiden], 4),
             tg.immediate(_ => {
                 goalWatchRangers.complete()
                 shared.chapter5Blockades.roshan.destroy()
@@ -436,4 +431,59 @@ export type CirclePointsConfig = {
     clockwise?: boolean,
     halfCircle?: boolean,
     startLeft?: boolean,
+}
+
+function fakePickupRune(runeType: RuneType, pickingHero: CDOTA_BaseNPC_Hero) {
+    const context = GameRules.Addon.context;
+    if (IsValidEntity(context[CustomEntityKeys.TopPowerRune])) {
+        context[CustomEntityKeys.TopPowerRune].Destroy()
+        context[CustomEntityKeys.TopPowerRune] = undefined
+    }
+
+    let modifier;
+    let particleFx;
+
+    switch (runeType) {
+        case RuneType.DOUBLEDAMAGE:
+            modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_doubledamage", { duration: runesDuration })
+            EmitSoundOnLocationForAllies(pickingHero.GetAbsOrigin(), "Rune.DD", pickingHero)
+            particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_doubledamage_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
+            ParticleManager.SetParticleControlEnt(particleFx, 0, pickingHero, ParticleAttachment.POINT_FOLLOW, "attach_hitloc", pickingHero.GetAbsOrigin(), true)
+            modifier.AddParticle(particleFx, false, false, -1, false, false)
+            break;
+
+        case RuneType.HASTE:
+            modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_haste", { duration: runesDuration })
+            pickingHero.EmitSound("Rune.Haste")
+            particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_haste_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
+            modifier.AddParticle(particleFx, false, false, -1, false, false)
+            break;
+
+        case RuneType.REGENERATION:
+            pickingHero.EmitSound("Rune.Regen")
+            modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_regen", { duration: runesDuration })
+            particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_regen_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
+            modifier.AddParticle(particleFx, false, false, -1, false, false)
+            break;
+
+        case RuneType.ARCANE:
+            modifier = pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_arcane", { duration: runesDuration })
+            pickingHero.EmitSound("Rune.Arcane")
+            particleFx = ParticleManager.CreateParticle("particles/generic_gameplay/rune_arcane_owner.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, pickingHero)
+            modifier.AddParticle(particleFx, false, false, -1, false, false)
+            break;
+
+        case RuneType.INVISIBILITY:
+            pickingHero.AddNewModifier(undefined, undefined, "modifier_rune_invis", { duration: runesDuration })
+            pickingHero.EmitSound("Rune.Invis")
+            break;
+
+        case RuneType.ILLUSION:
+            CreateIllusions(pickingHero, pickingHero, { outgoing_damage: 35, incoming_damage: 200 }, 2, 96, true, true)
+            pickingHero.EmitSound("Rune.Illusion")
+            break;
+
+        default:
+            break;
+    }
 }
