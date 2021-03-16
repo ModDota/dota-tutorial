@@ -152,9 +152,9 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             // Spawn enemies and make our heroes leave the pit
-            shared.spawnEnemyHeroes(shared.enemyLocation),
             tg.immediate(() => goalLeaveRoshPit.start()),
             tg.goToLocation(shared.outsidePitLocation),
+            shared.spawnEnemyHeroes(shared.enemyLocation),
             tg.immediate(() => {
                 goalLeaveRoshPit.complete()
             }),
