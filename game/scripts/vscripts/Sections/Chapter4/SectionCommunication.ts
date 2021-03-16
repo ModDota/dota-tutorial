@@ -157,7 +157,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(_ => goalGoToTopBountyRune.start()),
             tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
-            tg.goToLocation(bountyRuneLocation),
+            tg.goToLocation(bountyRuneLocation, [], false),
             tg.immediate(_ => goalGoToTopBountyRune.complete()),
         ])
     )
