@@ -56,8 +56,10 @@ const onStart = (complete: () => void) => {
     const radiantSecretShopLocation = Vector(-5082, 2011, 128)
     const direSecretShopLocation = Vector(4804, -1304, 128)
     const inFrontOfTheRiverLocation = Vector(-3661, 3761, 128)
-    const insideRiverLocation = Vector(-4106, 2298, 0)
+    const insideRiverLocation = Vector(-3930, 2480, 0)
     const inFrontOfRadiantSecretShopLocation = Vector(-4840, 1822, 128)
+    const upSecretShopRamp = Vector(-4380, 2020, 128)
+    const upDireRamp = Vector(-3675, 3400, 128)
     const finalMovementPositionLocation = Vector(-3538, 3861, 128)
 
     allowedItems.add(recipeName)
@@ -107,7 +109,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalMoveToSecretShop.start()
         }),
-        tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation]),
+        tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation, upSecretShopRamp]),
         tg.immediate(() => {
             goalMoveToSecretShop.complete()
         }),
@@ -195,7 +197,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             goalMoveToFinalPosition.start()
         }),
-        tg.goToLocation(finalMovementPositionLocation, _ => [insideRiverLocation]),
+        tg.goToLocation(finalMovementPositionLocation, _ => [upSecretShopRamp, insideRiverLocation, upDireRamp]),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )

@@ -25,6 +25,8 @@ export type RequiredState = {
     sunsFanLocation?: Vector
     requireSlacksGolem?: boolean
     slacksLocation?: Vector
+    requireODPixelGolem?: boolean
+    odPixelLocation?: Vector
 
     // Towers
     topDireT1TowerStanding?: boolean
@@ -45,10 +47,13 @@ export type RequiredState = {
     // Respawn positions for unintended deaths
     respawnLocation?: Vector | "heroLocation"
     respawnTime?: number
-    
+
     // Roshan
     requireRoshan?: boolean
     roshanHitsLikeATruck?: boolean
+
+    // Planted wards
+    clearWards?: boolean
 }
 
 /**
@@ -80,6 +85,10 @@ export const defaultRequiredState: FilledRequiredState = {
     sunsFanLocation: Vector(-7000, 600, 128),
     requireSlacksGolem: false,
     slacksLocation: Vector(-7000, 600, 128),
+    requireODPixelGolem: false,
+    odPixelLocation: Vector(-7000, 600, 128),
+    
+
 
     // Towers
     topDireT1TowerStanding: true,
@@ -100,8 +109,11 @@ export const defaultRequiredState: FilledRequiredState = {
     // Respawn positions for unintended deaths
     respawnLocation: "heroLocation",
     respawnTime: 10,
-    
+
     // Roshan
     requireRoshan: false,
-    roshanHitsLikeATruck: false
+    roshanHitsLikeATruck: false,
+
+    // Planted wards
+    clearWards: true
 }

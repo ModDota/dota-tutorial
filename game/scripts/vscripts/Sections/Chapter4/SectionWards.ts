@@ -24,7 +24,7 @@ const requiredState: RequiredState = {
 const markerLocation = Vector(-2200, 3700, 256);
 const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
-const rikiName = "npc_dota_hero_riki";
+const rikiName = CustomNpcKeys.Riki;
 let allowUseItem = false;
 
 //dire jungle top
@@ -187,7 +187,8 @@ function onStart(complete: () => void) {
                 const runDirection = riki.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
                 riki.MoveToPosition(riki.GetAbsOrigin().__add(runDirection.__mul(800)));
             }),
-            tg.wait(3),
+
+            tg.audioDialog(LocalizationKey.Script_4_RTZ_cya, LocalizationKey.Script_4_RTZ_cya, ctx => ctx[rikiName], 2.5),
             tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
             tg.audioDialog(LocalizationKey.Script_4_Wards_15, LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),

@@ -18,13 +18,14 @@ declare const enum SectionName {
     Chapter5_Roshan = "Chapter5_Roshan",
     Chapter5_TeamFight = "Chapter5_TeamFight",
     Chapter6_Opening = "Chapter6_Opening",
+    Chapter6_Closing = "Chapter6_Closing",
 }
 
 declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
     GodzMudGolem = "npc_mud_golem_godz",
-    ODPixelMudGolem = "npc_mud_golem_sunsfan",
+    ODPixelMudGolem = "npc_mud_golem_odpixel",
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
@@ -44,7 +45,9 @@ declare const enum CustomNpcKeys {
     MiranaIllusionTwo = "mirana_illusion_two",
     Tidehunter = "npc_dota_hero_tidehunter",
     Antimage = "npc_dota_hero_antimage",
+    Luna = "npc_dota_hero_luna",
     Lina = "npc_dota_hero_lina",
+    Jakiro = "npc_dota_hero_jakiro",
     Visage = "npc_dota_hero_visage",
     Pudge = "npc_dota_hero_pudge",
     Wisp = "npc_dota_hero_wisp",
@@ -53,6 +56,26 @@ declare const enum CustomNpcKeys {
     Centaur = "npc_dota_hero_centaur",
     Invoker = "npc_dota_hero_invoker",
     PhantomAssassin = "npc_dota_hero_phantom_assassin",
+    Windrunner = "npc_dota_hero_windrunner",
+
+    // Guides / Personalities
+    DotaU = "npc_dota_tutorial_dotau",
+    Liquipedia = "npc_dota_tutorial_liquipedia",
+
+    // Modders (have no personalities apparently)
+    Flam3s = "npc_dota_tutorial_flam3s",
+    Perry = "npc_dota_tutorial_perry",
+    PongPing = "npc_dota_tutorial_pongping",
+    Shush = "npc_dota_tutorial_shush",
+    SinZ = "npc_dota_tutorial_sinz",
+    SmashTheState = "npc_dota_tutorial_smashthestate",
+    Tora = "npc_dota_tutorial_tora",
+    Toyoka = "npc_dota_tutorial_toyoka",
+    VicFrank = "npc_dota_tutorial_vicfrank",
+    Yoyo = "npc_dota_tutorial_yoyo",
+
+    // Helpers
+    ValkyrjaRuby = "npc_dota_hero_templar_assassin",
 }
 
 declare const enum CustomEntityKeys {
@@ -90,6 +113,7 @@ declare const enum ParticleName {
     HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
     QuestionMarks = "particles/tutorial_question_marks.vpcf",
+    MoveToLocation = "particles/tutorial_moveto_goal.vpcf",
 }
 
 type VideoName = "guides" | "muting"

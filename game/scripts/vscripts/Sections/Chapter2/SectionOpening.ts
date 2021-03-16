@@ -16,6 +16,7 @@ const moveToPrepareToLaunchAssaultLocation = Vector(-6600, -2745, 128)
 const radiantCreepsPrepareToAttackLocation = Vector(-6288, 3280, 128)
 const moveToPrepareToAttackLocation = Vector(-6288, 3000, 128)
 const inFrontOfRadiantAncientLocation = Vector(-5572, -5041, 256)
+const upBaseTopRamp = Vector(-6850, -3250, 256)
 
 const requiredState: RequiredState = {
     heroLocation: inFrontOfBarracksLocation,
@@ -148,6 +149,7 @@ const onStart = (complete: () => void) => {
                 goalWaitForCreepsToPrepareToMove.complete()
                 goalPrepareToMove.start()
             }),
+            tg.immediate(_ => freezePlayerHero(false)),
             tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => []),
             tg.immediate(context => {
                 goalPrepareToMove.complete()
