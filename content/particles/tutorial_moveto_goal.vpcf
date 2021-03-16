@@ -159,10 +159,10 @@
 	m_Children = 
 	[
 		{
-			m_ChildRef = resource:"particles/newplayer_fx/npx_moveto_arrow.vpcf"
+			m_ChildRef = resource:"particles/tutorial_moveto_arrow.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/newplayer_fx/npx_moveto_highlight.vpcf"
+			m_ChildRef = resource:"particles/tutorial_moveto_highlight.vpcf"
 		},
 	]
 }

@@ -14,11 +14,19 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
     let actualLocation: Vector | undefined = undefined
+    let moveParticleFx: ParticleID | undefined = undefined
 
     const cleanup = () => {
         if (pathParticle) {
             ParticleManager.DestroyParticle(pathParticle, false)
+            ParticleManager.ReleaseParticleIndex(pathParticle)
             pathParticle = undefined
+        }
+
+        if (moveParticleFx) {
+            ParticleManager.DestroyParticle(moveParticleFx, false)
+            ParticleManager.ReleaseParticleIndex(moveParticleFx)
+            moveParticleFx = undefined
         }
 
         if (checkTimer) {
@@ -39,7 +47,9 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         const hero = getOrError(getPlayerHero())
 
-        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.MOVE_TO_TARGET, 99999);
+        moveParticleFx = ParticleManager.CreateParticle(ParticleName.MoveToLocation, ParticleAttachment.WORLDORIGIN, undefined)
+        ParticleManager.SetParticleControl(moveParticleFx, 0, actualLocation);
 
         if (actualShowPathParticle) {
             pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
