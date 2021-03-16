@@ -29,13 +29,13 @@ const requiredState: RequiredState = {
     },
 }
 
+const INTERACTION_DISTANCE = 200;
+
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
 
     private spawned = false
 
-    private interactDistance = 200
-    private interacting = false
     private dialogToken: DialogToken | undefined
 
     constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName?: string) {
@@ -80,33 +80,13 @@ class ClosingNpc {
         }
     }
 
-    update() {
+    interact() {
         if (this.spawned && this.unit && unitIsValidAndAlive(this.unit)) {
-            const hero = getOrError(getPlayerHero(), "Can not get player hero")
-
-            const distance = hero.GetAbsOrigin().__sub(this.location).Length2D()
-
-            if (this.interacting) {
-                // Player leaves
-                if (distance > this.interactDistance) {
-                    // Stop dialog if it was still in progress
-                    this.interacting = false
-                    if (this.dialogToken !== undefined) {
-                        dg.stop(this.dialogToken)
-                        this.dialogToken = undefined
-                    }
-                }
+            // Play dialog
+            if (this.soundName) {
+                this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
             } else {
-                // Player enters
-                if (distance <= this.interactDistance) {
-                    // Play dialog
-                    this.interacting = true
-                    if (this.soundName) {
-                        this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
-                    } else {
-                        this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
-                    }
-                }
+                this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
             }
         }
     }
@@ -141,6 +121,8 @@ const spawnNpcs = () => npcs.forEach(npc => npc.spawn())
 const waitNpcsSpawned = () => tg.completeOnCheck(_ => npcs.every(npc => npc.unit !== undefined), 0.1)
 const clearNpcs = () => npcs.forEach(npc => npc.destroy())
 
+let sectionTimer: string;
+
 function onStart(complete: () => void) {
     print("Starting", sectionName)
 
@@ -150,6 +132,8 @@ function onStart(complete: () => void) {
 
     const slacks = (GameRules.Addon.context[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC)
     const sunsFan = (GameRules.Addon.context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC)
+
+    sectionTimer = Timers.CreateTimer(sectionTimerUpdate)
 
     // Make Slacks and SUNSfan invisible at the start until we fade back in
     slacks.AddNoDraw()
@@ -182,11 +166,6 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
             ]),
 
-            tg.loop(true, tg.seq([
-                tg.immediate(_ => npcs.forEach(npc => npc.update())),
-                tg.wait(0.1),
-            ])),
-
             // Make everyone stare at you, little bit creepy
             tg.loop(true, tg.seq([
                 tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
@@ -213,6 +192,10 @@ function onStop() {
         graph = undefined
     }
 
+    if (sectionTimer) {
+        Timers.RemoveTimer(sectionTimer);
+    }
+
     const slacks = (GameRules.Addon.context[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC)
     const sunsFan = (GameRules.Addon.context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC)
 
@@ -222,9 +205,44 @@ function onStop() {
     clearNpcs()
 }
 
+let talkTarget: ClosingNpc | undefined;
+
+function sectionTimerUpdate() {
+    const playerHero = getPlayerHero();
+    if (playerHero && talkTarget) {
+        const distance = (playerHero.GetAbsOrigin() - talkTarget.location as Vector).Length2D();
+        if (distance < INTERACTION_DISTANCE) {
+            talkTarget.interact();
+            talkTarget = undefined;
+        }
+    }
+
+    return 0.2;
+}
+
+function orderFilter(order: ExecuteOrderFilterEvent) {
+    if(!order.entindex_target) {
+        talkTarget = undefined;
+        return true;
+    }
+
+    const target = EntIndexToHScript(order.entindex_target);
+
+    const closingNpc = npcs.find(npc => npc.unit === target);
+    if (closingNpc) {
+        talkTarget = closingNpc;
+        order.order_type = UnitOrder.MOVE_TO_TARGET;
+    } else {
+        talkTarget = undefined;
+    }
+
+    return true;
+}
+
 export const sectionClosing = new tut.FunctionalSection(
     sectionName,
     requiredState,
     onStart,
-    onStop
+    onStop,
+    orderFilter
 )
