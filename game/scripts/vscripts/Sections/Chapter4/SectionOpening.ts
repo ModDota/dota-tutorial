@@ -172,7 +172,7 @@ function onStart(complete: () => void) {
             //Part3: 1st scan, failed
             tg.immediate(_ => {
                 scanLocation = undefined;
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_12, LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -182,7 +182,7 @@ function onStart(complete: () => void) {
                 removeHighlight(scanUIPath);
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_13, LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, playerHero as CBaseEntity, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
+            tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
             tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -191,7 +191,7 @@ function onStart(complete: () => void) {
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
                 highlightUiElement(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
@@ -199,7 +199,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 goalScanSucceed.complete();
                 removeHighlight(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero as CBaseEntity, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_16, LocalizationKey.Script_4_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
