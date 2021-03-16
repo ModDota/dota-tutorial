@@ -159,13 +159,13 @@ function onStart(complete: () => void) {
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_8, LocalizationKey.Script_4_Opening_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Opening_9, LocalizationKey.Script_4_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.fork([
-                tg.audioDialog(LocalizationKey.Script_4_Opening_10, LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.immediate(_ => {
-                    highlightUiElement(scanUIPath)
-                    goalScanFailed.start();
-                })
-            ]),
+            // Behold the scan icon
+            tg.immediate(_ => {
+                highlightUiElement(scanUIPath)
+                goalScanFailed.start();
+            }),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_10, LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
             tg.immediate(_ => canPlayerIssueOrders = true),
             tg.audioDialog(LocalizationKey.Script_4_Opening_11, LocalizationKey.Script_4_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
