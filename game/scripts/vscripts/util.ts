@@ -329,7 +329,7 @@ export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_B
 
     return particleID;
 }
-export type HighlightType = "circle" | "arrow" | "arrow_enemy"
+export type HighlightType = "circle" | "arrow" | "arrow_enemy" | "dialog_circle"
 
 type HighlightParticleDescriptor = {
     name: string // Particle name
@@ -348,6 +348,9 @@ const highlightTypeParticleNames: Record<HighlightType, HighlightParticleDescrip
     "arrow_enemy": [
         { name: ParticleName.HighlightRedCircle },
         { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+    ],
+    "dialog_circle": [
+        { name: ParticleName.DialogCircle },
     ],
 }
 
@@ -513,9 +516,8 @@ export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Ve
 export function removeNeutralSpawners() {
     //const creepSpawnLocationToKeep = Entities.FindAllByClassnameWithin("npc_dota_neutral_spawner",Vector(-2464,4816,170),500)[0];
     const spawners = Entities.FindAllByClassname("npc_dota_neutral_spawner");
-    for (const spawner of spawners)
-    {
-        let normal = spawner.GetAbsOrigin()-Vector(-2464,4816,170) as Vector
+    for (const spawner of spawners) {
+        let normal = spawner.GetAbsOrigin() - Vector(-2464, 4816, 170) as Vector
         if (normal.Length2D() > 100) {
             UTIL_Remove(spawner);
         }
