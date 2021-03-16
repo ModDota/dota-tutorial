@@ -28,6 +28,9 @@ export type RequiredState = {
     requireODPixelGolem?: boolean
     odPixelLocation?: Vector
 
+    // Elder Dragon Form
+    removeElderDragonForm?: boolean,
+
     // Towers
     topDireT1TowerStanding?: boolean
 
@@ -87,8 +90,9 @@ export const defaultRequiredState: FilledRequiredState = {
     slacksLocation: Vector(-7000, 600, 128),
     requireODPixelGolem: false,
     odPixelLocation: Vector(-7000, 600, 128),
-    
 
+    // Elder Dragon Form
+    removeElderDragonForm: true,
 
     // Towers
     topDireT1TowerStanding: true,

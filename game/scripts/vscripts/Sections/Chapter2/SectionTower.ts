@@ -373,8 +373,6 @@ const onStart = (complete: () => void) => {
                         for (const item of items) {
                             playerHero.RemoveItem(item);
                         }
-                        playerHero.RemoveModifierByName("modifier_dragon_knight_dragon_form")
-                        playerHero.RemoveModifierByName("modifier_dragon_knight_corrosive_breath")
                         playerHero.RemoveModifierByName(modifier_dk_attack_tower_chapter2.name)
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_18, LocalizationKey.Script_2_Tower_18, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -405,8 +403,6 @@ const onStop = () => {
 
     const playerHero = getPlayerHero()
     if (playerHero) {
-        playerHero.RemoveModifierByName("modifier_dragon_knight_dragon_form")
-        playerHero.RemoveModifierByName("modifier_dragon_knight_corrosive_breath")
         playerHero.RemoveModifierByName(modifier_dk_death_chapter2_tower.name)
         playerHero.RemoveModifierByName(modifier_dk_attack_tower_chapter2.name)
     }

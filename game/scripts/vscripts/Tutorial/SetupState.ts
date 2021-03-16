@@ -24,6 +24,8 @@ export const setupState = (stateReq: RequiredState): void => {
     handleRequiredRespawn(state)
     handleItemsOnGround()
     handlePlantedWards(state)
+    handleAbilityCooldowns(hero)
+    handleElderDragonForm(state.removeElderDragonForm, hero)
 
     handleUnits(state)
     handleFountainTrees(state)
@@ -472,6 +474,7 @@ function handleItemsOnGround() {
         }
     }
 }
+
 function handlePlantedWards(state: FilledRequiredState) {
     if (state.clearWards) {
         const obsWards = Entities.FindAllByClassname("npc_dota_ward_base")
@@ -481,6 +484,26 @@ function handlePlantedWards(state: FilledRequiredState) {
             if (IsValidEntity(ward)) {
                 UTIL_Remove(ward)
             }
+        }
+    }
+}
+
+function handleAbilityCooldowns(hero: CDOTA_BaseNPC_Hero) {
+    for (let index = 0; index < hero.GetAbilityCount(); index++) {
+        const ability = hero.GetAbilityByIndex(index)
+        if (ability && !ability.IsCooldownReady()) {
+            ability.EndCooldown()
+        }
+    }
+}
+
+function handleElderDragonForm(removeElderDragonForm: boolean, hero: CDOTA_BaseNPC_Hero) {
+    if (!removeElderDragonForm) return;
+
+    const modifiers = ["modifier_dragon_knight_dragon_form", "modifier_dragon_knight_corrosive_breath", "modifier_dragon_knight_splash_attack", "modifier_dragon_knight_frost_breath"]
+    for (const modifier of modifiers) {
+        if (hero.HasModifier(modifier)) {
+            hero.RemoveModifierByName(modifier)
         }
     }
 }
