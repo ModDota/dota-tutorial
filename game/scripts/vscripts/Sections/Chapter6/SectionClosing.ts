@@ -99,21 +99,29 @@ const npcs = [
 
     // Personalities / Guides
     new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6400, 384), LocalizationKey.Script_6_Purge, LocalizationKey.Script_6_Purge),
-    new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7200, -6750, 384), LocalizationKey.Script_6_Opening_9, LocalizationKey.Script_6_Opening_9),
+    new ClosingNpc(CustomNpcKeys.Coccia, Vector(-7050, -6050, 384), "TODO"),
     new ClosingNpc(CustomNpcKeys.DotaU, Vector(-6900, -7050, 384), LocalizationKey.Script_6_DotaU, LocalizationKey.Script_6_DotaU),
-    new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-6650, -6900, 384), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
+    new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5170, -5300, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
+    new ClosingNpc(CustomNpcKeys.BSJ, Vector(-4800, -5450, 256), "TODO"),
+    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4440, -5620, 256), "TODO"),
+    new ClosingNpc(CustomNpcKeys.Angermania, Vector(-4530, -5940, 256), LocalizationKey.Script_6_anger, LocalizationKey.Script_6_anger),
+    new ClosingNpc(CustomNpcKeys.RedditDota, Vector(-4820, -6330, 256), LocalizationKey.Script_6_Reddit, LocalizationKey.Script_6_Reddit),
+    new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6540, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
+
+    // Voice actors
+    new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7200, -6750, 384), "TODO"),
 
     // Modders
-    new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -4400, 256), LocalizationKey.Script_6_Flam3s),
-    new ClosingNpc(CustomNpcKeys.Perry, Vector(-7050, -4700, 256), LocalizationKey.Script_6_Perry),
-    new ClosingNpc(CustomNpcKeys.PongPing, Vector(-6750, -4400, 256), LocalizationKey.Script_6_PongPing),
-    new ClosingNpc(CustomNpcKeys.Shush, Vector(-6450, -4400, 256), LocalizationKey.Script_6_Shush),
-    new ClosingNpc(CustomNpcKeys.SinZ, Vector(-6150, -4400, 256), LocalizationKey.Script_6_SinZ),
-    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5850, -4700, 256), LocalizationKey.Script_6_SmashTheState),
-    new ClosingNpc(CustomNpcKeys.Tora, Vector(-5850, -5000, 256), LocalizationKey.Script_6_Tora),
-    new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-7050, -5000, 256), LocalizationKey.Script_6_Toyoka),
-    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-7050, -5300, 256), LocalizationKey.Script_6_VicFrank),
-    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-7050, -5600, 256), LocalizationKey.Script_6_Yoyo),
+    new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),
+    new ClosingNpc(CustomNpcKeys.Perry, Vector(-5150, -3540, 256), LocalizationKey.Script_6_Perry),
+    new ClosingNpc(CustomNpcKeys.PongPing, Vector(-5750, -3850, 256), LocalizationKey.Script_6_PongPing),
+    new ClosingNpc(CustomNpcKeys.Shush, Vector(-5450, -3850, 256), LocalizationKey.Script_6_Shush),
+    new ClosingNpc(CustomNpcKeys.SinZ, Vector(-5330, -4250, 256), LocalizationKey.Script_6_SinZ),
+    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5400, -4600, 256), LocalizationKey.Script_6_SmashTheState),
+    new ClosingNpc(CustomNpcKeys.Tora, Vector(-6300, -4160, 256), LocalizationKey.Script_6_Tora),
+    new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-6700, -4600, 256), LocalizationKey.Script_6_Toyoka),
+    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-5940, -4680, 256), LocalizationKey.Script_6_VicFrank),
+    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-6550, -3880, 256), LocalizationKey.Script_6_Yoyo),
 
     // Helpers
     new ClosingNpc(CustomNpcKeys.ValkyrjaRuby, Vector(-6250, -5500, 256), LocalizationKey.Script_6_valkyrjaRuby),

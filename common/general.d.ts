@@ -60,8 +60,14 @@ declare const enum CustomNpcKeys {
     Windrunner = "npc_dota_hero_windrunner",
 
     // Guides / Personalities
+    Coccia = "npc_dota_tutorial_coccia",
     DotaU = "npc_dota_tutorial_dotau",
+    DotaFromZero = "npc_dota_tutorial_dotafromzero",
     Liquipedia = "npc_dota_tutorial_liquipedia",
+    BSJ = "npc_dota_tutorial_bsj",
+    Bowie = "npc_dota_tutorial_bowie",
+    Angermania = "npc_dota_tutorial_angermania",
+    RedditDota = "npc_dota_tutorial_redditdota",
 
     // Modders (have no personalities apparently)
     Flam3s = "npc_dota_tutorial_flam3s",
@@ -76,7 +82,7 @@ declare const enum CustomNpcKeys {
     Yoyo = "npc_dota_tutorial_yoyo",
 
     // Helpers
-    ValkyrjaRuby = "npc_dota_hero_templar_assassin",
+    ValkyrjaRuby = "npc_dota_tutorial_ruby",
 }
 
 declare const enum CustomEntityKeys {
