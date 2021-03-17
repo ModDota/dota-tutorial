@@ -141,7 +141,6 @@ const onStart = (complete: () => void) => {
                         const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
                         setUnitPacifist(godzMudGolem, true);
                     }),
-                    tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), 2),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
