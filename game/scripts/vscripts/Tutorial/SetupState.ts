@@ -107,6 +107,8 @@ function handleBlockades(state: FilledRequiredState) {
 function handleUnits(state: FilledRequiredState) {
     // Golems
     const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
+        if (!IsValidEntity(unit)) error("Unit was not valid.")
+
         const shouldGolemBeHidden = unit.GetAbsOrigin() === Vector(0, 0, 0);
 
         if (shouldGolemBeHidden) {
