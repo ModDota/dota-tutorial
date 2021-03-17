@@ -341,6 +341,7 @@ const onStop = () => {
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
     removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
     removeContextEntityIfExists(context, Chapter2SpecificKeys.sniperEnemyHero)
+    removeContextEntityIfExists(context, CustomNpcKeys.GodzMudGolem)
 
     if (graph) {
         graph.stop(GameRules.Addon.context);
