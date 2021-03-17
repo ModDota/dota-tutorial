@@ -98,13 +98,13 @@
     align: center center;
 
     text-transform: uppercase;
-    text-decoration: underline;
-    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) )
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
     text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
     font-size: 25px;
     letter-spacing: 2px;
     margin-top: 5px;
+    font-family: titleFont;
 }
 
 .ChaptersCloseButton {
@@ -489,54 +489,66 @@
 }
 
 #MessageToTheNoobsButton {
-    width: 100px;
-    height: 50px;
-    horizontal-align: center;
-    vertical-align: bottom;
+    width: 210px;
+    height: 55px;
+    horizontal-align: left;
+    vertical-align: center;
     flow-children: right;
-    margin-bottom: 166px;
-    margin-right: 650px;
-    box-shadow: 0 0 8px white;
-    background-color: #333333;
-    border-radius: 30%;
+    margin-top: 520px;
+    margin-left: 0px;
+    background-color: #000000ef;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    tooltip-position: top;
+}
+
+.MinimapExtraLarge #MessageToTheNoobsButton {
+	margin-top: 450px;
 }
 
 #MessageToTheNoobsButton:hover {
-    background-color: #444444;
+    brightness: 2;
 }
 
 #MessageToTheNoobsButton:active {
-    background-color: #222222;
+    brightness: 2;
 }
 
 #MessageToTheNoobsImage {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
 
     vertical-align: center;
 
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    background-image: url("file://{images}/custom_game/skip_section/old/chapter5artold.png");
+    background-image: url("file://{images}/custom_game/message_noobs/random.png");
+    margin-left: 10px;
 }
 
 #MessageToTheNoobsText {
-    font-size: 24px;
-    margin-top: 10px;
+    font-size: 21px;
+    margin-top: 13px;
+    margin-left: 10px;
     height: 50px;
     vertical-align: center;
     color: #EEEEEE;
+    text-shadow: 0px 0px 3px 5.0 #000000;
+    font-weight: semi-bold;
+    font-family: titleFont;
+    text-transform: uppercase;
 }
 
 #MessageToTheNoobsMessage {
     font-size: 24px;
-    margin-top: 10px;
+    margin-top: 5px;
 
     max-width: 500px;
 
-    background-color: #666;
+    background-color: #000000ef;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 5px;
 
     color: #EEEEEE;
 
@@ -545,4 +557,12 @@
     margin-bottom: 200px;
 
     opacity: 0.9;
+    transform: scale3d(0, 0, 1);
+
+    text-shadow: 0px 0px 3px 3.0 #000000;
+}
+
+#MessageToTheNoobsMessage.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
 }

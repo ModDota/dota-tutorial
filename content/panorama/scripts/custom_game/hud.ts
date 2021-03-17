@@ -212,6 +212,8 @@ function showMessageToTheNoobs() {
         hideMessageToTheNoobsTimer = undefined;
     }
 
+    $("#MessageToTheNoobsMessage").SetHasClass("Visible", true);
+    Game.EmitSound("ui_generic_button_click");
     const message = `#MessageToTheNoobs_${Math.round(Math.random() * 1000000000) % numMessagesToTheNoobs}`;
     messageToTheNoobsMessage.text = $.Localize(message);
     messageToTheNoobsMessage.visible = true;
