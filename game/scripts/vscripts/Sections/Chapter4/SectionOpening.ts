@@ -53,6 +53,7 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
     currentRequiredScanLocation = firstScanLocation;
+    waitingForPlayerToScan = false
 
     goalListenDialog.start();
 
