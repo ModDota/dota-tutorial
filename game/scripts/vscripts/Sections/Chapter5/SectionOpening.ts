@@ -35,6 +35,7 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
     heroItems: { [shared.itemDaedalus]: 1 },
+    outpostTeam: DotaTeam.GOODGUYS,
 };
 
 const powerRuneRangersInfo: HeroInfo[] = [

@@ -298,7 +298,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
         }
     }
 
-    // Create the top T1 dier tower if it's down
+    // Create the top T1 dire tower if it's down and needs to be up, or remove it if it needs to be down
     const direTopTowerLocation = Vector(-4672, 6016, 128)
     let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
     if (state.topDireT1TowerStanding) {
@@ -314,6 +314,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
         UTIL_Remove(direTop)
     }
 
+    // Create the top T2 dire tower if it's down and needs to be up, or remove it if it needs to be down
     const direTopTower2Location = Vector(0, 6016, 128)
     let direTop2 = Entities.FindByClassnameNearest("npc_dota_tower", direTopTower2Location, 200) as CDOTA_BaseNPC_Building
     if (state.topDireT2TowerStanding) {
@@ -335,6 +336,16 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
         })
 
         UTIL_Remove(direTop2)
+    }
+
+    const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top")) as CDOTA_BaseNPC
+    if (topOutpost.GetTeamNumber() !== state.outpostTeam) {
+        topOutpost.SetTeam(state.outpostTeam)
+        if (state.outpostTeam === DotaTeam.BADGUYS) {
+            if (topOutpost.HasModifier("modifier_invulnerable")) {
+                topOutpost.RemoveModifierByName("modifier_invulnerable")
+            }
+        }
     }
 }
 

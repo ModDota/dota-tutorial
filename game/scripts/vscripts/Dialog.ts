@@ -42,10 +42,12 @@ class DialogController {
         if (this.particles !== undefined) {
             for (const particleIndex of this.particles) {
                 if (this.currentLine && this.currentLine.speaker) {
-                    for (const modifier of this.currentLine.speaker.FindAllModifiersByName(modifier_particle_attach.name)) {
-                        if ((modifier as modifier_particle_attach).particleID === particleIndex) {
-                            modifier.Destroy()
-                            break;
+                    if (IsValidEntity(this.currentLine.speaker)) {
+                        for (const modifier of this.currentLine.speaker.FindAllModifiersByName(modifier_particle_attach.name)) {
+                            if ((modifier as modifier_particle_attach).particleID === particleIndex) {
+                                modifier.Destroy()
+                                break;
+                            }
                         }
                     }
                 }

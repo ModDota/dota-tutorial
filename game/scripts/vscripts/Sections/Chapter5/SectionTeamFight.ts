@@ -30,7 +30,8 @@ const requiredState: RequiredState = {
     ],
     removeElderDragonForm: false,
     topDireT1TowerStanding: false,
-    topDireT2TowerStanding: false
+    topDireT2TowerStanding: false,
+    outpostTeam: DotaTeam.GOODGUYS,
 }
 
 const radiantFountainLocation = Vector(-6850, -6500, 384)
