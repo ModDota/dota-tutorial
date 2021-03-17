@@ -22,3 +22,5 @@ panorama_debugger.cfg
 # Inputs and outputs used by notebooks
 notebooks/scripts/*
 notebooks/results/*
+notebooks/tiers/*
+notebooks/results_tiers/*

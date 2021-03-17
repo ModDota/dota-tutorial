@@ -487,3 +487,62 @@
         opacity: 0;
     }
 }
+
+#MessageToTheNoobsButton {
+    width: 100px;
+    height: 50px;
+    horizontal-align: center;
+    vertical-align: bottom;
+    flow-children: right;
+    margin-bottom: 166px;
+    margin-right: 650px;
+    box-shadow: 0 0 8px white;
+    background-color: #333333;
+    border-radius: 30%;
+}
+
+#MessageToTheNoobsButton:hover {
+    background-color: #444444;
+}
+
+#MessageToTheNoobsButton:active {
+    background-color: #222222;
+}
+
+#MessageToTheNoobsImage {
+    width: 50px;
+    height: 50px;
+
+    vertical-align: center;
+
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-image: url("file://{images}/custom_game/skip_section/old/chapter5artold.png");
+}
+
+#MessageToTheNoobsText {
+    font-size: 24px;
+    margin-top: 10px;
+    height: 50px;
+    vertical-align: center;
+    color: #EEEEEE;
+}
+
+#MessageToTheNoobsMessage {
+    font-size: 24px;
+    margin-top: 10px;
+
+    max-width: 500px;
+
+    background-color: #666;
+    padding: 10px;
+    border-radius: 10px;
+
+    color: #EEEEEE;
+
+    horizontal-align: center;
+    vertical-align: bottom;
+    margin-bottom: 200px;
+
+    opacity: 0.9;
+}

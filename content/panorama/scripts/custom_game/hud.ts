@@ -202,3 +202,21 @@ function playChapter(chapterNumber: number) {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
     }
 }
+
+const numMessagesToTheNoobs = 78; // This needs to be updated when the messages are updated too
+const messageToTheNoobsMessage = $("#MessageToTheNoobsMessage") as LabelPanel;
+let hideMessageToTheNoobsTimer: ScheduleID | undefined = undefined
+function showMessageToTheNoobs() {
+    if (hideMessageToTheNoobsTimer) {
+        $.CancelScheduled(hideMessageToTheNoobsTimer);
+        hideMessageToTheNoobsTimer = undefined;
+    }
+
+    const message = `#MessageToTheNoobs_${Math.round(Math.random() * 1000000000) % numMessagesToTheNoobs}`;
+    messageToTheNoobsMessage.text = $.Localize(message);
+    messageToTheNoobsMessage.visible = true;
+    hideMessageToTheNoobsTimer = $.Schedule(5, () => {
+        messageToTheNoobsMessage.visible = false;
+        hideMessageToTheNoobsTimer = undefined;
+    });
+}
