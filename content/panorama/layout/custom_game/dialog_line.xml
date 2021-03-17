@@ -5,6 +5,7 @@
         <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
 
         <include src="file://{resources}/styles/custom_game/dialog_log.css" />
+        <include src="file://{resources}/styles/custom_game/dialog.css" />
     </styles>
 
     <scripts>
