@@ -102,7 +102,7 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_1, LocalizationKey.Script_2_Tower_1, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => direTopTower.GetAbsOrigin(), 1),
+                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => direTopTower.GetAbsOrigin(), 2),
             ]),
             tg.immediate(() => {
                 // Calculate how long you should be dead while Slacks and Sunsfan explain death
@@ -117,17 +117,14 @@ const onStart = (complete: () => void) => {
                     const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
                     if (!modifier) error("Dragon Knight death modifier does not exist")
                     return modifier.dkDiedToTower
-                }, 0.5),
-                    _ =>
-                    ({
-                        type: "arrow_enemy",
-                        units: [direTopTower],
-                        attach: true
-                    })
-                ),
+                }, 0.5), _ => ({
+                    type: "arrow_enemy",
+                    units: [direTopTower],
+                    attach: true
+                })),
                 tg.seq([
                     tg.wait(1),
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
                 ])
             ]),
             tg.immediate(() => {
@@ -142,7 +139,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(() => {
                 if (!playerHero.IsAlive()) playerHero.RespawnHero(false, false)
             }),
-            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => fountainLocation, 0.9),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => fountainLocation, 1.5),
             tg.completeOnCheck(() => {
                 const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
                 if (!modifier) error("The modifier does not exist")
@@ -159,7 +156,7 @@ const onStart = (complete: () => void) => {
                 playerHero.SetAbsOrigin(teleportAfterRespawnLocation)
                 freezePlayerHero(false)
             }),
-            tg.panCameraExponential(_ => fountainLocation, _ => playerHero.GetAbsOrigin(), 0.9),
+            tg.panCameraExponential(_ => fountainLocation, _ => playerHero.GetAbsOrigin(), 1.5),
             tg.goToLocation(moveAfterTeleportCloseToTowerLocation, _ => []),
             tg.immediate(() => {
                 goalGetBackToTopTowerPosition.complete()
@@ -195,7 +192,7 @@ const onStart = (complete: () => void) => {
                 tg.seq([
                     tg.wait(2),
                     tg.audioDialog(LocalizationKey.Script_2_Tower_9, LocalizationKey.Script_2_Tower_9, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
                     tg.immediate(() => {
                         goalSneakThroughTower.start()
                         freezePlayerHero(false)

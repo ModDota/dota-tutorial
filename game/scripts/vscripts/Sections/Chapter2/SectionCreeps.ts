@@ -116,7 +116,7 @@ const onStart = (complete: () => void) => {
                 ]),
                 tg.seq([
                     tg.wait(2.5),
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => {
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => {
                         if (radiantCreeps)
                             return radiantCreeps[0].GetAbsOrigin()
                         return playerHero.GetAbsOrigin()
@@ -141,7 +141,7 @@ const onStart = (complete: () => void) => {
                         const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
                         setUnitPacifist(godzMudGolem, true);
                     }),
-                    tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), 1),
+                    tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), 2),
                     tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
                     tg.immediate(() => {
                         goalLastHitCreeps.start()
@@ -201,7 +201,7 @@ const onStart = (complete: () => void) => {
                         sniper.FaceTowards(playerHero.GetAbsOrigin())
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                     }),
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[Chapter2SpecificKeys.sniperEnemyHero].GetAbsOrigin(), 1),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), context => context[Chapter2SpecificKeys.sniperEnemyHero].GetAbsOrigin(), 2),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_13, LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(context => {
                         const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero];
