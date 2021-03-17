@@ -1,10 +1,10 @@
-import * as tut from "../../Tutorial/Core";
-import * as tg from "../../TutorialGraph/index";
-import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
+import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist } from "../../util";
+import * as shared from "./Shared";
 import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
-import * as shared from "./Shared"
-import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
@@ -33,6 +33,7 @@ const requiredState: RequiredState = {
     requireRoshan: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
+    heroItems: { [shared.itemDaedalus]: 1 },
 };
 
 const roshanMusic = "valve_ti10.music.roshan"

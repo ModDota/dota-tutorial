@@ -36,6 +36,7 @@ const requiredState: RequiredState = {
     roshanHitsLikeATruck: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
+    heroItems: { [shared.itemDaedalus]: 1 },
 };
 
 const powerRuneRangersInfo: HeroInfo[] = [
