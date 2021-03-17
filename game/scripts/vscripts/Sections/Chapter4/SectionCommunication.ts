@@ -24,8 +24,8 @@ const requiredState: RequiredState = {
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
 const bountyRuneLocation = Vector(-3850, 2570);
-const lunaName = "npc_dota_hero_luna";
-const kunkkaName = "npc_dota_hero_kunkka";
+const tsunamiName = CustomNpcKeys.Tsunami;
+const kunkkaName = CustomNpcKeys.Kunkka;
 const lunaHighgroundLocation = Vector(-2000, 3600, 256)
 const kunkkaHighgroundLocation = Vector(-1800, 3800, 256)
 
@@ -45,7 +45,7 @@ function onStart(complete: () => void) {
         tg.seq([
             tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
 
-            tg.spawnUnit(lunaName, allyHeroStartLocation, DotaTeam.GOODGUYS, lunaName, true),
+            tg.spawnUnit(tsunamiName, allyHeroStartLocation, DotaTeam.GOODGUYS, tsunamiName, true),
             tg.spawnUnit(kunkkaName, allyHeroStartLocation, DotaTeam.GOODGUYS, kunkkaName, true),
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
@@ -61,17 +61,17 @@ function onStart(complete: () => void) {
 
             tg.fork([
                 tg.moveUnit(context => context[kunkkaName], kunkkaHighgroundLocation),
-                tg.moveUnit(context => context[lunaName], lunaHighgroundLocation),
+                tg.moveUnit(context => context[tsunamiName], lunaHighgroundLocation),
             ]),
 
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
                 kunkka.FaceTowards(playerHero.GetAbsOrigin());
-                const luna = getOrError(context[lunaName] as CDOTA_BaseNPC | undefined);
+                const luna = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
                 luna.FaceTowards(playerHero.GetAbsOrigin());
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Communication_1, LocalizationKey.Script_4_Communication_1, ctx => ctx[lunaName]),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_1, LocalizationKey.Script_4_Communication_1, ctx => ctx[tsunamiName]),
             tg.setCameraTarget(undefined),
             tg.audioDialog(LocalizationKey.Script_4_Communication_2, LocalizationKey.Script_4_Communication_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_3, LocalizationKey.Script_4_Communication_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -96,10 +96,10 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalChatWheelWP.start()),
             tg.waitForChatWheel(),
             tg.immediate(_ => goalChatWheelWP.complete()),
-            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[lunaName].GetAbsOrigin(), 1),
-            tg.setCameraTarget(context => context[lunaName]),
-            tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[lunaName]),
-            tg.moveUnit(context => context[lunaName], allyHeroStartLocation),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[tsunamiName].GetAbsOrigin(), 1),
+            tg.setCameraTarget(context => context[tsunamiName]),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[tsunamiName]),
+            tg.moveUnit(context => context[tsunamiName], allyHeroStartLocation),
 
             tg.setCameraTarget(context => context[kunkkaName]),
             tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
@@ -181,7 +181,7 @@ function onStop() {
 
 function disposeHeroes(context: tg.TutorialContext) {
     removeContextEntityIfExists(context, kunkkaName);
-    removeContextEntityIfExists(context, lunaName);
+    removeContextEntityIfExists(context, tsunamiName);
 }
 
 export const sectionCommunication = new tut.FunctionalSection(
