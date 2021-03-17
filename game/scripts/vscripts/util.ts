@@ -58,20 +58,24 @@ export function canPlayerHeroEarnXP(): boolean {
  * Sets whether a unit can be shown through the fog of war.
  */
 export function setUnitVisibilityThroughFogOfWar(unit: CDOTA_BaseNPC, visible: boolean) {
-    if (visible) {
-        unit.AddNewModifier(undefined, undefined, "modifier_visible_through_fog", {});
-    }
-    else {
-        unit.RemoveModifierByName("modifier_visible_through_fog");
+    if (IsValidEntity(unit)) {
+        if (visible) {
+            unit.AddNewModifier(undefined, undefined, "modifier_visible_through_fog", {});
+        }
+        else {
+            unit.RemoveModifierByName("modifier_visible_through_fog");
+        }
     }
 }
 
 export function setUnitPacifist(unit: CDOTA_BaseNPC, isPacifist: boolean, duration?: number) {
-    if (isPacifist) {
-        unit.AddNewModifier(undefined, undefined, "modifier_tutorial_pacifist", { duration: duration });
-    }
-    else {
-        unit.RemoveModifierByName("modifier_tutorial_pacifist");
+    if (IsValidEntity(unit)) {
+        if (isPacifist) {
+            unit.AddNewModifier(undefined, undefined, "modifier_tutorial_pacifist", { duration: duration });
+        }
+        else {
+            unit.RemoveModifierByName("modifier_tutorial_pacifist");
+        }
     }
 }
 
