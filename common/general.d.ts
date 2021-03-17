@@ -35,6 +35,7 @@ declare const enum CustomNpcKeys {
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
     DireTopT1Tower = "npc_dota_badguys_tower1_top",
+    DireTopT2Tower = "npc_dota_badguys_tower2_top",
     Sniper = "npc_dota_hero_sniper",
     Juggernaut = "npc_dota_hero_juggernaut",
     Zuus = "npc_dota_hero_zuus",

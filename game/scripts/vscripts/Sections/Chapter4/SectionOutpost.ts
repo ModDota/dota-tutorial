@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, freezePlayerHero, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation } from "../../util";
+import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, freezePlayerHero, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID, printEventTable } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
@@ -19,9 +19,12 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 1],
     heroItems: { "item_greater_crit": 1 },
     blockades: Object.values(shared.blockades),
-    clearWards: false
+    clearWards: false,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false,
 };
 
+let canPlayerTakeOutpost = false
 let allowUseItem = false;
 const dustName = "item_dust";
 const dustLocation = Vector(-1700, 3800, 256);
@@ -42,11 +45,11 @@ function onStart(complete: () => void) {
     const goalKillRiki = goalTracker.addBoolean(LocalizationKey.Goal_4_Outpost_5);
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
-    // TODO: Give ranged in dragon form
-    playerHero.SetAttackCapability(UnitAttackCapability.MELEE_ATTACK);
 
     const direOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"));
+    if (direOutpost && direOutpost.GetTeamNumber() === DotaTeam.GOODGUYS) direOutpost.SetTeam(DotaTeam.BADGUYS)
     allowUseItem = false;
+    canPlayerTakeOutpost = false
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
@@ -68,7 +71,7 @@ function onStart(complete: () => void) {
                 goalGoToLastLocationSawRiki.start();
             }),
 
-            tg.goToLocation(lastSawRikiLocation),
+            tg.goToLocation(GetGroundPosition(lastSawRikiLocation, undefined)),
             tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.NONE)),
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
@@ -123,18 +126,7 @@ function onStart(complete: () => void) {
                 // Part 2: Take outpost
                 tg.immediate(_ => {
                     goalTakeOutpost.start();
-
-                    const dmgToDestroyTower = CreateDamageInfo(playerHero, playerHero, playerHero.GetAbsOrigin(), playerHero.GetAbsOrigin(), 9999, 9999);
-
-                    const direTopTower1 = Entities.FindByName(undefined, "dota_badguys_tower1_top") as CDOTA_BaseNPC_Building | undefined;
-                    if (direTopTower1 && unitIsValidAndAlive(direTopTower1)) {
-                        direTopTower1.TakeDamage(dmgToDestroyTower);
-                    }
-
-                    const direTopTower2 = Entities.FindByName(undefined, "dota_badguys_tower2_top") as CDOTA_BaseNPC_Building | undefined;
-                    if (direTopTower2 && unitIsValidAndAlive(direTopTower2)) {
-                        direTopTower2.TakeDamage(dmgToDestroyTower);
-                    }
+                    canPlayerTakeOutpost = true
                 }),
 
                 tg.audioDialog(LocalizationKey.Script_4_Outpost_8, LocalizationKey.Script_4_Outpost_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -186,6 +178,17 @@ function onStop() {
 }
 
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
+    if (event.issuer_player_id_const !== findRealPlayerID()) return true
+
+    if (event.order_type === UnitOrder.ATTACK_TARGET && event.entindex_target) {
+        const target = EntIndexToHScript(event.entindex_target)
+        const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
+        if (target === topOutpost && !canPlayerTakeOutpost) {
+            displayDotaErrorMessage("Taking the Outpost is currently disabled.")
+            return false
+        }
+    }
+
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
         displayDotaErrorMessage("Dropping and moving items are disabled in this section.")
         return false;

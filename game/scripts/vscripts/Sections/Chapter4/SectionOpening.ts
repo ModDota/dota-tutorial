@@ -21,6 +21,7 @@ const requiredState: RequiredState = {
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
     blockades: Object.values(shared.blockades),
+    topDireT1TowerStanding: false
 };
 
 let canPlayerIssueOrders = true;

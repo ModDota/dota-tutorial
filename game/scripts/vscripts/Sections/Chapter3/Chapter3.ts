@@ -151,6 +151,7 @@ const requiredState: RequiredState = {
         new Blockade(Vector(-4480, 4630), Vector(-4597, 3497)),
         new Blockade(Vector(-1450, 4600), Vector(-1500, 3300)),
     ],
+    topDireT1TowerStanding: false
 }
 
 const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (tries: number, stacks: number) => tg.TutorialStep, onFailure: (tries: number, stacks: number) => tg.TutorialStep) => {

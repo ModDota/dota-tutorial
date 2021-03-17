@@ -34,6 +34,8 @@ const requiredState: RequiredState = {
     requireBountyRunes: true,
     requireRoshan: true,
     roshanHitsLikeATruck: true,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false,
     heroItems: { [shared.itemDaedalus]: 1 },
 };
 

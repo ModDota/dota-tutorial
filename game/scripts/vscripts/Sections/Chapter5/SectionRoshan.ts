@@ -31,6 +31,8 @@ const requiredState: RequiredState = {
         chapter5Blockades.midRiverTopSide,
     ],
     requireRoshan: true,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false,
     heroItems: { [shared.itemDaedalus]: 1 },
 };
 

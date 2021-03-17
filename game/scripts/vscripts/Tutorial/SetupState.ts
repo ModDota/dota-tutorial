@@ -305,6 +305,29 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
         UTIL_Remove(direTop)
     }
+
+    const direTopTower2Location = Vector(0, 6016, 128)
+    let direTop2 = Entities.FindByClassnameNearest("npc_dota_tower", direTopTower2Location, 200) as CDOTA_BaseNPC_Building
+    if (state.topDireT2TowerStanding) {
+        if (!direTop2 || !IsValidEntity(direTop2) || !direTop2.IsAlive()) {
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT2Tower, direTopTower2Location, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
+            direTop.RemoveModifierByName("modifier_invulnerable")
+            direTop.SetRenderColor(65, 78, 63)
+        }
+    }
+    else if (direTop2 && IsValidEntity(direTop2) && direTop2.IsAlive()) {
+        ApplyDamage({
+            attacker: direTop2,
+            victim: direTop2,
+            damage: direTop2.GetMaxHealth(),
+            damage_type: DamageTypes.PURE,
+            damage_flags: DamageFlag.BYPASSES_INVULNERABILITY + DamageFlag.HPLOSS
+        })
+
+        UTIL_Remove(direTop2)
+    }
 }
 
 function handleRequiredRespawn(state: FilledRequiredState) {
