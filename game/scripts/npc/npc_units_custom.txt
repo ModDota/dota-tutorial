@@ -715,8 +715,8 @@
 
     "npc_dota_tutorial_shush"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/amaterasu/amaterasu.vmdl"
+        "ModelScale" 				"1.5"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -725,8 +725,8 @@
 
     "npc_dota_tutorial_perry"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/tinkbot/tinkbot.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -756,8 +756,8 @@
 
     "npc_dota_tutorial_pongping"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/courier/frull/frull_courier.vmdl"
+        "ModelScale" 				"1.5"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -766,8 +766,8 @@
 
     "npc_dota_tutorial_sinz"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/courier/octopus/octopus.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -776,8 +776,8 @@
 
     "npc_dota_tutorial_smashthestate"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/arneyb_rabbit/arneyb_rabbit.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -786,8 +786,8 @@
 
     "npc_dota_tutorial_vicfrank"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/courier_ti10_dire/courier_ti10_dire_lvl3/courier_ti10_dire_lvl3.vmdl"
+        "ModelScale" 				"1.5"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -796,8 +796,8 @@
 
     "npc_dota_tutorial_toyoka"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/alphid_of_lecaciida/alphid_of_lecaciida.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -840,8 +840,8 @@
 
     "npc_dota_tutorial_coccia"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/enno_the_underlord/enno_the_underlord.vmdl"
+        "ModelScale" 				"1.5"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -860,8 +860,8 @@
 
     "npc_dota_tutorial_dotafromzero"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/grim_wolf_radiant/grim_wolf_radiant.vmdl"
+        "ModelScale" 				"1.5"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -871,7 +871,7 @@
     "npc_dota_tutorial_liquipedia"
     {
         "Model"						"models/items/courier/blue_lightning_horse/blue_lightning_horse.vmdl"
-        "ModelScale" 				"1.5"
+        "ModelScale" 				"1.7"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -880,8 +880,8 @@
 
     "npc_dota_tutorial_bsj"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/mole_messenger/mole_messenger.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -890,8 +890,8 @@
 
     "npc_dota_tutorial_bowie"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/raiq/raiq.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -900,8 +900,8 @@
 
     "npc_dota_tutorial_angermania"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/spooky_tear_of_the_swamp/spooky_tear_of_the_swamp.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
@@ -910,8 +910,8 @@
 
     "npc_dota_tutorial_redditdota"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/items/courier/vaal_the_animated_constructradiant/vaal_the_animated_constructradiant.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
