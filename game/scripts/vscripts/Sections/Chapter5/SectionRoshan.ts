@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist } from "../../util";
+import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
 import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
 
@@ -98,7 +98,7 @@ function onStart(complete: () => void) {
                 else {
                     error("Hero talents/abilities not found!")
                 }
-            }, 2),
+            }, 0.2),
             tg.immediate(() => goalUpgradeTalents.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_5, LocalizationKey.Script_5_Roshan_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(() => {
@@ -106,15 +106,17 @@ function onStart(complete: () => void) {
                 goalDefeatRoshan.start()
             }),
             tg.playGlobalSound(roshanMusic),
-            tg.completeOnCheck(() => {
-                return roshan.IsAttacking()
-            }, 0.5),
+            tg.completeOnCheck(() => !unitIsValidAndAlive(roshan) || roshan.IsAttacking(), 0.5),
             shared.spawnFriendlyHeroes(Vector(-2000, 1550, 0)),
             tg.wait(1),
             tg.immediate(context => {
-                for (const friendlyHero of friendlyHeroesInfo) {
-                    const hero: CDOTA_BaseNPC_Hero = context[friendlyHero.name]
-                    hero.SetForceAttackTarget(roshan)
+                if (unitIsValidAndAlive(roshan)) {
+                    for (const friendlyHero of friendlyHeroesInfo) {
+                        const hero: CDOTA_BaseNPC_Hero = context[friendlyHero.name]
+                        if (unitIsValidAndAlive(hero)) {
+                            hero.SetForceAttackTarget(roshan)
+                        }
+                    }
                 }
             }),
             tg.setCameraTarget(context => context[friendlyHeroesInfo[0].name]),
@@ -122,9 +124,7 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(undefined),
             tg.immediate(_ => centerCameraOnHero()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_6, LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.completeOnCheck(() => {
-                return !roshan.IsAlive()
-            }, 2),
+            tg.completeOnCheck(() => !unitIsValidAndAlive(roshan), 0.2),
             tg.immediate(() => {
                 goalDefeatRoshan.complete()
                 StopGlobalSound(roshanMusic)
@@ -150,7 +150,7 @@ function onStart(complete: () => void) {
                 goalPickupAegis.start()
                 canPlayerIssueOrders = true
             }),
-            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 2),
+            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 0.2),
             tg.immediate(() => goalPickupAegis.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
