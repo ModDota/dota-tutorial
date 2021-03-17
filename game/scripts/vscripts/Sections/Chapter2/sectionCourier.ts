@@ -104,23 +104,18 @@ const onStart = (complete: () => void) => {
         tg.forkAny([
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_2_Courier_3, LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-                // tg.immediate(context => {
-                //     MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 5)
-                //     MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 5)
-                // }),
                 tg.neverComplete()
             ]),
             tg.seq([
+                // Wait a bit so it doesn't completely overlap with the first secret shop minimap marker
+                tg.wait(3),
                 tg.immediate(() => {
                     goalMoveToSecretShop.start()
                 }),
-                // Wait a bit so it doesn't completely overlap with the first secret shop minimap marker
-                tg.wait(3),
                 tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation, upSecretShopRamp]),
             ])
         ]),
         tg.immediate(() => {
-            goalMoveToSecretShop.complete()
         }),
 
         // Don't fork this since dialogue only mentions buying the Demon Edge at the end, so maybe it'll confuse player if he follows the highlights immediately
@@ -346,7 +341,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
                     return true
                 }
             }
-        } else if (units.length == 1) {
+        } else if (units.length === 1) {
             const unit = units[0]
 
             if (unit.GetName() === getOrError(getPlayerHero()).GetName() && UnitOrder.MOVE_TO_POSITION)
