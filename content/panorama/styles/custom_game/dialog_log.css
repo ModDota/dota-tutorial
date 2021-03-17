@@ -94,12 +94,12 @@
     horizontal-align: center;
 
     text-transform: uppercase;
-    text-decoration: underline;
-    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) )
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
     text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
-    font-size: 22px;
+    font-size: 25px;
     letter-spacing: 2px;
+    font-family: titleFont;
 }
 
 #DialogLineContainer {
