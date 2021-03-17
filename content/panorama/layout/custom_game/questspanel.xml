@@ -12,9 +12,9 @@
         <Panel hittest="false" id="QuestsPanelRoot">
             <Panel hittest="false" class="QuestsPanelHeader">
                 <Panel class="QuestsTitleIcon" />
-                <Label class="QuestsTitle" text="#Quests" />
+                <Label class="QuestsTitle" text="#Tasks" />
                 <Panel class="Divider" />
-            </Panel>
+            </Panel>s
             <Panel hittest="false" id="QuestsPanelContainer">
             </Panel>
         </Panel>

@@ -9,6 +9,7 @@
         "Message_Log" "Message Log"
         "Chapters" "Chapters"
         "Guides" "Guides"
+        "Tasks" "Tasks"
         "Close" "Close"
         "Chapter_1" "Fountain"
         "Chapter_1_BriefInformation" "Covers movement, camera controls, and other basic game controls."
