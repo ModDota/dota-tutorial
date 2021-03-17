@@ -96,7 +96,7 @@ function onStart(complete: () => void) {
                 else {
                     error("Hero talents/abilities not found!")
                 }
-            }, 2),
+            }, 0.2),
             tg.immediate(() => goalUpgradeTalents.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_5, LocalizationKey.Script_5_Roshan_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(() => {
@@ -122,7 +122,7 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(undefined),
             tg.immediate(_ => centerCameraOnHero()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_6, LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.completeOnCheck(() => !unitIsValidAndAlive(roshan), 2),
+            tg.completeOnCheck(() => !unitIsValidAndAlive(roshan), 0.2),
             tg.immediate(() => {
                 goalDefeatRoshan.complete()
                 StopGlobalSound(roshanMusic)
@@ -148,7 +148,7 @@ function onStart(complete: () => void) {
                 goalPickupAegis.start()
                 canPlayerIssueOrders = true
             }),
-            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 2),
+            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 0.2),
             tg.immediate(() => goalPickupAegis.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
