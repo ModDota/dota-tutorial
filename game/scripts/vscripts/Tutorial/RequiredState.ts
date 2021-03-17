@@ -35,6 +35,9 @@ export type RequiredState = {
     topDireT1TowerStanding?: boolean
     topDireT2TowerStanding?: boolean
 
+    // Outpost
+    outpostTeam?: DotaTeam
+
     // Riki
     requireRiki?: boolean
     rikiLocation?: Vector
@@ -98,6 +101,9 @@ export const defaultRequiredState: FilledRequiredState = {
     // Towers
     topDireT1TowerStanding: true,
     topDireT2TowerStanding: true,
+
+    // Outpost
+    outpostTeam: DotaTeam.BADGUYS,
 
     // Riki
     requireRiki: false,

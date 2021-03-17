@@ -19,7 +19,8 @@ const requiredState: RequiredState = {
     blockades: Object.values(shared.blockades),
     clearWards: false,
     topDireT1TowerStanding: false,
-    topDireT2TowerStanding: false
+    topDireT2TowerStanding: false,
+    outpostTeam: DotaTeam.GOODGUYS
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);

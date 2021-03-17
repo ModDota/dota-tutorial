@@ -22,7 +22,8 @@ const requiredState: RequiredState = {
         "item_aegis": 1,
     },
     topDireT1TowerStanding: false,
-    topDireT2TowerStanding: false
+    topDireT2TowerStanding: false,
+    outpostTeam: DotaTeam.GOODGUYS,
 };
 
 const axeName = CustomNpcKeys.Axe;
