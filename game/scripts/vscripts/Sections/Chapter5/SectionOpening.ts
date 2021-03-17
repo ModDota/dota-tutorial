@@ -34,7 +34,7 @@ const requiredState: RequiredState = {
     requireBountyRunes: true,
     requireRoshan: true,
     roshanHitsLikeATruck: true,
-    heroItems: { "item_greater_crit": 1 },
+    heroItems: { [shared.itemDaedalus]: 1 },
 };
 
 const powerRuneRangersInfo: HeroInfo[] = [

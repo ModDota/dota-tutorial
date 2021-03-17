@@ -31,7 +31,7 @@ const requiredState: RequiredState = {
         chapter5Blockades.midRiverTopSide,
     ],
     requireRoshan: true,
-    heroItems: { "item_greater_crit": 1 },
+    heroItems: { [shared.itemDaedalus]: 1 },
 };
 
 const roshanMusic = "valve_ti10.music.roshan"
