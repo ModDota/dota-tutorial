@@ -178,7 +178,6 @@ function onStart(complete: () => void) {
             tg.loop(true, tg.seq([
                 tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
                 tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
-                tg.immediate(_ => print(playerHero.GetAbsOrigin())),
                 tg.wait(0.1),
             ])),
         ]),
