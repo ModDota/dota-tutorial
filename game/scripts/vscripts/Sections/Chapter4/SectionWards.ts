@@ -249,6 +249,15 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         return true;
     }
 
+    if (event.order_type === UnitOrder.ATTACK_TARGET && event.entindex_target) {
+        const target = EntIndexToHScript(event.entindex_target)
+        const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
+        if (target === topOutpost) {
+            displayDotaErrorMessage("Taking control of the Outpost is currently disabled.")
+            return false
+        }
+    }
+
     if (event.order_type === UnitOrder.DROP_ITEM) {
         displayDotaErrorMessage("Dropping items is currently disabled.")
         return false;

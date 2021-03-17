@@ -184,7 +184,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost && !canPlayerTakeOutpost) {
-            displayDotaErrorMessage("Taking the Outpost is currently disabled.")
+            displayDotaErrorMessage("Taking control of the Outpost is currently disabled.")
             return false
         }
     }
