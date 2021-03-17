@@ -107,7 +107,15 @@ function handleBlockades(state: FilledRequiredState) {
 function handleUnits(state: FilledRequiredState) {
     // Golems
     const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
-        if (!created) {
+        const shouldGolemBeHidden = unit.GetAbsOrigin() === Vector(0, 0, 0);
+
+        if (shouldGolemBeHidden) {
+            unit.SetTeam(DotaTeam.BADGUYS)
+            unit.AddNewModifier(undefined, undefined, "modifier_invisible", {})
+            setUnitPacifist(unit, false);
+            return
+        } else if (!created) {
+            if (unit.HasModifier("modifier_invisible")) unit.RemoveModifierByName("modifier_invisible")
             setUnitPacifist(unit, false);
             unit.SetTeam(DotaTeam.GOODGUYS);
         }

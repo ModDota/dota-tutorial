@@ -1,3 +1,4 @@
+import { modifier_particle_attach } from "./modifiers/modifier_particle_attach";
 import { getSoundDuration } from "./Sounds";
 import { getOrError, getPlayerHero, highlight } from "./util";
 
@@ -40,8 +41,14 @@ class DialogController {
     private clearParticles() {
         if (this.particles !== undefined) {
             for (const particleIndex of this.particles) {
-                ParticleManager.DestroyParticle(particleIndex, false);
-                ParticleManager.ReleaseParticleIndex(particleIndex);
+                if (this.currentLine && this.currentLine.speaker) {
+                    for (const modifier of this.currentLine.speaker.FindAllModifiersByName(modifier_particle_attach.name)) {
+                        if ((modifier as modifier_particle_attach).particleID === particleIndex) {
+                            modifier.Destroy()
+                            break;
+                        }
+                    }
+                }
             }
             this.particles = undefined;
         }

@@ -224,6 +224,13 @@ function onStart(complete: () => void) {
 function onStop() {
     print("Stopping", sectionName);
     removeHighlight(scanUIPath);
+
+    const playerHero = getOrError(getPlayerHero())
+
+    if (waitingForPlayerToScan) {
+        MinimapEvent(DotaTeam.GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
+    }
+
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeCreeps();
