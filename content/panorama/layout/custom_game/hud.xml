@@ -18,7 +18,7 @@
         <Panel hittest="false" id="FadeScreenContainer" />
 
         <Panel hittest="false" class="TopLeftMenu">
-            <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
+            <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onload="DOTAShowTextTooltip('#Message_Log')" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
             <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleChaptersMenu();" onmouseover="UIShowTextTooltip('#Chapters')" onmouseout="UIHideTextTooltip()" />
         </Panel>
 
@@ -28,6 +28,12 @@
             <Button id="CloseButton" class="ButtonBevel" onactivate="Close()">
                 <Label text="#Close"/>
             </Button>
+        </Panel>
+
+        <Label id="MessageToTheNoobsMessage" text="Hello" visible="false" />
+        <Panel id="MessageToTheNoobsButton" onactivate="showMessageToTheNoobs()" hittest="true" onmouseover="UIShowTextTooltip('#RandomTipHover')" onmouseout="UIHideTextTooltip()">
+            <Panel id="MessageToTheNoobsImage" hittest="false" />
+            <Label id="MessageToTheNoobsText" text="#RandomTip" hittest="false" />
         </Panel>
 
         <Panel id="ChaptersMenu" hittest="false">

@@ -21,6 +21,7 @@ const requiredState: RequiredState = {
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
     blockades: Object.values(shared.blockades),
+    topDireT1TowerStanding: false
 };
 
 let canPlayerIssueOrders = true;
@@ -33,6 +34,7 @@ const firstScanLocation = Vector(2000, 3800);
 const secondScanLocation = Vector(-2000, 3800);
 const outpostHighgroundCenter = Vector(-1800, 4000);
 let currentRequiredScanLocation = firstScanLocation;
+let waitingForPlayerToScan = false
 
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 let radiantCreeps: CDOTA_BaseNPC[] = [];
@@ -52,6 +54,7 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
     currentRequiredScanLocation = firstScanLocation;
+    waitingForPlayerToScan = false
 
     goalListenDialog.start();
 
@@ -171,6 +174,7 @@ function onStart(complete: () => void) {
 
             //Part3: 1st scan, failed
             tg.immediate(_ => {
+                waitingForPlayerToScan = true
                 scanLocation = undefined;
                 MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
@@ -179,6 +183,7 @@ function onStart(complete: () => void) {
             tg.completeOnCheck(context => checkIfScanCoversTheLocation(firstScanLocation, context), 1),
             tg.immediate(_ => {
                 goalScanFailed.complete();
+                waitingForPlayerToScan = false
                 removeHighlight(scanUIPath);
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_13, LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -188,6 +193,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(_ => {
                 scanLocation = undefined;
+                waitingForPlayerToScan = true
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
                 highlightUiElement(scanUIPath);
@@ -197,6 +203,7 @@ function onStart(complete: () => void) {
             tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
 
             tg.immediate(_ => {
+                waitingForPlayerToScan = false
                 goalScanSucceed.complete();
                 removeHighlight(scanUIPath);
                 MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
@@ -217,6 +224,13 @@ function onStart(complete: () => void) {
 function onStop() {
     print("Stopping", sectionName);
     removeHighlight(scanUIPath);
+
+    const playerHero = getOrError(getPlayerHero())
+
+    if (waitingForPlayerToScan) {
+        MinimapEvent(DotaTeam.GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
+    }
+
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeCreeps();
@@ -269,6 +283,8 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true;
 
     if (event.order_type === UnitOrder.RADAR) {
+        if (!waitingForPlayerToScan) return false
+
         scanLocation = Vector(event.position_x, event.position_y);
         return checkIfScanCoversTheLocation(currentRequiredScanLocation, GameRules.Addon.context);
     }

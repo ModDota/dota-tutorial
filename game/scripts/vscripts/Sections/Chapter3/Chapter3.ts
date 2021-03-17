@@ -151,6 +151,7 @@ const requiredState: RequiredState = {
         new Blockade(Vector(-4480, 4630), Vector(-4597, 3497)),
         new Blockade(Vector(-1450, 4600), Vector(-1500, 3300)),
     ],
+    topDireT1TowerStanding: false
 }
 
 const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (tries: number, stacks: number) => tg.TutorialStep, onFailure: (tries: number, stacks: number) => tg.TutorialStep) => {
@@ -373,11 +374,7 @@ const onStart = (complete: () => void) => {
 
         tg.audioDialog(LocalizationKey.Script_3_Opening_17, LocalizationKey.Script_3_Opening_17, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-        tg.immediate(_ => {
-            playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
-            playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
-            goalStackCreeps.complete()
-        }),
+        tg.immediate(_ => goalStackCreeps.complete()),
     ]
 
     const stackDialogKeys = [
@@ -399,8 +396,6 @@ const onStart = (complete: () => void) => {
             tg.immediate(ctx => {
                 goalOptionalStackCreeps.start()
                 goalTryStackCreeps.start()
-                playerHero.AddNewModifier(undefined, undefined, modifier_deal_no_damage.name, undefined)
-                playerHero.AddNewModifier(undefined, undefined, modifier_keep_hero_alive.name, undefined)
                 const odPixel = ctx[CustomNpcKeys.ODPixelMudGolem] as CDOTA_BaseNPC
                 FindClearSpaceForUnit(odPixel, odPixelLocation, false)
                 setUnitPacifist(odPixel, true)

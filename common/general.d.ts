@@ -35,6 +35,7 @@ declare const enum CustomNpcKeys {
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
     DireTopT1Tower = "npc_dota_badguys_tower1_top",
+    DireTopT2Tower = "npc_dota_badguys_tower2_top",
     Sniper = "npc_dota_hero_sniper",
     Juggernaut = "npc_dota_hero_juggernaut",
     Zuus = "npc_dota_hero_zuus",
@@ -46,6 +47,8 @@ declare const enum CustomNpcKeys {
     Tidehunter = "npc_dota_hero_tidehunter",
     Antimage = "npc_dota_hero_antimage",
     Luna = "npc_dota_hero_luna",
+    Kunkka = "npc_dota_hero_kunkka",
+    Tsunami = "npc_dota_hero_keeper_of_the_light",
     Lina = "npc_dota_hero_lina",
     Jakiro = "npc_dota_hero_jakiro",
     Visage = "npc_dota_hero_visage",
@@ -59,8 +62,14 @@ declare const enum CustomNpcKeys {
     Windrunner = "npc_dota_hero_windrunner",
 
     // Guides / Personalities
+    Coccia = "npc_dota_tutorial_coccia",
     DotaU = "npc_dota_tutorial_dotau",
+    DotaFromZero = "npc_dota_tutorial_dotafromzero",
     Liquipedia = "npc_dota_tutorial_liquipedia",
+    BSJ = "npc_dota_tutorial_bsj",
+    Bowie = "npc_dota_tutorial_bowie",
+    Angermania = "npc_dota_tutorial_angermania",
+    RedditDota = "npc_dota_tutorial_redditdota",
 
     // Modders (have no personalities apparently)
     Flam3s = "npc_dota_tutorial_flam3s",
@@ -75,7 +84,7 @@ declare const enum CustomNpcKeys {
     Yoyo = "npc_dota_tutorial_yoyo",
 
     // Helpers
-    ValkyrjaRuby = "npc_dota_hero_templar_assassin",
+    ValkyrjaRuby = "npc_dota_tutorial_ruby",
 }
 
 declare const enum CustomEntityKeys {

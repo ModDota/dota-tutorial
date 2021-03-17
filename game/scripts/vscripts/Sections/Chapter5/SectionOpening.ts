@@ -1,11 +1,10 @@
-import * as tut from "../../Tutorial/Core";
-import * as tg from "../../TutorialGraph/index";
-import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
+import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
 import { centerCameraOnHero, DirectionToPosition, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
-import * as shared from "./Shared"
+import * as shared from "./Shared";
 import { HeroInfo } from "./Shared";
-import { TutorialContext } from "../../TutorialGraph/index";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
 
@@ -15,8 +14,6 @@ let canPlayerIssueOrders = false;
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-5906, -3892, 256),
-    sunsFanLocation: Vector(-5500, -4170, 256),
     heroLocation: Vector(-4150, 2568, 0),
     heroLocationTolerance: 800,
     heroLevel: 6,
@@ -35,6 +32,9 @@ const requiredState: RequiredState = {
     requireBountyRunes: true,
     requireRoshan: true,
     roshanHitsLikeATruck: true,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false,
+    heroItems: { [shared.itemDaedalus]: 1 },
 };
 
 const powerRuneRangersInfo: HeroInfo[] = [

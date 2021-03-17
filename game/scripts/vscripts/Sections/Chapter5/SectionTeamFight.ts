@@ -1,9 +1,9 @@
-import * as tut from "../../Tutorial/Core";
-import * as tg from "../../TutorialGraph/index";
-import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import * as shared from "./Shared"
+import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
 import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
 
@@ -16,7 +16,7 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 200,
     heroLevel: 25,
     heroAbilityMinLevels: [4, 4, 4, 3],
-    heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis].map(itemName => [itemName, 1])),
+    heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis, shared.itemDaedalus].map(itemName => [itemName, 1])),
     blockades: [
         shared.chapter5Blockades.direJungleLowgroundRiver,
         shared.chapter5Blockades.topLaneRiver,
@@ -28,7 +28,9 @@ const requiredState: RequiredState = {
         shared.chapter5Blockades.midRiverTopSide,
         shared.chapter5Blockades.roshan,
     ],
-    removeElderDragonForm: false
+    removeElderDragonForm: false,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false
 }
 
 const radiantFountainLocation = Vector(-6850, -6500, 384)

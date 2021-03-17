@@ -19,6 +19,7 @@ const requiredState: RequiredState = {
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
     blockades: Object.values(shared.blockades),
+    topDireT1TowerStanding: false
 };
 
 const markerLocation = Vector(-2200, 3700, 256);

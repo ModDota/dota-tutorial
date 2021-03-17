@@ -23,8 +23,6 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 1500,
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-5906, -3892, 256),
-    sunsFanLocation: Vector(-5500, -4170, 256),
     heroAbilityMinLevels: [1, 1, 1, 0],
     heroLevel: 3,
     blockades: [

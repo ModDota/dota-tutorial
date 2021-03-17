@@ -17,6 +17,24 @@
 	"item_aegis"
 	{
 		"ItemKillable"                    "0"
+        "AbilitySpecial"
+        {
+            "01"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"reincarnate_time"		"5.0"
+			}
+			"02"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"disappear_time"		"3600.0"
+			}
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"disappear_time_minutes_tooltip"		"60"
+			}
+        }
 	}
 
     "item_demon_edge"
