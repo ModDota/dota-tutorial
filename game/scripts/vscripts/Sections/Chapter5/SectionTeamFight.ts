@@ -28,7 +28,9 @@ const requiredState: RequiredState = {
         shared.chapter5Blockades.midRiverTopSide,
         shared.chapter5Blockades.roshan,
     ],
-    removeElderDragonForm: false
+    removeElderDragonForm: false,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false
 }
 
 const radiantFountainLocation = Vector(-6850, -6500, 384)

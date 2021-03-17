@@ -1,9 +1,9 @@
-import * as tut from "../../Tutorial/Core";
-import * as tg from "../../TutorialGraph/index";
-import * as shared from "./Shared"
-import { RequiredState } from "../../Tutorial/RequiredState";
-import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
 import { GoalTracker } from "../../Goals";
+import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
+import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter4_Communication;
 
@@ -17,7 +17,9 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 1],
     heroItems: { "item_greater_crit": 1 },
     blockades: Object.values(shared.blockades),
-    clearWards: false
+    clearWards: false,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
@@ -186,5 +188,5 @@ export const sectionCommunication = new tut.FunctionalSection(
     sectionName,
     requiredState,
     onStart,
-    onStop
+    onStop,
 );

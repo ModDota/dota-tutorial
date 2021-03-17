@@ -33,6 +33,7 @@ export type RequiredState = {
 
     // Towers
     topDireT1TowerStanding?: boolean
+    topDireT2TowerStanding?: boolean
 
     // Riki
     requireRiki?: boolean
@@ -96,6 +97,7 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Towers
     topDireT1TowerStanding: true,
+    topDireT2TowerStanding: true,
 
     // Riki
     requireRiki: false,

@@ -30,7 +30,9 @@ const requiredState: RequiredState = {
         chapter5Blockades.direMidTopRiver,
         chapter5Blockades.midRiverTopSide,
     ],
-    requireRoshan: true
+    requireRoshan: true,
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false,
 };
 
 const roshanMusic = "valve_ti10.music.roshan"

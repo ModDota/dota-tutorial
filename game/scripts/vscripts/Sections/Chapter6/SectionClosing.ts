@@ -27,6 +27,8 @@ const requiredState: RequiredState = {
         "item_heart": 1,
         "item_aegis": 1,
     },
+    topDireT1TowerStanding: false,
+    topDireT2TowerStanding: false
 }
 
 const INTERACTION_DISTANCE = 200;
@@ -106,7 +108,7 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Perry, Vector(-7050, -4700, 256), LocalizationKey.Script_6_Perry),
     new ClosingNpc(CustomNpcKeys.PongPing, Vector(-6750, -4400, 256), LocalizationKey.Script_6_PongPing),
     new ClosingNpc(CustomNpcKeys.Shush, Vector(-6450, -4400, 256), LocalizationKey.Script_6_Shush),
-    new ClosingNpc(CustomNpcKeys.SinZ,Vector(-6150, -4400, 256), LocalizationKey.Script_6_SinZ),
+    new ClosingNpc(CustomNpcKeys.SinZ, Vector(-6150, -4400, 256), LocalizationKey.Script_6_SinZ),
     new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5850, -4700, 256), LocalizationKey.Script_6_SmashTheState),
     new ClosingNpc(CustomNpcKeys.Tora, Vector(-5850, -5000, 256), LocalizationKey.Script_6_Tora),
     new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-7050, -5000, 256), LocalizationKey.Script_6_Toyoka),
@@ -221,7 +223,7 @@ function sectionTimerUpdate() {
 }
 
 function orderFilter(order: ExecuteOrderFilterEvent) {
-    if(!order.entindex_target) {
+    if (!order.entindex_target) {
         talkTarget = undefined;
         return true;
     }
