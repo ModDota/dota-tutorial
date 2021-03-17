@@ -114,8 +114,7 @@ function handleUnits(state: FilledRequiredState) {
             unit.AddNewModifier(undefined, undefined, "modifier_invisible", {})
             setUnitPacifist(unit, false);
             return
-        }
-        else if (!created) {
+        } else if (!created) {
             if (unit.HasModifier("modifier_invisible")) unit.RemoveModifierByName("modifier_invisible")
             setUnitPacifist(unit, false);
             unit.SetTeam(DotaTeam.GOODGUYS);
