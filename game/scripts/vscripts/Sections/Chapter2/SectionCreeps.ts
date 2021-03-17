@@ -124,7 +124,6 @@ const onStart = (complete: () => void) => {
                     tg.withHighlights(tg.seq([
                         tg.audioDialog(LocalizationKey.Script_2_Creeps_1, LocalizationKey.Script_2_Creeps_1, context => context[CustomNpcKeys.SlacksMudGolem]),
                         tg.audioDialog(LocalizationKey.Script_2_Creeps_2, LocalizationKey.Script_2_Creeps_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                        tg.audioDialog(LocalizationKey.Script_2_Creeps_3, LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem]),
                     ]),
                         {
                             type: "circle",
@@ -134,60 +133,77 @@ const onStart = (complete: () => void) => {
                         }
                     ),
 
-                    tg.immediate(_ => GridNav.DestroyTreesAroundPoint(godzSpawnLocation, 300, true)),
-                    tg.wait(1),
-                    tg.spawnUnit(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.GodzMudGolem, true),
-                    tg.immediate(context => {
-                        const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
-                        setUnitPacifist(godzMudGolem, true);
-                    }),
-                    tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), context => context[CustomNpcKeys.GodzMudGolem].GetAbsOrigin(), 2),
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
-                    tg.immediate(() => {
-                        goalLastHitCreeps.start()
-                        currentLastHitStage = LastHitStages.LAST_HIT
-                        if (direCreeps) {
-                            highlight({
-                                type: "arrow_enemy",
-                                attach: true,
-                                units: direCreeps
-                            })
-                        }
-                        const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
-                        if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT);
-                    }),
-                    tg.completeOnCheck(_ => {
-                        const lastHitModifier = getOrError(playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name)) as modifier_dk_last_hit_chapter2_creeps
-                        const currentLastHits = lastHitModifier.GetStackCount()
-                        const lastDialogEnded = lastHitModifier.dialogFinishedPlaying
-                        goalLastHitCreeps.setValue(currentLastHits)
-                        return currentLastHits >= lastHitCount && lastDialogEnded;
-                    }, 0.1),
-                    tg.immediate(() => {
-                        goalLastHitCreeps.complete()
-                        currentLastHitStage = LastHitStages.LAST_HIT_BREATHE_FIRE
-                        goalLastHitCreepsWithBreatheFire.start()
-                        if (playerHero.HasModifier(modifier_dk_last_hit_chapter2_creeps.name)) {
-                            const modifier = playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name) as modifier_dk_last_hit_chapter2_creeps
-                            if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
-                            else {
-                                // Technically, this section of code should never happen. But you never know. Programming is black magic sometimes.
+                    // Fork dialogue instructing last hitting
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Creeps_3, LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem]),
+                            tg.immediate(_ => GridNav.DestroyTreesAroundPoint(godzSpawnLocation, 300, true)),
+                            tg.wait(1),
+                            tg.spawnUnit(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.GodzMudGolem, false),
+                            tg.immediate(context => {
+                                const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
+                                setUnitPacifist(godzMudGolem, true);
+                            }),
+                            tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => {
+                                goalLastHitCreeps.start()
+                                currentLastHitStage = LastHitStages.LAST_HIT
+                                if (direCreeps) {
+                                    highlight({
+                                        type: "arrow_enemy",
+                                        attach: true,
+                                        units: direCreeps
+                                    })
+                                }
                                 const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
-                                if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
-                            }
-                        }
-                    }),
-                    tg.audioDialog(LocalizationKey.Script_2_Creeps_11, LocalizationKey.Script_2_Creeps_11, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.completeOnCheck(_ => {
-                        const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
-                        goalLastHitCreepsWithBreatheFire.setValue(currentLastHitWithFire)
-                        return currentLastHitWithFire >= lastHitBreathFireCount;
-                    }, 0.5),
+                                if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT);
+                            }),
+                            tg.completeOnCheck(_ => {
+                                const lastHitModifier = getOrError(playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name)) as modifier_dk_last_hit_chapter2_creeps
+                                const currentLastHits = lastHitModifier.GetStackCount()
+                                goalLastHitCreeps.setValue(currentLastHits)
+                                return currentLastHits >= lastHitCount;
+                            }, 0.1),
+                        ])
+                    ]),
+                    tg.immediate(_ => goalLastHitCreeps.complete()),
+
+                    // Fork dialogue instructing breathe fire
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Creeps_11, LocalizationKey.Script_2_Creeps_11, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => {
+                                currentLastHitStage = LastHitStages.LAST_HIT_BREATHE_FIRE
+                                goalLastHitCreepsWithBreatheFire.start()
+                                if (playerHero.HasModifier(modifier_dk_last_hit_chapter2_creeps.name)) {
+                                    const modifier = playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name) as modifier_dk_last_hit_chapter2_creeps
+                                    if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
+                                    else {
+                                        // Technically, this section of code should never happen. But you never know. Programming is black magic sometimes.
+                                        const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
+                                        if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
+                                    }
+                                }
+                            }),
+                            tg.completeOnCheck(_ => {
+                                const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
+                                goalLastHitCreepsWithBreatheFire.setValue(currentLastHitWithFire)
+                                return currentLastHitWithFire >= lastHitBreathFireCount;
+                            }, 0.1),
+                        ]),
+                    ]),
                     tg.immediate(() => {
                         goalLastHitCreepsWithBreatheFire.complete()
                         if (direCreeps) clearAttachedHighlightParticlesFromUnits(direCreeps);
                         currentLastHitStage = undefined;
                     }),
+
                     tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.GodzMudGolem], 3),
                     tg.immediate(context => {
                         const godzMudGolem = (context[CustomNpcKeys.GodzMudGolem] as CDOTA_BaseNPC);
@@ -219,6 +235,7 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_19, LocalizationKey.Script_2_Creeps_19, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.setCameraTarget(undefined),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_20, LocalizationKey.Script_2_Creeps_20, context => context[CustomNpcKeys.SlacksMudGolem]),
+                    // No fork since it's pretty short dialogue
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_21, LocalizationKey.Script_2_Creeps_21, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.immediate(() => {
                         goalDenyOwnCreeps.start()
@@ -251,43 +268,52 @@ const onStart = (complete: () => void) => {
                         currentLastHitStage = undefined
                         if (radiantCreeps) clearAttachedHighlightParticlesFromUnits(radiantCreeps)
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Creeps_22, LocalizationKey.Script_2_Creeps_22, context => context[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Creeps_23, LocalizationKey.Script_2_Creeps_23, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.withHighlights(tg.seq([
-                        tg.immediate(context => {
-                            goalKillSniper.start()
-                            const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero]
-                            if (sniper) {
-                                if (sniper.HasModifier(modifier_sniper_deny_chapter2_creeps.name)) {
-                                    const modifier = sniper.FindModifierByName(modifier_sniper_deny_chapter2_creeps.name) as modifier_sniper_deny_chapter2_creeps;
-                                    if (modifier) {
-                                        modifier.sniperDenyingOwnCreeps = false;
+
+                    // Fork kill sniper dialogue
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Creeps_22, LocalizationKey.Script_2_Creeps_22, context => context[CustomNpcKeys.SlacksMudGolem]),
+                            tg.audioDialog(LocalizationKey.Script_2_Creeps_23, LocalizationKey.Script_2_Creeps_23, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.withHighlights(tg.seq([
+                            tg.immediate(context => {
+                                goalKillSniper.start()
+                                const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero]
+                                if (sniper) {
+                                    if (sniper.HasModifier(modifier_sniper_deny_chapter2_creeps.name)) {
+                                        const modifier = sniper.FindModifierByName(modifier_sniper_deny_chapter2_creeps.name) as modifier_sniper_deny_chapter2_creeps;
+                                        if (modifier) {
+                                            modifier.sniperDenyingOwnCreeps = false;
+                                        }
                                     }
                                 }
-                            }
-                        }),
-                        tg.completeOnCheck(context => {
-                            const sniper = context[Chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
-                            return !sniper.IsAlive()
-                        }, 0.25),
+                            }),
+                            tg.completeOnCheck(context => {
+                                const sniper = context[Chapter2SpecificKeys.sniperEnemyHero] as CDOTA_BaseNPC;
+                                return !sniper.IsAlive()
+                            }, 0.25),
+                        ]),
+                            context =>
+                            ({
+                                type: "arrow_enemy",
+                                attach: true,
+                                units: [context[Chapter2SpecificKeys.sniperEnemyHero]]
+                            })
+                        ),
                     ]),
-                        context =>
-                        ({
-                            type: "arrow_enemy",
-                            attach: true,
-                            units: [context[Chapter2SpecificKeys.sniperEnemyHero]]
-                        })
-                    ),
 
                     // No audio dialog for this yet
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_24, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
-                    tg.immediate(context => {
-                        goalKillSniper.complete()
-
-                        if (lastHitTimer) Timers.RemoveTimer(lastHitTimer)
-                        removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
-                        removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
-                    })
+                    tg.fork([
+                        tg.textDialog(LocalizationKey.Script_2_Creeps_24, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
+                        tg.immediate(context => {
+                            goalKillSniper.complete()
+    
+                            if (lastHitTimer) Timers.RemoveTimer(lastHitTimer)
+                            removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
+                            removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
+                        })
+                    ])
                 ])
             ])
         ]))

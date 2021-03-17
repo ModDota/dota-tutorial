@@ -1,7 +1,7 @@
 import * as dg from "../Dialog"
 import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
 import { LastHitStages } from "../Sections/Chapter2/shared";
-import { isCustomLaneCreepUnit } from "../util";
+import { isCustomLaneCreepUnit, unitIsValidAndAlive } from "../util";
 
 @registerModifier()
 export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
@@ -13,7 +13,6 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
     currentStage: LastHitStages = LastHitStages.LAST_HIT
     private successLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_5, LocalizationKey.Script_2_Creeps_6, LocalizationKey.Script_2_Creeps_7]
     private missLocalizationKeys: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_8, LocalizationKey.Script_2_Creeps_9, LocalizationKey.Script_2_Creeps_10]
-    dialogFinishedPlaying: boolean = false
 
     lastHits?: number
     lastHitBreatheFire?: number
@@ -111,7 +110,12 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
                     if (distance <= 300) {
                         // Play "you missed!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
                         const chosenLocalizaionKey = this.missLocalizationKeys[RandomInt(0, this.missLocalizationKeys.length - 1)];
-                        dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+
+                        Timers.CreateTimer(FrameTime(), () => {
+                            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
+                                dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+                            }
+                        })
 
                         SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_MISS, event.unit, 0, undefined)
                     }
@@ -131,12 +135,18 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
 
         // Only the last dialog tags dialogFinishedPlaying
         if (this.lastHits && this.lastHits - 1 === this.GetStackCount()) {
-            dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3, () => {
-                this.dialogFinishedPlaying = true
+            Timers.CreateTimer(FrameTime(), () => {
+                if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
+                    dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+                }
             })
         }
         else {
-            dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+            Timers.CreateTimer(FrameTime(), () => {
+                if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
+                    dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+                }
+            })
         }
 
         const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
