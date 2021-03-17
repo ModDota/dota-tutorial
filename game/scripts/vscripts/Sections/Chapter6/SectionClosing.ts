@@ -108,9 +108,6 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.RedditDota, Vector(-4820, -6330, 256), LocalizationKey.Script_6_Reddit, LocalizationKey.Script_6_Reddit),
     new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6540, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
 
-    // Voice actors
-    new ClosingNpc(CustomNpcKeys.GodzMudGolem, Vector(-7200, -6750, 384), "TODO"),
-
     // Modders
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),
     new ClosingNpc(CustomNpcKeys.Perry, Vector(-5150, -3540, 256), LocalizationKey.Script_6_Perry),
@@ -180,6 +177,7 @@ function onStart(complete: () => void) {
             tg.loop(true, tg.seq([
                 tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
                 tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
+                tg.immediate(_ => print(playerHero.GetAbsOrigin())),
                 tg.wait(0.1),
             ])),
         ]),
