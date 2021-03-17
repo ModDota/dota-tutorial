@@ -15,8 +15,6 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 1800, // prevent teleportations if you're still in the vicinity
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-5495, 2930, 128),
-    sunsFanLocation: Vector(-5515, 2700, 128),
     heroAbilityMinLevels: [1, 1, 1, 1],
     heroLevel: 6,
     blockades: [

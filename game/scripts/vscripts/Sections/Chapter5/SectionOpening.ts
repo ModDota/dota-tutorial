@@ -14,8 +14,6 @@ let canPlayerIssueOrders = false;
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    slacksLocation: Vector(-5906, -3892, 256),
-    sunsFanLocation: Vector(-5500, -4170, 256),
     heroLocation: Vector(-4150, 2568, 0),
     heroLocationTolerance: 800,
     heroLevel: 6,
