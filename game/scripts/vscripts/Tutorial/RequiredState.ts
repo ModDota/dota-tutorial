@@ -85,11 +85,11 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Golems
     requireSunsfanGolem: false,
-    sunsFanLocation: Vector(-7000, 600, 128),
+    sunsFanLocation: Vector(0, 0, 0),
     requireSlacksGolem: false,
-    slacksLocation: Vector(-7000, 600, 128),
+    slacksLocation: Vector(0, 0, 0),
     requireODPixelGolem: false,
-    odPixelLocation: Vector(-7000, 600, 128),
+    odPixelLocation: Vector(0, 0, 0),
 
     // Elder Dragon Form
     removeElderDragonForm: true,
