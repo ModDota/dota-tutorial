@@ -98,18 +98,18 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(context => {
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 5)
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 5)
         }),
 
         // Fork secret shop waypoint dialog
         tg.forkAny([
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_2_Courier_3, LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-                tg.immediate(context => {
-                    MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
-                    MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
-                }),
+                // tg.immediate(context => {
+                //     MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 5)
+                //     MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 5)
+                // }),
                 tg.neverComplete()
             ]),
             tg.seq([

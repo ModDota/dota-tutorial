@@ -111,11 +111,9 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
                         // Play "you missed!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
                         const chosenLocalizaionKey = this.missLocalizationKeys[RandomInt(0, this.missLocalizationKeys.length - 1)];
 
-                        Timers.CreateTimer(FrameTime(), () => {
-                            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
-                                dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
-                            }
-                        })
+                        if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
+                            dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+                        }
 
                         SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_MISS, event.unit, 0, undefined)
                     }
@@ -135,18 +133,14 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
 
         // Only the last dialog tags dialogFinishedPlaying
         if (this.lastHits && this.lastHits - 1 === this.GetStackCount()) {
-            Timers.CreateTimer(FrameTime(), () => {
-                if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
-                    dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
-                }
-            })
+            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
+                dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+            }
         }
         else {
-            Timers.CreateTimer(FrameTime(), () => {
-                if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
-                    dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
-                }
-            })
+            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
+                dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+            }
         }
 
         const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
