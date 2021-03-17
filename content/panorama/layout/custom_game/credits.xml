@@ -1,5 +1,6 @@
 <root>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/credits.js" />
     </scripts>
     <styles>
         <include src="s2r://panorama/styles/dotastyles.css" />
@@ -14,7 +15,7 @@
         <Panel id="CreditsContainer">
             <Panel class="CreditsContainerLeft">
                 <Panel class="AvatarContainer">
-                    <Panel class="Avatar" />
+                    <Image id="Avatar" />
                 </Panel>
             </Panel>
             <Panel class="CreditsContainerCenter">
@@ -22,9 +23,9 @@
             </Panel>
             <Panel class="CreditsContainerRight">
                 <Panel class="CreditsContainerHeader">
-                    <Label class="CreditsTitle" text="#SirActionSlacks" hittest="false"/>
+                    <Label id="CreditsName" text="#SirActionSlacks" hittest="false"/>
                 </Panel>
-                <Panel class="CreditsContainerContent">
+                <Panel id="CreditsContainerContent">
                     <Panel class="Column1">
                         <Panel class="Twitter" />
                         <Label class="SocialMedia" text="Twitter" hittest="false"/>
@@ -41,7 +42,7 @@
             </Panel>
         </Panel>
         <Panel id="CreditsDescriptionContainer">
-            <Label class="CreditsDescriptionLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris massa elit, cursus eu nibh non, luctus tempus tellus. Cras egestas nec orci eget porttitor. Fusce at tellus in mi ornare euismod." hittest="false"/>
+            <Label id="CreditsDescriptionLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris massa elit, cursus eu nibh non, luctus tempus tellus. Cras egestas nec orci eget porttitor. Fusce at tellus in mi ornare euismod." hittest="false"/>
         </Panel>
     </Panel>
 </root>

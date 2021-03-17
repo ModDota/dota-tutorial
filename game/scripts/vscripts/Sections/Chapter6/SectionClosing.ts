@@ -32,6 +32,7 @@ const requiredState: RequiredState = {
 }
 
 const INTERACTION_DISTANCE = 200;
+const MAX_INTERACTION_DISTANCE = 300;
 
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
@@ -90,6 +91,15 @@ class ClosingNpc {
             } else {
                 this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
             }
+        }
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.soundName });
+    }
+
+    stopInteracting() {
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact_stop", {});
+        if (this.dialogToken) {
+            dg.stop(this.dialogToken);
+            this.dialogToken = undefined;
         }
     }
 }
@@ -208,14 +218,30 @@ function onStop() {
 }
 
 let talkTarget: ClosingNpc | undefined;
+let interactingWith: ClosingNpc | undefined;
 
 function sectionTimerUpdate() {
     const playerHero = getPlayerHero();
     if (playerHero && talkTarget) {
         const distance = (playerHero.GetAbsOrigin() - talkTarget.location as Vector).Length2D();
         if (distance < INTERACTION_DISTANCE) {
+
+            // First cancel old interaction
+            if (interactingWith) {
+                interactingWith.stopInteracting();
+            }
+
             talkTarget.interact();
+            interactingWith = talkTarget;
             talkTarget = undefined;
+        }
+    }
+
+    if (playerHero && interactingWith) {
+        const distance = (playerHero.GetAbsOrigin() - interactingWith.location as Vector).Length2D();
+        if (distance > MAX_INTERACTION_DISTANCE) {
+            interactingWith.stopInteracting();
+            interactingWith =  undefined;
         }
     }
 
