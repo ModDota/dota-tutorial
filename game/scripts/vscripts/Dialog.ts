@@ -97,23 +97,25 @@ class DialogController {
 
         const hero = getOrError(getPlayerHero());
 
-        if (speaker.IsAlive()) {
-            if (gesture) {
-                speaker.StartGesture(gesture);
+        if (speaker && IsValidEntity(speaker)) {
+            if (speaker.IsAlive()) {
+                if (gesture) {
+                    speaker.StartGesture(gesture);
+                }
+
+                this.particles = highlight({
+                    type: "dialog_circle",
+                    attach: true,
+                    radius: 90,
+                    units: [speaker]
+                });
+
+                speaker.FaceTowards(hero.GetAbsOrigin());
             }
 
-            this.particles = highlight({
-                type: "dialog_circle",
-                attach: true,
-                radius: 90,
-                units: [speaker]
-            });
-
-            speaker.FaceTowards(hero.GetAbsOrigin());
-        }
-
-        if (sound) {
-            speaker.EmitSoundParams(sound, 0, this.voiceVolume, 0);
+            if (sound) {
+                speaker.EmitSoundParams(sound, 0, this.voiceVolume, 0);
+            }
         }
 
         this.currentToken = generateDialogToken();
