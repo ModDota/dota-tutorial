@@ -135,7 +135,7 @@ function handleUnits(state: FilledRequiredState) {
     }
 
     if (state.requireODPixelGolem) {
-        createOrMoveUnit(CustomNpcKeys.ODPixelMudGolem, DotaTeam.GOODGUYS, state.odPixelLocation, state.heroLocation, golemPostCreate)
+        createOrMoveUnit(CustomNpcKeys.ODPixelMudGolem, DotaTeam.GOODGUYS, state.odPixelLocation, state.heroLocation, (unit, created) => setUnitPacifist(unit, true))
     } else {
         clearUnit(CustomNpcKeys.ODPixelMudGolem)
     }
