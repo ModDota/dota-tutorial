@@ -1,5 +1,5 @@
+import { Blockade } from "../../Blockade";
 import * as tg from "../../TutorialGraph/index";
-import { Blockade } from "../../Blockade"
 import { removeContextEntityIfExists, unitIsValidAndAlive } from "../../util";
 
 // Chapter 5 blockades
@@ -46,10 +46,10 @@ export const enemyHeroesInfo: HeroInfo[] = [
     { name: CustomNpcKeys.Wisp },
 ]
 
+export const itemDaedalus = "item_greater_crit"
 export const itemAegis = "item_aegis"
 
 export const preRoshKillItems = [
-    "item_greater_crit",
     "item_assault",
     "item_power_treads",
     "item_heart",

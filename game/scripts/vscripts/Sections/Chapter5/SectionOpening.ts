@@ -1,11 +1,10 @@
-import * as tut from "../../Tutorial/Core";
-import * as tg from "../../TutorialGraph/index";
-import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
+import * as tut from "../../Tutorial/Core";
+import { RequiredState } from "../../Tutorial/RequiredState";
+import * as tg from "../../TutorialGraph/index";
 import { centerCameraOnHero, DirectionToPosition, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
-import * as shared from "./Shared"
+import * as shared from "./Shared";
 import { HeroInfo } from "./Shared";
-import { TutorialContext } from "../../TutorialGraph/index";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
 
@@ -35,6 +34,7 @@ const requiredState: RequiredState = {
     requireBountyRunes: true,
     requireRoshan: true,
     roshanHitsLikeATruck: true,
+    heroItems: { [shared.itemDaedalus]: 1 },
 };
 
 const powerRuneRangersInfo: HeroInfo[] = [
