@@ -47,6 +47,8 @@ declare const enum CustomNpcKeys {
     Tidehunter = "npc_dota_hero_tidehunter",
     Antimage = "npc_dota_hero_antimage",
     Luna = "npc_dota_hero_luna",
+    Kunkka = "npc_dota_hero_kunkka",
+    Tsunami = "npc_dota_hero_keeper_of_the_light",
     Lina = "npc_dota_hero_lina",
     Jakiro = "npc_dota_hero_jakiro",
     Visage = "npc_dota_hero_visage",

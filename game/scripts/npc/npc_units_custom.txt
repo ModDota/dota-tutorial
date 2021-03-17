@@ -806,8 +806,8 @@
 
     "npc_dota_tutorial_flam3s"
     {
-        "Model"						"models/props_gameplay/dummy/dummy.vmdl"
-        "ModelScale" 				"5.0"
+        "Model"						"models/courier/seekling/seekling.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
