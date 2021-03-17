@@ -3,6 +3,7 @@ import "./modifiers/modifier_tutorial_pacifist"
 import "./modifiers/modifier_dummy"
 import "./modifiers/modifier_particle_attach"
 import { TutorialContext } from "./TutorialGraph/Core";
+import { modifier_particle_attach } from "./modifiers/modifier_particle_attach";
 
 let respawnListener: EventListenerID | undefined
 
@@ -322,8 +323,9 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  */
 export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
     const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
-    const modifier = unit.AddNewModifier(undefined, undefined, "modifier_particle_attach", {})
+    const modifier = unit.AddNewModifier(undefined, undefined, modifier_particle_attach.name, {}) as modifier_particle_attach
     if (modifier) {
+        modifier.particleID = particleID;
         modifier.AddParticle(particleID, false, false, -1, false, false);
     }
 
