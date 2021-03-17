@@ -14,7 +14,7 @@
                 <Panel class="QuestsTitleIcon" />
                 <Label class="QuestsTitle" text="#Tasks" />
                 <Panel class="Divider" />
-            </Panel>s
+            </Panel>
             <Panel hittest="false" id="QuestsPanelContainer">
             </Panel>
         </Panel>
