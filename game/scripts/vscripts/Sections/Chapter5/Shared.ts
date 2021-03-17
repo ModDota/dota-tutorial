@@ -1,5 +1,5 @@
+import { Blockade } from "../../Blockade";
 import * as tg from "../../TutorialGraph/index";
-import { Blockade } from "../../Blockade"
 import { removeContextEntityIfExists, unitIsValidAndAlive } from "../../util";
 
 // Chapter 5 blockades
@@ -39,17 +39,17 @@ export const friendlyHeroesInfo: HeroInfo[] = [
 ]
 
 export const enemyHeroesInfo: HeroInfo[] = [
-    { name: CustomNpcKeys.Antimage },
-    { name: CustomNpcKeys.Lina },
-    { name: CustomNpcKeys.Visage },
+    { name: CustomNpcKeys.Luna },
+    { name: CustomNpcKeys.Jakiro },
+    { name: CustomNpcKeys.Windrunner },
     { name: CustomNpcKeys.Pudge },
     { name: CustomNpcKeys.Wisp },
 ]
 
+export const itemDaedalus = "item_greater_crit"
 export const itemAegis = "item_aegis"
 
 export const preRoshKillItems = [
-    "item_greater_crit",
     "item_assault",
     "item_power_treads",
     "item_heart",

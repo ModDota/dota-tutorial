@@ -1,0 +1,193 @@
+.CreditsRoot {
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    transform: scale3d(0, 0, 1);
+}
+
+.CreditsRoot.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+#CreditsContainer {
+    width: 480px;
+    height: 160px;
+
+    align: left center;
+    margin-bottom: 350px;
+
+    background-color: #000000ef;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    flow-children: right;
+
+}
+
+.CreditsContainerLeft {
+    width: 33%;
+    height: 100%;
+}
+
+.AvatarContainer {
+    width: 90%;
+    height: 90%;
+    align: center center;
+    border-radius: 5px;
+
+    background-image: url("file://{images}/custom_game/credits/Avatar_Container.png");
+    background-size: 100% 100%;
+}
+
+.Avatar {
+    width: 90%;
+    height: 90%;
+    align: center center;
+
+    background-color: #00000099;
+    background-image: url("file://{images}/custom_game/credits/avatars/Slacks.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.CreditsContainerCenter {
+    width: 2%;
+    height: 100%;
+    margin-left: 20px;
+}
+
+.Divider {
+    width: 13%;
+    height: 80%;
+
+    background-color: #cdf;
+
+    align: center center;
+    border-radius: 3px;
+
+    brightness: 1.2;
+}
+
+.CreditsContainerRight {
+    width: 65%;
+    height: 100%;
+    horizontal-align: right;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+.CreditsContainerHeader {
+    width: 100%;
+    height: 25%;
+
+    margin-top: 5px;
+}
+
+.CreditsContainerContent {
+    width: 100%;
+    height: 71%;
+    vertical-align: bottom;
+    flow-children: down;
+}
+
+.CreditsTitle {
+    text-transform: uppercase;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
+    text-shadow: 0px 0px 3px 5.0 #000000;
+    font-weight: bold;
+    font-size: 23px;
+    letter-spacing: 2px;
+    margin-left: 5px;
+    font-family: titleFont;
+}
+
+.Column1,
+.Column2 {
+    width: 100%;
+    height: 40%;
+    flow-children: right;
+    margin-top: 5px;
+}
+
+.Twitter {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Twitter.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Youtube {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Youtube.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Discord {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Discord.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Website {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Website.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.SocialMedia {
+    text-transform: uppercase;
+    color: #cdf;
+    text-shadow: 0px 0px 3px 3.0 #000000;
+    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-left: 0px;
+    margin-top: 3px;
+    font-family: defaultFont;
+    padding-left: 5px;
+    padding-right: 15px;
+}
+
+#CreditsDescriptionContainer {
+    width: 480px;
+    height: 70px;
+
+    align: left center;
+    margin-bottom: 120px;
+
+    background-color: #000000ef;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    overflow: clip;
+}
+
+.CreditsDescriptionLabel {
+    color: white;
+    text-shadow: 0px 0px 3px 3.0 #000000;
+    font-size: 16;
+    text-align: left;
+    align: left center;
+    margin-left: 5px;
+}

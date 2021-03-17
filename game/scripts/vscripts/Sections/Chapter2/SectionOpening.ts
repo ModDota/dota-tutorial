@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { findRealPlayerID, freezePlayerHero, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import { findRealPlayerID, freezePlayerHero, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Opening
@@ -16,6 +16,7 @@ const moveToPrepareToLaunchAssaultLocation = Vector(-6600, -2745, 128)
 const radiantCreepsPrepareToAttackLocation = Vector(-6288, 3280, 128)
 const moveToPrepareToAttackLocation = Vector(-6288, 3000, 128)
 const inFrontOfRadiantAncientLocation = Vector(-5572, -5041, 256)
+const upBaseTopRamp = Vector(-6850, -3250, 256)
 
 const requiredState: RequiredState = {
     heroLocation: inFrontOfBarracksLocation,
@@ -61,10 +62,8 @@ const onStart = (complete: () => void) => {
         tg.seq([
             tg.immediate(_ => chapter2Blockades.radiantBaseTop.spawn()),
             tg.wait(FrameTime()),
-            tg.immediate(context => {
-                goalMoveNextToBarracks.start(),
-                    freezePlayerHero(false)
-            }),
+            tg.immediate(_ => goalMoveNextToBarracks.start()),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
             tg.goToLocation(moveNextToBarracksLocation),
             tg.immediate(context => {
                 goalMoveNextToBarracks.complete()
@@ -72,7 +71,6 @@ const onStart = (complete: () => void) => {
             }),
             tg.immediate(() => {
                 playerHero.Stop()
-                freezePlayerHero(true)
             }),
             tg.withHighlights(tg.audioDialog(LocalizationKey.Script_2_Opening_1, LocalizationKey.Script_2_Opening_1, context => context[CustomNpcKeys.SlacksMudGolem]),
                 {
@@ -84,32 +82,43 @@ const onStart = (complete: () => void) => {
             ),
 
             // Talking about moonwells
-            tg.withHighlights(tg.seq([
-                tg.audioDialog(LocalizationKey.Script_2_Opening_2, LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_2_Opening_3, LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-            ]), {
-                type: "circle",
-                units: Entities.FindAllByClassname("npc_dota_filler").concat(Entities.FindAllByClassname("npc_dota_effigy_statue")) as CDOTA_BaseNPC[],
-                radius: 150,
-                attach: false,
-            }
-            ),
+            tg.fork([
+                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => Entities.FindAllByClassnameWithin("npc_dota_filler", moveNextToBarracksLocation, 1000)[0].GetAbsOrigin(), 2),
+                tg.withHighlights(tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_2, LocalizationKey.Script_2_Opening_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_3, LocalizationKey.Script_2_Opening_3, context => context[CustomNpcKeys.SlacksMudGolem]),
+                ]), {
+                    type: "circle",
+                    units: Entities.FindAllByClassname("npc_dota_filler").concat(Entities.FindAllByClassname("npc_dota_effigy_statue")) as CDOTA_BaseNPC[],
+                    radius: 150,
+                    attach: false,
+                }
+                ),
+            ]),
 
             // Talking about barracks
-            tg.withHighlights(tg.seq([
-                tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_2_Opening_5, LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_2_Opening_6, LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_2_Opening_7, LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_2_Opening_8, LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_2_Opening_9, LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem]),
-            ]), {
-                type: "circle",
-                units: Entities.FindAllByClassnameWithin("npc_dota_barracks", inFrontOfRadiantAncientLocation, 2500) as CDOTA_BaseNPC[], // only radiant barracks should be highlighted here
-                radius: 230,
-                attach: false,
-            }
-            ),
+            tg.fork([
+                tg.withHighlights(tg.seq([
+                    tg.fork([
+                        tg.audioDialog(LocalizationKey.Script_2_Opening_4, LocalizationKey.Script_2_Opening_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.seq([
+                            // Melee rax
+                            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => Entities.FindAllByClassnameWithin("npc_dota_barracks", moveNextToBarracksLocation, 500)[0].GetAbsOrigin(), 2),
+                        ]),
+                    ]),
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_5, LocalizationKey.Script_2_Opening_5, context => context[CustomNpcKeys.SlacksMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_6, LocalizationKey.Script_2_Opening_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_7, LocalizationKey.Script_2_Opening_7, context => context[CustomNpcKeys.SlacksMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_8, LocalizationKey.Script_2_Opening_8, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_2_Opening_9, LocalizationKey.Script_2_Opening_9, context => context[CustomNpcKeys.SlacksMudGolem]),
+                ]), {
+                    type: "circle",
+                    units: Entities.FindAllByClassnameWithin("npc_dota_barracks", inFrontOfRadiantAncientLocation, 2500) as CDOTA_BaseNPC[], // only radiant barracks should be highlighted here
+                    radius: 230,
+                    attach: false,
+                }
+                ),
+            ]),
 
             tg.audioDialog(LocalizationKey.Script_2_Opening_10, LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Opening_11, LocalizationKey.Script_2_Opening_11, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -145,7 +154,12 @@ const onStart = (complete: () => void) => {
                 goalPrepareToMove.start()
             }),
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => []),
+            tg.goToLocation(moveToPrepareToLaunchAssaultLocation, _ => {
+                if (playerHero.GetAbsOrigin().z < 256)
+                    return []
+                else
+                    return [upBaseTopRamp]
+            }),
             tg.immediate(context => {
                 goalPrepareToMove.complete()
                 goalWaitForCreepsToPrepareToAttack.start()

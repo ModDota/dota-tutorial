@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
 
 declare global {
@@ -38,6 +38,7 @@ export class GameMode {
         chapters.chapter5.sectionRoshan,
         chapters.chapter5.sectionTeamFight,
         chapters.chapter6.sectionOpening,
+        chapters.chapter6.sectionClosing,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -51,6 +52,8 @@ export class GameMode {
         PrecacheResource("particle", ParticleName.HighlightRedArrow, context);
         PrecacheResource("particle", ParticleName.HighlightRedCircle, context);
         PrecacheResource("particle", ParticleName.Path, context);
+        PrecacheResource("particle", ParticleName.MoveToLocation, context)
+        PrecacheResource("particle", ParticleName.DialogCircle, context)
     }
 
     public static Activate(this: void) {
@@ -142,6 +145,8 @@ export class GameMode {
         // Remove Roshan spawner
         const roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
         roshanSpawner.Destroy()
+
+        removeNeutralSpawners()
     }
 
     registerFilters() {

@@ -17,6 +17,7 @@ const requiredState: RequiredState = {
     heroAbilityMinLevels: [1, 1, 1, 1],
     heroItems: { "item_greater_crit": 1 },
     blockades: Object.values(shared.blockades),
+    clearWards: false
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
@@ -76,7 +77,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalPressVoiceChatButton.start()),
             tg.forkAny([
                 tg.seq([
-                    tg.waitForCommand(37), // Team voice
+                    tg.waitForVoiceChat(),
                     tg.immediate(_ => voicePressed = true),
                     tg.audioDialog(LocalizationKey.Script_4_Communication_4, LocalizationKey.Script_4_Communication_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 ]),
@@ -100,7 +101,7 @@ function onStart(complete: () => void) {
 
             tg.setCameraTarget(context => context[kunkkaName]),
             tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
-            tg.textDialog(LocalizationKey.Script_4_Communication_8, ctx => ctx[kunkkaName], 10),
+            tg.audioDialog(LocalizationKey.Script_4_Communication_8, LocalizationKey.Script_4_Communication_8, ctx => ctx[kunkkaName]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_9, LocalizationKey.Script_4_Communication_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_10, LocalizationKey.Script_4_Communication_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_11, LocalizationKey.Script_4_Communication_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -114,32 +115,35 @@ function onStart(complete: () => void) {
             // Kunkka destroy items
             tg.immediate(_ => freezePlayerHero(true)),
             tg.setCameraTarget(context => context[kunkkaName]),
-            tg.loop(context => {
-                const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
-                context[kunkkaName] = kunkka;
-                for (let i = 0; i < 6; i++) {
-                    const item = kunkka.GetItemInSlot(i)
-                    if (item) {
-                        context["ItemToDestroy"] = item;
-                        return true;
+            tg.fork([
+                tg.audioDialog(LocalizationKey.Script_4_mason_mad, LocalizationKey.Script_4_mason_mad, ctx => ctx[kunkkaName]),
+                tg.loop(context => {
+                    const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
+                    context[kunkkaName] = kunkka;
+                    for (let i = 0; i < 6; i++) {
+                        const item = kunkka.GetItemInSlot(i)
+                        if (item) {
+                            context["ItemToDestroy"] = item;
+                            return true;
+                        }
                     }
-                }
-                return false;
+                    return false;
 
-            }, tg.seq([
-                tg.immediate(context => {
-                    context[kunkkaName].DropItemAtPosition(context[kunkkaName].GetAbsOrigin().__add(Vector(50, 50)), context["ItemToDestroy"]);
-                }),
-                tg.completeOnCheck(context => !context[kunkkaName].HasItemInInventory((context["ItemToDestroy"] as CDOTA_Item).GetName()), 0.8),
-                tg.immediate(context => {
-                    ExecuteOrderFromTable({
-                        OrderType: UnitOrder.ATTACK_TARGET,
-                        UnitIndex: context[kunkkaName].entindex(),
-                        TargetIndex: (context["ItemToDestroy"] as CDOTA_Item).GetContainer()!.entindex(),
-                    });
-                }),
-                tg.wait(1),
-            ])),
+                }, tg.seq([
+                    tg.immediate(context => {
+                        context[kunkkaName].DropItemAtPosition(context[kunkkaName].GetAbsOrigin().__add(Vector(50, 50)), context["ItemToDestroy"]);
+                    }),
+                    tg.completeOnCheck(context => !context[kunkkaName].HasItemInInventory((context["ItemToDestroy"] as CDOTA_Item).GetName()), 0.8),
+                    tg.immediate(context => {
+                        ExecuteOrderFromTable({
+                            OrderType: UnitOrder.ATTACK_TARGET,
+                            UnitIndex: context[kunkkaName].entindex(),
+                            TargetIndex: (context["ItemToDestroy"] as CDOTA_Item).GetContainer()!.entindex(),
+                        });
+                    }),
+                    tg.wait(1),
+                ])),
+            ]),
 
             tg.immediate(context => context[kunkkaName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.moveUnit(context => context[kunkkaName], allyHeroStartLocation),

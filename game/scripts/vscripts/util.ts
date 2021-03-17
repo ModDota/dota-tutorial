@@ -246,7 +246,7 @@ export function isPointInsidePolygon(point: Vector, polygon: Vector[]) {
     }
     return inside
 }
-
+      
 export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
     if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
         unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
@@ -391,7 +391,7 @@ export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_B
 
     return particleID;
 }
-export type HighlightType = "circle" | "arrow" | "arrow_enemy"
+export type HighlightType = "circle" | "arrow" | "arrow_enemy" | "dialog_circle"
 
 type HighlightParticleDescriptor = {
     name: string // Particle name
@@ -410,6 +410,9 @@ const highlightTypeParticleNames: Record<HighlightType, HighlightParticleDescrip
     "arrow_enemy": [
         { name: ParticleName.HighlightRedCircle },
         { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+    ],
+    "dialog_circle": [
+        { name: ParticleName.DialogCircle },
     ],
 }
 
@@ -570,6 +573,18 @@ export function Distance2D(point1: Vector, point2: Vector): number {
  */
 export function DirectionToPosition(origin_pos: Vector, towards_pos: Vector): Vector {
     return ((towards_pos - origin_pos) as Vector).Normalized();
+}
+
+export function removeNeutralSpawners() {
+    //const creepSpawnLocationToKeep = Entities.FindAllByClassnameWithin("npc_dota_neutral_spawner",Vector(-2464,4816,170),500)[0];
+    const spawners = Entities.FindAllByClassname("npc_dota_neutral_spawner");
+    for (const spawner of spawners) {
+        let normal = spawner.GetAbsOrigin() - Vector(-2464, 4816, 170) as Vector
+        if (normal.Length2D() > 100) {
+            UTIL_Remove(spawner);
+        }
+
+    }
 }
 
 /**

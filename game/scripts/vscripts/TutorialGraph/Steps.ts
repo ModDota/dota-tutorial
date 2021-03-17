@@ -14,11 +14,19 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
     let actualLocation: Vector | undefined = undefined
+    let moveParticleFx: ParticleID | undefined = undefined
 
     const cleanup = () => {
         if (pathParticle) {
             ParticleManager.DestroyParticle(pathParticle, false)
+            ParticleManager.ReleaseParticleIndex(pathParticle)
             pathParticle = undefined
+        }
+
+        if (moveParticleFx) {
+            ParticleManager.DestroyParticle(moveParticleFx, false)
+            ParticleManager.ReleaseParticleIndex(moveParticleFx)
+            moveParticleFx = undefined
         }
 
         if (checkTimer) {
@@ -39,7 +47,9 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         const hero = getOrError(getPlayerHero())
 
-        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.MOVE_TO_TARGET, 99999);
+        moveParticleFx = ParticleManager.CreateParticle(ParticleName.MoveToLocation, ParticleAttachment.WORLDORIGIN, undefined)
+        ParticleManager.SetParticleControl(moveParticleFx, 0, actualLocation);
 
         if (actualShowPathParticle) {
             pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
@@ -353,7 +363,7 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
 
             // Stop when we are close enough.
             // Exactly zero distance does seem to actually happen so this check works fine.
-            if (distance > 0.1) {
+            if (distance > 10) {
                 // Query the speed for the current location.
                 const speed = getSpeed(actualStartLocation, actualEndLocation, currentLocation)
 
@@ -467,25 +477,20 @@ export const waitForCameraMovement = () => {
 }
 
 /**
- * Waits for a command to be executed. See panorama's DOTAKeybindCommand_t for the commands. Overrides the default behavior for the command so this can only be used if we merely want to detect the hotkey.
- * @param command Command to wait for. See DOTAKeybindCommand_t.
+ * Waits for the player to release their voice hotkey (either team or party).
  */
-export const waitForCommand = (command: number) => {
+export const waitForVoiceChat = () => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
     return tg.step((context, complete) => {
-        listenerId = CustomGameEventManager.RegisterListener("command_detected", (source, event) => {
-            if (event.command === command) {
-                if (listenerId) {
-                    CustomGameEventManager.UnregisterListener(listenerId)
-                    listenerId = undefined
-                }
-
-                complete()
+        listenerId = CustomGameEventManager.RegisterListener("voice_chat", _ => {
+            if (listenerId) {
+                CustomGameEventManager.UnregisterListener(listenerId)
+                listenerId = undefined
             }
-        })
 
-        CustomGameEventManager.Send_ServerToAllClients("detect_command", { command });
+            complete()
+        })
     }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
