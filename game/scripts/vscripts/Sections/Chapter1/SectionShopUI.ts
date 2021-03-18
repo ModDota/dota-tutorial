@@ -93,7 +93,6 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_1_Shop_4, LocalizationKey.Script_1_Shop_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.showVideo("guides"),
             tg.audioDialog(LocalizationKey.Script_1_Shop_5, LocalizationKey.Script_1_Shop_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_1_Shop_6, LocalizationKey.Script_1_Shop_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             // Tell player to buy a tango.
             tg.audioDialog(LocalizationKey.Script_1_Shop_7, LocalizationKey.Script_1_Shop_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
