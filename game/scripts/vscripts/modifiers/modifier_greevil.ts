@@ -17,14 +17,14 @@ export interface GreevilConfig {
 export class modifier_greevil extends BaseModifier {
 
     private config: GreevilConfig = {
-        material: RandomInt(0, 8)as GreevilConfig["material"],
+        material: RandomInt(0, 8) as GreevilConfig["material"],
         stance: "level_1",
         ears: RandomInt(1, 2) as GreevilConfig["ears"],
         horns: RandomInt(1, 4) as GreevilConfig["horns"],
         hair: RandomInt(1, 2) as GreevilConfig["hair"],
         nose: RandomInt(1, 3) as GreevilConfig["nose"],
         tail: RandomInt(1, 4) as GreevilConfig["tail"],
-        teeth: RandomInt(1, 4)as GreevilConfig["teeth"],
+        teeth: RandomInt(1, 4) as GreevilConfig["teeth"],
         feathers: false
     };
 
@@ -116,8 +116,7 @@ export class modifier_greevil extends BaseModifier {
         this.particle = ParticleManager.CreateParticle(particles[this.config.material], ParticleAttachment.ABSORIGIN_FOLLOW, this.GetParent());
     }
 
-    CheckState(): Partial<Record<ModifierState, boolean>>
-    {
-        return this.GetParent().GetTeamNumber() == DotaTeam.GOODGUYS ? {[ModifierState.NO_HEALTH_BAR]: true} : {[ModifierState.NO_HEALTH_BAR]: false}
+    CheckState(): Partial<Record<ModifierState, boolean>> {
+        return this.GetParent().GetTeamNumber() == DotaTeam.GOODGUYS ? { [ModifierState.NO_HEALTH_BAR]: true } : { [ModifierState.NO_HEALTH_BAR]: false }
     }
 }
