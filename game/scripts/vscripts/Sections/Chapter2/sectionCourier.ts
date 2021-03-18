@@ -296,7 +296,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return true
 
         if (event.order_type !== UnitOrder.PURCHASE_ITEM || event.shop_item_name !== demonEdgeName) {
-            displayDotaErrorMessage("Buy a Demon Edge to continue.")
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_1)
             return false;
         }
 
@@ -308,12 +308,12 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return true
 
         if (event.order_type !== UnitOrder.PURCHASE_ITEM) {
-            displayDotaErrorMessage("Buy the Daedalus recipe and Crystalis to continue")
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
 
         if (!allowedItems.has(event.shop_item_name)) {
-            displayDotaErrorMessage("Buy the Daedalus recipe and Crystalis to continue")
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
 
@@ -348,7 +348,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
                 return true
         }
 
-        displayDotaErrorMessage("Request the courier to deliver items.")
+        displayDotaErrorMessage(LocalizationKey.Error_Courier_3)
         return false
     }
 

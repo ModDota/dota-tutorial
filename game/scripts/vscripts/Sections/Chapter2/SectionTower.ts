@@ -499,7 +499,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerMustOrderTrainUltimate && event.order_type != UnitOrder.MOVE_TO_POSITION) {
         if (event.order_type != UnitOrder.TRAIN_ABILITY) {
-            displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_1)
             return false
         }
 
@@ -508,7 +508,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
             if (ability) {
                 if (ability.GetName() === "dragon_knight_elder_dragon_form") return true
                 else {
-                    displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
+                    displayDotaErrorMessage(LocalizationKey.Error_Tower_1)
                     return false
                 }
             }
@@ -517,7 +517,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerMustOrderTrainAbilities) {
         if (event.order_type != UnitOrder.TRAIN_ABILITY && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-            displayDotaErrorMessage("Upgrade the rest of your abilities to continue.")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_2)
             return false
         }
         return true
@@ -525,7 +525,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerMustOrderGlyph) {
         if (event.order_type != UnitOrder.GLYPH && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-            displayDotaErrorMessage("Please use Glyph next to the minimap.")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_3)
             return false
         }
 
@@ -539,7 +539,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerOrderMustCastUltimate) {
         if (event.order_type != UnitOrder.CAST_NO_TARGET && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-            displayDotaErrorMessage("Cast your Ultimate first!")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_4)
             return false
         }
     }

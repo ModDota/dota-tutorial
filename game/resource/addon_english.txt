@@ -64,6 +64,31 @@
 
         "dota_item_build_title_default" "Items for future victim"
 
+        // Errors
+        "Error_Leveling_1"     "Train the ability you are instructed to."
+        "Error_ShopUI_1"       "Use your gold to buy a Tango."
+        "Error_Courier_1"      "Buy a Demon Edge to continue."
+        "Error_Courier_2"      "Buy the Daedalus recipe and Crystalis to continue"
+        "Error_Courier_3"      "Request the courier to deliver items."
+        "Error_Tower_1"        "Upgrade Elder Dragon Form to continue."
+        "Error_Tower_2"        "Upgrade the rest of your abilities to continue."
+        "Error_Tower_3"        "Please use Glyph next to the minimap."
+        "Error_Tower_4"        "Cast your Ultimate first!"
+        "Error_Chapter3_1"     "Dropping and moving items are disabled in this section."
+        "Error_Opening_1"      "Scan the required location"
+        "Error_Outpost_1"      "Taking control of the Outpost is currently disabled."
+        "Error_Outpost_2"      "Dropping and moving items are disabled in this section."
+        "Error_Outpost_3"      "Item usage is currently disabled."
+        "Error_Wards_1"        "Item usage is currently disabled."
+        "Error_Wards_2"        "Place the ward on the target location."
+        "Error_Wards_3"        "Taking control of the Outpost is currently disabled."
+        "Error_Wards_4"        "Dropping items is currently disabled."
+        "Error_Wards_5"        "Moving items is currently disabled."
+        "Error_Wards_6"        "Toggling items is currently disabled."
+        "Error_Wards_7"        "Locking or combining items is currently disabled."
+        "Error_Teamfight_1"    "Teleport to your fountain by double-tapping the Town Portal Scroll."
+
+        // Goals
         "Goal_1_Camera_1" "Move your camera by dragging the cursor to the edge of your screen."
         "Goal_1_Camera_2" "Attack and destroy the target dummy by right-clicking it."
         "Goal_1_Camera_3" "Attack SUNSfan."
@@ -151,6 +176,7 @@
         "Goal_6_Opening_2" "Watch Phantom Assassin's (Agility) skill showcase."
         "Goal_6_Opening_3" "Watch Invoker's (Intelligence) skill showcase."
 
+        // Dialog
         "Script_1_Opening_1" "Oh look at this! New blood! The dragon knight himself!"
         "Script_1_Opening_2" "Fresh from the Netflix anime are you? Welcome to the world of Dota 2! We are here to teach you how to navigate the best game ever made."
         "Script_1_Opening_3" "Except for Artifact."
