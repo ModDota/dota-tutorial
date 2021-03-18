@@ -34,21 +34,19 @@ enum SocialType {
     Website = "Website",
 }
 
-function makeSocialUrl(name: string, socialType: SocialType) {
+function makeSocialUrl(name: string, socialType: SocialType): string {
     switch (socialType) {
         case "Twitter":
             return `https://twitter.com/${name}`;
-            break;
         case "Youtube":
             return `https://youtube.com/${name}`;
-            break;
         case "Discord":
             return `https://discord.gg/${name}`;
-            break;
         case "Website":
             return `https://${name}`;
-            break;
     }
+
+    throw new Error(`Unknown social type ${name}.`);
 }
 
 GameEvents.Subscribe("credits_interact", event => {
@@ -84,7 +82,7 @@ GameEvents.Subscribe("credits_interact_stop", () => {
     $.GetContextPanel().RemoveClass("Visible");
 });
 
-
+declare function ExternalBrowserGoToURL(url: string): void
 
 function addSocialIfExists(social: SocialType, unitName: string, container: Panel) {
     const linkLocalizationKey = `${unitName}_${social}`;
@@ -97,8 +95,8 @@ function addSocialIfExists(social: SocialType, unitName: string, container: Pane
         socialName.AddClass("SocialMedia");
         socialName.text = socialId;
         socialName.hittest = true;
-        // TODO: Why does ExternalBrowserGoToURL not exist in ts defs?
-        // socialName.SetPanelEvent("onactivate", () => ExternalBrowserGoToURL(makeSocialUrl(socialId, social)));
+
+        socialName.SetPanelEvent("onactivate", () => $.DispatchEvent(`ExternalBrowserGoToURL`, socialName, makeSocialUrl(socialId, social)));
 
         return true;
     }

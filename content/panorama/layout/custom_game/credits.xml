@@ -11,8 +11,8 @@
     <snippets>
 
     </snippets>
-    <Panel hittest="false" class="CreditsRoot">
-        <Panel id="CreditsContainer" hittest="false">
+    <Panel class="CreditsRoot">
+        <Panel id="CreditsContainer">
             <Panel class="CreditsContainerLeft">
                 <Panel class="AvatarContainer">
                     <Image id="Avatar" />
@@ -21,18 +21,18 @@
             <Panel class="CreditsContainerCenter">
                 <Panel class="Divider" />
             </Panel>
-            <Panel class="CreditsContainerRight" hittest="false">
-                <Panel class="CreditsContainerHeader" hittest="false">
-                    <Label id="CreditsName" text="#SirActionSlacks" hittest="false"/>
+            <Panel class="CreditsContainerRight">
+                <Panel class="CreditsContainerHeader">
+                    <Label id="CreditsName" text="#SirActionSlacks"/>
                 </Panel>
-                <Panel id="CreditsContainerContent" hittest="false">
-                    <Panel id="CreditsSocialsColumn1" hittest="false">
+                <Panel id="CreditsContainerContent">
+                    <Panel id="CreditsSocialsColumn1">
                         <Panel class="Twitter" />
                         <Label class="SocialMedia" text="Twitter"/>
                         <Panel class="Youtube" />
                         <Label class="SocialMedia" text="Youtube"/>
                     </Panel>
-                    <Panel id="CreditsSocialsColumn2" hittest="false">
+                    <Panel id="CreditsSocialsColumn2">
                         <Panel class="Discord" />
                         <Label class="SocialMedia" text="Discord"/>
                         <Panel class="Website" />
@@ -42,7 +42,7 @@
             </Panel>
         </Panel>
         <Panel id="CreditsDescriptionContainer">
-            <Label id="CreditsDescriptionLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris massa elit, cursus eu nibh non, luctus tempus tellus. Cras egestas nec orci eget porttitor. Fusce at tellus in mi ornare euismod." hittest="false"/>
+            <Label id="CreditsDescriptionLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris massa elit, cursus eu nibh non, luctus tempus tellus. Cras egestas nec orci eget porttitor. Fusce at tellus in mi ornare euismod."/>
         </Panel>
     </Panel>
 </root>
