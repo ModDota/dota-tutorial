@@ -99,7 +99,7 @@ export class modifier_greevil extends BaseModifier {
         part.SetMaterialGroup(this.config.material.toString());
     }
 
-    
+
     attachParticle() {
         const particles = [
             "particles/econ/courier/courier_greevil_naked/courier_greevil_naked_ambient_1.vpcf",
@@ -114,5 +114,10 @@ export class modifier_greevil extends BaseModifier {
         ];
 
         this.particle = ParticleManager.CreateParticle(particles[this.config.material], ParticleAttachment.ABSORIGIN_FOLLOW, this.GetParent());
+    }
+
+    CheckState(): Partial<Record<ModifierState, boolean>>
+    {
+        return this.GetParent().GetTeamNumber() == DotaTeam.GOODGUYS ? {[ModifierState.NO_HEALTH_BAR]: true} : {[ModifierState.NO_HEALTH_BAR]: false}
     }
 }
