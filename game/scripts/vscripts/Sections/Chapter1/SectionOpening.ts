@@ -41,15 +41,9 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.fork([
-            tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.seq([
-                tg.wait(2),
-                tg.panCameraExponential(ctx => ctx[CustomNpcKeys.SlacksMudGolem].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
-            ])
-        ]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.panCameraLinear(ctx => playerHero.GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 4),
+        tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 4),
 
         // Highlight the enemy ancient while talking about it
         tg.withHighlights(

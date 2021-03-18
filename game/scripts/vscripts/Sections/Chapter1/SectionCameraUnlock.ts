@@ -73,6 +73,7 @@ const onStart = (complete: () => void) => {
             tg.seq([
                 // MAke SUNSfan attackable
                 tg.immediate(_ => goalKillSunsfan.start()),
+                tg.immediate(_ => getOrError(getPlayerHero()).SetIdleAcquire(false)),
                 tg.immediate(context => setUnitPacifist(getOrError(context[CustomNpcKeys.SunsFanMudGolem]), false)),
                 tg.immediate(context => getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC).SetTeam(DotaTeam.NEUTRALS)),
                 // Wait for player to kill SUNSfan.
