@@ -294,6 +294,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_3.vsnd" ]
     }
+    "Script_1_BreatheFire_3_failed" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_BreatheFire_3_failed.vsnd" ]
+    }
     "Script_1_BreatheFire_4" =
     {
         type = "dota_src1_2d"
@@ -570,6 +576,24 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_2_Creeps_18.vsnd" ]
     }
+    "Script_2_Creeps_18_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_2_Creeps_18_1.vsnd" ]
+    }
+    "Script_2_Creeps_18_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_2_Creeps_18_2.vsnd" ]
+    }
+    "Script_2_Creeps_18_3" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_2_Creeps_18_3.vsnd" ]
+    }
     "Script_2_Creeps_19" =
     {
         type = "dota_src1_2d"
@@ -605,6 +629,12 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_2_Creeps_24.vsnd" ]
+    }
+    "Script_2_Creeps_25" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_2_Creeps_25.vsnd" ]
     }
     "Script_2_Tower_1" =
     {
