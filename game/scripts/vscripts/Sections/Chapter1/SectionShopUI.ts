@@ -236,7 +236,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
                 playerBoughtTango = true;
                 waitingForPlayerToPurchaseTango = false;
             } else {
-                displayDotaErrorMessage("Use your gold to buy a Tango.");
+                displayDotaErrorMessage(LocalizationKey.Error_ShopUI_1);
                 return false;
             }
         }
