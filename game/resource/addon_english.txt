@@ -96,6 +96,17 @@
         "npc_dota_tutorial_flam3s_website" "steamcommunity.com/id/Flam3sDota"
         "npc_dota_tutorial_ruby_twitter" "valkyrjaRuby"
 
+        "npc_dota_tutorial_tora_discord" "gRmZgvz"
+        "npc_dota_tutorial_shush_discord" "gRmZgvz"
+        "npc_dota_tutorial_perry_discord" "gRmZgvz"
+        "npc_dota_tutorial_yoyo_discord" "gRmZgvz"
+        "npc_dota_tutorial_pongping_discord" "gRmZgvz"
+        "npc_dota_tutorial_sinz_discord" "gRmZgvz"
+        "npc_dota_tutorial_smashthestate_discord" "gRmZgvz"
+        "npc_dota_tutorial_vicfrank_discord" "gRmZgvz"
+        "npc_dota_tutorial_toyoka_discord" "gRmZgvz"
+        "npc_dota_tutorial_flam3s_discord" "gRmZgvz"
+
         "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
         "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
         "npc_dota_tutorial_dire_melee_creep" "Melee Creep"
