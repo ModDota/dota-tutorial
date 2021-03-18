@@ -109,8 +109,7 @@ function stopListeningToBreatheFireCasts() {
         listenerID = undefined
     }
 
-    if (eventTimer)
-    {
+    if (eventTimer) {
         Timers.RemoveTimer(eventTimer)
         eventTimer = undefined
     }
