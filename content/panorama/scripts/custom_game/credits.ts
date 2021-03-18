@@ -33,6 +33,7 @@ enum SocialType {
     Youtube = "Youtube",
     Discord = "Discord",
     Website = "Website",
+    Twitch = "Twitch",
 }
 
 function makeSocialUrl(name: string, socialType: SocialType): string {
@@ -43,6 +44,8 @@ function makeSocialUrl(name: string, socialType: SocialType): string {
             return `https://youtube.com/${name}`;
         case "Discord":
             return `https://discord.gg/${name}`;
+        case "Twitch":
+            return `https://twitch.tv/${name}`;
         case "Website":
             return `https://${name}`;
     }
@@ -70,7 +73,7 @@ GameEvents.Subscribe("credits_interact", event => {
 
     let socialCount = 0;
     for (const social of Object.values(SocialType)) {
-        if (addSocialIfExists(social, event.name, socialCount < 2 ? socialsCol1 : socialsCol2)) {
+        if (addSocialIfExists(social, event.name, socialCount % 2 === 0 ? socialsCol1 : socialsCol2)) {
             socialCount++;
         }
     }
@@ -87,10 +90,13 @@ function addSocialIfExists(social: SocialType, unitName: string, container: Pane
     const linkLocalizationKey = `${unitName}_${social}`;
     const socialId = $.Localize(linkLocalizationKey);
     if (socialId && socialId !== linkLocalizationKey) {
-        const iconPanel = $.CreatePanel("Panel", container, "");
+        const socialContainer = $.CreatePanel("Panel", container, "");
+        socialContainer.AddClass("SocialContainer");
+
+        const iconPanel = $.CreatePanel("Panel", socialContainer, "");
         iconPanel.AddClass(social);
 
-        const socialName = $.CreatePanel("Label", container, "");
+        const socialName = $.CreatePanel("Label", socialContainer, "");
         socialName.AddClass("SocialMedia");
         socialName.text = socialId;
         socialName.hittest = true;

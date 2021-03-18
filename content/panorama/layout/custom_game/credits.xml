@@ -27,16 +27,28 @@
                 </Panel>
                 <Panel id="CreditsContainerContent">
                     <Panel id="CreditsSocialsColumn1">
-                        <Panel class="Twitter" />
-                        <Label class="SocialMedia" text="Twitter"/>
-                        <Panel class="Youtube" />
-                        <Label class="SocialMedia" text="Youtube"/>
+                        <Panel class="SocialContainer">
+                            <Panel class="Twitter" />
+                            <Label class="SocialMedia" text="Twitter"/>
+                        </Panel>
+                        <Panel class="SocialContainer">
+                            <Panel class="Youtube" />
+                            <Label class="SocialMedia" text="Youtube"/>
+                        </Panel>
+                        <Panel class="SocialContainer">
+                            <Panel class="Twitch" />
+                            <Label class="SocialMedia" text="Twitch"/>
+                        </Panel>
                     </Panel>
                     <Panel id="CreditsSocialsColumn2">
-                        <Panel class="Discord" />
-                        <Label class="SocialMedia" text="Discord"/>
-                        <Panel class="Website" />
-                        <Label class="SocialMedia" text="Website"/>
+                        <Panel class="SocialContainer">
+                            <Panel class="Discord" />
+                            <Label class="SocialMedia" text="Discord"/>
+                        </Panel>
+                        <Panel class="SocialContainer">
+                            <Panel class="Website" />
+                            <Label class="SocialMedia" text="Website"/>
+                        </Panel>
                     </Panel>
                 </Panel>
             </Panel>
