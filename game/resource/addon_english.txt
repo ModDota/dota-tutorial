@@ -74,7 +74,7 @@
         "Error_Tower_2"        "Upgrade the rest of your abilities to continue."
         "Error_Tower_3"        "Please use Glyph next to the minimap."
         "Error_Tower_4"        "Cast your Ultimate first!"
-        "Error_Chapter3_1"              "Dropping and moving items are disabled in this section."
+        "Error_Chapter3_1"     "Dropping and moving items are disabled in this section."
         "Error_Opening_1"      "Scan the required location"
         "Error_Outpost_1"      "Taking control of the Outpost is currently disabled."
         "Error_Outpost_2"      "Dropping and moving items are disabled in this section."
