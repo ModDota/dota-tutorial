@@ -51,7 +51,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => freezePlayerHero(false)),
         tg.immediate(ctx => listenerID = ListenToGameEvent("dota_player_used_ability", (event: DotaPlayerUsedAbilityEvent) => {
             if (event.abilityname === abilNameBreatheFire) {
-                eventTimer = Timers.CreateTimer(2, () => {
+                eventTimer = Timers.CreateTimer(1.25, () => {
                     if (unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem])) {
                         currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
                             currentDialogToken = undefined
