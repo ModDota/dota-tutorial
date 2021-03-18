@@ -117,10 +117,10 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Wards_3, LocalizationKey.Script_4_Wards_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_4, LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_5, LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(_ => freezePlayerHero(true)),
+            // tg.immediate(_ => freezePlayerHero(true)),
             tg.audioDialog(LocalizationKey.Script_4_Wards_6, LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            tg.fork([
+            tg.forkAny([
                 tg.seq([
                     tg.panCamera(_ => getPlayerCameraLocation(), cliffLocation1, _ => cameraSpeed),
                     tg.wait(0.25),
@@ -129,11 +129,11 @@ function onStart(complete: () => void) {
                     tg.panCamera(cliffLocation2, cliffLocation3, _ => cameraSpeed),
                     tg.wait(0.25),
                     tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
-                    tg.wait(0.25),
-                    tg.panCamera(cliffLocation4, _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
+                    tg.wait(2.5),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
+            tg.panCamera(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
             tg.immediate(_ => freezePlayerHero(false)),
             tg.immediate(_ => {
                 highlightUiElement(inventorySlot1UIPath);

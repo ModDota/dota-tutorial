@@ -94,63 +94,70 @@ function onStart(complete: () => void) {
             }),
 
             //Part2: Juke
-            tg.audioDialog(LocalizationKey.Script_4_Opening_7, LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
-            tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
-            tg.setCameraTarget(context => context[slarkName]),
-
-            tg.fork([
+            tg.forkAny([
                 tg.seq([
-                    tg.immediate(context => context[miranaName].SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(600, -3700), undefined)),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(1600, -3280), undefined)),
-                    tg.immediate(context => {
-                        const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
-                        setUnitVisibilityThroughFogOfWar(mirana, true);
-                        // Miiiiiiiirana: TODO maybe get a better voice line here?
-                        EmitSoundOn("Script_1_Movement_9_1", mirana);
-                    }),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
-                    tg.immediate(context => {
-                        const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
-                        setUnitVisibilityThroughFogOfWar(mirana, false);
-                    }),
-
+                    tg.audioDialog(LocalizationKey.Script_4_Opening_7, LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.neverComplete()
                 ]),
-
                 tg.seq([
-                    tg.wait(2), // Give slark some time to hit and follow mirana
-                    // Take over control
-                    tg.immediate(context => setUnitPacifist(context[slarkName], true)),
-                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(1050, -3680), undefined)),
-                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3800), undefined)),
-                    // Show ??? particle
-                    tg.immediate(context => {
-                        const slark: CDOTA_BaseNPC_Hero = context[slarkName];
-                        const particle = createParticleAtLocation(ParticleName.QuestionMarks, slark.GetAbsOrigin());
-                        ParticleManager.ReleaseParticleIndex(particle);
-                    }),
-                    tg.wait(5)
-                ]),
-
-                // Reveal riki for a short time, otherwise the successful scan later won't show up
-                // because of a Dota bug. Hope the player won't notice!
-                tg.seq([
-                    tg.immediate(ctx => {
-                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
-                        const backstab = riki.FindAbilityByName("riki_backstab")
-                        backstab!.SetLevel(0)
-                        riki.RemoveModifierByName("modifier_invisible")
-                        riki.RemoveModifierByName("modifier_riki_backstab")
-                    }),
-                    tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
-                    tg.wait(0.1),
-                    tg.immediate(ctx => {
-                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
-                        const backstab = riki.FindAbilityByName("riki_backstab")
-                        backstab!.SetLevel(1)
-                    }),
-                ]),
+                    tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
+                    tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
+                    tg.setCameraTarget(context => context[slarkName]),
+        
+                    tg.fork([
+                        tg.seq([
+                            tg.immediate(context => context[miranaName].SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
+                            tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(600, -3700), undefined)),
+                            tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(1600, -3280), undefined)),
+                            tg.immediate(context => {
+                                const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
+                                setUnitVisibilityThroughFogOfWar(mirana, true);
+                                // Miiiiiiiirana: TODO maybe get a better voice line here?
+                                EmitSoundOn("Script_1_Movement_9_1", mirana);
+                            }),
+                            tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
+                            tg.immediate(context => {
+                                const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
+                                setUnitVisibilityThroughFogOfWar(mirana, false);
+                            }),
+        
+                        ]),
+        
+                        tg.seq([
+                            tg.wait(2), // Give slark some time to hit and follow mirana
+                            // Take over control
+                            tg.immediate(context => setUnitPacifist(context[slarkName], true)),
+                            tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(1050, -3680), undefined)),
+                            tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3800), undefined)),
+                            // Show ??? particle
+                            tg.immediate(context => {
+                                const slark: CDOTA_BaseNPC_Hero = context[slarkName];
+                                const particle = createParticleAtLocation(ParticleName.QuestionMarks, slark.GetAbsOrigin());
+                                ParticleManager.ReleaseParticleIndex(particle);
+                            }),
+                            tg.wait(5)
+                        ]),
+        
+                        // Reveal riki for a short time, otherwise the successful scan later won't show up
+                        // because of a Dota bug. Hope the player won't notice!
+                        tg.seq([
+                            tg.immediate(ctx => {
+                                const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                                const backstab = riki.FindAbilityByName("riki_backstab")
+                                backstab!.SetLevel(0)
+                                riki.RemoveModifierByName("modifier_invisible")
+                                riki.RemoveModifierByName("modifier_riki_backstab")
+                            }),
+                            tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
+                            tg.wait(0.1),
+                            tg.immediate(ctx => {
+                                const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                                const backstab = riki.FindAbilityByName("riki_backstab")
+                                backstab!.SetLevel(1)
+                            }),
+                        ]),
+                    ]),
+                ])
             ]),
 
             tg.setCameraTarget(undefined),
