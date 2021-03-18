@@ -86,6 +86,8 @@
         "Error_Wards_5"        "Moving items is currently disabled."
         "Error_Wards_6"        "Toggling items is currently disabled."
         "Error_Wards_7"        "Locking or combining items is currently disabled."
+        "Error_Communications_1" "You cannot pick up item in this section."
+        "Error_Communications_2" "You cannot destroy items in this section."
         "Error_Teamfight_1"    "Teleport to your fountain by double-tapping the Town Portal Scroll."
 
         // Goals
