@@ -196,17 +196,6 @@
     color: #81818100;
 }
 
-.DialogPanelText {
-    color: black;
-    font-style: italics;
-    font-weight: bold;
-    font-size: 18px;
-    text-overflow: shrink;
-    max-width: 600px;
-    max-height: 200px;
-    margin: 26px 36px;
-}
-
 #CloseButton {
     horizontal-align: center;
     vertical-align: center;

@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index"
 import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
-import { centerCameraOnHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { centerCameraOnHero, Distance2D, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
@@ -33,6 +33,7 @@ const requiredState: RequiredState = {
 }
 
 const INTERACTION_DISTANCE = 200;
+const MAX_INTERACTION_DISTANCE = 300;
 
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
@@ -91,6 +92,15 @@ class ClosingNpc {
             } else {
                 this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
             }
+        }
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
+    }
+
+    stopInteracting() {
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact_stop", {});
+        if (this.dialogToken) {
+            dg.stop(this.dialogToken);
+            this.dialogToken = undefined;
         }
     }
 }
@@ -215,14 +225,30 @@ function onStop() {
 }
 
 let talkTarget: ClosingNpc | undefined;
+let interactingWith: ClosingNpc | undefined;
 
 function sectionTimerUpdate() {
     const playerHero = getPlayerHero();
     if (playerHero && talkTarget) {
-        const distance = (playerHero.GetAbsOrigin() - talkTarget.location as Vector).Length2D();
+        const distance = Distance2D(playerHero.GetAbsOrigin(), talkTarget.location);
         if (distance < INTERACTION_DISTANCE) {
+
+            // First cancel old interaction
+            if (interactingWith) {
+                interactingWith.stopInteracting();
+            }
+
             talkTarget.interact();
+            interactingWith = talkTarget;
             talkTarget = undefined;
+        }
+    }
+
+    if (playerHero && interactingWith) {
+        const distance = (playerHero.GetAbsOrigin() - interactingWith.location as Vector).Length2D();
+        if (distance > MAX_INTERACTION_DISTANCE) {
+            interactingWith.stopInteracting();
+            interactingWith = undefined;
         }
     }
 

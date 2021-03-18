@@ -260,11 +260,6 @@ const onStart = (complete: () => void) => {
     movedToStash = false
 
     const neutralDetector = new NeutralDetector(creepCampMin, creepCampMax, addedNeutrals => {
-        print("Neutrals added", addedNeutrals.length, "total", neutralDetector.neutralCount)
-        addedNeutrals.forEach(neutral => {
-            print(neutral.GetUnitName(), neutral.GetAbsOrigin())
-        })
-
         highlight({
             units: addedNeutrals,
             type: "arrow_enemy",
@@ -366,13 +361,11 @@ const onStart = (complete: () => void) => {
         // Stacking
         tg.immediate(_ => neutralDetector.removeNew = true),
         stack(1, neutralDetector,
-            _ => tg.immediate(_ => print("Stack success")),
+            _ => tg.immediate(_ => { }),
             _ => tg.audioDialog(LocalizationKey.Script_3_Opening_16, LocalizationKey.Script_3_Opening_16, ctx => ctx[CustomNpcKeys.SlacksMudGolem])
         ),
         tg.immediate(_ => neutralDetector.removeNew = true),
-
         tg.audioDialog(LocalizationKey.Script_3_Opening_17, LocalizationKey.Script_3_Opening_17, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
         tg.immediate(_ => goalStackCreeps.complete()),
     ]
 
@@ -512,6 +505,7 @@ const onStart = (complete: () => void) => {
                 riki.RemoveModifierByName("modifier_riki_backstab")
                 riki.Hold()
                 setUnitPacifist(riki, true)
+                freezePlayerHero(true)
 
                 // Spawn fow viewer on Riki's location
                 fowViewer = AddFOWViewer(DotaTeam.GOODGUYS, rikiLocation, 800, 30, true)
@@ -539,12 +533,11 @@ const onStart = (complete: () => void) => {
                     fowViewer = undefined
                 }
             }),
-            tg.fork([
-                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
-                tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            ]),
-            tg.goToLocation(belowRamp),
 
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_14, LocalizationKey.Script_3_Neutrals_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.immediate(() => freezePlayerHero(false)),
+            tg.goToLocation(belowRamp),
             tg.immediate(ctx => removeContextEntityIfExists(ctx, CustomNpcKeys.Riki)),
         ]
     }
@@ -576,7 +569,7 @@ const onStart = (complete: () => void) => {
 }
 
 const onStop = () => {
-    print("Stopping", "Section Opening")
+    print("Stopping", SectionName.Chapter3_Opening)
 
     if (graph) {
         graph.stop(GameRules.Addon.context)
@@ -616,7 +609,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     }
 
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
-        displayDotaErrorMessage("Dropping and moving items are disabled in this section.")
+        displayDotaErrorMessage(LocalizationKey.Error_Chapter3_1)
         return false
     }
 

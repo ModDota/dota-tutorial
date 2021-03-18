@@ -229,7 +229,7 @@ function disposeHeroes() {
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.order_type === UnitOrder.CAST_POSITION) {
         if (!allowUseItem) {
-            displayDotaErrorMessage("Item usage is currently disabled.")
+            displayDotaErrorMessage(LocalizationKey.Error_Wards_1)
             return false;
         }
         const targetPosition2D = Vector(event.position_x, event.position_y);
@@ -241,7 +241,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
             if (targetZ === markerLocation.z && distance < 150) {
                 return true;
             } else {
-                displayDotaErrorMessage("Place the ward on the target location.")
+                displayDotaErrorMessage(LocalizationKey.Error_Wards_2)
                 return false;
             }
         }
@@ -253,25 +253,25 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost) {
-            displayDotaErrorMessage("Taking control of the Outpost is currently disabled.")
+            displayDotaErrorMessage(LocalizationKey.Error_Wards_3)
             return false
         }
     }
 
     if (event.order_type === UnitOrder.DROP_ITEM) {
-        displayDotaErrorMessage("Dropping items is currently disabled.")
+        displayDotaErrorMessage(LocalizationKey.Error_Wards_4)
         return false;
     }
     if (event.order_type === UnitOrder.MOVE_ITEM) {
-        displayDotaErrorMessage("Moving items is currently disabled.")
+        displayDotaErrorMessage(LocalizationKey.Error_Wards_5)
         return false;
     }
     if (event.order_type === UnitOrder.CAST_TOGGLE) {
-        displayDotaErrorMessage("Toggling items is currently disabled.")
+        displayDotaErrorMessage(LocalizationKey.Error_Wards_6)
         return false;
     }
     if (event.order_type === UnitOrder.SET_ITEM_COMBINE_LOCK) {
-        displayDotaErrorMessage("Locking or combining items is currently disabled.")
+        displayDotaErrorMessage(LocalizationKey.Error_Wards_7)
         return false;
     }
     return true;

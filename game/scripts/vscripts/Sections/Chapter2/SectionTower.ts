@@ -6,7 +6,7 @@ import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -60,6 +60,7 @@ const onStart = (complete: () => void) => {
     const finalTowerSneakLocation = Vector(-3353, 6014, 128)
 
     const elderDragonFormAbility = "dragon_knight_elder_dragon_form"
+    const elderDragonFormHighlightAbilityPath = getPathToHighlightAbility(3);
 
     const items: CDOTA_Item[] = []
 
@@ -86,7 +87,6 @@ const onStart = (complete: () => void) => {
     graph = tg.withGoals(context => goalTracker.getGoals(),
         tg.seq([
             tg.immediate(context => {
-                freezePlayerHero(true);
                 playerMustOrderTrainUltimate = false;
                 playerMustOrderTrainAbilities = false;
                 playerMustOrderGlyph = false
@@ -98,38 +98,43 @@ const onStart = (complete: () => void) => {
                 removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
             }),
             tg.audioDialog(LocalizationKey.Script_2_Tower_1, LocalizationKey.Script_2_Tower_1, context => context[CustomNpcKeys.SlacksMudGolem]),
-            tg.fork([
-                tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => direTopTower.GetAbsOrigin(), 2),
-            ]),
-            tg.immediate(() => {
-                // Calculate how long you should be dead while Slacks and Sunsfan explain death
-                setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
-                freezePlayerHero(false)
-                goalAttemptToAttackTower.start()
-                playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
-                direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
-            }),
-            tg.fork([
-                tg.withHighlights(tg.completeOnCheck(() => {
-                    const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
-                    if (!modifier) error("Dragon Knight death modifier does not exist")
-                    return modifier.dkDiedToTower
-                }, 0.5), _ => ({
-                    type: "arrow_enemy",
-                    units: [direTopTower],
-                    attach: true
-                })),
+
+            // Fork dialogue ordering attack on tower
+            tg.forkAny([
+                tg.fork([
+                    tg.audioDialog(LocalizationKey.Script_2_Tower_2, LocalizationKey.Script_2_Tower_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.seq([
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => direTopTower.GetAbsOrigin(), 2),
+                        tg.wait(1),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
+                    ]),
+                    tg.neverComplete()
+                ]),
                 tg.seq([
-                    tg.wait(1),
-                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
-                ])
+                    tg.immediate(() => {
+                        // Calculate how long you should be dead while Slacks and Sunsfan explain death
+                        setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
+                        goalAttemptToAttackTower.start()
+                        playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
+                        direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
+                    }),
+                    tg.withHighlights(tg.completeOnCheck(() => {
+                        const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
+                        if (!modifier) error("Dragon Knight death modifier does not exist")
+                        return modifier.dkDiedToTower
+                    }, 0.5), _ => ({
+                        type: "arrow_enemy",
+                        units: [direTopTower],
+                        attach: true
+                    })),
+                ]),
             ]),
             tg.immediate(() => {
                 goalAttemptToAttackTower.complete()
                 goalwaitToRespawn.start()
                 freezePlayerHero(true)
             }),
+
             tg.audioDialog(LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_3, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_5, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -161,16 +166,27 @@ const onStart = (complete: () => void) => {
                 playerHero.Stop()
                 freezePlayerHero(true)
             }),
-            tg.audioDialog(LocalizationKey.Script_2_Tower_8, LocalizationKey.Script_2_Tower_8, context => context[CustomNpcKeys.SlacksMudGolem]),
-            tg.setCameraTarget(playerHero),
-            tg.immediate(() => goalHoldAltToSeeTowerRadius.start()),
-            tg.waitForModifierKey(ModifierKey.Alt),
+
+            // Fork alt btn dialogue
+            tg.forkAny([
+                tg.seq([
+                    tg.setCameraTarget(playerHero),
+                    tg.audioDialog(LocalizationKey.Script_2_Tower_8, LocalizationKey.Script_2_Tower_8, context => context[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(() => goalHoldAltToSeeTowerRadius.start()),
+                    tg.waitForModifierKey(ModifierKey.Alt),
+                ])
+            ]),
             tg.immediate(() => {
                 goalHoldAltToSeeTowerRadius.complete()
                 radiantCreeps = createRadiantLaneCreeps();
             }),
+
             tg.wait(1),
             tg.setCameraTarget(_ => radiantCreeps[0]),
+
             tg.forkAny([
                 tg.seq([
                     tg.immediate(context => {
@@ -207,39 +223,55 @@ const onStart = (complete: () => void) => {
                         goalSneakThroughTower.setValue(4)
                         goalSneakThroughTower.complete()
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Tower_10, LocalizationKey.Script_2_Tower_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(() => {
-                        goalSneakBackAgain.start()
-                    }),
-                    tg.goToLocation(thirdTowerSneakLocation, _ => []),
-                    tg.immediate(() => goalSneakBackAgain.setValue(1)),
-                    tg.goToLocation(secondTowerSneakLocation, _ => []),
-                    tg.immediate(() => goalSneakBackAgain.setValue(2)),
-                    tg.goToLocation(firstTowerSneakLocation, _ => []),
-                    tg.immediate(() => goalSneakBackAgain.setValue(3)),
-                    tg.goToLocation(moveAfterTeleportCloseToTowerLocation, []),
+
+                    // Fork movement back from behind tower to initial position dialogue
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Tower_10, LocalizationKey.Script_2_Tower_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => {
+                                goalSneakBackAgain.start()
+                            }),
+                            tg.goToLocation(thirdTowerSneakLocation, _ => []),
+                            tg.immediate(() => goalSneakBackAgain.setValue(1)),
+                            tg.goToLocation(secondTowerSneakLocation, _ => []),
+                            tg.immediate(() => goalSneakBackAgain.setValue(2)),
+                            tg.goToLocation(firstTowerSneakLocation, _ => []),
+                            tg.immediate(() => goalSneakBackAgain.setValue(3)),
+                            tg.goToLocation(moveAfterTeleportCloseToTowerLocation, []),
+                        ]),
+                    ]),
+
                     tg.immediate(() => {
                         goalSneakBackAgain.setValue(4)
                         goalSneakBackAgain.complete()
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Tower_11, LocalizationKey.Script_2_Tower_11, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(() => {
-                        goalAttackTowerWeak.start()
-                        direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
-                        playerHero.AddNewModifier(playerHero, undefined, modifier_dk_attack_tower_chapter2.name, {})
-                    }),
-                    tg.withHighlights(tg.completeOnCheck(() => {
-                        const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
-                        if (!modifier) error("Could not find the modifier for attacking the tower")
-                        return modifier.dkAttackedTower
-                    }, 0.5),
-                        _ =>
-                        ({
-                            type: "arrow_enemy",
-                            attach: true,
-                            units: [direTopTower]
-                        })
-                    ),
+
+                    // Fork retry attack on tower dialogue
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Tower_11, LocalizationKey.Script_2_Tower_11, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => {
+                                goalAttackTowerWeak.start()
+                                direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
+                                playerHero.AddNewModifier(playerHero, undefined, modifier_dk_attack_tower_chapter2.name, {})
+                            }),
+                            tg.withHighlights(tg.completeOnCheck(() => {
+                                const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
+                                if (!modifier) error("Could not find the modifier for attacking the tower")
+                                return modifier.dkAttackedTower
+                            }, 0.5), _ => ({
+                                type: "arrow_enemy",
+                                attach: true,
+                                units: [direTopTower]
+                            })),
+                        ])
+                    ]),
                     tg.immediate(() => {
                         goalAttackTowerWeak.complete()
                         setUnitPacifist(playerHero, true)
@@ -251,62 +283,84 @@ const onStart = (complete: () => void) => {
                             })
                         ignorePlayerOrders = true
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Tower_12, LocalizationKey.Script_2_Tower_12, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(() => {
-                        const currentHeroLevel = playerHero.GetLevel()
-                        const ultimateLevel = 6
-                        const levelsToGrant = ultimateLevel - currentHeroLevel
-                        playerHero.AddExperience(levelsToGrant, ModifyXpReason.UNSPECIFIED, false, true)
-                        const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
-                        if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
-                        dragonFormAbilityHandle.SetUpgradeRecommended(true)
-                        ignorePlayerOrders = false
-                        playerMustOrderTrainUltimate = true
-                        playerMustOrderTrainAbilities = true
-                        goalTrainUltimate.start()
-                        direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
-                    }),
-                    tg.completeOnCheck(() => {
-                        const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
-                        if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
-                        if (dragonFormAbilityHandle.GetLevel() > 0) {
-                            dragonFormAbilityHandle.SetUpgradeRecommended(false)
-                            playerMustOrderTrainUltimate = false
-                            return true
-                        }
-                        return false
-                    }, 0.2),
-                    tg.immediate(() => {
-                        goalTrainUltimate.complete()
-                        goalTrainAbilities.start()
-                    }),
-                    tg.completeOnCheck(() => {
-                        if (playerHero.GetAbilityPoints() === 0) {
-                            playerMustOrderTrainAbilities = false
-                            return true
-                        }
 
-                        return false
-                    }, 0.2),
+                    // Fork upgrade abilities dialogue
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Tower_12, LocalizationKey.Script_2_Tower_12, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => {
+                                const currentHeroLevel = playerHero.GetLevel()
+                                const ultimateLevel = 6
+                                const levelsToGrant = ultimateLevel - currentHeroLevel
+                                playerHero.AddExperience(levelsToGrant, ModifyXpReason.UNSPECIFIED, false, true)
+                                const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
+                                if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
+                                dragonFormAbilityHandle.SetUpgradeRecommended(true)
+                                ignorePlayerOrders = false
+                                playerMustOrderTrainUltimate = true
+                                playerMustOrderTrainAbilities = true
+                                goalTrainUltimate.start()
+                                direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
+                            }),
+                            tg.immediate(() => {
+                                items.push(playerHero.AddItemByName("item_heart"))
+                                items.push(playerHero.AddItemByName("item_power_treads"))
+                                items.push(playerHero.AddItemByName("item_rapier"))
+                                items.push(playerHero.AddItemByName("item_desolator"))
+                                items.push(playerHero.AddItemByName("item_moon_shard"))
+                            }),
+                            tg.completeOnCheck(() => {
+                                const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
+                                if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
+                                if (dragonFormAbilityHandle.GetLevel() > 0) {
+                                    dragonFormAbilityHandle.SetUpgradeRecommended(false)
+                                    playerMustOrderTrainUltimate = false
+                                    return true
+                                }
+                                return false
+                            }, 0.2),
+                            tg.immediate(() => {
+                                goalTrainUltimate.complete()
+                                goalTrainAbilities.start()
+                            }),
+                            tg.completeOnCheck(() => {
+                                if (playerHero.GetAbilityPoints() === 0) {
+                                    playerMustOrderTrainAbilities = false
+                                    return true
+                                }
+
+                                return false
+                            }, 0.2),
+                        ])
+                    ]),
                     tg.immediate(() => {
                         goalTrainAbilities.complete()
-                        items.push(playerHero.AddItemByName("item_heart"))
-                        items.push(playerHero.AddItemByName("item_power_treads"))
-                        items.push(playerHero.AddItemByName("item_rapier"))
-                        items.push(playerHero.AddItemByName("item_desolator"))
-                        items.push(playerHero.AddItemByName("item_moon_shard"))
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Tower_13, LocalizationKey.Script_2_Tower_13, context => context[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(LocalizationKey.Script_2_Tower_14, LocalizationKey.Script_2_Tower_14, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(() => {
-                        goalUseUltimate.start()
-                        playerOrderMustCastUltimate = true
-                    }),
-                    tg.completeOnCheck(() => {
-                        return playerHero.HasModifier("modifier_dragon_knight_dragon_form")
-                    }, 0.2),
+
+                    // Fork use ulti dialogue
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Tower_13, LocalizationKey.Script_2_Tower_13, context => context[CustomNpcKeys.SlacksMudGolem]),
+                            tg.audioDialog(LocalizationKey.Script_2_Tower_14, LocalizationKey.Script_2_Tower_14, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => {
+                                goalUseUltimate.start()
+                                highlightUiElement(elderDragonFormHighlightAbilityPath)
+                                playerOrderMustCastUltimate = true
+                            }),
+                            tg.completeOnCheck(() => {
+                                return playerHero.HasModifier("modifier_dragon_knight_dragon_form")
+                            }, 0.2),
+                        ])
+                    ]),
                     tg.immediate(() => {
                         goalUseUltimate.complete()
+                        removeHighlight(elderDragonFormHighlightAbilityPath)
                         setUnitPacifist(playerHero, false)
                         playerOrderMustCastUltimate = false
                         const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
@@ -314,6 +368,8 @@ const onStart = (complete: () => void) => {
                         modifier.dkCanAttackTowerAgainBeforeGlyph = true
                         direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                     }),
+
+                    // No fork since it's pretty short dialogue
                     tg.audioDialog(LocalizationKey.Script_2_Tower_15, LocalizationKey.Script_2_Tower_15, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(() => {
                         goalAttackTowerStrong.start()
@@ -340,6 +396,8 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.wait(1),
                     tg.immediate(_ => setUnitPacifist(playerHero, true)),
+
+                    // Seemed confusing to fork since glyph icon is only mentioned at the end of the dialogue, so keep as is
                     tg.audioDialog(LocalizationKey.Script_2_Tower_16, LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(() => {
                         goalUseGlyph.start()
@@ -359,17 +417,26 @@ const onStart = (complete: () => void) => {
                             radiantCreep.AddNewModifier(undefined, undefined, "modifier_fountain_glyph", { duration: 7 })
                         }
                     }),
-                    tg.audioDialog(LocalizationKey.Script_2_Tower_17, LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                    tg.immediate(() => goalDestroyTower.start()),
-                    tg.withHighlights(tg.completeOnCheck(() => {
-                        return !IsValidEntity(direTopTower) || !direTopTower.IsAlive()
-                    }, 0.1),
-                        _ => ({
-                            type: "arrow_enemy",
-                            attach: true,
-                            units: [direTopTower]
-                        })
-                    ),
+
+                    // Fork destroy tower dialogue
+                    tg.forkAny([
+                        tg.seq([
+                            tg.audioDialog(LocalizationKey.Script_2_Tower_17, LocalizationKey.Script_2_Tower_17, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => goalDestroyTower.start()),
+                            tg.withHighlights(tg.completeOnCheck(() => {
+                                return !IsValidEntity(direTopTower) || !direTopTower.IsAlive()
+                            }, 0.1),
+                                _ => ({
+                                    type: "arrow_enemy",
+                                    attach: true,
+                                    units: [direTopTower]
+                                })
+                            ),
+                        ])
+                    ]),
                     tg.immediate(() => {
                         goalDestroyTower.complete()
                         for (const item of items) {
@@ -377,6 +444,7 @@ const onStart = (complete: () => void) => {
                         }
                         playerHero.RemoveModifierByName(modifier_dk_attack_tower_chapter2.name)
                     }),
+
                     tg.audioDialog(LocalizationKey.Script_2_Tower_18, LocalizationKey.Script_2_Tower_18, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(() => {
                         if (radiantCreepTimer) Timers.RemoveTimer(radiantCreepTimer)
@@ -434,7 +502,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerMustOrderTrainUltimate && event.order_type != UnitOrder.MOVE_TO_POSITION) {
         if (event.order_type != UnitOrder.TRAIN_ABILITY) {
-            displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_1)
             return false
         }
 
@@ -443,7 +511,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
             if (ability) {
                 if (ability.GetName() === "dragon_knight_elder_dragon_form") return true
                 else {
-                    displayDotaErrorMessage("Upgrade Elder Dragon Form to continue.")
+                    displayDotaErrorMessage(LocalizationKey.Error_Tower_1)
                     return false
                 }
             }
@@ -452,7 +520,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerMustOrderTrainAbilities) {
         if (event.order_type != UnitOrder.TRAIN_ABILITY && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-            displayDotaErrorMessage("Upgrade the rest of your abilities to continue.")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_2)
             return false
         }
         return true
@@ -460,7 +528,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerMustOrderGlyph) {
         if (event.order_type != UnitOrder.GLYPH && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-            displayDotaErrorMessage("Please use Glyph next to the minimap.")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_3)
             return false
         }
 
@@ -474,7 +542,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
 
     if (playerOrderMustCastUltimate) {
         if (event.order_type != UnitOrder.CAST_NO_TARGET && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-            displayDotaErrorMessage("Cast your Ultimate first!")
+            displayDotaErrorMessage(LocalizationKey.Error_Tower_4)
             return false
         }
     }

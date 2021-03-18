@@ -96,21 +96,29 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(context => {
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 10)
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 5)
+            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 5)
         }),
-        tg.audioDialog(LocalizationKey.Script_2_Courier_3, LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-        tg.immediate(context => {
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.CANCEL_TELEPORTING, 10)
-        }),
+
+        // Fork secret shop waypoint dialog
+        tg.forkAny([
+            tg.seq([
+                tg.audioDialog(LocalizationKey.Script_2_Courier_3, LocalizationKey.Script_2_Courier_3, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                // Wait a bit so it doesn't completely overlap with the first secret shop minimap marker
+                tg.wait(3),
+                tg.immediate(() => {
+                    goalMoveToSecretShop.start()
+                }),
+                tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation, upSecretShopRamp]),
+            ])
+        ]),
         tg.immediate(() => {
-            goalMoveToSecretShop.start()
         }),
-        tg.goToLocation(inFrontOfRadiantSecretShopLocation, _ => [inFrontOfTheRiverLocation, insideRiverLocation, upSecretShopRamp]),
-        tg.immediate(() => {
-            goalMoveToSecretShop.complete()
-        }),
+
+        // Don't fork this since dialogue only mentions buying the Demon Edge at the end, so maybe it'll confuse player if he follows the highlights immediately
         tg.audioDialog(LocalizationKey.Script_2_Courier_4, LocalizationKey.Script_2_Courier_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(() => {
             highlightUiElement(shopBtnUIPath)
@@ -137,52 +145,66 @@ const onStart = (complete: () => void) => {
             removeHighlight(demonEdgeGuideUIPath)
             goalBuyDemonEdge.complete()
         }),
-        tg.fork([
-            tg.audioDialog(LocalizationKey.Script_2_Courier_5, LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(() => {
-                playerOrderMustBuyRecipeAndCrystalis = true
-                highlightUiElement(crystalisGuideUIPath);
-                highlightUiElement(daedalusGuideUIPath);
-                goalBuyCrystalisAndRecipe.start()
-            }),
+
+        // Fork crystalis and recipe dialog
+        tg.forkAny([
+            tg.seq([
+                tg.audioDialog(LocalizationKey.Script_2_Courier_5, LocalizationKey.Script_2_Courier_5, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(() => {
+                    playerOrderMustBuyRecipeAndCrystalis = true
+                    highlightUiElement(crystalisGuideUIPath);
+                    highlightUiElement(daedalusGuideUIPath);
+                    goalBuyCrystalisAndRecipe.start()
+                }),
+                tg.completeOnCheck(() => {
+                    return requiredItemCount === 4
+                }, 0.2),
+            ])
         ]),
-        tg.completeOnCheck(() => {
-            return requiredItemCount === 4
-        }, 0.2),
         tg.immediate(() => {
             goalBuyCrystalisAndRecipe.complete()
             removeHighlight(crystalisGuideUIPath)
             removeHighlight(daedalusGuideUIPath)
             playerOrderMustBuyRecipeAndCrystalis = false
         }),
+
         tg.audioDialog(LocalizationKey.Script_2_Courier_6, LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_7, LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_2_Courier_8, LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem]),
-        tg.immediate(_ => {
-            highlightUiElement(deliverItemsUIPath)
-            playerOrderMustDeliverItemsFromCourier = true
-            goalRequestItemsToBeDeliveredFromCourier.start()
-        }),
-        tg.fork([
-            tg.audioDialog(LocalizationKey.Script_2_Courier_9, LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem]),
+
+        // Fork dialog mentioning courier delivery button
+        tg.forkAny([
             tg.seq([
+                tg.audioDialog(LocalizationKey.Script_2_Courier_8, LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Courier_9, LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(_ => {
+                    highlightUiElement(deliverItemsUIPath)
+                    playerOrderMustDeliverItemsFromCourier = true
+                    goalRequestItemsToBeDeliveredFromCourier.start()
+                }),
                 tg.completeOnCheck(() => {
                     return hasPlayerRequestedToDeliverFromCourier
                 }, 0.2),
-                tg.immediate(() => {
-                    goalRequestItemsToBeDeliveredFromCourier.complete()
-                    goalWaitToCourierToDeliverItems.start()
-                    playerCourier.AddNewModifier(undefined, undefined, modifier_courier_chapter_2_ms_bonus.name, {})
-                    playerOrderMustDeliverItemsFromCourier = false
-                    removeHighlight(deliverItemsUIPath)
-                    freezePlayerHero(true)
-                }),
-                tg.setCameraTarget(playerCourier),
-                tg.completeOnCheck(() => {
-                    return playerHero.HasItemInInventory(daedalusName)
-                }, 0.2),
             ]),
         ]),
+        tg.immediate(() => {
+            goalRequestItemsToBeDeliveredFromCourier.complete()
+            goalWaitToCourierToDeliverItems.start()
+            playerCourier.AddNewModifier(undefined, undefined, modifier_courier_chapter_2_ms_bonus.name, {})
+            playerOrderMustDeliverItemsFromCourier = false
+            removeHighlight(deliverItemsUIPath)
+            freezePlayerHero(true)
+        }),
+
+        tg.setCameraTarget(playerCourier),
+        tg.completeOnCheck(() => {
+            return playerHero.HasItemInInventory(daedalusName)
+        }, 0.2),
         tg.immediate(() => {
             freezePlayerHero(false)
             goalWaitToCourierToDeliverItems.complete()
@@ -192,16 +214,25 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_2_Courier_10, LocalizationKey.Script_2_Courier_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_11, LocalizationKey.Script_2_Courier_11, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_12, LocalizationKey.Script_2_Courier_12, context => context[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_2_Courier_13, LocalizationKey.Script_2_Courier_13, context => context[CustomNpcKeys.SlacksMudGolem]),
-        tg.immediate(() => {
-            goalMoveToFinalPosition.start()
-        }),
-        tg.goToLocation(finalMovementPositionLocation, _ => {
-            if (playerHero.GetAbsOrigin().z < 10)
-                return [insideRiverLocation, upDireRamp]
-            else
-                return [upSecretShopRamp, insideRiverLocation, upDireRamp]
-        }),
+
+        // Fork navigate to jungle dialog
+        tg.forkAny([
+            tg.seq([
+                tg.audioDialog(LocalizationKey.Script_2_Courier_13, LocalizationKey.Script_2_Courier_13, context => context[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(() => {
+                    goalMoveToFinalPosition.start()
+                }),
+                tg.goToLocation(finalMovementPositionLocation, _ => {
+                    if (playerHero.GetAbsOrigin().z < 10)
+                        return [insideRiverLocation, upDireRamp]
+                    else
+                        return [upSecretShopRamp, insideRiverLocation, upDireRamp]
+                }),
+            ])
+        ]),
         tg.immediate(() => goalMoveToFinalPosition.complete())
     ])
     )
@@ -265,7 +296,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return true
 
         if (event.order_type !== UnitOrder.PURCHASE_ITEM || event.shop_item_name !== demonEdgeName) {
-            displayDotaErrorMessage("Buy a Demon Edge to continue.")
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_1)
             return false;
         }
 
@@ -277,12 +308,12 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return true
 
         if (event.order_type !== UnitOrder.PURCHASE_ITEM) {
-            displayDotaErrorMessage("Buy the Daedalus recipe and Crystalis to continue")
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
 
         if (!allowedItems.has(event.shop_item_name)) {
-            displayDotaErrorMessage("Buy the Daedalus recipe and Crystalis to continue")
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
 
@@ -310,14 +341,14 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
                     return true
                 }
             }
-        } else if (units.length == 1) {
+        } else if (units.length === 1) {
             const unit = units[0]
 
             if (unit.GetName() === getOrError(getPlayerHero()).GetName() && UnitOrder.MOVE_TO_POSITION)
                 return true
         }
 
-        displayDotaErrorMessage("Request the courier to deliver items.")
+        displayDotaErrorMessage(LocalizationKey.Error_Courier_3)
         return false
     }
 
