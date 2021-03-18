@@ -31,6 +31,7 @@ const requiredState: RequiredState = {
     requireRoshan: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
+    outpostTeam: DotaTeam.GOODGUYS,
     heroItems: { [shared.itemDaedalus]: 1 },
 };
 

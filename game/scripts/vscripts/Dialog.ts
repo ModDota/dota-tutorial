@@ -42,10 +42,12 @@ class DialogController {
         if (this.particles !== undefined) {
             for (const particleIndex of this.particles) {
                 if (this.currentLine && this.currentLine.speaker) {
-                    for (const modifier of this.currentLine.speaker.FindAllModifiersByName(modifier_particle_attach.name)) {
-                        if ((modifier as modifier_particle_attach).particleID === particleIndex) {
-                            modifier.Destroy()
-                            break;
+                    if (IsValidEntity(this.currentLine.speaker)) {
+                        for (const modifier of this.currentLine.speaker.FindAllModifiersByName(modifier_particle_attach.name)) {
+                            if ((modifier as modifier_particle_attach).particleID === particleIndex) {
+                                modifier.Destroy()
+                                break;
+                            }
                         }
                     }
                 }
@@ -95,23 +97,25 @@ class DialogController {
 
         const hero = getOrError(getPlayerHero());
 
-        if (speaker.IsAlive()) {
-            if (gesture) {
-                speaker.StartGesture(gesture);
+        if (speaker && IsValidEntity(speaker)) {
+            if (speaker.IsAlive()) {
+                if (gesture) {
+                    speaker.StartGesture(gesture);
+                }
+
+                this.particles = highlight({
+                    type: "dialog_circle",
+                    attach: true,
+                    radius: 90,
+                    units: [speaker]
+                });
+
+                speaker.FaceTowards(hero.GetAbsOrigin());
             }
 
-            this.particles = highlight({
-                type: "dialog_circle",
-                attach: true,
-                radius: 90,
-                units: [speaker]
-            });
-
-            speaker.FaceTowards(hero.GetAbsOrigin());
-        }
-
-        if (sound) {
-            speaker.EmitSoundParams(sound, 0, this.voiceVolume, 0);
+            if (sound) {
+                speaker.EmitSoundParams(sound, 0, this.voiceVolume, 0);
+            }
         }
 
         this.currentToken = generateDialogToken();

@@ -34,8 +34,16 @@
         "npc_mud_golem_slacks" "Slacks"
         "npc_mud_golem_godz" "GoDz"
         "npc_mud_golem_odpixel" "ODPixel"
+
+        "npc_dota_tutorial_coccia" "Alexander Coccia"
         "npc_dota_tutorial_dotau" "Dota University"
+        "npc_dota_tutorial_dotafromzero" "Dota From Zero"
+        "npc_dota_tutorial_bsj" "BSJ"
+        "npc_dota_tutorial_bowie" "Bowie"
+        "npc_dota_tutorial_angermania" "Angermania"
+        "npc_dota_tutorial_redditdota" "Reddit /r/dota2"
         "npc_dota_tutorial_liquipedia" "Liquipedia"
+
         "npc_dota_tutorial_tora" "Tora"
         "npc_dota_tutorial_shush" "Shush"
         "npc_dota_tutorial_perry" "Perry"
@@ -47,7 +55,6 @@
         "npc_dota_tutorial_toyoka" "Toyoka"
         "npc_dota_tutorial_flam3s" "Flam3s"
         "npc_dota_tutorial_ruby" "valkyrjaRuby"
-        "npc_dota_hero_templar_assassin" "valkyrjaRuby"
 
         "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
         "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
