@@ -12,7 +12,7 @@
 
     </snippets>
     <Panel hittest="false" class="CreditsRoot">
-        <Panel id="CreditsContainer">
+        <Panel id="CreditsContainer" hittest="false">
             <Panel class="CreditsContainerLeft">
                 <Panel class="AvatarContainer">
                     <Image id="Avatar" />
@@ -21,22 +21,22 @@
             <Panel class="CreditsContainerCenter">
                 <Panel class="Divider" />
             </Panel>
-            <Panel class="CreditsContainerRight">
-                <Panel class="CreditsContainerHeader">
+            <Panel class="CreditsContainerRight" hittest="false">
+                <Panel class="CreditsContainerHeader" hittest="false">
                     <Label id="CreditsName" text="#SirActionSlacks" hittest="false"/>
                 </Panel>
-                <Panel id="CreditsContainerContent">
-                    <Panel class="Column1">
+                <Panel id="CreditsContainerContent" hittest="false">
+                    <Panel id="CreditsSocialsColumn1" hittest="false">
                         <Panel class="Twitter" />
-                        <Label class="SocialMedia" text="Twitter" hittest="false"/>
+                        <Label class="SocialMedia" text="Twitter"/>
                         <Panel class="Youtube" />
-                        <Label class="SocialMedia" text="Youtube" hittest="false"/>
+                        <Label class="SocialMedia" text="Youtube"/>
                     </Panel>
-                    <Panel class="Column2">
+                    <Panel id="CreditsSocialsColumn2" hittest="false">
                         <Panel class="Discord" />
-                        <Label class="SocialMedia" text="Discord" hittest="false"/>
+                        <Label class="SocialMedia" text="Discord"/>
                         <Panel class="Website" />
-                        <Label class="SocialMedia" text="Website" hittest="false"/>
+                        <Label class="SocialMedia" text="Website"/>
                     </Panel>
                 </Panel>
             </Panel>

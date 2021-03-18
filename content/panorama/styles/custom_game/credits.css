@@ -1,7 +1,7 @@
 .CreditsRoot {
     width: 100%;
     height: 100%;
-    position: -480px 0px 0px;
+    position: -500px 0px 0px;
     transition: position 0.1s ease-in-out 0.0s;
 }
 
@@ -11,10 +11,10 @@
 }
 
 #CreditsContainer {
-    width: 480px;
+    width: 500px;
     height: 160px;
-    align: left center;
-    margin-bottom: 350px;
+    align: left top;
+    margin-top: 240px;
     background-color: #000000ef;
     box-shadow: #000000aa -4px -4px 8px 8px;
     border-top-right-radius: 5px;
@@ -48,7 +48,6 @@
 .CreditsContainerCenter {
     width: 2%;
     height: 100%;
-    margin-left: 20px;
 }
 
 .Divider {
@@ -64,7 +63,6 @@
     width: 65%;
     height: 100%;
     horizontal-align: right;
-    margin-left: 10px;
     margin-top: 5px;
 }
 
@@ -92,7 +90,7 @@
     font-family: titleFont;
 }
 
-.Column1, .Column2 {
+#CreditsSocialsColumn1, #CreditsSocialsColumn2 {
     width: 100%;
     height: 40%;
     flow-children: right;
@@ -144,20 +142,18 @@
     color: #cdf;
     text-shadow: 0px 0px 3px 3.0 #000000;
     font-weight: bold;
-    font-size: 15px;
-    letter-spacing: 1px;
-    margin-left: 0px;
+    font-size: 11px;
     margin-top: 3px;
     font-family: defaultFont;
-    padding-left: 5px;
-    padding-right: 15px;
+    max-width: 140px;
 }
 
 #CreditsDescriptionContainer {
-    width: 480px;
-    height: 70px;
-    align: left center;
-    margin-bottom: 120px;
+    width: 500px;
+    max-height: 500px;
+    padding: 8px;
+    align: left top;
+    margin-top: 400px;
     background-color: #000000ef;
     box-shadow: #000000aa -4px -4px 8px 8px;
     border-top-right-radius: 5px;

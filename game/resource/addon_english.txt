@@ -56,6 +56,8 @@
         "npc_dota_tutorial_flam3s" "Flam3s"
         "npc_dota_tutorial_ruby" "valkyrjaRuby"
 
+        "npc_dota_tutorial_ruby_twitter" "valkyrjaRuby"
+
         "npc_dota_tutorial_radiant_melee_creep" "Melee Creep"
         "npc_dota_tutorial_radiant_ranged_creep" "Ranged Creep"
         "npc_dota_tutorial_dire_melee_creep" "Melee Creep"
