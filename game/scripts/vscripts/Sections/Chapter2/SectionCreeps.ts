@@ -4,6 +4,7 @@ import { modifier_sniper_deny_chapter2_creeps } from "../../modifiers/modifier_s
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
+import * as dg from "../../Dialog"
 import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 
@@ -30,6 +31,10 @@ const requiredState: RequiredState = {
 }
 
 let lastHitTimer: string | undefined;
+const abilNameBreatheFire = "dragon_knight_breathe_fire"
+let listenerID: EventListenerID | undefined = undefined;
+let currentDialogToken: number | undefined = undefined;
+let eventTimer: string | undefined = undefined;
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -192,6 +197,22 @@ const onStart = (complete: () => void) => {
                                     }
                                 }
                             }),
+                            tg.immediate(ctx => listenerID = ListenToGameEvent("dota_player_used_ability", (event: DotaPlayerUsedAbilityEvent) => {
+                                if (event.abilityname === abilNameBreatheFire) {
+                                    eventTimer = Timers.CreateTimer(2, () => {
+                                        const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
+                                        if (currentLastHitWithFire < lastHitBreathFireCount)
+                                        {
+                                            currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
+                                                const ability = playerHero.FindAbilityByName(abilNameBreatheFire)
+                                                if (ability) {
+                                                    ability.EndCooldown()
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }, undefined)),
                             tg.completeOnCheck(_ => {
                                 const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
                                 goalLastHitCreepsWithBreatheFire.setValue(currentLastHitWithFire)
@@ -204,6 +225,8 @@ const onStart = (complete: () => void) => {
                         removeHighlight(breatheFireAbilityHighlightPath)
                         if (direCreeps) clearAttachedHighlightParticlesFromUnits(direCreeps);
                         currentLastHitStage = undefined;
+                        currentDialogToken = undefined
+                        stopListeningToBreatheFireCasts()
                     }),
 
                     tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.GodzMudGolem], 3),
@@ -341,6 +364,13 @@ const onStop = () => {
         lastHitTimer = undefined;
     }
 
+    if (currentDialogToken !== undefined) {
+        dg.stop(currentDialogToken)
+        currentDialogToken = undefined
+    }
+
+    stopListeningToBreatheFireCasts()
+
     const context = GameRules.Addon.context;
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
     removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
@@ -397,4 +427,17 @@ function createLaneCreeps(creepNames: string[], location: Vector, team: DotaTeam
         GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] = arrayToPush
 
     return arrayToPush;
+}
+
+function stopListeningToBreatheFireCasts() {
+    if (listenerID) {
+        StopListeningToGameEvent(listenerID)
+        listenerID = undefined
+    }
+
+    if (eventTimer)
+    {
+        Timers.RemoveTimer(eventTimer)
+        eventTimer = undefined
+    }
 }
