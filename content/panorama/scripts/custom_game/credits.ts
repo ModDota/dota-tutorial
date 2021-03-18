@@ -25,6 +25,7 @@ const portraits: Record<string, string> = {
     [CustomNpcKeys.Toyoka]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.VicFrank]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.Yoyo]: "file://{images}/custom_game/credits/avatars/moddota.png",
+    [CustomNpcKeys.ValkyrjaRuby]: "file://{images}/custom_game/credits/avatars/Ruby.png",
 };
 
 enum SocialType {

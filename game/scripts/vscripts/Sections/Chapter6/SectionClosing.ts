@@ -93,7 +93,7 @@ class ClosingNpc {
                 this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
             }
         }
-        CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.soundName });
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
     }
 
     stopInteracting() {
