@@ -1,5 +1,6 @@
 <root>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/credits.js" />
     </scripts>
     <styles>
         <include src="s2r://panorama/styles/dotastyles.css" />
@@ -10,11 +11,11 @@
     <snippets>
 
     </snippets>
-    <Panel hittest="false" class="CreditsRoot">
+    <Panel class="CreditsRoot">
         <Panel id="CreditsContainer">
             <Panel class="CreditsContainerLeft">
                 <Panel class="AvatarContainer">
-                    <Panel class="Avatar" />
+                    <Image id="Avatar" />
                 </Panel>
             </Panel>
             <Panel class="CreditsContainerCenter">
@@ -22,26 +23,38 @@
             </Panel>
             <Panel class="CreditsContainerRight">
                 <Panel class="CreditsContainerHeader">
-                    <Label class="CreditsTitle" text="#SirActionSlacks" hittest="false"/>
+                    <Label id="CreditsName" text="#SirActionSlacks"/>
                 </Panel>
-                <Panel class="CreditsContainerContent">
-                    <Panel class="Column1">
-                        <Panel class="Twitter" />
-                        <Label class="SocialMedia" text="Twitter" hittest="false"/>
-                        <Panel class="Youtube" />
-                        <Label class="SocialMedia" text="Youtube" hittest="false"/>
+                <Panel id="CreditsContainerContent">
+                    <Panel id="CreditsSocialsColumn1">
+                        <Panel class="SocialContainer">
+                            <Panel class="Twitter" />
+                            <Label class="SocialMedia" text="Twitter"/>
+                        </Panel>
+                        <Panel class="SocialContainer">
+                            <Panel class="Youtube" />
+                            <Label class="SocialMedia" text="Youtube"/>
+                        </Panel>
+                        <Panel class="SocialContainer">
+                            <Panel class="Twitch" />
+                            <Label class="SocialMedia" text="Twitch"/>
+                        </Panel>
                     </Panel>
-                    <Panel class="Column2">
-                        <Panel class="Discord" />
-                        <Label class="SocialMedia" text="Discord" hittest="false"/>
-                        <Panel class="Website" />
-                        <Label class="SocialMedia" text="Website" hittest="false"/>
+                    <Panel id="CreditsSocialsColumn2">
+                        <Panel class="SocialContainer">
+                            <Panel class="Discord" />
+                            <Label class="SocialMedia" text="Discord"/>
+                        </Panel>
+                        <Panel class="SocialContainer">
+                            <Panel class="Website" />
+                            <Label class="SocialMedia" text="Website"/>
+                        </Panel>
                     </Panel>
                 </Panel>
             </Panel>
         </Panel>
         <Panel id="CreditsDescriptionContainer">
-            <Label class="CreditsDescriptionLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris massa elit, cursus eu nibh non, luctus tempus tellus. Cras egestas nec orci eget porttitor. Fusce at tellus in mi ornare euismod." hittest="false"/>
+            <Label id="CreditsDescriptionLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris massa elit, cursus eu nibh non, luctus tempus tellus. Cras egestas nec orci eget porttitor. Fusce at tellus in mi ornare euismod."/>
         </Panel>
     </Panel>
 </root>
