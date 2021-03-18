@@ -186,6 +186,50 @@ export function removeHighlight(path: string) {
     CustomGameEventManager.Send_ServerToAllClients("remove_highlight", { path });
 }
 
+/**
+ * Returns the string to highlight in the UI
+ * @param item The item you want to highlight
+ */
+function getItemInventoryPathString(item:CDOTA_Item): string|undefined {
+    const hero = getOrError(getPlayerHero());
+    let slot = undefined;
+
+    if (hero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT) === item ) {
+        return "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot";
+    }
+
+    for (let i = 0; i < DOTA_ITEM_INVENTORY_SIZE; i++) {
+        if (hero.GetItemInSlot(i) === item) {
+            slot = i;
+            break;
+        }
+    }
+    
+    if (slot === undefined) {
+        return;
+    }
+    if (slot <= InventorySlot.SLOT_3) {
+        return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_" + slot;
+    } else if (slot <= InventorySlot.SLOT_6) {
+        return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list2/inventory_slot_" + slot;
+    } else if (slot <= InventorySlot.SLOT_9) {
+        return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_backpack_list/inventory_slot_" + slot;
+    }
+}
+
+/**
+ * Highlights the slot of an item if it exists, returns the string for you to remove later
+ * @param item the item you want to highlight
+ */
+export function highlightItemInUi(item:CDOTA_Item) {
+    const pathString = getItemInventoryPathString(item);
+    if (pathString !== undefined) {
+        highlightUiElement(pathString!);
+    }
+    
+    return pathString
+}
+      
 export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
     if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
         unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
@@ -538,4 +582,13 @@ export function randomChoice<T>(choices: T[]) {
     }
 
     return choices[RandomInt(0, choices.length - 1)]
+}
+
+/**
+ * Returns the path to highlight an ability, based on its index. The indices are based on their location in the ability bar, starting from 0.
+ * @param index The slot the ability is in, starting from 0.
+ * @returns The path that can be used in highlightUiElement to highlight an ability.
+ */
+export function getPathToHighlightAbility(index: number) {
+    return "HUDElements/lower_hud/center_with_stats/center_block/AbilitiesAndStatBranch/abilities/Ability" + index + "/ButtonAndLevel/ButtonWithLevelUpTab/ButtonWell/ButtonSize/AbilityButton"
 }

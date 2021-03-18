@@ -4,7 +4,7 @@ import { modifier_sniper_deny_chapter2_creeps } from "../../modifiers/modifier_s
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, highlight, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
@@ -53,6 +53,8 @@ const onStart = (complete: () => void) => {
     const lastHitCount = 5;
     const lastHitBreathFireCount = 1;
     const denyCount = 3;
+
+    const breatheFireAbilityHighlightPath = getPathToHighlightAbility(0)
 
     const goalTracker = new GoalTracker()
     const goalLastHitCreeps = goalTracker.addNumeric(LocalizationKey.Goal_2_Creeps_1, lastHitCount);
@@ -179,6 +181,7 @@ const onStart = (complete: () => void) => {
                             tg.immediate(() => {
                                 currentLastHitStage = LastHitStages.LAST_HIT_BREATHE_FIRE
                                 goalLastHitCreepsWithBreatheFire.start()
+                                highlightUiElement(breatheFireAbilityHighlightPath)
                                 if (playerHero.HasModifier(modifier_dk_last_hit_chapter2_creeps.name)) {
                                     const modifier = playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name) as modifier_dk_last_hit_chapter2_creeps
                                     if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)
@@ -198,6 +201,7 @@ const onStart = (complete: () => void) => {
                     ]),
                     tg.immediate(() => {
                         goalLastHitCreepsWithBreatheFire.complete()
+                        removeHighlight(breatheFireAbilityHighlightPath)
                         if (direCreeps) clearAttachedHighlightParticlesFromUnits(direCreeps);
                         currentLastHitStage = undefined;
                     }),
@@ -306,7 +310,7 @@ const onStart = (complete: () => void) => {
                         tg.textDialog(LocalizationKey.Script_2_Creeps_24, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
                         tg.immediate(context => {
                             goalKillSniper.complete()
-    
+
                             if (lastHitTimer) Timers.RemoveTimer(lastHitTimer)
                             removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
                             removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)

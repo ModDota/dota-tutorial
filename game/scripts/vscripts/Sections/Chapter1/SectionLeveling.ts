@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util"
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation } from "./Shared"
@@ -29,6 +29,7 @@ const start = (complete: () => void) => {
     print("Started section leveling")
 
     const hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
+    const abilityDragonTailHighlightPath = getPathToHighlightAbility(1);
 
     const goalTracker = new GoalTracker()
     const goalLevelDragonTail = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_2)
@@ -92,6 +93,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => goalKillPurge.start()),
         tg.immediate(_ => {
             hero.SetIdleAcquire(false)
+            highlightUiElement(abilityDragonTailHighlightPath)
         }),
         tg.immediate(context => setUnitPacifist(context[CustomNpcKeys.PurgePugna], false)),
 
@@ -129,6 +131,7 @@ const start = (complete: () => void) => {
         ]),
 
         tg.immediate(_ => {
+            removeHighlight(abilityDragonTailHighlightPath)
             goalKillPurge.complete()
             hero.SetIdleAcquire(true)
         }),

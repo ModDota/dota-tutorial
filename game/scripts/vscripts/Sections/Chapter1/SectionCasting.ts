@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { freezePlayerHero, getOrError, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { freezePlayerHero, getOrError, getPathToHighlightAbility, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { slacksFountainLocation } from "./Shared";
@@ -22,6 +22,7 @@ const start = (complete: () => void) => {
 
     const goalTracker = new GoalTracker();
     const goalKillSlacks = goalTracker.addBoolean(LocalizationKey.Goal_1_BreatheFire_1);
+    const abilityBreatheFireHighlightPath = getPathToHighlightAbility(0);
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(ctx => {
@@ -29,6 +30,7 @@ const start = (complete: () => void) => {
             const slacks = getOrError(ctx[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC | undefined);
             setUnitPacifist(slacks, true);
             slacks.SetTeam(DotaTeam.NEUTRALS);
+            highlightUiElement(abilityBreatheFireHighlightPath)
         }),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -49,6 +51,7 @@ const start = (complete: () => void) => {
             ]),
         ]),
         tg.immediate(_ => goalKillSlacks.complete()),
+        tg.immediate(() => removeHighlight(abilityBreatheFireHighlightPath)),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_4, LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_5, LocalizationKey.Script_1_BreatheFire_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
