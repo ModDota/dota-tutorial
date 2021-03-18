@@ -184,17 +184,17 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost && !canPlayerTakeOutpost) {
-            displayDotaErrorMessage("Taking control of the Outpost is currently disabled.")
+            displayDotaErrorMessage(LocalizationKey.Script_4_Outpost_Error_1)
             return false
         }
     }
 
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
-        displayDotaErrorMessage("Dropping and moving items are disabled in this section.")
+        displayDotaErrorMessage(LocalizationKey.Script_4_Outpost_Error_2)
         return false;
     }
     if (event.order_type === UnitOrder.CAST_NO_TARGET && !allowUseItem) {
-        displayDotaErrorMessage("Item usage is currently disabled.")
+        displayDotaErrorMessage(LocalizationKey.Script_4_Outpost_Error_3)
         return false;
     }
     return true;

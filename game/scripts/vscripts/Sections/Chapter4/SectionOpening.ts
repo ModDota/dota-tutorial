@@ -245,7 +245,7 @@ function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: Tutor
         if (scanLocation.__sub(targetScanLocation).Length2D() < 500) {
             return true;
         }
-        displayDotaErrorMessage("Scan the required location");
+        displayDotaErrorMessage(LocalizationKey.Script_4_Opening_Error_1);
         dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem]);
         scanLocation = undefined;
     }

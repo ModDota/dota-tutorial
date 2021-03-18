@@ -232,7 +232,7 @@ function orderFilter(event: ExecuteOrderFilterEvent) {
                 if (Vector(event.position_x, event.position_y).__sub(radiantFountainLocation).Length2D() < 1000) {
                     playerUsedTp = true
                 } else {
-                    displayDotaErrorMessage("Teleport to your fountain by double-tapping the Town Portal Scroll.")
+                    displayDotaErrorMessage(LocalizationKey.Script_5_Teamfight_Error_1)
                 }
             }
 

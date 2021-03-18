@@ -617,7 +617,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     }
 
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
-        displayDotaErrorMessage("Dropping and moving items are disabled in this section.")
+        displayDotaErrorMessage(LocalizationKey.Script_3_Error_1)
         return false
     }
 
