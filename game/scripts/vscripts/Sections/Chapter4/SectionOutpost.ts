@@ -184,17 +184,17 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost && !canPlayerTakeOutpost) {
-            displayDotaErrorMessage(LocalizationKey.Script_4_Outpost_Error_1)
+            displayDotaErrorMessage(LocalizationKey.Error_Outpost_1)
             return false
         }
     }
 
     if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
-        displayDotaErrorMessage(LocalizationKey.Script_4_Outpost_Error_2)
+        displayDotaErrorMessage(LocalizationKey.Error_Outpost_2)
         return false;
     }
     if (event.order_type === UnitOrder.CAST_NO_TARGET && !allowUseItem) {
-        displayDotaErrorMessage(LocalizationKey.Script_4_Outpost_Error_3)
+        displayDotaErrorMessage(LocalizationKey.Error_Outpost_3)
         return false;
     }
     return true;

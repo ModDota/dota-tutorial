@@ -220,7 +220,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
                 playerBoughtTango = true;
                 waitingForPlayerToPurchaseTango = false;
             } else {
-                displayDotaErrorMessage(LocalizationKey.Script_1_ShopUI_Error_1);
+                displayDotaErrorMessage(LocalizationKey.Error_ShopUI_1);
                 return false;
             }
         }

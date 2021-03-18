@@ -265,7 +265,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return true
 
         if (event.order_type !== UnitOrder.PURCHASE_ITEM || event.shop_item_name !== demonEdgeName) {
-            displayDotaErrorMessage(LocalizationKey.Script_2_Courier_Error_1)
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_1)
             return false;
         }
 
@@ -277,12 +277,12 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return true
 
         if (event.order_type !== UnitOrder.PURCHASE_ITEM) {
-            displayDotaErrorMessage(LocalizationKey.Script_2_Courier_Error_2)
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
 
         if (!allowedItems.has(event.shop_item_name)) {
-            displayDotaErrorMessage(LocalizationKey.Script_2_Courier_Error_2)
+            displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
 
@@ -317,7 +317,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
                 return true
         }
 
-        displayDotaErrorMessage(LocalizationKey.Script_2_Courier_Error_3)
+        displayDotaErrorMessage(LocalizationKey.Error_Courier_3)
         return false
     }
 

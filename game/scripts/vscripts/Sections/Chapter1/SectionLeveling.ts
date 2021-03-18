@@ -158,7 +158,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (learnAbilityAllowedName && event.order_type === UnitOrder.TRAIN_ABILITY) {
         const ability = getOrError(EntIndexToHScript(event.entindex_ability), "Could not find ability being trained") as CDOTABaseAbility
         if (ability.GetAbilityName() !== learnAbilityAllowedName) {
-            displayDotaErrorMessage(LocalizationKey.Script_1_Leveling_Error_1)
+            displayDotaErrorMessage(LocalizationKey.Error_Leveling_1)
             return false
         }
     }

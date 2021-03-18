@@ -232,7 +232,7 @@ function orderFilter(event: ExecuteOrderFilterEvent) {
                 if (Vector(event.position_x, event.position_y).__sub(radiantFountainLocation).Length2D() < 1000) {
                     playerUsedTp = true
                 } else {
-                    displayDotaErrorMessage(LocalizationKey.Script_5_Teamfight_Error_1)
+                    displayDotaErrorMessage(LocalizationKey.Error_Teamfight_1)
                 }
             }
 
