@@ -54,6 +54,7 @@ const start = (complete: () => void) => {
                 eventTimer = Timers.CreateTimer(2, () => {
                     if (unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem])) {
                         currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
+                            currentDialogToken = undefined
                             const ability = hero.FindAbilityByName(abilNameBreatheFire)
                             if (ability) {
                                 ability.EndCooldown()
@@ -66,7 +67,6 @@ const start = (complete: () => void) => {
 
         tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
         tg.immediate(() => {
-            currentDialogToken = undefined
             stopListeningToBreatheFireCasts()
         }),
         tg.immediate(_ => goalKillSlacks.complete()),

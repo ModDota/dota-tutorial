@@ -5,7 +5,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import * as dg from "../../Dialog"
-import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
+import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
@@ -53,13 +53,13 @@ const onStart = (complete: () => void) => {
     const sniperSpawnLocation = Vector(-5700, 5555, 128)
 
     const sniperTalkShitLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_17, LocalizationKey.Script_2_Creeps_18, LocalizationKey.Script_2_Creeps_18_1]
-    const chosenSniperTalkShitLocalizationOption = sniperTalkShitLocalizationOptions[RandomInt(0, sniperTalkShitLocalizationOptions.length - 1)]
+    const chosenSniperTalkShitLocalizationOption = randomChoice(sniperTalkShitLocalizationOptions)
 
     const sniperDiesLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_24, LocalizationKey.Script_2_Creeps_25]
-    const chosenSniperDiesLocalizationOption = sniperDiesLocalizationOptions[RandomInt(0, sniperDiesLocalizationOptions.length - 1)]
+    const chosenSniperDiesLocalizationOption = randomChoice(sniperDiesLocalizationOptions)
 
     const sniperAdmitsDefeatLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_18_2, LocalizationKey.Script_2_Creeps_18_3]
-    const chosenSniperAdmitsDefeatLocalizationOption = sniperAdmitsDefeatLocalizationOptions[RandomInt(0, sniperAdmitsDefeatLocalizationOptions.length - 1)]
+    const chosenSniperAdmitsDefeatLocalizationOption = randomChoice(sniperAdmitsDefeatLocalizationOptions)
 
     const lastHitCount = 5;
     const lastHitBreathFireCount = 1;
@@ -209,6 +209,7 @@ const onStart = (complete: () => void) => {
                                         const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
                                         if (currentLastHitWithFire < lastHitBreathFireCount) {
                                             currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
+                                                currentDialogToken = undefined
                                                 const ability = playerHero.FindAbilityByName(abilNameBreatheFire)
                                                 if (ability) {
                                                     ability.EndCooldown()
@@ -230,7 +231,6 @@ const onStart = (complete: () => void) => {
                         removeHighlight(breatheFireAbilityHighlightPath)
                         if (direCreeps) clearAttachedHighlightParticlesFromUnits(direCreeps);
                         currentLastHitStage = undefined;
-                        currentDialogToken = undefined
                         stopListeningToBreatheFireCasts()
                     }),
 
