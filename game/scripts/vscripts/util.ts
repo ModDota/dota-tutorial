@@ -539,3 +539,7 @@ export function randomChoice<T>(choices: T[]) {
 
     return choices[RandomInt(0, choices.length - 1)]
 }
+
+export function getPathToHighlightAbility(index: number) {
+    return "HUDElements/lower_hud/center_with_stats/center_block/AbilitiesAndStatBranch/abilities/Ability" + index + "/ButtonAndLevel/ButtonWithLevelUpTab/ButtonWell/ButtonSize/AbilityButton"
+}
