@@ -779,9 +779,9 @@
         {
             "AttachWearables"
             {
-                "Wearable1" { "ItemDef" "5302" } // Dreaded Bravo's Scarf
-                "Wearable2" { "ItemDef" "5303" } // Dreaded Bravo's Cape
-                "Wearable3" { "ItemDef" "5304" } // Dreaded Bravo's Guise
+                "Wearable1" { "ItemDef" "7433" } // Timekeeper
+                "Wearable2" { "ItemDef" "7435" }
+                "Wearable3" { "ItemDef" "7436" }
             }
         }
     }
