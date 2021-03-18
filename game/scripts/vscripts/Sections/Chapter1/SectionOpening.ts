@@ -33,6 +33,7 @@ const onStart = (complete: () => void) => {
                 tg.setCameraTarget(context => context[CustomNpcKeys.SlacksMudGolem]),
             ])
         ]),
+        tg.setCameraTarget(playerHero),
         tg.audioDialog(LocalizationKey.Script_1_Opening_1, LocalizationKey.Script_1_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_2, LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_3, LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
