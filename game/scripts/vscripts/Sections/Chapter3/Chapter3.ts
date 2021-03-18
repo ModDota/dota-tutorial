@@ -396,11 +396,11 @@ const onStart = (complete: () => void) => {
             tg.immediate(ctx => {
                 goalOptionalStackCreeps.start()
                 goalTryStackCreeps.start()
-                const odPixel = ctx[CustomNpcKeys.ODPixelMudGolem] as CDOTA_BaseNPC
+                const odPixel = ctx[CustomNpcKeys.ODPixel] as CDOTA_BaseNPC
                 FindClearSpaceForUnit(odPixel, odPixelLocation, false)
                 setUnitPacifist(odPixel, true)
             }),
-            tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixelMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixel]),
 
             // Stacking
             tg.immediate(_ => neutralDetector.removeNew = true),
@@ -411,7 +411,7 @@ const onStart = (complete: () => void) => {
                         goalOptionalStackCreeps.setValue(stacks)
                         updateStackKey(stacks)
                     }),
-                    tg.audioDialog(_ => stackKey, _ => stackKey, ctx => ctx[CustomNpcKeys.ODPixelMudGolem])
+                    tg.audioDialog(_ => stackKey, _ => stackKey, ctx => ctx[CustomNpcKeys.ODPixel])
                 ]),
                 (tries, stacks) => tg.seq([
                     tg.immediate(_ => {
@@ -419,7 +419,7 @@ const onStart = (complete: () => void) => {
                         goalOptionalStackCreeps.setValue(stacks)
                         updateStackKey(0)
                     }),
-                    tg.audioDialog(_ => stackKey, _ => stackKey, ctx => ctx[CustomNpcKeys.ODPixelMudGolem])
+                    tg.audioDialog(_ => stackKey, _ => stackKey, ctx => ctx[CustomNpcKeys.ODPixel])
                 ]),
             ),
             tg.immediate(_ => neutralDetector.removeNew = true),

@@ -33,7 +33,7 @@
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
         "npc_mud_golem_godz" "GoDz"
-        "npc_mud_golem_odpixel" "ODPixel"
+        "npc_dota_tutorial_odpixel" "ODPixel"
 
         "npc_dota_tutorial_coccia" "Alexander Coccia"
         "npc_dota_tutorial_dotau" "Dota University"
