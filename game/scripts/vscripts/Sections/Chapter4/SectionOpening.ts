@@ -24,7 +24,6 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 };
 
-let canPlayerIssueOrders = true;
 let scanLocation: Vector | undefined = undefined;
 
 const miranaName = "npc_dota_hero_mirana";
@@ -75,7 +74,7 @@ function onStart(complete: () => void) {
                     }
                 }
             }),
-            tg.immediate(_ => canPlayerIssueOrders = false),
+
             tg.setCameraTarget(_ => radiantCreeps[0]),
 
             tg.forkAny([
@@ -168,8 +167,6 @@ function onStart(complete: () => void) {
                 goalScanFailed.start();
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_10, LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
-            tg.immediate(_ => canPlayerIssueOrders = true),
             tg.audioDialog(LocalizationKey.Script_4_Opening_11, LocalizationKey.Script_4_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             //Part3: 1st scan, failed
@@ -190,18 +187,24 @@ function onStart(complete: () => void) {
             tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
-            tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(_ => {
-                scanLocation = undefined;
-                waitingForPlayerToScan = true
-                currentRequiredScanLocation = secondScanLocation;
-                goalScanSucceed.start();
-                highlightUiElement(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
-            }),
-
-            tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
-
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => {
+                        scanLocation = undefined;
+                        waitingForPlayerToScan = true
+                        currentRequiredScanLocation = secondScanLocation;
+                        goalScanSucceed.start();
+                        highlightUiElement(scanUIPath);
+                        MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                    }),
+        
+                    tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
+                ])
+            ]),
             tg.immediate(_ => {
                 waitingForPlayerToScan = false
                 goalScanSucceed.complete();
@@ -241,6 +244,7 @@ function onStop() {
 
 // Scan radius is 900, but check within 500 to avoid the case of not covering target heroes
 function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: TutorialContext): boolean {
+    print("Checking if scan covers location!")
     if (scanLocation) {
         if (scanLocation.__sub(targetScanLocation).Length2D() < 500) {
             return true;
@@ -289,5 +293,5 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         return checkIfScanCoversTheLocation(currentRequiredScanLocation, GameRules.Addon.context);
     }
 
-    return canPlayerIssueOrders;
+    return true;
 }
