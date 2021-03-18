@@ -82,6 +82,7 @@ const start = (complete: () => void) => {
             })
         }),
         tg.panCameraLinear(pugnaMoveToLocation, pugnaBlinkLocation, 0.5),
+        tg.setCameraTarget(getOrError(getPlayerHero())),
         tg.audioDialog(LocalizationKey.Script_1_Leveling_4, LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna]), // yellow everybody
         tg.audioDialog(LocalizationKey.Script_1_Leveling_5, LocalizationKey.Script_1_Leveling_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // make him stop, press W
         // Don't fork this so we show purge's long monologue
