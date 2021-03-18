@@ -373,7 +373,7 @@
         "Script_4_Communication_2" "Oh dear, this is one of your teammates! Don't worry they can't hear us, we are ghosts that only haunt you!"
         "Script_4_Communication_3" "This is a nice teammate, let's acknowledge their existence. Press the 'V' key to turn on your microphone, and say hello!"
         "Script_4_Communication_4" "Wait did you actually talk? This is a tutorial man that is not a real person."
-        "Script_4_Communication_5" "It's OK, let’s not use our microphones then. Press 'Y' to open up the chat wheel, and select 'Well played!”. This is universal for “thanks” in the Dota world."
+        "Script_4_Communication_5" "It's ok, let’s not use our microphones then. Press 'Y' to open up the chat wheel, and select 'Well played!”. This is universal for “thanks” in the Dota world."
         "Script_4_Communication_6" "Also used for “you suck” surprisingly."
         "Script_4_Communication_7" "Oh thanks! You too!"
         "Script_4_Communication_8" "WHAT THE BLEEP ARE YOU DOING? YOU KILLED RIKI YOU'RE STEALING MY KILLS! WHY DO YOU HAVE SO MANY WARDS IN YOUR INVENTORY AND WHY AREN'T MY CAMPS STACKED?!"
