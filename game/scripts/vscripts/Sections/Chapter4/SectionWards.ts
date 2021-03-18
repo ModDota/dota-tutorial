@@ -141,11 +141,16 @@ function onStart(complete: () => void) {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Wards_8, LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-            tg.immediate(_ => allowUseItem = true),
-            tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
-
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Wards_8, LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => allowUseItem = true),
+                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
+                ])
+            ]),
             tg.immediate(_ => {
                 goalPlaceObserverWard.complete();
                 allowUseItem = false;
@@ -153,11 +158,18 @@ function onStart(complete: () => void) {
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_9, LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.immediate(_ => allowUseItem = true),
-            tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
-
+            // Don't fork since it explains what blue ward does, and only instructs usage by the end of the dialog
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => allowUseItem = true),
+                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
+                ])
+            ]),
             tg.immediate(_ => {
                 goalPlaceSentryWard.complete();
                 removeHighlight(inventorySlot1UIPath);
