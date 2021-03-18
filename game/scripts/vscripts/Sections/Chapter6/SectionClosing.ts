@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index"
 import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
-import { centerCameraOnHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { centerCameraOnHero, Distance2D, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
@@ -230,7 +230,7 @@ let interactingWith: ClosingNpc | undefined;
 function sectionTimerUpdate() {
     const playerHero = getPlayerHero();
     if (playerHero && talkTarget) {
-        const distance = (playerHero.GetAbsOrigin() - talkTarget.location as Vector).Length2D();
+        const distance = Distance2D(playerHero.GetAbsOrigin(), talkTarget.location);
         if (distance < INTERACTION_DISTANCE) {
 
             // First cancel old interaction
@@ -248,7 +248,7 @@ function sectionTimerUpdate() {
         const distance = (playerHero.GetAbsOrigin() - interactingWith.location as Vector).Length2D();
         if (distance > MAX_INTERACTION_DISTANCE) {
             interactingWith.stopInteracting();
-            interactingWith =  undefined;
+            interactingWith = undefined;
         }
     }
 
