@@ -36,8 +36,9 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
 
 function handleSpecialUnitPortrait(unitName: string): boolean {
     const unitPortraits: Record<string, string> = {
-        npc_mud_golem_sunsfan: "file://{images}/custom_game/portraits/sunsfan_greevil.png",
-        npc_mud_golem_slacks: "file://{images}/custom_game/portraits/slacks_greevil.png",
+        [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/portraits/sunsfan_greevil.png",
+        [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/portraits/slacks_greevil.png",
+        [CustomNpcKeys.ODPixel]: "file://{images}/custom_game/portraits/odpixel_lion.png",
     };
 
     if (unitPortraits[unitName] !== undefined) {
