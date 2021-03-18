@@ -205,7 +205,7 @@ const onStart = (complete: () => void) => {
                             }),
                             tg.immediate(ctx => listenerID = ListenToGameEvent("dota_player_used_ability", (event: DotaPlayerUsedAbilityEvent) => {
                                 if (event.abilityname === abilNameBreatheFire) {
-                                    eventTimer = Timers.CreateTimer(2, () => {
+                                    eventTimer = Timers.CreateTimer(1.25, () => {
                                         const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
                                         if (currentLastHitWithFire < lastHitBreathFireCount) {
                                             currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
