@@ -82,8 +82,6 @@ GameEvents.Subscribe("credits_interact_stop", () => {
     $.GetContextPanel().RemoveClass("Visible");
 });
 
-declare function ExternalBrowserGoToURL(url: string): void
-
 function addSocialIfExists(social: SocialType, unitName: string, container: Panel) {
     const linkLocalizationKey = `${unitName}_${social}`;
     const socialId = $.Localize(linkLocalizationKey);
@@ -96,7 +94,7 @@ function addSocialIfExists(social: SocialType, unitName: string, container: Pane
         socialName.text = socialId;
         socialName.hittest = true;
 
-        socialName.SetPanelEvent("onactivate", () => $.DispatchEvent(`ExternalBrowserGoToURL`, socialName, makeSocialUrl(socialId, social)));
+        socialName.SetPanelEvent("onactivate", () => $.DispatchEvent("ExternalBrowserGoToURL", socialName, makeSocialUrl(socialId, social)));
 
         return true;
     }
