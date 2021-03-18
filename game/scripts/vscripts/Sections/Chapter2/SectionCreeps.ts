@@ -52,8 +52,14 @@ const onStart = (complete: () => void) => {
     const godzSpawnLocation = Vector(-6715, 4402, 128)
     const sniperSpawnLocation = Vector(-5700, 5555, 128)
 
-    const sniperTalkShitLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_16, LocalizationKey.Script_2_Creeps_17, LocalizationKey.Script_2_Creeps_18]
+    const sniperTalkShitLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_17, LocalizationKey.Script_2_Creeps_18, LocalizationKey.Script_2_Creeps_18_1]
     const chosenSniperTalkShitLocalizationOption = sniperTalkShitLocalizationOptions[RandomInt(0, sniperTalkShitLocalizationOptions.length - 1)]
+
+    const sniperDiesLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_24, LocalizationKey.Script_2_Creeps_25]
+    const chosenSniperDiesLocalizationOption = sniperDiesLocalizationOptions[RandomInt(0, sniperDiesLocalizationOptions.length - 1)]
+
+    const sniperAdmitsDefeatLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_18_2, LocalizationKey.Script_2_Creeps_18_3]
+    const chosenSniperAdmitsDefeatLocalizationOption = sniperAdmitsDefeatLocalizationOptions[RandomInt(0, sniperAdmitsDefeatLocalizationOptions.length - 1)]
 
     const lastHitCount = 5;
     const lastHitBreathFireCount = 1;
@@ -201,8 +207,7 @@ const onStart = (complete: () => void) => {
                                 if (event.abilityname === abilNameBreatheFire) {
                                     eventTimer = Timers.CreateTimer(2, () => {
                                         const currentLastHitWithFire = playerHero.GetModifierStackCount(modifier_dk_last_hit_chapter2_creeps.name, playerHero);
-                                        if (currentLastHitWithFire < lastHitBreathFireCount)
-                                        {
+                                        if (currentLastHitWithFire < lastHitBreathFireCount) {
                                             currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
                                                 const ability = playerHero.FindAbilityByName(abilNameBreatheFire)
                                                 if (ability) {
@@ -243,6 +248,7 @@ const onStart = (complete: () => void) => {
                         sniper.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)
                     }),
                     tg.panCameraExponential(_ => getPlayerCameraLocation(), context => context[Chapter2SpecificKeys.sniperEnemyHero].GetAbsOrigin(), 2),
+                    tg.audioDialog(LocalizationKey.Script_2_Creeps_16, LocalizationKey.Script_2_Creeps_16, context => context[Chapter2SpecificKeys.sniperEnemyHero]),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_13, LocalizationKey.Script_2_Creeps_13, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(context => {
                         const sniper: CDOTA_BaseNPC = context[Chapter2SpecificKeys.sniperEnemyHero];
@@ -255,8 +261,7 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_14, LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_15, LocalizationKey.Script_2_Creeps_15, context => context[CustomNpcKeys.SlacksMudGolem]),
-                    // no spoken dialog for this yet, unfortunately
-                    tg.textDialog(chosenSniperTalkShitLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
+                    tg.audioDialog(chosenSniperTalkShitLocalizationOption, chosenSniperTalkShitLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_19, LocalizationKey.Script_2_Creeps_19, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.setCameraTarget(undefined),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_20, LocalizationKey.Script_2_Creeps_20, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -288,6 +293,7 @@ const onStart = (complete: () => void) => {
                         goalDenyOwnCreeps.setValue(currentDenies)
                         return currentDenies >= denyCount;
                     }, 0.1),
+                    tg.audioDialog(chosenSniperAdmitsDefeatLocalizationOption, chosenSniperAdmitsDefeatLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero]),
                     tg.immediate(() => {
                         goalDenyOwnCreeps.complete()
                         currentLastHitStage = undefined
@@ -328,17 +334,14 @@ const onStart = (complete: () => void) => {
                         ),
                     ]),
 
-                    // No audio dialog for this yet
-                    tg.fork([
-                        tg.textDialog(LocalizationKey.Script_2_Creeps_24, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
-                        tg.immediate(context => {
-                            goalKillSniper.complete()
+                    tg.audioDialog(chosenSniperDiesLocalizationOption, chosenSniperDiesLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero]),
+                    tg.immediate(context => {
+                        goalKillSniper.complete()
 
-                            if (lastHitTimer) Timers.RemoveTimer(lastHitTimer)
-                            removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
-                            removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
-                        })
-                    ])
+                        if (lastHitTimer) Timers.RemoveTimer(lastHitTimer)
+                        removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
+                        removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
+                    })
                 ])
             ])
         ]))
@@ -435,8 +438,7 @@ function stopListeningToBreatheFireCasts() {
         listenerID = undefined
     }
 
-    if (eventTimer)
-    {
+    if (eventTimer) {
         Timers.RemoveTimer(eventTimer)
         eventTimer = undefined
     }
