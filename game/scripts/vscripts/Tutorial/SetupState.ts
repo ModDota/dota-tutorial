@@ -135,9 +135,9 @@ function handleUnits(state: FilledRequiredState) {
     }
 
     if (state.requireODPixelGolem) {
-        createOrMoveUnit(CustomNpcKeys.ODPixelMudGolem, DotaTeam.GOODGUYS, state.odPixelLocation, state.heroLocation, (unit, created) => setUnitPacifist(unit, true))
+        createOrMoveUnit(CustomNpcKeys.ODPixel, DotaTeam.GOODGUYS, state.odPixelLocation, state.heroLocation, (unit, created) => setUnitPacifist(unit, true))
     } else {
-        clearUnit(CustomNpcKeys.ODPixelMudGolem)
+        clearUnit(CustomNpcKeys.ODPixel)
     }
 
     // Riki
