@@ -11,7 +11,7 @@
     <snippets>
 
     </snippets>
-    <Panel class="CreditsRoot">
+    <Panel class="CreditsRoot" hittest="false">
         <Panel id="CreditsContainer">
             <Panel class="CreditsContainerLeft">
                 <Panel class="AvatarContainer">
