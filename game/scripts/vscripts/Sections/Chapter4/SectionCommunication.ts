@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
 import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter4_Communication;
@@ -74,11 +74,11 @@ function onStart(complete: () => void) {
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
                 kunkka.AddItemByName("item_tpscroll").EndCooldown();
-                
+
                 const tsunami = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
                 tsunami.AddItemByName("item_tpscroll").EndCooldown();
             }),
-            
+
             tg.setCameraTarget(contex => contex[kunkkaName]),
 
             tg.fork([
@@ -136,7 +136,6 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Communication_15, LocalizationKey.Script_4_Communication_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Kunkka destroy items
-            tg.immediate(_ => freezePlayerHero(true)),
             tg.setCameraTarget(context => context[kunkkaName]),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_4_mason_mad, LocalizationKey.Script_4_mason_mad, ctx => ctx[kunkkaName]),
@@ -171,7 +170,6 @@ function onStart(complete: () => void) {
             tg.immediate(ctx => tpHome(ctx, kunkkaName)),
             tg.wait(3),
 
-            tg.immediate(_ => freezePlayerHero(false)),
             tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -209,4 +207,21 @@ export const sectionCommunication = new tut.FunctionalSection(
     requiredState,
     onStart,
     onStop,
+    orderFilter
 );
+
+function orderFilter(event: ExecuteOrderFilterEvent) {
+    if (event.issuer_player_id_const == findRealPlayerID()) {
+        if (event.order_type == UnitOrder.PICKUP_ITEM) {
+            displayDotaErrorMessage(LocalizationKey.Error_Communications_1)
+            return false
+        }
+
+        if (event.order_type === UnitOrder.ATTACK_TARGET) {
+            displayDotaErrorMessage(LocalizationKey.Error_Communications_2)
+            return false
+        }
+    }
+
+    return true
+}
