@@ -25,22 +25,29 @@ const start = (complete: () => void) => {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(ctx => {
-            freezePlayerHero(true);
-
-            // Make Slacks attackable
+            // Have Slacks health bar turn red, but make him invulnerable for now
             const slacks = getOrError(ctx[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC | undefined);
-            setUnitPacifist(slacks, false);
+            setUnitPacifist(slacks, true);
             slacks.SetTeam(DotaTeam.NEUTRALS);
         }),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.immediate(_ => goalKillSlacks.start()),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-        tg.immediate(_ => freezePlayerHero(false)),
-
-        tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+        
+        // Fork use breathe fire dialogs
+        tg.forkAny([
+            tg.seq([
+                tg.immediate(_ => goalKillSlacks.start()),
+                tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(ctx => {
+                    setUnitPacifist(ctx[CustomNpcKeys.SlacksMudGolem], false);
+                }),
+                tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+            ]),
+        ]),
         tg.immediate(_ => goalKillSlacks.complete()),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_4, LocalizationKey.Script_1_BreatheFire_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),

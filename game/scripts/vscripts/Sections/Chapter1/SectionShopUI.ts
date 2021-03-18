@@ -93,34 +93,44 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_1_Shop_4, LocalizationKey.Script_1_Shop_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.showVideo("guides"),
             tg.audioDialog(LocalizationKey.Script_1_Shop_5, LocalizationKey.Script_1_Shop_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_1_Shop_6, LocalizationKey.Script_1_Shop_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            // Tell player to buy a tango.
-            tg.audioDialog(LocalizationKey.Script_1_Shop_7, LocalizationKey.Script_1_Shop_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.forkAny([
+                tg.seq([
+                    // Tell player to buy a tango.
+                    tg.audioDialog(LocalizationKey.Script_1_Shop_7, LocalizationKey.Script_1_Shop_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    // Give the player some gold and wait for them to buy a tango.
+                    tg.immediate(_ => {
+                        goalBuyTango.start();
+                        highlightUiElement(tangoInGuideUIPath);
+                        playerHero.SetGold(90, true);
+                        waitingForPlayerToPurchaseTango = true;
+                    }),
+                    tg.completeOnCheck(_ => playerBoughtTango, 0.2),
+                ])
+            ]),
 
-            // Give the player some gold and wait for them to buy a tango.
-            tg.immediate(_ => {
-                goalBuyTango.start();
-                highlightUiElement(tangoInGuideUIPath);
-                playerHero.SetGold(90, true);
-                waitingForPlayerToPurchaseTango = true;
-            }),
-            tg.completeOnCheck(_ => playerBoughtTango, 0.2),
             tg.immediate(_ => {
                 removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
                 highlightUiElement(inventorySlot0UIPath);
             }),
 
-            // Ask the player to use their tango to escape.
-            tg.immediate(_ => freezePlayerHero(true)),
-            tg.audioDialog(LocalizationKey.Script_1_Closing_1, LocalizationKey.Script_1_Closing_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_1_Closing_2, LocalizationKey.Script_1_Closing_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(_ => goalEatTree.start()),
-            tg.immediate(_ => freezePlayerHero(false)),
-
-            // Wait for the player to use their tango to escape.
-            tg.completeOnCheck(_ => playerHero.HasModifier("modifier_tango_heal"), 0.2),
+            tg.forkAny([
+                tg.seq([
+                    // Ask the player to use their tango to escape.
+                    tg.audioDialog(LocalizationKey.Script_1_Closing_1, LocalizationKey.Script_1_Closing_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_1_Closing_2, LocalizationKey.Script_1_Closing_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => goalEatTree.start()),
+                    // Wait for the player to use their tango to escape.
+                    tg.completeOnCheck(_ => playerHero.HasModifier("modifier_tango_heal"), 0.2),
+                ])
+            ]),
             tg.immediate(_ => {
                 goalEatTree.complete();
                 removeHighlight(inventorySlot0UIPath);
@@ -128,19 +138,25 @@ const onStart = (complete: () => void) => {
 
             tg.immediate(_ => freezePlayerHero(true)),
             tg.audioDialog(LocalizationKey.Script_1_Closing_3, LocalizationKey.Script_1_Closing_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
-            // Unlock player camera
-            tg.audioDialog(LocalizationKey.Script_1_Closing_4, LocalizationKey.Script_1_Closing_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.setCameraTarget(undefined),
             tg.immediate(_ => freezePlayerHero(false)),
-            tg.immediate(_ => goalMoveOut.start()),
 
-            // Wait for player to move outside the fountain into the base
             tg.forkAny([
-                tg.goToLocation(midPositionBeforeTrapLocation, [GetGroundPosition(Vector(-5553, -5640), undefined)]),
-                tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseBotExitSide1, radiantBaseBotExitSide2), 0.1),
-                tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseMidExitSide1, radiantBaseMidExitSide2), 0.1),
-                tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseTopExitSide1, radiantBaseTopExitSide2), 0.1)
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_1_Closing_4, LocalizationKey.Script_1_Closing_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    // Unlock player camera
+                    tg.setCameraTarget(undefined),
+                    tg.immediate(_ => goalMoveOut.start()),
+                    // Wait for player to move outside the fountain into the base
+                    tg.forkAny([
+                        tg.goToLocation(midPositionBeforeTrapLocation, [GetGroundPosition(Vector(-5553, -5640), undefined)]),
+                        tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseBotExitSide1, radiantBaseBotExitSide2), 0.1),
+                        tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseMidExitSide1, radiantBaseMidExitSide2), 0.1),
+                        tg.completeOnCheck(_ => checkPlayerHeroTryingToEscape(radiantBaseTopExitSide1, radiantBaseTopExitSide2), 0.1)
+                    ]),
+                ])
             ]),
 
             // Spawn blockades to guide player upwards while dialog is playing.
@@ -162,7 +178,7 @@ const onStart = (complete: () => void) => {
                 ])
             ]),
 
-            // Tell player to escape and wait for them to move to the top.
+            // Tell player to follow the markers.
             tg.immediate(_ => freezePlayerHero(false)),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_1_Closing_6, LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),

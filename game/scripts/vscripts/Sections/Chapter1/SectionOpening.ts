@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getPlayerHero } from "../../util"
+import { findRealPlayerID, getPlayerCameraLocation, getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
 
@@ -40,7 +40,13 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.fork([
+            tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.seq([
+                tg.wait(2),
+                tg.panCameraExponential(ctx => ctx[CustomNpcKeys.SlacksMudGolem].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 1),
+            ])
+        ]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.panCameraLinear(ctx => ctx[CustomNpcKeys.SlacksMudGolem].GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 8),
 
@@ -50,11 +56,11 @@ const onStart = (complete: () => void) => {
                 tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]), {
-                type: "circle",
-                units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
-                radius: 400,
-                attach: false
-            }
+            type: "circle",
+            units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
+            radius: 400,
+            attach: false
+        }
         ),
         tg.panCameraExponential(Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerHero),
