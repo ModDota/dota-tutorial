@@ -282,7 +282,7 @@ const onStart = (complete: () => void) => {
                 goalKillFirstSpawn.start()
                 neutralDetector.neutrals.forEach(neutral => neutral.RemoveSelf())
             }),
-            tg.wait(0.1),
+            tg.wait(0.2),
 
             respawnNeutrals(neutralDetector),
 
