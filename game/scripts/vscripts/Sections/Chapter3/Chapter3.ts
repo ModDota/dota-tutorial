@@ -16,9 +16,9 @@ const creepCampMin = Vector(-2911, 4373)
 const creepCampMax = Vector(-2142, 5203)
 const creepCampCenter = creepCampMin.__add(creepCampMax).__mul(0.5)
 
-const mediumCampLocation = Vector(-500, 5100, 384)
+const mediumCampLocation = Vector(-500, 5200, 384)
 const bigCampLocation = Vector(-4300, 3550, 256)
-const ancientCampLocation = Vector(-4700, -300, 256)
+const ancientCampLocation = Vector(-4870, -390, 256)
 
 const stackClockStartTime = 44
 const stackClockEndTime = 3
