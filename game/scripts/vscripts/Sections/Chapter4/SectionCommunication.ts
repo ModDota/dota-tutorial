@@ -27,8 +27,19 @@ const allyHeroStartLocation = Vector(-3000, 3800, 128);
 const bountyRuneLocation = Vector(-3850, 2570);
 const tsunamiName = CustomNpcKeys.Tsunami;
 const kunkkaName = CustomNpcKeys.Kunkka;
-const lunaHighgroundLocation = Vector(-2000, 3600, 256)
+const tsunamiHighgroundLocation = Vector(-2000, 3600, 256)
 const kunkkaHighgroundLocation = Vector(-1800, 3800, 256)
+
+const tpHome = (context: tg.TutorialContext, key: CustomNpcKeys) => {
+    const hero = getOrError(context[key] as CDOTA_BaseNPC_Hero | undefined)
+    const tp = hero.FindItemInInventory("item_tpscroll")
+    if (!tp) {
+        Warning("Could not find tp for " + key)
+    } else {
+        const radiantFountain = getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good"));
+        hero.CastAbilityOnPosition(radiantFountain.GetAbsOrigin(), tp, 0);
+    }
+}
 
 function onStart(complete: () => void) {
     print("Starting", sectionName);
@@ -58,11 +69,21 @@ function onStart(complete: () => void) {
                 kunkka.AddItemByName("item_monkey_king_bar");
             }),
 
+            // Without the wait kunkka doesn't get a tp
+            tg.wait(0.1),
+            tg.immediate(context => {
+                const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
+                kunkka.AddItemByName("item_tpscroll").EndCooldown();
+
+                const tsunami = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
+                tsunami.AddItemByName("item_tpscroll").EndCooldown();
+            }),
+
             tg.setCameraTarget(contex => contex[kunkkaName]),
 
             tg.fork([
                 tg.moveUnit(context => context[kunkkaName], kunkkaHighgroundLocation),
-                tg.moveUnit(context => context[tsunamiName], lunaHighgroundLocation),
+                tg.moveUnit(context => context[tsunamiName], tsunamiHighgroundLocation),
             ]),
 
             tg.immediate(context => {
@@ -100,7 +121,7 @@ function onStart(complete: () => void) {
             tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[tsunamiName].GetAbsOrigin(), 1),
             tg.setCameraTarget(context => context[tsunamiName]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[tsunamiName]),
-            tg.moveUnit(context => context[tsunamiName], allyHeroStartLocation),
+            tg.immediate(ctx => tpHome(ctx, tsunamiName)),
 
             tg.setCameraTarget(context => context[kunkkaName]),
             tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
@@ -147,9 +168,9 @@ function onStart(complete: () => void) {
                 ])),
             ]),
 
-            tg.immediate(context => context[kunkkaName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
-            tg.moveUnit(context => context[kunkkaName], allyHeroStartLocation),
-            tg.immediate(context => context[kunkkaName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
+            tg.immediate(ctx => tpHome(ctx, kunkkaName)),
+            tg.wait(3),
+
             tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),

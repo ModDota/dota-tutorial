@@ -20,6 +20,13 @@ function OnPlayVideo(event: PlayVideoEvent) {
             break;
     }
 
+    if (currentVideoPanel) {
+        const moviePanel = currentVideoPanel.FindChildrenWithClassTraverse("TutorialMovie")[0] as MoviePanel;
+        // Restart the movie. Stop() -> Play() didn't work (might with a schedule) but this does.
+        moviePanel.SetReadyForDisplay(false);
+        moviePanel.SetReadyForDisplay(true);
+    }
+
     Game.EmitSound("ui_chat_slide_in");
 }
 
