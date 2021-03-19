@@ -272,10 +272,10 @@ function onStart(complete: () => void) {
                 tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
                 tg.wait(0.1),
             ])),
+        ]),
 
-            // Should never happen currently
-            tg.immediate(_ => cleanup()),
-        ])
+        // Should never happen currently
+        tg.immediate(_ => cleanup()),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
