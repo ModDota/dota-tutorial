@@ -196,6 +196,9 @@ const stop = () => {
     const hero = getOrError(getPlayerHero())
     hero.SetIdleAcquire(true)
 
+    removeHighlight(getPathToHighlightAbility(0))
+    removeHighlight(getPathToHighlightAbility(1))
+
     if (graph) {
         graph.stop(GameRules.Addon.context)
         graph = undefined
