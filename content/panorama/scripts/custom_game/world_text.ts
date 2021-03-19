@@ -1,20 +1,24 @@
 type WorldText = {
+    type: WorldTextType
     panel: LabelPanel
-    location: [number, number, number]
+    location: { x: number, y: number, z: number }
+    entity?: EntityIndex
 }
 
 (() => {
     const root = $.GetContextPanel();
     const worldTexts = new Map<number, WorldText>()
 
-    function addWorldText(index: number, text: string, location: [number, number, number]) {
+    function addWorldText(event: NetworkedData<AddWorldTextEvent>) {
         const panel = $.CreatePanel("Label", root, "")
-        panel.text = text;
-        panel.AddClass("WorldText")
+        panel.text = event.text;
+        panel.AddClass(event.type === "credit_section" ? "WorldText" : "WorldTextNpc")
 
-        worldTexts.set(index, {
+        worldTexts.set(event.index, {
             panel,
-            location,
+            entity: event.entity,
+            location: event.location,
+            type: event.type,
         })
     }
 
@@ -31,11 +35,24 @@ type WorldText = {
     function update() {
         const ratio = 1080 / Game.GetScreenHeight();
 
-        for (const { location, panel } of worldTexts.values()) {
-            const screenLocation = [
-                Game.WorldToScreenX(...location),
-                Game.WorldToScreenY(...location)
-            ]
+        for (const worldText of worldTexts.values()) {
+            const panel = worldText.panel
+
+            const screenLocation = [-1, -1]
+            const worldLocation = worldText.location
+            if (worldText.entity !== undefined) {
+                if (Entities.IsValidEntity(worldText.entity)) {
+                    const loc = Entities.GetAbsOrigin(worldText.entity)
+                    screenLocation[0] = Game.WorldToScreenX(worldLocation.x + loc[0], worldLocation.y + loc[1], worldLocation.z + loc[2])
+                    screenLocation[1] = Game.WorldToScreenY(worldLocation.x + loc[0], worldLocation.y + loc[1], worldLocation.z + loc[2])
+                } else {
+                    screenLocation[0] = -1
+                    screenLocation[1] = -1
+                }
+            } else {
+                screenLocation[0] = Game.WorldToScreenX(worldLocation.x, worldLocation.y, worldLocation.z)
+                screenLocation[1] = Game.WorldToScreenY(worldLocation.x, worldLocation.y, worldLocation.z)
+            }
 
             if (screenLocation[0] !== -1 && screenLocation[1] !== -1) {
                 panel.style.x = `${Math.round(screenLocation[0] * ratio)}px`
@@ -49,7 +66,7 @@ type WorldText = {
         $.Schedule(0.01, update);
     }
 
-    GameEvents.Subscribe("add_world_text", event => addWorldText(event.index, event.text, [event.location.x, event.location.y, event.location.z]))
+    GameEvents.Subscribe("add_world_text", event => addWorldText(event))
     GameEvents.Subscribe("remove_world_text", event => removeWorldText(event.index))
 
     $.Schedule(0.01, update);

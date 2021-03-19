@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, freezePlayerHero, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID, printEventTable } from "../../util";
+import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;

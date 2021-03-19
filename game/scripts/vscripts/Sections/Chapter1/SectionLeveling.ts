@@ -4,6 +4,7 @@ import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPathToHighlig
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation } from "./Shared"
+import { addWorldTextAtLocation, addWorldTextAttached } from "../../WorldText"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -38,6 +39,8 @@ const start = (complete: () => void) => {
 
     const dragonTailNotFoundMsg = "Dragon Tail was not found."
 
+    let purgeTitle: number | undefined
+
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(_ => learnAbilityAllowedName = abilNameDragonTail),
         tg.forkAny([
@@ -60,6 +63,7 @@ const start = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // here comes pugna
             tg.seq([
                 tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna, true),
+                tg.immediate(ctx => purgeTitle = addWorldTextAttached("Purge the Wicked", ctx[CustomNpcKeys.PurgePugna], "npc_title")),
                 tg.setCameraTarget(context => context[CustomNpcKeys.PurgePugna]),
                 tg.wait(FrameTime()),
                 tg.immediate(ctx => {
