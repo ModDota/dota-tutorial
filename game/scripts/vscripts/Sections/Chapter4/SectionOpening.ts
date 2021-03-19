@@ -103,7 +103,7 @@ function onStart(complete: () => void) {
                     tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
                     tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
                     tg.setCameraTarget(context => context[slarkName]),
-        
+
                     tg.fork([
                         tg.seq([
                             tg.immediate(context => context[miranaName].SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
@@ -120,9 +120,9 @@ function onStart(complete: () => void) {
                                 const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
                                 setUnitVisibilityThroughFogOfWar(mirana, false);
                             }),
-        
+
                         ]),
-        
+
                         tg.seq([
                             tg.wait(2), // Give slark some time to hit and follow mirana
                             // Take over control
@@ -137,7 +137,7 @@ function onStart(complete: () => void) {
                             }),
                             tg.wait(5)
                         ]),
-        
+
                         // Reveal riki for a short time, otherwise the successful scan later won't show up
                         // because of a Dota bug. Hope the player won't notice!
                         tg.seq([
@@ -208,7 +208,7 @@ function onStart(complete: () => void) {
                         highlightUiElement(scanUIPath);
                         MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
                     }),
-        
+
                     tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
                 ])
             ]),
@@ -257,7 +257,8 @@ function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: Tutor
             return true;
         }
         displayDotaErrorMessage(LocalizationKey.Error_Opening_1);
-        dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem]);
+        if (targetScanLocation === secondScanLocation)
+            dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem]);
         scanLocation = undefined;
     }
     return false;
