@@ -26,6 +26,8 @@ const markerLocation = Vector(-2200, 3700, 256);
 const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
 const rikiName = CustomNpcKeys.Riki;
+const panCameraWardSpotsAlpha = 1.5;
+
 let allowUseItem = false;
 let wardMarkerActive = false
 
@@ -121,18 +123,18 @@ function onStart(complete: () => void) {
 
             tg.forkAny([
                 tg.seq([
-                    tg.panCameraExponential(_ => getPlayerCameraLocation(), cliffLocation1, 1.5),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), cliffLocation1, panCameraWardSpotsAlpha),
                     tg.wait(0.25),
-                    tg.panCameraExponential(cliffLocation1, cliffLocation2, 1.5),
+                    tg.panCameraExponential(cliffLocation1, cliffLocation2, panCameraWardSpotsAlpha),
                     tg.wait(0.25),
-                    tg.panCameraExponential(cliffLocation2, cliffLocation3, 1.5),
+                    tg.panCameraExponential(cliffLocation2, cliffLocation3, panCameraWardSpotsAlpha),
                     tg.wait(0.25),
-                    tg.panCameraExponential(cliffLocation3, cliffLocation4, 1.5),
+                    tg.panCameraExponential(cliffLocation3, cliffLocation4, panCameraWardSpotsAlpha),
                     tg.wait(4),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
-            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1.5),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), panCameraWardSpotsAlpha),
             tg.immediate(_ => {
                 highlightUiElement(inventorySlot1UIPath);
                 goalPlaceObserverWard.start();
