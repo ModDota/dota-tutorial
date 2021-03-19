@@ -874,8 +874,8 @@
 		},
 		{
 			_class = "C_INIT_RandomColor"
-			m_ColorMin = [ 249, 205, 117 ]
-			m_ColorMax = [ 250, 155, 83 ]
+			m_ColorMin = [ 249, 242, 117 ]
+			m_ColorMax = [ 241, 250, 81 ]
 			m_TintMin = [ 0, 0, 0 ]
 			m_TintMax = [ 255, 255, 255 ]
 		},
@@ -929,8 +929,11 @@
 			m_RateMax = 2.0
 			m_flEndTime_min = 9999.0
 			m_flEndTime_max = 9999.0
-			m_nField = 4
+			m_nField = "4"
 			m_bProportionalOp = false
+		},
+		{
+			_class = "C_OP_PositionLock"
 		},
 	]
 	m_ForceGenerators = 

@@ -1,0 +1,189 @@
+.CreditsRoot {
+    width: 100%;
+    height: 100%;
+    position: -610px 0px 0px;
+    transition: position 0.1s ease-in-out 0.0s;
+}
+
+.CreditsRoot.Visible {
+    position: 0px 0px 0px;
+    transform: scale3d(1, 1, 1);
+}
+
+#CreditsContainer {
+    width: 610px;
+    height: 160px;
+    align: left top;
+    margin-top: 240px;
+    background-color: #000000ef;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    flow-children: right;
+}
+
+.CreditsContainerLeft {
+    width: 30%;
+    height: 100%;
+}
+
+.AvatarContainer {
+    width: 60%;
+    height: 70%;
+    align: center center;
+    border-radius: 5px;
+    background-image: url("file://{images}/custom_game/credits/Avatar_Container.png");
+    background-size: 100% 100%;
+}
+
+#Avatar {
+    width: 90%;
+    height: 90%;
+    align: center center;
+    background-color: black;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.CreditsContainerCenter {
+    width: 2%;
+    height: 100%;
+}
+
+.Divider {
+    width: 13%;
+    height: 80%;
+    background-color: #cdf;
+    align: center center;
+    border-radius: 3px;
+    brightness: 1.2;
+}
+
+.CreditsContainerRight {
+    width: 67%;
+    height: 100%;
+    horizontal-align: right;
+    margin-top: 5px;
+}
+
+.CreditsContainerHeader {
+    width: 100%;
+    height: 25%;
+    margin-top: 5px;
+}
+
+#CreditsContainerContent {
+    width: 100%;
+    height: 71%;
+    vertical-align: bottom;
+    flow-children: right;
+}
+
+#CreditsName {
+    text-transform: uppercase;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9), color-stop( 0.5, #E4C269), to( #C79123));
+    text-shadow: 0px 0px 3px 5.0 #000000;
+    font-weight: bold;
+    font-size: 23px;
+    letter-spacing: 2px;
+    margin-left: 5px;
+    font-family: titleFont;
+}
+
+#CreditsSocialsColumn1, #CreditsSocialsColumn2 {
+    width: 49%;
+    height: 100%;
+    flow-children: down;
+    margin-top: 5px;
+}
+
+.Twitter {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Twitter.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Youtube {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Youtube.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Discord {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Discord.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Website {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Website.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+}
+
+.Twitch {
+    width: 24px;
+    height: 24px;
+    background-image: url("file://{images}/custom_game/credits/Twitch.png");
+    background-size: 90% 95%;
+    background-repeat: no-repeat;
+    wash-color: #cdf;
+    margin-left: 10px;
+    margin-top: 2px;
+}
+
+.SocialContainer {
+    flow-children: right;
+    height: 30%;
+}
+
+.SocialMedia {
+    text-transform: uppercase;
+    color: white;
+    text-shadow: 0px 0px 3px 2.0 #000000;
+    font-weight: normal;
+    font-size: 14px;
+    margin-left: 2px;
+    margin-top: 4px;
+    font-family: defaultFont;
+    max-width: 155px;
+    text-overflow: shrink;
+}
+
+#CreditsDescriptionContainer {
+    width: 610px;
+    max-height: 500px;
+    padding: 8px;
+    align: left top;
+    margin-top: 400px;
+    background-color: #000000ef;
+    box-shadow: #000000aa -4px -4px 8px 8px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    overflow: clip;
+}
+
+#CreditsDescriptionLabel {
+    color: white;
+    text-shadow: 0px 0px 3px 3.0 #000000;
+    font-size: 16;
+    text-align: left;
+    align: left center;
+    margin-left: 5px;
+}

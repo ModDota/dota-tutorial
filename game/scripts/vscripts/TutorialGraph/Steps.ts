@@ -1,30 +1,32 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight, unitIsValidAndAlive, showPressKeyMessage } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
 
-const isHeroNearby = (location: Vector, radius: number) => FindUnitsInRadius(
-    DotaTeam.BADGUYS, location, undefined, radius,
-    UnitTargetTeam.BOTH,
-    UnitTargetType.HERO,
-    UnitTargetFlags.INVULNERABLE + UnitTargetFlags.OUT_OF_WORLD + UnitTargetFlags.MAGIC_IMMUNE_ENEMIES,
-    0, false
-).length > 0
+const isPlayerHeroNearby = (location: Vector, radius: number) => getOrError(getPlayerHero()).GetAbsOrigin().__sub(location).Length2D() < radius
 
 /**
  * Creates a tutorial step that waits for a hero to go to a location.
  * @param location Target location
  * @param visualIntermediateLocations Locations to use for the visual path between the current and end location.
  */
-export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations?: tg.StepArgument<Vector[]>) => {
+export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermediateLocations: tg.StepArgument<Vector[]> = [], showPathParticle: tg.StepArgument<boolean> = true) => {
     let checkTimer: string | undefined = undefined
     let pathParticle: ParticleID | undefined = undefined
     let actualLocation: Vector | undefined = undefined
+    let moveParticleFx: ParticleID | undefined = undefined
 
     const cleanup = () => {
         if (pathParticle) {
             ParticleManager.DestroyParticle(pathParticle, false)
+            ParticleManager.ReleaseParticleIndex(pathParticle)
             pathParticle = undefined
+        }
+
+        if (moveParticleFx) {
+            ParticleManager.DestroyParticle(moveParticleFx, false)
+            ParticleManager.ReleaseParticleIndex(moveParticleFx)
+            moveParticleFx = undefined
         }
 
         if (checkTimer) {
@@ -40,17 +42,22 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
     return tg.step((context, complete) => {
         actualLocation = tg.getArg(location, context)
-        const actualVisualIntermediateLocations = tg.getOptionalArg(visualIntermediateLocations, context) ?? []
+        const actualVisualIntermediateLocations = tg.getArg(visualIntermediateLocations, context)
+        const actualShowPathParticle = tg.getArg(showPathParticle, context)
 
         const hero = getOrError(getPlayerHero())
 
-        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.MOVE_TO_TARGET, 99999);
+        moveParticleFx = ParticleManager.CreateParticle(ParticleName.MoveToLocation, ParticleAttachment.WORLDORIGIN, undefined)
+        ParticleManager.SetParticleControl(moveParticleFx, 0, actualLocation);
 
-        pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        if (actualShowPathParticle) {
+            pathParticle = createPathParticle([hero.GetAbsOrigin(), ...actualVisualIntermediateLocations, actualLocation])
+        }
 
         // Wait until a hero is at the goal location
         const checkIsAtGoal = () => {
-            if (isHeroNearby(actualLocation!, 200)) {
+            if (isPlayerHeroNearby(actualLocation!, 200)) {
                 cleanup()
                 complete()
             } else {
@@ -120,13 +127,49 @@ export const spawnUnit = (unitName: tg.StepArgument<string>, spawnLocation: tg.S
 }
 
 /**
+ * Creates a tutorial step that returns a fork of multiple moveUnit steps.
+ * @param unit The unit to move.
+ * @param moveLocations Array of locations the unit should move through.
+ * @param completeIfUnitInvalid Optional param that controls whether steps should complete if provided unit is invalid or dead. Default value is false
+ */
+export const moveUnitSequence = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocations: tg.StepArgument<Vector[]>, completeIfUnitInvalid: boolean = false): tg.TutorialStep => {
+
+    const steps = (context: tg.TutorialContext) => {
+        const moveUnitSteps: tg.TutorialStep[] = []
+        const actualUnit = tg.getArg(unit, context)
+        const actualMoveLocations = tg.getArg(moveLocations, context)
+
+        for (const moveLocation of actualMoveLocations) {
+            moveUnitSteps.push(moveUnit(actualUnit, moveLocation, completeIfUnitInvalid))
+        }
+
+        return moveUnitSteps
+    }
+
+    return tg.fork(steps)
+}
+
+/**
  * Creates a tutorial step that moves a unit.
  * @param unit The unit to move.
  * @param moveLocation Location to move the unit to.
+ * @param completeIfUnitInvalid Optional param that controls whether step should complete if provided unit is invalid or dead. Default value is false
  */
-export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>) => {
+export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.StepArgument<Vector>, completeIfUnitInvalid: boolean = false) => {
     let checkTimer: string | undefined = undefined
     let delayCheckTimer: string | undefined = undefined
+
+    const cleanup = () => {
+        if (checkTimer) {
+            Timers.RemoveTimer(checkTimer)
+            checkTimer = undefined
+        }
+
+        if (delayCheckTimer) {
+            Timers.RemoveTimer(delayCheckTimer)
+            delayCheckTimer = undefined
+        }
+    }
 
     return tg.step((context, complete) => {
         const actualUnit = tg.getArg(unit, context)
@@ -139,28 +182,39 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
             Queue: true
         }
 
-        ExecuteOrderFromTable(order)
+        const errorMsg = "Unit wasn't a valid entity or wasn't alive"
 
-        const checkIsIdle = () => {
-            if (actualUnit && actualUnit.IsIdle()) {
+        if (unitIsValidAndAlive(actualUnit)) {
+            ExecuteOrderFromTable(order)
+        } else if (completeIfUnitInvalid) {
+            cleanup()
+            complete()
+            return
+        } else {
+            error(errorMsg)
+        }
+
+        const checkIsIdleAndValid = () => {
+            if (!unitIsValidAndAlive(actualUnit)) {
+                if (completeIfUnitInvalid) {
+                    cleanup()
+                    complete()
+                    return
+                } else {
+                    error(errorMsg)
+                }
+            }
+
+            if (actualUnit.IsIdle()) {
+                cleanup()
                 complete()
             } else {
-                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
+                checkTimer = Timers.CreateTimer(0.1, () => checkIsIdleAndValid())
             }
         }
 
-        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdle())
-    },
-        context => {
-            if (checkTimer) {
-                Timers.RemoveTimer(checkTimer)
-                checkTimer = undefined
-            }
-            if (delayCheckTimer) {
-                Timers.RemoveTimer(delayCheckTimer)
-                delayCheckTimer = undefined
-            }
-        })
+        delayCheckTimer = Timers.CreateTimer(0.1, () => checkIsIdleAndValid())
+    }, context => cleanup())
 }
 
 /**
@@ -308,6 +362,7 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
             const distance = actualEndLocation.__sub(currentLocation).Length2D()
 
             // Stop when we are close enough.
+            // Exactly zero distance does seem to actually happen so this check works fine.
             if (distance > 10) {
                 // Query the speed for the current location.
                 const speed = getSpeed(actualStartLocation, actualEndLocation, currentLocation)
@@ -319,8 +374,14 @@ export const panCamera = (startLocation: tg.StepArgument<Vector>, endLocation: t
                 cameraTimer = Timers.CreateTimer(updateInterval, () => updateDummy())
             } else {
                 cameraDummy.SetAbsOrigin(actualEndLocation)
-                cleanup()
-                complete()
+
+                // Delay cleanup, otherwise the player camera doesn't update exactly.
+                // Could fail if this step is called again before the callback is executed (ie. called twice in the same frame)
+                // as then we would clean up and complete the new camera movement, but we will take that chance.
+                Timers.CreateTimer(FrameTime(), () => {
+                    cleanup()
+                    complete()
+                })
             }
         }
 
@@ -416,31 +477,27 @@ export const waitForCameraMovement = () => {
 }
 
 /**
- * Waits for a command to be executed. See panorama's DOTAKeybindCommand_t for the commands. Overrides the default behavior for the command so this can only be used if we merely want to detect the hotkey.
- * @param command Command to wait for. See DOTAKeybindCommand_t.
+ * Waits for the player to release their voice hotkey (either team or party).
  */
-export const waitForCommand = (command: number) => {
+export const waitForVoiceChat = () => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
-    return tg.step((context, complete) => {
-        listenerId = CustomGameEventManager.RegisterListener("command_detected", (source, event) => {
-            if (event.command === command) {
-                if (listenerId) {
-                    CustomGameEventManager.UnregisterListener(listenerId)
-                    listenerId = undefined
-                }
+    const cleanup = () => {
+        CustomGameEventManager.Send_ServerToAllClients("hide_press_key_message", {})
 
-                complete()
-            }
-        })
-
-        CustomGameEventManager.Send_ServerToAllClients("detect_command", { command });
-    }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
             listenerId = undefined
         }
-    })
+    }
+
+    return tg.step((context, complete) => {
+        showPressKeyMessage(37, LocalizationKey.PressKey_Voice) // DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_VOICE_TEAM
+        listenerId = CustomGameEventManager.RegisterListener("voice_chat", _ => {
+            cleanup()
+            complete()
+        })
+    }, context => cleanup())
 }
 
 /**
@@ -478,24 +535,25 @@ export const waitForModifierKey = (key: ModifierKey) => {
 export const waitForChatWheel = (phraseIndex?: number) => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
-    return tg.step((context, complete) => {
-        listenerId = CustomGameEventManager.RegisterListener("chat_wheel_phrase_selected", (source, event) => {
-            print("Got chat wheel selected", event.phraseIndex)
-            if (phraseIndex === undefined || event.phraseIndex === phraseIndex) {
-                if (listenerId) {
-                    CustomGameEventManager.UnregisterListener(listenerId)
-                    listenerId = undefined
-                }
+    const cleanup = () => {
+        CustomGameEventManager.Send_ServerToAllClients("hide_press_key_message", {})
 
-                complete()
-            }
-        })
-    }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
             listenerId = undefined
         }
-    })
+    }
+
+    return tg.step((context, complete) => {
+        showPressKeyMessage(38, LocalizationKey.PressKey_ChatWheel) // DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL
+        listenerId = CustomGameEventManager.RegisterListener("chat_wheel_phrase_selected", (source, event) => {
+            print("Got chat wheel selected", event.phraseIndex)
+            if (phraseIndex === undefined || event.phraseIndex === phraseIndex) {
+                cleanup()
+                complete()
+            }
+        })
+    }, context => cleanup())
 }
 
 /**
@@ -644,14 +702,24 @@ export const withGoals = (goals: tg.StepArgument<Goal[]>, step: tg.TutorialStep)
 export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, extraDelaySeconds?: tg.StepArgument<number>) => {
     const defaultExtraDelaySeconds = 0.5
 
+    let dialogToken: DialogToken | undefined
+
     return tg.step((context, complete) => {
         const actualSoundName = tg.getArg(soundName, context)
         const actualUnit = tg.getArg(unit, context)
         const actualText = tg.getArg(text, context)
         const actualExtraDelaySeconds = tg.getOptionalArg(extraDelaySeconds, context)
 
-        dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : 0.5, complete)
-    }, _ => dg.stop())
+        dialogToken = dg.playAudio(actualSoundName, actualText, actualUnit, actualExtraDelaySeconds === undefined ? defaultExtraDelaySeconds : actualExtraDelaySeconds, () => {
+            dialogToken = undefined
+            complete()
+        })
+    }, _ => {
+        if (dialogToken !== undefined) {
+            dg.stop(dialogToken)
+            dialogToken = undefined
+        }
+    })
 }
 
 /**
@@ -661,13 +729,23 @@ export const audioDialog = (soundName: tg.StepArgument<string>, text: tg.StepArg
  * @param waitSeconds Time to wait for in seconds.
  */
 export const textDialog = (text: tg.StepArgument<string>, unit: tg.StepArgument<CDOTA_BaseNPC>, waitSeconds: tg.StepArgument<number>) => {
+    let dialogToken: DialogToken | undefined
+
     return tg.step((context, complete) => {
         const actualText = tg.getArg(text, context)
         const actualUnit = tg.getArg(unit, context)
         const actualWaitSeconds = tg.getArg(waitSeconds, context)
 
-        dg.playText(actualText, actualUnit, actualWaitSeconds, complete)
-    }, _ => dg.stop())
+        dialogToken = dg.playText(actualText, actualUnit, actualWaitSeconds, () => {
+            dialogToken = undefined
+            complete()
+        })
+    }, _ => {
+        if (dialogToken !== undefined) {
+            dg.stop(dialogToken)
+            dialogToken = undefined
+        }
+    })
 }
 
 /**
@@ -707,6 +785,33 @@ export const withHighlights = (step: tg.StepArgument<tg.TutorialStep>, props: tg
 
         if (actualStep) {
             actualStep.stop(context)
+        }
+    })
+}
+
+/**
+ * Shows a video and waits for the player to press continue.
+ * @param name Name of the video to play.
+ */
+export const showVideo = (name: VideoName) => {
+    let listenerId: CustomGameEventListenerID | undefined = undefined
+
+    return tg.step((context, complete) => {
+        listenerId = CustomGameEventManager.RegisterListener("play_video_continue", _ => {
+            if (listenerId) {
+                CustomGameEventManager.UnregisterListener(listenerId)
+                listenerId = undefined
+            }
+
+            complete()
+        })
+
+        CustomGameEventManager.Send_ServerToAllClients("play_video", { name });
+    }, context => {
+        if (listenerId) {
+            CustomGameEventManager.UnregisterListener(listenerId)
+            listenerId = undefined
+            CustomGameEventManager.Send_ServerToAllClients("hide_video", {});
         }
     })
 }

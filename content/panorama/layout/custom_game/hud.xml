@@ -1,6 +1,7 @@
 <root>
     <scripts>
         <include src="file://{resources}/scripts/custom_game/hud.js" />
+        <include src="file://{resources}/scripts/custom_game/fade-screen.js" />
         <include src="s2r://panorama/scripts/custom_game/dialog_log.vjs_c" />
     </scripts>
     <styles>
@@ -14,10 +15,11 @@
 
     </snippets>
     <Panel hittest="false" class="MainHud">
+        <Panel hittest="false" id="FadeScreenContainer" />
+
         <Panel hittest="false" class="TopLeftMenu">
-            <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
+            <Button id="DialogLogButton" class="TopLeftMenuButton" onactivate="ToggleDialogLog();" onload="DOTAShowTextTooltip('#Message_Log')" onmouseover="UIShowTextTooltip('#Message_Log')" onmouseout="UIHideTextTooltip()" />
             <Button id="SkipButton" class="TopLeftMenuButton" onactivate="ToggleChaptersMenu();" onmouseover="UIShowTextTooltip('#Chapters')" onmouseout="UIHideTextTooltip()" />
-            <Button id="GuidesButton" class="TopLeftMenuButton" onactivate="ToggleGuidesMenu();" onmouseover="UIShowTextTooltip('#Guides')" onmouseout="UIHideTextTooltip()" />
         </Panel>
 
         <Panel id="DialogLog" hittest="false">
@@ -27,6 +29,14 @@
                 <Label text="#Close"/>
             </Button>
         </Panel>
+
+        <Label id="MessageToTheNoobsMessage" text="Hello" />
+        <Panel id="MessageToTheNoobsButton" onactivate="showMessageToTheNoobs()" hittest="true" onmouseover="UIShowTextTooltip('#RandomTipHover')" onmouseout="UIHideTextTooltip()">
+            <Panel id="MessageToTheNoobsImage" hittest="false" />
+            <Label id="MessageToTheNoobsText" text="#RandomTip" hittest="false" />
+        </Panel>
+
+        <Label id="PressKeyMessage" />
 
         <Panel id="ChaptersMenu" hittest="false">
             <Panel class="ChaptersMenuHeader">
@@ -40,7 +50,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_1" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="playChapter(0)">
+                        <Button id="ChapterPlayButton" onactivate="playChapter(0)">
                             <Label text="#SkipChapter"/>
                         </Button>
                     </Panel>
@@ -51,7 +61,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_2" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="playChapter(1)">
+                        <Button id="ChapterPlayButton" onactivate="playChapter(1)">
                             <Label text="#SkipChapter"/>
                         </Button>
                     </Panel>
@@ -62,18 +72,18 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_3" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="playChapter(2)">
+                        <Button id="ChapterPlayButton" onactivate="playChapter(2)">
                             <Label text="#SkipChapter"/>
                         </Button>
                     </Panel>
                 </Panel>
                 <Panel class="ChapterContainer" id="Chapter4">
                     <Panel class="ChapterArtContainer" onmouseover="UIShowTextTooltip('#Chapter_4_BriefInformation')" onmouseout="UIHideTextTooltip()">
-                        <Panel class="Chapter4Art" />
+                        <DOTAUIEconSetPreview id="CourierModel" class="Chapter4Art" hittest="false" hittestchildren="false" itemdef="596" displaymode="loadout" drawbackground="false" renderdeferred="false" deferredalpha="true"/>
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_4" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="playChapter(3)">
+                        <Button id="ChapterPlayButton" onactivate="playChapter(3)">
                             <Label text="#SkipChapter"/>
                         </Button>
                     </Panel>
@@ -84,7 +94,7 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_5" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="playChapter(4)">
+                        <Button id="ChapterPlayButton" onactivate="playChapter(4)">
                             <Label text="#SkipChapter"/>
                         </Button>
                     </Panel>
@@ -95,49 +105,11 @@
                     </Panel>
                     <Panel class="ChapterInformationContainer">
                         <Label class="ChaptersSubTitle" text="#Chapter_6" hittest="false"/>
-                        <Button id="ChapterPlayButton" class="ButtonBevel" onactivate="playChapter(5)">
+                        <Button id="ChapterPlayButton" onactivate="playChapter(5)">
                             <Label text="#SkipChapter"/>
                         </Button>
                     </Panel>
                 </Panel>
-            </Panel>
-        </Panel>
-
-        <Panel id="GuidesMenu" hittest="false">
-            <Panel class="GuidesMenuHeader">
-                <Label class="GuidesTitle" text="#Guides" hittest="false"/>
-                <Button class="GuidesCloseButton" onactivate="GuidesClose()" onmouseover="UIShowTextTooltip('#Close')" onmouseout="UIHideTextTooltip()"/>
-            </Panel>
-            <Panel class="GuidesMenuContents">
-                <Panel class="GuideContainer" id="Guide1">
-                     <Panel class="GuideThumbnailContainer">
-                        <Panel class="Guide1Thumbnail" />
-                    </Panel>
-                    <Panel class="GuideInformationContainer">
-                        <Label class="GuideSubTitle" text="#Guide_1" hittest="false"/>
-                        <Button id="GuideOpenButton" class="ButtonBevel" onactivate="ExternalBrowserGoToURL('https://www.youtube.com/watch?v=9Szj-CloJiI');">
-                            <Label text="#Watch"/>
-                        </Button>
-                    </Panel>
-                </Panel>
-                <Panel class="GuideContainer" id="Guide2">
-                     <Panel class="GuideThumbnailContainer">
-                        <Panel class="Guide2Thumbnail" />
-                    </Panel>
-                    <Panel class="GuideInformationContainer">
-                        <Label class="GuideSubTitle" text="#Guide_2" hittest="false"/>
-                        <Button id="GuideOpenButton" class="ButtonBevel" onactivate="ExternalBrowserGoToURL('https://howdoiplay.com/');">
-                            <Label text="#Go_To_Website"/>
-                        </Button>
-                    </Panel>
-                </Panel>
-                <Panel class="GuideContainer" id="Guide3" />
-                <Panel class="GuideContainer" id="Guide4" />
-                <Panel class="GuideContainer" id="Guide5" />
-                <Panel class="GuideContainer" id="Guide6" />
-                <Panel class="GuideContainer" id="Guide7" />
-                <Panel class="GuideContainer" id="Guide8" />
-                <Panel class="GuideContainer" id="Guide9" />
             </Panel>
         </Panel>
     </Panel>

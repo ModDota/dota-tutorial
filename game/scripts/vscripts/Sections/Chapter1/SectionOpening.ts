@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getPlayerHero } from "../../util"
+import { findRealPlayerID, getPlayerCameraLocation, getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
 
@@ -12,6 +12,7 @@ const requiredState: RequiredState = {
     slacksLocation: slacksInitialLocation,
     sunsFanLocation: sunsfanFountainLocation,
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 }
 
 const onStart = (complete: () => void) => {
@@ -20,7 +21,6 @@ const onStart = (complete: () => void) => {
 
     graph = tg.seq([
         tg.immediate(() => canPlayerIssueOrders = false),
-        tg.setCameraTarget(() => playerHero),
         tg.fork([
             tg.seq([
                 tg.moveUnit(context => context[CustomNpcKeys.SlacksMudGolem], slacksFountainLocation),
@@ -33,31 +33,32 @@ const onStart = (complete: () => void) => {
                 tg.setCameraTarget(context => context[CustomNpcKeys.SlacksMudGolem]),
             ])
         ]),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_1, LocalizationKey.Script_1_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_2, LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_3, LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_4, LocalizationKey.Script_1_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.panCameraLinear(ctx => ctx[CustomNpcKeys.SlacksMudGolem].GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 8),
+        tg.setCameraTarget(playerHero),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_1, LocalizationKey.Script_1_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_2, LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_3, LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_4, LocalizationKey.Script_1_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+        tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 4),
 
         // Highlight the enemy ancient while talking about it
         tg.withHighlights(
             tg.seq([
-                tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-                tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+                tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]), {
-                type: "circle",
-                units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
-                radius: 400,
-                attach: false
-            }
+            type: "circle",
+            units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
+            radius: 400,
+            attach: false
+        }
         ),
         tg.panCameraExponential(Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.5),
-        tg.setCameraTarget(() => playerHero),
+        tg.setCameraTarget(playerHero),
     ])
 
     graph.start(GameRules.Addon.context, () => {

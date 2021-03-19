@@ -10,6 +10,7 @@ const dialogLabel = $("#DialogLabel") as LabelPanel;
 let dialogAdvanceTime = -1;
 let currentCharacter = 0;
 let pendingDialog: string | undefined = undefined;
+let currentToken: DialogToken | undefined = undefined;
 
 function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     dialogPanel.SetHasClass("Visible", true);
@@ -19,28 +20,25 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     if (!handleSpecialUnitPortrait(unitName)) {
         dialogImagePortrait.visible = false;
         dialogPortrait.visible = true;
-        dialogPortrait.SetUnit(
-            Entities.GetUnitName(data.DialogEntIndex),
-            "",
-            true
-        );
+        dialogPortrait.SetUnit(unitName, "", true);
     }
-    dialogTitle.text = $.Localize(Entities.GetUnitName(data.DialogEntIndex));
+    dialogTitle.text = $.Localize(unitName);
 
     currentCharacter = 0;
     dialogAdvanceTime = Game.GetGameTime() + data.DialogAdvanceTime;
     pendingDialog = $.Localize(data.DialogText);
     dialogLabelSizer.text = pendingDialog;
 
+    currentToken = data.Token;
+
     $.Schedule(characterAdvanceRate, AdvanceDialogThink);
 }
 
 function handleSpecialUnitPortrait(unitName: string): boolean {
     const unitPortraits: Record<string, string> = {
-        npc_mud_golem_sunsfan:
-            "file://{images}/custom_game/portraits/sunsfan_greevil.png",
-        npc_mud_golem_slacks:
-            "file://{images}/custom_game/portraits/slacks_greevil.png",
+        [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/portraits/sunsfan_greevil.png",
+        [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/portraits/slacks_greevil.png",
+        [CustomNpcKeys.ODPixel]: "file://{images}/custom_game/portraits/odpixel_lion.png",
     };
 
     if (unitPortraits[unitName] !== undefined) {
@@ -57,6 +55,7 @@ function handleSpecialUnitPortrait(unitName: string): boolean {
 function AdvanceDialogThink() {
     // Check if we have no dialog
     if (!pendingDialog) {
+        currentToken = undefined;
         dialogPanel.SetHasClass("Visible", false);
         return;
     }
@@ -64,7 +63,11 @@ function AdvanceDialogThink() {
     // Check if dialog is over
     if (Game.GetGameTime() > dialogAdvanceTime) {
         dialogPanel.SetHasClass("Visible", false);
-        GameEvents.SendCustomGameEventToServer("dialog_complete", {});
+        const token = currentToken;
+        currentToken = undefined;
+        if (token) {
+            GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
+        }
         return;
     }
 
@@ -87,15 +90,25 @@ function OnAdvanceDialogButtonPressed() {
     }
 }
 
-function HideDialog() {
-    pendingDialog = undefined;
-    dialogPanel.SetHasClass("Visible", false);
+function HideDialog(event: DialogClearEvent) {
+    if (currentToken === event.Token) {
+        pendingDialog = undefined;
+        currentToken = undefined;
+        dialogPanel.SetHasClass("Visible", false);
+    }
 }
 
 function OnCloseDialogButtonPressed() {
     pendingDialog = undefined;
+
+    // Store current token in case SendCustomGameEventToServer directly calls the
+    // server function which could start a new dialog rather than sending a network message.
+    const token = currentToken;
+    currentToken = undefined;
     $("#DialogPanel").SetHasClass("Visible", false);
-    GameEvents.SendCustomGameEventToServer("dialog_complete", {});
+    if (token) {
+        GameEvents.SendCustomGameEventToServer("dialog_complete", { Token: token });
+    }
 }
 
 GameEvents.Subscribe("dialog", OnDialogReceived);

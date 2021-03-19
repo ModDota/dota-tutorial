@@ -5,6 +5,7 @@
         <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
 
         <include src="file://{resources}/styles/custom_game/dialog_log.css" />
+        <include src="file://{resources}/styles/custom_game/dialog.css" />
     </styles>
 
     <scripts>
@@ -13,6 +14,7 @@
 
     <Panel class="DialogLine" hittest="false" hittestchildren="false">
         <DOTAScenePanel id="DialogPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false"/>
+        <Image id="DialogImagePortrait" />
         <Panel class="SpeechBubble">
             <Panel class="SpeechBubbleContainer">
                 <Panel class="SpeechBubbleBackgroundOutline"/>

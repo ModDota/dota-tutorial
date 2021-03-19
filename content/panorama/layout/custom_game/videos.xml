@@ -1,0 +1,37 @@
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.css" />
+        <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
+        <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
+
+        <include src="file://{resources}/styles/custom_game/videos.css" />
+    </styles>
+
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/videos.js" />
+    </scripts>
+
+    <Panel hittest="false" class="VideosRoot">
+        <Panel id="MutePlayersPanel" hittest="false">
+            <Panel class="BlurBackground" hittest="false" />
+            <Panel class="MovieContainerMuting">
+                <Label class="VideoTitle" text="#Muting_Player"/>
+                <Movie class="CustomMoviePanelMuting TutorialMovie" src="s2r://panorama/videos/MutePlayer.webm" repeat="true" autoplay="onload" />
+                <Button class="VideoContinue" onactivate="OnVideoContinue();">
+                    <Label text="#Continue"/>
+                </Button>
+            </Panel>
+        </Panel>
+
+        <Panel id="SelectGuidePanel" hittest="false">
+            <Panel class="BlurBackground" hittest="false" />
+            <Panel class="MovieContainerGuides">
+                <Label class="VideoTitle" text="#Select_Guide"/>
+                <Movie class="CustomMoviePanelGuides TutorialMovie" src="s2r://panorama/videos/Guides.webm" repeat="true" autoplay="onload" />
+                <Button class="VideoContinue" onactivate="OnVideoContinue();">
+                    <Label text="#Continue"/>
+                </Button>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

@@ -3,7 +3,8 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, getCameraDummy, getOrError, getPlayerHero, setUnitPacifist } from "./util";
+import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
+import * as dg from "./Dialog"
 
 declare global {
     interface CDOTAGamerules {
@@ -25,14 +26,19 @@ export class GameMode {
         chapters.chapter1.sectionCasting,
         chapters.chapter1.sectionShopUI,
         chapters.chapter2.sectionOpening,
-        chapters.chapter2.SectionCreeps,
-        chapters.chapter2.SectionTower,
+        chapters.chapter2.sectionCreeps,
+        chapters.chapter2.sectionTower,
+        chapters.chapter2.sectionCourier,
         chapters.chapter3.sectionOpening,
         chapters.chapter4.sectionOpening,
         chapters.chapter4.sectionWards,
         chapters.chapter4.sectionOutpost,
         chapters.chapter4.sectionCommunication,
         chapters.chapter5.sectionOpening,
+        chapters.chapter5.sectionRoshan,
+        chapters.chapter5.sectionTeamFight,
+        chapters.chapter6.sectionOpening,
+        chapters.chapter6.sectionClosing,
     ]);
 
     playerHero?: CDOTA_BaseNPC_Hero;
@@ -41,9 +47,13 @@ export class GameMode {
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
         PrecacheResource("particle", ParticleName.HighlightCircle, context);
-        PrecacheResource("particle", ParticleName.HighlightArrowEnemy, context);
-        PrecacheResource("particle", ParticleName.HighlightArrow, context);
+        PrecacheResource("particle", ParticleName.HighlightOrangeArrow, context);
+        PrecacheResource("particle", ParticleName.HighlightOrangeCircle, context);
+        PrecacheResource("particle", ParticleName.HighlightRedArrow, context);
+        PrecacheResource("particle", ParticleName.HighlightRedCircle, context);
         PrecacheResource("particle", ParticleName.Path, context);
+        PrecacheResource("particle", ParticleName.MoveToLocation, context)
+        PrecacheResource("particle", ParticleName.DialogCircle, context)
     }
 
     public static Activate(this: void) {
@@ -59,6 +69,8 @@ export class GameMode {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
         })
+
+        dg.init();
     }
 
     private configure(): void {
@@ -129,6 +141,10 @@ export class GameMode {
 
         // Make the fountain unable to attack
         setUnitPacifist(getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC), true)
+
+        // Remove Roshan spawner
+        const roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
+        roshanSpawner.Destroy()
     }
 
     registerFilters() {
@@ -147,6 +163,11 @@ export class GameMode {
     ExecuteOrderFilter(event: ExecuteOrderFilterEvent): boolean {
         // Cancel orders if false
         if (this.tutorial.currentSection && this.tutorial.currentSection.orderFilter && !this.tutorial.currentSection.orderFilter(event)) {
+            return false;
+        }
+
+        // Cancel player orders if they are frozen
+        if (isPlayerHeroFrozen() && event.issuer_player_id_const === findRealPlayerID()) {
             return false;
         }
 
@@ -176,9 +197,6 @@ export class GameMode {
     }
 
     ModifierGainedFilter(event: ModifierGainedFilterEvent): boolean {
-        if (event.name_const === "modifier_rune_doubledamage")
-            event.duration = -1
-
         return true
     }
 

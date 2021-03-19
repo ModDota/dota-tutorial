@@ -603,6 +603,9 @@
 			m_flOutput = 0.0
 			m_flLerpTime = 0.25
 		},
+		{
+			_class = "C_OP_PositionLock"
+		},
 	]
 	m_Renderers = 
 	[
@@ -2142,6 +2145,12 @@
 					m_vDomainMaxs = [ 0.0, 0.0 ]
 				}
 			}
+		},
+	]
+	m_Children = 
+	[
+		{
+			m_ChildRef = resource:"particles/tutorial_highlight_sparkles.vpcf"
 		},
 	]
 }

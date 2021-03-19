@@ -22,6 +22,9 @@ const sectionUi: Partial<Record<SectionName, Set<DotaDefaultUIElement_t>>> = {
 }
 
 GameEvents.Subscribe("section_started", event => {
+    // Clear old UI highlights
+    clearUiHighlights();
+
     const enabledUI = sectionUi[event.section];
     if (enabledUI) {
         const disabledUi = except(allUI, enabledUI);
@@ -61,45 +64,95 @@ function findPanelAtPath(path: string): Panel | undefined {
 function removeHighlight(event: RemoveHighlightEvent) {
     const { path } = event;
     if (!highlightedPanels[path]) {
-        $.Msg("Panel is not currently highlighted");
+        $.Msg(`Panel ${path} is not currently highlighted`);
+        return;
     }
 
     highlightedPanels[path].DeleteAsync(0);
     delete highlightedPanels[path];
 }
 
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
-//highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
+function clearUiHighlights() {
+    for (const panel of Object.values(highlightedPanels)) {
+        panel.DeleteAsync(0);
+    }
+    highlightedPanels = {};
+}
+
+// Example usage:
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup");
+// highlightUiElement("HUDElements/lower_hud/center_with_stats/center_block/inventory");
 function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
-    const { path, duration, setElementAsParent } = event;
+    const { path, duration } = event;
     // Panel is already highlighted
     if (highlightedPanels[path]) {
-        $.Msg("Element is already highlighted");
+        $.Msg(`Element ${path} is already highlighted`);
         return;
     }
 
     const element = findPanelAtPath(path);
     // Can't highlight if the scale is too small/large/uninitialized
     if (element && element.actualuiscale_x > 0.01) {
-        const parent = element.GetParent()!;
+        const pos = element.GetPositionWithinAncestor(hudRoot);
 
         const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
-        if (setElementAsParent) highlightPanel.SetParent(element);
-        else highlightPanel.SetParent(parent);
+        highlightPanel.hittest = false; // Dont block interactions
+        highlightPanel.AddClass("UIHighlightScalingAnimation")
+        $.Schedule(0.5, () => {
+            if (highlightPanel.IsValid()) {
+                highlightPanel.RemoveClass("UIHighlightScalingAnimation")
+                highlightPanel.AddClass("UIHighlight");
+            }
+        })
 
-        highlightPanel.AddClass("UIHighlight");
+        highlightPanel.SetParent(hudRoot);
 
         // Set size/position
         highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
         highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
-        highlightPanel.style.position = `${element.actualxoffset / element.actualuiscale_x}px ${element.actualyoffset / element.actualuiscale_y}px 0px`;
+        highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
 
         highlightedPanels[path] = highlightPanel;
 
         if (duration) {
             $.Schedule(duration, () => removeHighlight({ path }));
         }
+
+        // Shop guide items
+        const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
+        if (isShopGuideItem) {
+            checkShopHighlightItemPanel(highlightPanel, element)
+        }
+
+        // Deliver Courier path
+        if (path === "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton") {
+            highlightPanel.AddClass("UIHighlightCourierDeliverButton")
+        }
     }
+}
+
+function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel) {
+    if (!highlightPanel.IsValid()) return
+
+    const isShopOpen = Game.IsShopOpen()
+
+    // Manage visibility
+    isShopOpen ? highlightPanel.style.visibility = "visible" :
+        highlightPanel.style.visibility = "collapse"
+
+    // Adjust position of the panel if needed
+    if (!isShopOpen) {
+        $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel))
+        return;
+    }
+    else {
+        const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
+        const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
+        if (highlightPanel.style.position !== originalPanelPosition)
+            highlightPanel.style.position = originalPanelPosition
+    }
+
+    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel))
 }
 
 GameEvents.Subscribe("highlight_element", highlightUiElement);
@@ -144,7 +197,42 @@ const chapterSections = [
 ];
 
 function playChapter(chapterNumber: number) {
+    Game.EmitSound("ui_generic_button_click")
     if (chapterSections[chapterNumber]) {
         GameEvents.SendCustomGameEventToServer("skip_to_section", { section: chapterSections[chapterNumber] });
     }
 }
+
+const numMessagesToTheNoobs = 78; // This needs to be updated when the messages are updated too
+const messageToTheNoobsMessage = $("#MessageToTheNoobsMessage") as LabelPanel;
+let hideMessageToTheNoobsTimer: ScheduleID | undefined = undefined
+function showMessageToTheNoobs() {
+    if (hideMessageToTheNoobsTimer) {
+        $.CancelScheduled(hideMessageToTheNoobsTimer);
+        hideMessageToTheNoobsTimer = undefined;
+    }
+
+    $("#MessageToTheNoobsMessage").SetHasClass("Visible", true);
+    Game.EmitSound("ui_generic_button_click");
+    const message = `#MessageToTheNoobs_${Math.round(Math.random() * 1000000000) % numMessagesToTheNoobs}`;
+    messageToTheNoobsMessage.text = $.Localize(message);
+    messageToTheNoobsMessage.visible = true;
+    hideMessageToTheNoobsTimer = $.Schedule(5, () => {
+        messageToTheNoobsMessage.visible = false;
+        hideMessageToTheNoobsTimer = undefined;
+    });
+}
+
+const pressKeyMessagePanel = $("#PressKeyMessage") as LabelPanel;
+function showPressKeyMessage(command: DOTAKeybindCommand_t, text: string) {
+    pressKeyMessagePanel.AddClass("Visible");
+    pressKeyMessagePanel.SetDialogVariable("key", Game.GetKeybindForCommand(command));
+    pressKeyMessagePanel.text = $.Localize(text, pressKeyMessagePanel);
+}
+
+function hidePressKeyMessage() {
+    pressKeyMessagePanel.RemoveClass("Visible");
+}
+
+GameEvents.Subscribe("show_press_key_message", event => showPressKeyMessage(event.command, event.text));
+GameEvents.Subscribe("hide_press_key_message", event => hidePressKeyMessage());

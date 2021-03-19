@@ -4,7 +4,7 @@
 }
 
 .TopLeftMenu {
-    width: 125px;
+    width: 85px;
     height: 40px;
     margin-top: 9px;
     margin-left: 150px;
@@ -54,22 +54,8 @@
     opacity: 1;
 }
 
-#GuidesButton {
-    background-image: url("file://{images}/custom_game/guides/guide.png");
-    background-size: 90%;
-    margin-top: 8px;
-    margin-left: 90px;
-    transition-duration: 0.2s;
-    transition-property: opacity;
-    transition-timing-function: ease-in-out;
-    brightness: 1;
-    wash-color: #F6A639;
-    opacity: 1;
-}
-
 #DialogLogButton:hover,
-#SkipButton:hover,
-#GuidesButton:hover {
+#SkipButton:hover, {
     opacity: 0.5;
     transition-duration: 0.3s;
     transition-property: opacity;
@@ -108,11 +94,12 @@
     horizontal-align: center;
 
     text-transform: uppercase;
-    color: #ffffffdd;
-    text-shadow: 0px 0px 20px 1.0 #3382ff44;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
+    text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
-    font-size: 22px;
+    font-size: 25px;
     letter-spacing: 2px;
+    font-family: titleFont;
 }
 
 #DialogLineContainer {
@@ -209,18 +196,16 @@
     color: #81818100;
 }
 
-.DialogPanelText {
-    color: black;
-    font-style: italics;
-    font-weight: bold;
-    font-size: 18px;
-    text-overflow: shrink;
-    max-width: 600px;
-    max-height: 200px;
-    margin: 26px 36px;
-}
-
 #CloseButton {
     horizontal-align: center;
     vertical-align: center;
+}
+
+#DialogImagePortrait {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    box-shadow: fill #000000af -6px -6px 12px 12px;
+    border: 2px solid black;
+    z-index: 1;
 }

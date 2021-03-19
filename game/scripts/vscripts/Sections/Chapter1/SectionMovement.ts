@@ -1,12 +1,11 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist } from "../../util"
+import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, randomChoice, removeContextEntityIfExists, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation, sunsfanFountainLocation } from "./Shared"
 
 let graph: tg.TutorialStep | undefined = undefined
-let canPlayerIssueOrders = false;
 
 const requiredState: RequiredState = {
     requireSunsfanGolem: true,
@@ -14,7 +13,13 @@ const requiredState: RequiredState = {
     sunsFanLocation: sunsfanFountainLocation,
     slacksLocation: slacksFountainLocation,
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 }
+
+const getMiranaHitKey = () => randomChoice([
+    LocalizationKey.Script_1_Movement_10_1,
+    LocalizationKey.Script_1_Movement_10_2,
+])
 
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", {
@@ -22,79 +27,127 @@ const onStart = (complete: () => void) => {
     });
 
     const goalTracker = new GoalTracker()
-    const goalMoveToFirstMarker = goalTracker.addBoolean("Move to the marked waypoint.")
-    const goalMoveToSecondMarker = goalTracker.addBoolean("Move to the second waypoint.")
+    const goalMoveToFirstMarker = goalTracker.addBoolean(LocalizationKey.Goal_1_Movement_1)
+    const goalMoveToSecondMarker = goalTracker.addBoolean(LocalizationKey.Goal_1_Movement_2)
 
     const playerHero = getOrError(getPlayerHero())
     const topLeftMarkerLocation = Vector(-7300, -6100, 384)
     const botRightMarkerLocation = Vector(-6500, -6900, 384)
-    const miranaSpawnLocation = Vector(-6225, -5600, 256)
+    const miranaSpawnLocation = Vector(-5800, -3400, 256)
+    const miranaShootLocation = Vector(-6225, -5600, 256)
+
+    const miranaGreeting = randomChoice([
+        LocalizationKey.Script_1_Movement_9,
+        LocalizationKey.Script_1_Movement_9_1,
+    ])
+
+    let miranaHitKey: LocalizationKey = getMiranaHitKey()
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        tg.immediate(_ => canPlayerIssueOrders = false),
         tg.fork([
             tg.seq([
                 tg.goToLocation(topLeftMarkerLocation),
                 tg.immediate(_ => {
                     goalMoveToFirstMarker.complete()
-                    canPlayerIssueOrders = false
+                    freezePlayerHero(true)
                 }),
             ]),
             tg.seq([
-                tg.audioDialog(LocalizationKey.Script_1_Movement_1, LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_2, LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 2),
-                tg.immediate(_ => {
-                    goalMoveToFirstMarker.start()
-                    canPlayerIssueOrders = true
-                }),
-                tg.completeOnCheck(_ => playerHero.IsMoving(), 0.5),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_3, LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_4, LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+                tg.forkAny([
+                    tg.seq([
+                        tg.audioDialog(LocalizationKey.Script_1_Movement_1, LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                        tg.audioDialog(LocalizationKey.Script_1_Movement_2, LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.audioDialog(LocalizationKey.Script_1_Movement_3, LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                        tg.neverComplete()
+                    ]),
+                    tg.seq([
+                        tg.immediate(_ => {
+                            goalMoveToFirstMarker.start()
+                        }),
+                        tg.completeOnCheck(_ => playerHero.IsMoving(), 0.1),
+                    ]),
+                ]),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_4, LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
         ]),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_5, LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
+
+        // Spawn Mirana
         tg.spawnUnit(CustomNpcKeys.Mirana, miranaSpawnLocation, DotaTeam.BADGUYS, CustomNpcKeys.Mirana, true),
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
+
+        // Introduce mirana, walk her to the shooting location, pan camera on her
+        tg.fork([
+            tg.seq([
+                tg.immediate(_ => goalMoveToSecondMarker.start()),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_5, LocalizationKey.Script_1_Movement_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(miranaGreeting, miranaGreeting, ctx => ctx[CustomNpcKeys.Mirana]),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_6, LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_7, LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_Movement_8, LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            ]),
+            tg.seq([
+                tg.wait(2),
+                tg.panCameraExponential(_ => getPlayerCameraLocation(), ctx => ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), 4),
+                tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
+                tg.moveUnit(ctx => ctx[CustomNpcKeys.Mirana], miranaShootLocation),
+            ])
+        ]),
+
         tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], playerHero.GetAbsOrigin()),
-        tg.immediate(_ => goalMoveToSecondMarker.start()),
-        tg.panCameraExponential(_ => playerHero.GetAbsOrigin(), miranaSpawnLocation, 4),
-        tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_6, LocalizationKey.Script_1_Movement_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_7, LocalizationKey.Script_1_Movement_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_8, LocalizationKey.Script_1_Movement_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+
         // Make sure player hero is not in the arrow firing area
         tg.immediate(_ => playerHero.SetAbsOrigin(topLeftMarkerLocation)),
         tg.wait(0.5),
-        tg.playGlobalSound("mirana_mir_attack_10"),
-        tg.immediate((ctx) => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
+
+        // Start firing arrows
+        tg.immediate(ctx => ctx[CustomNpcKeys.Mirana].FindAbilityByName(CustomAbilityKeys.CustomMiranaArrow).SetLevel(1)),
         tg.forkAny([
-            fireArrowsInArea((ctx) => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
+            // Make Mirana fire arrows forever
+            fireArrowsInArea(ctx => ctx[CustomNpcKeys.Mirana], topLeftMarkerLocation, botRightMarkerLocation, playerHero),
+            // Play Mirana dialog when player gets stunned
+            tg.loop(true, tg.seq([
+                tg.completeOnCheck(_ => playerHero.IsStunned(), 0.1),
+                tg.immediate(_ => miranaHitKey = getMiranaHitKey()),
+                tg.audioDialog(_ => miranaHitKey, _ => miranaHitKey, ctx => ctx[CustomNpcKeys.Mirana]),
+            ])),
+            // Pan between the goals and wait for player to move to target location
             tg.seq([
                 tg.fork([
                     tg.seq([
-                        tg.panCameraExponential(miranaSpawnLocation, botRightMarkerLocation, 4),
+                        tg.panCameraExponential(miranaShootLocation, botRightMarkerLocation, 2),
                         tg.wait(1),
-                        tg.panCameraExponential(botRightMarkerLocation, _ => playerHero.GetAbsOrigin(), 4),
+                        tg.panCameraExponential(botRightMarkerLocation, _ => playerHero.GetAbsOrigin(), 2),
                         tg.setCameraTarget(playerHero),
-                        tg.immediate(_ => canPlayerIssueOrders = true),
+                        tg.immediate(_ => freezePlayerHero(false)),
                     ]),
                     tg.goToLocation(botRightMarkerLocation),
                 ]),
             ])
         ]),
-        tg.immediate((ctx) => {
-            goalMoveToSecondMarker.complete()
-            const mirana = ctx[CustomNpcKeys.Mirana] as CDOTA_BaseNPC_Hero
-            if (IsUnitInValidPosition(mirana)) {
-                mirana.RemoveSelf()
-                ctx[CustomNpcKeys.Mirana] = undefined
-            }
-        }),
-        // Should be different personalities for the following two lines, until determined, using Slacks and SUNSfan
-        tg.audioDialog(LocalizationKey.Script_1_Movement_9, LocalizationKey.Script_1_Movement_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3),
-        tg.audioDialog(LocalizationKey.Script_1_Movement_10, LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        tg.immediate(_ => goalMoveToSecondMarker.complete()),
 
-        tg.audioDialog(LocalizationKey.Script_1_Movement_11, LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 3),
+        // "Nice dodging", make Mirana move away
+        tg.audioDialog(LocalizationKey.Script_1_Movement_10, LocalizationKey.Script_1_Movement_10, ctx => ctx[CustomNpcKeys.Mirana]),
+        tg.immediate(ctx => ctx[CustomNpcKeys.Mirana].MoveToPosition(miranaSpawnLocation)),
+
+        tg.fork([
+            // Tell player we'll unlock their camera
+            tg.audioDialog(LocalizationKey.Script_1_Movement_11, LocalizationKey.Script_1_Movement_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            // Make Mirana leap
+            tg.seq([
+                tg.wait(1),
+                tg.immediate(ctx => {
+                    const mirana = getOrError(ctx[CustomNpcKeys.Mirana] as CDOTA_BaseNPC_Hero | undefined, "Could not get Mirana")
+                    const leap = getOrError(mirana.FindAbilityByName("mirana_leap"), "Could not get leap")
+                    leap.SetLevel(4)
+                    leap.CastAbility()
+                }),
+                tg.wait(1),
+            ])
+        ]),
+
+        // Remove mirana
+        tg.immediate(ctx => removeContextEntityIfExists(ctx, CustomNpcKeys.Mirana)),
     ])
     )
 
@@ -118,17 +171,7 @@ export const sectionMovement = new tut.FunctionalSection(
     requiredState,
     onStart,
     onStop,
-    sectionOneMovementOrderFilter
 )
-
-function sectionOneMovementOrderFilter(event: ExecuteOrderFilterEvent): boolean {
-    // Allow all orders that aren't done by the player
-    if (event.issuer_player_id_const != findRealPlayerID()) return true;
-
-    if (!canPlayerIssueOrders) return false;
-
-    return true;
-}
 
 /**
  * Creates a tutorial step that orders mirana to fire arrows at points on a line connecting two end points. Runs forever.
@@ -168,7 +211,7 @@ const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, start
             else
                 i += 1
 
-            checkTimer = Timers.CreateTimer(0.4, () => checkDkReachedDestination())
+            checkTimer = Timers.CreateTimer(1.2, () => checkDkReachedDestination())
         }
 
         checkDkReachedDestination()

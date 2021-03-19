@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation } from "./Shared"
@@ -13,9 +13,13 @@ const requiredState: RequiredState = {
     slacksLocation: slacksFountainLocation,
     heroLevel: 2,
     requireFountainTrees: true,
+    lockCameraOnHero: true,
 }
 
-const pugnaLocation = Vector(-6700, -6300, 384)
+const pugnaLocation = Vector(-5090, -5625, 256)
+const pugnaMoveToLocation = Vector(-5846, -6007, 254)
+const pugnaBlinkLocation = Vector(-6814, -6329, 384)
+
 const abilNameDragonTail = "dragon_knight_dragon_tail"
 const abilNameBreatheFire = "dragon_knight_breathe_fire"
 
@@ -25,42 +29,80 @@ const start = (complete: () => void) => {
     print("Started section leveling")
 
     const hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
+    const abilityDragonTailHighlightPath = getPathToHighlightAbility(1);
 
     const goalTracker = new GoalTracker()
-    const goalKillPurge = goalTracker.addBoolean("Stun Pugna Purge using your Dragon Tail ability to stop his monologue.")
-    const goalLevelDragonTail = goalTracker.addBoolean("Level up your Dragon Tail ability.")
-    const goalLevelBreatheFire = goalTracker.addBoolean("Level up your Breathe Fire ability.")
+    const goalLevelDragonTail = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_2)
+    const goalKillPurge = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_1)
+    const goalLevelBreatheFire = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_3)
+
+    const dragonTailNotFoundMsg = "Dragon Tail was not found."
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(_ => learnAbilityAllowedName = abilNameDragonTail),
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_1, LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 9), // take W
-        tg.immediate(_ => goalLevelDragonTail.start()),
-        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), "Dragon Tail was not found.")),
+        tg.forkAny([
+            tg.seq([
+                // Check if level is 0 incase we skipped from a later section
+                tg.completeOnCheck(_ => getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg).GetLevel() === 0, 1),
+                tg.audioDialog(LocalizationKey.Script_1_Leveling_1, LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // take W
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(_ => goalLevelDragonTail.start()),
+                tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg)),
+            ]),
+        ]),
         tg.immediate(_ => goalLevelDragonTail.complete()),
+        tg.audioDialog(LocalizationKey.Script_1_Leveling_2, LocalizationKey.Script_1_Leveling_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // hover over abil
 
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_2, LocalizationKey.Script_1_Leveling_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // hover over abil
+        // Spawn purge
+        tg.fork([
+            tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // here comes pugna
+            tg.seq([
+                tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna, true),
+                tg.setCameraTarget(context => context[CustomNpcKeys.PurgePugna]),
+                tg.wait(FrameTime()),
+                tg.immediate(ctx => {
+                    const pugna = getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC)
+                    pugna.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+                    setUnitPacifist(pugna, true)
+                }),
+                tg.moveUnit(context => context[CustomNpcKeys.PurgePugna], pugnaMoveToLocation)
+            ])
+        ]),
+        tg.setCameraTarget(undefined),
+        tg.immediate(context => {
+            const pugna = context[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC
+            const blinkItem = pugna.AddItemByName("item_blink")
 
-        // Spawn purge and freeze player during initial dialog
-        tg.immediate(_ => freezePlayerHero(true)),
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 3), // here comes pugna
+            ExecuteOrderFromTable({
+                OrderType: UnitOrder.CAST_POSITION,
+                UnitIndex: pugna.entindex(),
+                AbilityIndex: blinkItem.entindex(),
+                Position: pugnaBlinkLocation
+            })
+        }),
+        tg.panCameraLinear(pugnaMoveToLocation, pugnaBlinkLocation, 0.5),
+        tg.setCameraTarget(getOrError(getPlayerHero())),
+        tg.audioDialog(LocalizationKey.Script_1_Leveling_4, LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna]), // yellow everybody
+        tg.audioDialog(LocalizationKey.Script_1_Leveling_5, LocalizationKey.Script_1_Leveling_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // make him stop, press W
+        // Don't fork this so we show purge's long monologue
+        tg.audioDialog(LocalizationKey.Script_1_Leveling_6, LocalizationKey.Script_1_Leveling_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // use W
 
-        tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna),
-        tg.immediate(ctx => getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC | undefined).SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
-
-        tg.textDialog(LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna], 4), // yellow everybody
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_5, LocalizationKey.Script_1_Leveling_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // make him stop, press W
-        tg.textDialog(LocalizationKey.Script_1_Leveling_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 4), // use W
-
-        // Unfreeze player and wait for them to stun purge while he performs his monologue.
+        // Unpacify Purge and wait for player to stun purge while he performs his monologue.
         tg.immediate(_ => goalKillPurge.start()),
-        tg.immediate(_ => freezePlayerHero(false)),
+        tg.immediate(_ => {
+            hero.SetIdleAcquire(false)
+            highlightUiElement(abilityDragonTailHighlightPath)
+        }),
+        tg.immediate(context => setUnitPacifist(context[CustomNpcKeys.PurgePugna], false)),
 
         tg.forkAny([
             // Loop while purge is alive
             tg.loop(ctx => unitIsValidAndAlive(ctx[CustomNpcKeys.PurgePugna]), tg.seq([
                 tg.forkAny([
                     // Play dialog while purge is alive
-                    tg.loop(ctx => unitIsValidAndAlive(ctx[CustomNpcKeys.PurgePugna]), tg.textDialog("Very long dialog", ctx => ctx[CustomNpcKeys.PurgePugna], 10)),
+                    tg.loop(ctx => unitIsValidAndAlive(ctx[CustomNpcKeys.PurgePugna]), tg.audioDialog(LocalizationKey.Script_1_Leveling_4_2, LocalizationKey.Script_1_Leveling_4_2, ctx => ctx[CustomNpcKeys.PurgePugna])),
                     // Stop long dialog when we get attacked but not stunned. Let purge speak for at least a few seconds too.
                     tg.seq([
                         tg.wait(2),
@@ -71,7 +113,7 @@ const start = (complete: () => void) => {
                     ])
                 ]),
                 // We escaped the above loop by attacking pugna, please dont interrupt purge!
-                tg.textDialog(LocalizationKey.Script_1_Leveling_7, ctx => ctx[CustomNpcKeys.PurgePugna], 2),
+                tg.audioDialog(LocalizationKey.Script_1_Leveling_7, LocalizationKey.Script_1_Leveling_7, ctx => ctx[CustomNpcKeys.PurgePugna]),
                 tg.immediate(ctx => {
                     const purge = ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC
                     if (unitIsValidAndAlive(purge)) {
@@ -88,25 +130,41 @@ const start = (complete: () => void) => {
             ]),
         ]),
 
-        tg.immediate(_ => goalKillPurge.complete()),
-
-        // Play death dialog and kill purge
-        tg.textDialog(LocalizationKey.Script_1_Leveling_8, ctx => ctx[CustomNpcKeys.PurgePugna], 2),
-        tg.immediate(ctx => {
-            const purge = ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC_Hero
-            purge.ForceKill(false)
+        tg.immediate(_ => {
+            removeHighlight(abilityDragonTailHighlightPath)
+            goalKillPurge.complete()
+            hero.SetIdleAcquire(true)
         }),
 
+        // Play death dialog and kill purge
+        tg.fork([
+            tg.audioDialog(LocalizationKey.Script_1_Leveling_8, LocalizationKey.Script_1_Leveling_8, ctx => ctx[CustomNpcKeys.PurgePugna]),
+            tg.seq([
+                tg.wait(0.25),
+                tg.immediate(ctx => {
+                    const purge = ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC_Hero
+                    purge.ForceKill(false)
+                }),
+            ])
+        ]),
+
         // Excellent work, skill Q
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_9, LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 5),
-        tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
-        tg.immediate(_ => hero.HeroLevelUp(true)),
-        tg.immediate(_ => goalLevelBreatheFire.start()),
-        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
+        tg.forkAny([
+            tg.seq([
+                tg.audioDialog(LocalizationKey.Script_1_Leveling_9, LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
+                tg.immediate(_ => hero.HeroLevelUp(true)),
+                tg.immediate(_ => goalLevelBreatheFire.start()),
+                tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
+            ])
+        ]),
         tg.immediate(_ => goalLevelBreatheFire.complete()),
 
         // Explain Q and W
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_10, LocalizationKey.Script_1_Leveling_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem], 6),
+        tg.audioDialog(LocalizationKey.Script_1_Leveling_10, LocalizationKey.Script_1_Leveling_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
@@ -120,7 +178,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (learnAbilityAllowedName && event.order_type === UnitOrder.TRAIN_ABILITY) {
         const ability = getOrError(EntIndexToHScript(event.entindex_ability), "Could not find ability being trained") as CDOTABaseAbility
         if (ability.GetAbilityName() !== learnAbilityAllowedName) {
-            displayDotaErrorMessage("Train the ability you are instructed to.")
+            displayDotaErrorMessage(LocalizationKey.Error_Leveling_1)
             return false
         }
     }
@@ -129,6 +187,9 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 }
 
 const stop = () => {
+    const hero = getOrError(getPlayerHero())
+    hero.SetIdleAcquire(true)
+
     if (graph) {
         graph.stop(GameRules.Addon.context)
         graph = undefined

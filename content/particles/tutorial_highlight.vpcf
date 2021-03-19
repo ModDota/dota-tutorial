@@ -2,19 +2,16 @@
 {
 	_class = "CParticleSystemDefinition"
 	m_nBehaviorVersion = 10
-	m_Children = 
-	[
-		{
-			m_ChildRef = resource:"particles/tutorial_highlight_ring.vpcf"
-		},
-		{
-			m_ChildRef = resource:"particles/tutorial_highlight_sparkles.vpcf"
-		},
-	]
 	m_controlPointConfigurations = 
 	[
 		{
 			m_name = "preview"
+		},
+	]
+	m_Children = 
+	[
+		{
+			m_ChildRef = resource:"particles/tutorial_highlight_ring.vpcf"
 		},
 	]
 }

@@ -1,8 +1,9 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "../util"
+import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
-import { runeSpawnsLocations } from "../Sections/Chapter5/Shared"
+import { itemAegis, outsidePitLocation, roshanLocation, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
+import { modifier_custom_roshan_attack_speed } from "../modifiers/modifier_custom_roshan_attack_speed"
 
 // Keep track of spawned blockades so we can remove them again.
 const spawnedBlockades = new Set<Blockade>()
@@ -17,22 +18,174 @@ export const setupState = (stateReq: RequiredState): void => {
     // Use defaults and override them with the passed state. Does not work if we have nested objects.
     const state: FilledRequiredState = { ...defaultRequiredState, ...stateReq }
 
-    // Player / hero
+    const hero = handleHeroCreationAndLevel(state)
+    handleRequiredAbilities(state, hero)
+    handleRequiredItems(state, hero)
+    handleRequiredRespawn(state)
+    handleItemsOnGround()
+    handlePlantedWards(state)
+    handleAbilityCooldowns(hero)
+    handleElderDragonForm(state.removeElderDragonForm, hero)
+
+    handleUnits(state)
+    handleFountainTrees(state)
+    handleBlockades(state)
+    handleRoshan(state)
+
+    handleCamera(state, hero)
+    handleMisc(state, hero)
+}
+
+function handleCamera(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
+    // Focus or unlock all cameras
+    findAllPlayersID().forEach(playerId => PlayerResource.SetCameraTarget(playerId, state.lockCameraOnHero ? hero : undefined))
+
+    // Center camera on the hero
+    if (state.centerCameraOnHero) {
+        centerCameraOnHero()
+    }
+}
+
+function handleMisc(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
+    // Set or remove DD modifier as needed
+    if (state.heroHasDoubleDamage) {
+        if (!hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", undefined)
+        }
+    } else {
+        if (hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.RemoveModifierByName("modifier_rune_doubledamage")
+        }
+    }
+
+    // Create/remake or remove bounty runes
+    if (state.requireBountyRunes) {
+        createBountyRunes()
+    } else {
+        removeBountyRunes()
+    }
+}
+
+function handleFountainTrees(state: FilledRequiredState) {
+    // Chapter 1 tree wall at the fountain
+    const treeLocationStart = Vector(-6800, -5800, 256)
+    const treeLocationEnd = Vector(-6300, -6300, 256)
+    const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
+
+    // Spawn trees in a line between start and end if we want them.
+    if (state.requireFountainTrees) {
+        const numTrees = 6
+        for (let i = 0; i < numTrees; i++) {
+            // Only create a tree if there is not already one at the desired location.
+            const treeLocation = getTreeLocation(i / (numTrees - 1))
+            if (GridNav.GetAllTreesAroundPoint(treeLocation, 10, true).length === 0) {
+                CreateTempTree(treeLocation, 100000)
+            }
+        }
+    } else {
+        // Destroy all trees around the tree-line center point.
+        GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
+    }
+}
+
+function handleBlockades(state: FilledRequiredState) {
+    // Destroy old blockades
+    for (const spawnedBlockade of spawnedBlockades) {
+        if (!state.blockades.includes(spawnedBlockade)) {
+            spawnedBlockade.destroy()
+            spawnedBlockades.delete(spawnedBlockade)
+        }
+    }
+
+    // Spawn required blockades (calling spawn and add a second time will do nothing if they are already spawned)
+    for (const blockade of state.blockades) {
+        blockade.spawn()
+        spawnedBlockades.add(blockade)
+    }
+}
+
+function handleUnits(state: FilledRequiredState) {
+    // Golems
+    const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
+        const shouldGolemBeHidden = unit.GetAbsOrigin().__sub(Vector(0, 0, 0)).Length2D() < 100
+
+        if (shouldGolemBeHidden) {
+            unit.SetTeam(DotaTeam.BADGUYS)
+            unit.AddNewModifier(undefined, undefined, "modifier_invisible", {})
+            setUnitPacifist(unit, true);
+            return
+        } else if (!created) {
+            if (unit.HasModifier("modifier_invisible")) unit.RemoveModifierByName("modifier_invisible")
+            setUnitPacifist(unit, false);
+            unit.SetTeam(DotaTeam.GOODGUYS);
+        }
+    }
+
+    // Requiring golem
+    if (state.requireSlacksGolem) {
+        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
+    } else {
+        clearUnit(CustomNpcKeys.SlacksMudGolem)
+    }
+
+    if (state.requireSunsfanGolem) {
+        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation, golemPostCreate)
+    } else {
+        clearUnit(CustomNpcKeys.SunsFanMudGolem)
+    }
+
+    if (state.requireODPixelGolem) {
+        createOrMoveUnit(CustomNpcKeys.ODPixel, DotaTeam.GOODGUYS, state.odPixelLocation, state.heroLocation, (unit, created) => setUnitPacifist(unit, true))
+    } else {
+        clearUnit(CustomNpcKeys.ODPixel)
+    }
+
+    // Riki
+    if (state.requireRiki) {
+        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {
+            if (created) {
+                const rikiHero = riki as CDOTA_BaseNPC_Hero
+                rikiHero.SetAbilityPoints(3)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
+                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
+                rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+                rikiHero.AddItemByName("item_lotus_orb")
+                rikiHero.AddItemByName("item_sange_and_yasha")
+            }
+        })
+    } else {
+        clearUnit(CustomNpcKeys.Riki)
+    }
+}
+
+function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_Hero {
     let hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
     // Recreate the hero if we want a lower level than the current one (because you can't downlevel a hero)
     if (hero.GetLevel() > state.heroLevel || hero.GetUnitName() !== state.heroUnitName) {
         hero = PlayerResource.ReplaceHeroWith(hero.GetPlayerOwner().GetPlayerID(), state.heroUnitName, state.heroGold, 0)
-    } else {
-        // Make sure the hero is not frozen
-        freezePlayerHero(false)
     }
+
+    // Make sure the hero is not frozen. Note: can still be frozen when replacing because of order filter.
+    freezePlayerHero(false)
 
     // Level the hero to the desired level. 1 experience per level as defined in GameMode.
     hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
 
-    // Ability levels and points
+    // Move the hero if not within tolerance
+    if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
+        hero.Stop()
+        hero.SetAbsOrigin(state.heroLocation)
+    }
 
+    hero.SetGold(state.heroGold, false)
+
+    return hero
+}
+
+function handleRequiredAbilities(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
+    // Ability levels and points
     const abilityIndices = [0, 1, 2, 3]
     const abilities = [0, 1, 2, 5].map(abilityIndex => getOrError(hero.GetAbilityByIndex(abilityIndex)))
 
@@ -64,114 +217,173 @@ export const setupState = (stateReq: RequiredState): void => {
         abil.SetLevel(Math.max(state.heroAbilityMinLevels[abilityIndex], abil.GetLevel()))
     }
 
+    // Set or remove DD modifier as needed
+    if (state.heroHasDoubleDamage) {
+        if (!hero.HasModifier("modifier_rune_doubledamage")) {
+            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", {
+                // Have to explicitly set duration or it assumes infinite, using standard value as of dota patch 7.28c
+                duration: 45
+            })
+        }
+    }
+
     // Set remaining ability points. Print a warning if we made an obvious mistake (eg. sum of minimum levels > hero level) but allow it.
     remainingAbilityPoints = getRemainingAbilityPoints()
     if (remainingAbilityPoints < 0) {
         Warning("Remaining ability points are negative. Should be greater or equal to zero.")
     }
     hero.SetAbilityPoints(Math.max(0, remainingAbilityPoints))
+}
 
-    // Focus all cameras on the hero
-    const playerIds = findAllPlayersID()
-    playerIds.forEach(playerId => PlayerResource.SetCameraTarget(playerId, hero))
+function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Hero) {
+    // TODO: Take item stacking into account in this entire thing.
+    // TODO: Skipping backwards combined with removeUnrequiredItems might have undesired consequences (keeping items from later sections).
 
-    // Move the hero if not within tolerance
-    if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
-        hero.Stop()
-        hero.SetAbsOrigin(state.heroLocation)
-    }
-
-    hero.SetGold(state.heroGold, false)
-
-    // Golems
-    const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
-        if (!created) {
-            setUnitPacifist(unit, false);
-            unit.SetTeam(DotaTeam.GOODGUYS);
+    // Find out how many of each item currently in the inventory we have.
+    let numEmptyItemSlots = DOTA_ITEM_INVENTORY_SIZE - hero.GetNumItemsInInventory();
+    let currentItems: Record<string, number> = {}
+    for (let i = 0; i < DOTA_ITEM_INVENTORY_SIZE; i++) {
+        const item = hero.GetItemInSlot(i)
+        if (item) {
+            const itemName = item.GetName()
+            currentItems[itemName] = (currentItems[itemName] ?? 0) + 1
+        } else {
+            numEmptyItemSlots++;
         }
     }
 
-    if (state.requireSlacksGolem) {
-        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
-    } else {
-        clearUnit(CustomNpcKeys.SlacksMudGolem)
-    }
+    // Remove unrequired items if we don't want them.
+    if (state.removeUnrequiredItems) {
+        for (const [itemName, currentItemCount] of Object.entries(currentItems)) {
+            const desiredItemCount = state.heroItems[itemName] ?? 0
+            const toRemoveCount = currentItemCount - desiredItemCount
 
-    if (state.requireSunsfanGolem) {
-        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation, golemPostCreate)
-    } else {
-        clearUnit(CustomNpcKeys.SunsFanMudGolem)
-    }
-
-    // Riki
-    if (state.requireRiki) {
-        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {
-            if (created) {
-                const rikiHero = riki as CDOTA_BaseNPC_Hero
-                rikiHero.SetAbilityPoints(3)
-                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
-                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
-                rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
-                rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
-                rikiHero.AddItemByName("item_lotus_orb")
+            for (let i = 0; i < toRemoveCount; i++) {
+                const itemToDelete = hero.FindItemInInventory(itemName)
+                if (itemToDelete) {
+                    itemToDelete.RemoveSelf()
+                }
             }
+
+            currentItems[itemName] -= toRemoveCount
+            numEmptyItemSlots += toRemoveCount
+        }
+    }
+
+    // Clear the hero's inventory if we need more items than slots left.
+    // First figure out how many items we want to add in total.
+    let numAdditionalDesiredItems = 0;
+    for (const [itemName, requiredItemCount] of Object.entries(state.heroItems)) {
+        const currentItemCount = currentItems[itemName] ?? 0
+        numAdditionalDesiredItems += requiredItemCount - currentItemCount
+    }
+
+    // Then clear hero inventory if we don't have enough empty slots.
+    if (numEmptyItemSlots < numAdditionalDesiredItems) {
+        for (let i = 0; i < DOTA_ITEM_INVENTORY_SIZE; i++) {
+            const item = hero.GetItemInSlot(i)
+            if (item) {
+                item.RemoveSelf()
+            }
+        }
+
+        currentItems = {}
+    }
+
+    // For each required item, give the hero as many as they need to reach the required count.
+    for (const [itemName, requiredItemCount] of Object.entries(state.heroItems)) {
+        const currentItemCount = currentItems[itemName] ?? 0
+        for (let i = 0; i < requiredItemCount - currentItemCount; i++) {
+            hero.AddItemByName(itemName)
+        }
+    }
+
+    // Create the top T1 dire tower if it's down and needs to be up, or remove it if it needs to be down
+    const direTopTowerLocation = Vector(-4672, 6016, 128)
+    let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
+    if (state.topDireT1TowerStanding) {
+        if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive()) {
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
+            direTop.RemoveModifierByName("modifier_invulnerable")
+            direTop.SetRenderColor(65, 78, 63)
+        }
+    }
+    else if (direTop && IsValidEntity(direTop) && direTop.IsAlive()) {
+        UTIL_Remove(direTop)
+    }
+
+    // Create the top T2 dire tower if it's down and needs to be up, or remove it if it needs to be down
+    const direTopTower2Location = Vector(0, 6016, 128)
+    let direTop2 = Entities.FindByClassnameNearest("npc_dota_tower", direTopTower2Location, 200) as CDOTA_BaseNPC_Building
+    if (state.topDireT2TowerStanding) {
+        if (!direTop2 || !IsValidEntity(direTop2) || !direTop2.IsAlive()) {
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT2Tower, direTopTower2Location, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
+            direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
+            direTop.RemoveModifierByName("modifier_invulnerable")
+            direTop.SetRenderColor(65, 78, 63)
+        }
+    }
+    else if (direTop2 && IsValidEntity(direTop2) && direTop2.IsAlive()) {
+        ApplyDamage({
+            attacker: direTop2,
+            victim: direTop2,
+            damage: direTop2.GetMaxHealth(),
+            damage_type: DamageTypes.PURE,
+            damage_flags: DamageFlag.BYPASSES_INVULNERABILITY + DamageFlag.HPLOSS
         })
-    } else {
-        clearUnit(CustomNpcKeys.Riki)
+
+        UTIL_Remove(direTop2)
     }
 
-    // Chapter 1 tree wall at the fountain
-    const treeLocationStart = Vector(-6800, -5800, 256)
-    const treeLocationEnd = Vector(-6300, -6300, 256)
-    const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
-
-    // Spawn trees in a line between start and end if we want them.
-    if (state.requireFountainTrees) {
-        const numTrees = 6
-        for (let i = 0; i < numTrees; i++) {
-            // Only create a tree if there is not already one at the desired location.
-            const treeLocation = getTreeLocation(i / (numTrees - 1))
-            if (GridNav.GetAllTreesAroundPoint(treeLocation, 10, true).length === 0) {
-                CreateTempTree(treeLocation, 100000)
+    const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top")) as CDOTA_BaseNPC
+    if (topOutpost.GetTeamNumber() !== state.outpostTeam) {
+        topOutpost.SetTeam(state.outpostTeam)
+        if (state.outpostTeam === DotaTeam.BADGUYS) {
+            if (topOutpost.HasModifier("modifier_invulnerable")) {
+                topOutpost.RemoveModifierByName("modifier_invulnerable")
             }
         }
-    } else {
-        // Destroy all trees around the tree-line center point.
-        GridNav.DestroyTreesAroundPoint(getTreeLocation(0.5), 500, true)
     }
+}
 
-    // Blockades
+function handleRequiredRespawn(state: FilledRequiredState) {
+    const respawnLocation = state.respawnLocation === "heroLocation" ? state.heroLocation : state.respawnLocation
+    setRespawnSettings(respawnLocation, state.respawnTime)
+}
 
-    // Destroy old blockades
-    for (const spawnedBlockade of spawnedBlockades) {
-        if (!state.blockades.includes(spawnedBlockade)) {
-            spawnedBlockade.destroy()
-            spawnedBlockades.delete(spawnedBlockade)
+function handleRoshan(state: FilledRequiredState) {
+    let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
+
+    if (state.requireRoshan) {
+        if (!unitIsValidAndAlive(roshan)) {
+            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+            roshan.AddItemByName(itemAegis)
         }
-    }
 
-    // Spawn required blockades (calling spawn and add a second time will do nothing if they are already spawned)
-    for (const blockade of state.blockades) {
-        blockade.spawn()
-        spawnedBlockades.add(blockade)
-    }
-
-    // Set or remove DD modifier as needed
-    if (state.heroHasDoubleDamage) {
-        if (!hero.HasModifier("modifier_rune_doubledamage")) {
-            hero.AddNewModifier(hero, undefined, "modifier_rune_doubledamage", undefined)
+        if (roshanLocation.__sub(roshan.GetAbsOrigin()).Length2D() > 0) {
+            roshan.Stop()
+            roshan.SetAbsOrigin(roshanLocation)
         }
-    } else {
-        if (hero.HasModifier("modifier_rune_doubledamage")) {
-            hero.RemoveModifierByName("modifier_rune_doubledamage")
-        }
-    }
 
-    // Create/remake or remove bounty runes
-    if (state.requireBountyRunes) {
-        createBountyRunes()
+        roshan.FaceTowards(outsidePitLocation)
+
+        // Remove standard rosh modifiers so he doesn't grow stronger as time passes
+        roshan.RemoveModifierByName("modifier_roshan_inherent_buffs")
+        roshan.RemoveModifierByName("modifier_roshan_devotion")
+        roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
+        // Add modifier since attack speed is part of the devotion modifier, and his attacks don't look genuine without this
+        roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
+
+        if (state.roshanHitsLikeATruck)
+            roshan.SetBaseDamageMin(600)
+        else
+            roshan.SetBaseDamageMin(75) // Standard Rosh base dmg, patch 7.28c
     } else {
-        removeBountyRunes()
+        if (unitIsValidAndAlive(roshan))
+            roshan.Destroy()
     }
 }
 
@@ -290,5 +502,50 @@ function removeBountyRunes() {
     if (IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
         context[CustomEntityKeys.DireAncientsBountyRune].Destroy()
         context[CustomEntityKeys.DireAncientsBountyRune] = undefined
+    }
+}
+function handleItemsOnGround() {
+    // Clear all items on the ground, if any
+    const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+
+    if (droppedItems) {
+        for (const droppedItem of droppedItems) {
+            const itemEntity = droppedItem.GetContainedItem()
+            UTIL_Remove(itemEntity)
+            UTIL_Remove(droppedItem)
+        }
+    }
+}
+
+function handlePlantedWards(state: FilledRequiredState) {
+    if (state.clearWards) {
+        const obsWards = Entities.FindAllByClassname("npc_dota_ward_base")
+        const wards = obsWards.concat(Entities.FindAllByClassname("npc_dota_ward_base_truesight"))
+
+        for (const ward of wards) {
+            if (IsValidEntity(ward)) {
+                UTIL_Remove(ward)
+            }
+        }
+    }
+}
+
+function handleAbilityCooldowns(hero: CDOTA_BaseNPC_Hero) {
+    for (let index = 0; index < hero.GetAbilityCount(); index++) {
+        const ability = hero.GetAbilityByIndex(index)
+        if (ability && !ability.IsCooldownReady()) {
+            ability.EndCooldown()
+        }
+    }
+}
+
+function handleElderDragonForm(removeElderDragonForm: boolean, hero: CDOTA_BaseNPC_Hero) {
+    if (!removeElderDragonForm) return;
+
+    const modifiers = ["modifier_dragon_knight_dragon_form", "modifier_dragon_knight_corrosive_breath", "modifier_dragon_knight_splash_attack", "modifier_dragon_knight_frost_breath"]
+    for (const modifier of modifiers) {
+        if (hero.HasModifier(modifier)) {
+            hero.RemoveModifierByName(modifier)
+        }
     }
 }

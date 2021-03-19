@@ -8,28 +8,84 @@ declare const enum SectionName {
     Chapter2_Opening = "Chapter2_Opening",
     Chapter2_Creeps = "Chapter2_Creeps",
     Chapter2_Tower = "Chapter2_Tower",
+    Chapter2_Courier = "Chapter2_Courier",
     Chapter3_Opening = "Chapter3_Opening",
     Chapter4_Opening = "Chapter4_Opening",
     Chapter4_Wards = "Chapter4_Wards",
     Chapter4_Outpost = "Chapter4_Outpost",
     Chapter4_Communication = "Chapter4_Communication",
     Chapter5_Opening = "Chapter5_Opening",
+    Chapter5_Roshan = "Chapter5_Roshan",
+    Chapter5_TeamFight = "Chapter5_TeamFight",
+    Chapter6_Opening = "Chapter6_Opening",
+    Chapter6_Closing = "Chapter6_Closing",
 }
 
 declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
     GodzMudGolem = "npc_mud_golem_godz",
+    ODPixel = "npc_dota_tutorial_odpixel",
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
+    DireMeleeMegaCreep = "npc_dota_creep_badguys_melee_upgraded_mega",
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     Riki = "npc_dota_hero_riki",
     TargetDummy = "npc_dota_tutorial_target_dummy",
     PurgePugna = "npc_dota_hero_pugna",
     DireTopT1Tower = "npc_dota_badguys_tower1_top",
-    Sniper = "npc_dota_hero_sniper"
+    DireTopT2Tower = "npc_dota_badguys_tower2_top",
+    Sniper = "npc_dota_hero_sniper",
+    Juggernaut = "npc_dota_hero_juggernaut",
+    Zuus = "npc_dota_hero_zuus",
+    CrystalMaiden = "npc_dota_hero_crystal_maiden",
+    Lion = "npc_dota_hero_lion",
+    StormSpirit = "npc_dota_hero_storm_spirit",
+    MiranaIllusionOne = "mirana_illusion_one",
+    MiranaIllusionTwo = "mirana_illusion_two",
+    Tidehunter = "npc_dota_hero_tidehunter",
+    Antimage = "npc_dota_hero_antimage",
+    Luna = "npc_dota_hero_luna",
+    Kunkka = "npc_dota_hero_kunkka",
+    Tsunami = "npc_dota_hero_keeper_of_the_light",
+    Lina = "npc_dota_hero_lina",
+    Jakiro = "npc_dota_hero_jakiro",
+    Visage = "npc_dota_hero_visage",
+    Pudge = "npc_dota_hero_pudge",
+    Wisp = "npc_dota_hero_wisp",
+    Roshan = "npc_dota_roshan",
+    Axe = "npc_dota_hero_axe",
+    Centaur = "npc_dota_hero_centaur",
+    Invoker = "npc_dota_hero_invoker",
+    PhantomAssassin = "npc_dota_hero_phantom_assassin",
+    Windrunner = "npc_dota_hero_windrunner",
+
+    // Guides / Personalities
+    Coccia = "npc_dota_tutorial_coccia",
+    DotaU = "npc_dota_tutorial_dotau",
+    DotaFromZero = "npc_dota_tutorial_dotafromzero",
+    Liquipedia = "npc_dota_tutorial_liquipedia",
+    BSJ = "npc_dota_tutorial_bsj",
+    Bowie = "npc_dota_tutorial_bowie",
+    Angermania = "npc_dota_tutorial_angermania",
+    RedditDota = "npc_dota_tutorial_redditdota",
+
+    // Modders (have no personalities apparently)
+    Flam3s = "npc_dota_tutorial_flam3s",
+    Perry = "npc_dota_tutorial_perry",
+    PongPing = "npc_dota_tutorial_pongping",
+    Shush = "npc_dota_tutorial_shush",
+    SinZ = "npc_dota_tutorial_sinz",
+    SmashTheState = "npc_dota_tutorial_smashthestate",
+    Tora = "npc_dota_tutorial_tora",
+    Toyoka = "npc_dota_tutorial_toyoka",
+    VicFrank = "npc_dota_tutorial_vicfrank",
+    Yoyo = "npc_dota_tutorial_yoyo",
+
+    // Helpers
+    ValkyrjaRuby = "npc_dota_tutorial_ruby",
 }
 
 declare const enum CustomEntityKeys {
@@ -61,7 +117,16 @@ declare const enum ModifierKey {
 
 declare const enum ParticleName {
     HighlightCircle = "particles/tutorial_highlight.vpcf",
-    HighlightArrow = "particles/tutorial_arrow_base.vpcf",
-    HighlightArrowEnemy = "particles/tutorial_arrow_attack_base.vpcf",
+    HighlightOrangeArrow = "particles/tutorial_arrow.vpcf",
+    HighlightOrangeCircle = "particles/tutorial_arrow_ring.vpcf",
+    HighlightRedArrow = "particles/tutorial_arrow_attack.vpcf",
+    HighlightRedCircle = "particles/tutorial_arrow_attack_ring.vpcf",
     Path = "particles/tutorial_path.vpcf",
+    QuestionMarks = "particles/tutorial_question_marks.vpcf",
+    MoveToLocation = "particles/tutorial_moveto_goal.vpcf",
+    DialogCircle = "particles/tutorial_unit_speaker.vpcf",
 }
+
+type VideoName = "guides" | "muting"
+
+type DialogToken = number
