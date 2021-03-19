@@ -89,8 +89,8 @@ function onStart(complete: () => void) {
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
                 kunkka.FaceTowards(playerHero.GetAbsOrigin());
-                const luna = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
-                luna.FaceTowards(playerHero.GetAbsOrigin());
+                const kotl = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
+                kotl.FaceTowards(playerHero.GetAbsOrigin());
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_1, LocalizationKey.Script_4_Communication_1, ctx => ctx[tsunamiName]),
@@ -173,11 +173,18 @@ function onStart(complete: () => void) {
             tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.immediate(_ => goalGoToTopBountyRune.start()),
-            tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
-            tg.goToLocation(bountyRuneLocation, [], false),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => goalGoToTopBountyRune.start()),
+                    tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
+                    tg.goToLocation(bountyRuneLocation, [], false),
+                ])
+            ]),
             tg.immediate(_ => goalGoToTopBountyRune.complete()),
         ])
     )

@@ -159,7 +159,6 @@ function onStart(complete: () => void) {
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_9, LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
-            // Don't fork since it explains what blue ward does, and only instructs usage by the end of the dialog
             tg.forkAny([
                 tg.seq([
                     tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -189,11 +188,16 @@ function onStart(complete: () => void) {
                 setUnitPacifist(playerHero, false);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Wards_14, LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
-            tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
-            tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 620, 0.1),
-
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Wards_14, LocalizationKey.Script_4_Wards_14, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
+                    tg.completeOnCheck(context => playerHero.GetAbsOrigin().__sub(context[rikiName].GetAbsOrigin()).Length2D() < 620, 0.1),
+                ])
+            ]),
             tg.immediate(context => {
                 goalAttackRiki.complete();
                 const riki: CDOTA_BaseNPC_Hero = context[rikiName];
@@ -204,8 +208,16 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_RTZ_cya, LocalizationKey.Script_4_RTZ_cya, ctx => ctx[rikiName], 2.5),
             tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
-            tg.audioDialog(LocalizationKey.Script_4_Wards_15, LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.waitForModifierKey(ModifierKey.Alt),
+
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Wards_15, LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.waitForModifierKey(ModifierKey.Alt),
+                ])
+            ]),
             tg.immediate(_ => {
                 goalHoldAlt.complete();
                 disposeHeroes();
