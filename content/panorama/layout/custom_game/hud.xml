@@ -30,11 +30,13 @@
             </Button>
         </Panel>
 
-        <Label id="MessageToTheNoobsMessage" text="Hello" visible="false" />
+        <Label id="MessageToTheNoobsMessage" text="Hello" />
         <Panel id="MessageToTheNoobsButton" onactivate="showMessageToTheNoobs()" hittest="true" onmouseover="UIShowTextTooltip('#RandomTipHover')" onmouseout="UIHideTextTooltip()">
             <Panel id="MessageToTheNoobsImage" hittest="false" />
             <Label id="MessageToTheNoobsText" text="#RandomTip" hittest="false" />
         </Panel>
+
+        <Label id="PressKeyMessage" />
 
         <Panel id="ChaptersMenu" hittest="false">
             <Panel class="ChaptersMenuHeader">

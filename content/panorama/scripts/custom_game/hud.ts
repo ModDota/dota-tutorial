@@ -222,3 +222,17 @@ function showMessageToTheNoobs() {
         hideMessageToTheNoobsTimer = undefined;
     });
 }
+
+const pressKeyMessagePanel = $("#PressKeyMessage") as LabelPanel;
+function showPressKeyMessage(command: DOTAKeybindCommand_t, text: string) {
+    pressKeyMessagePanel.AddClass("Visible");
+    pressKeyMessagePanel.SetDialogVariable("key", Game.GetKeybindForCommand(command));
+    pressKeyMessagePanel.text = $.Localize(text, pressKeyMessagePanel);
+}
+
+function hidePressKeyMessage() {
+    pressKeyMessagePanel.RemoveClass("Visible");
+}
+
+GameEvents.Subscribe("show_press_key_message", event => showPressKeyMessage(event.command, event.text));
+GameEvents.Subscribe("hide_press_key_message", event => hidePressKeyMessage());

@@ -59,6 +59,16 @@ interface PlayVideoEvent {
     name: VideoName;
 }
 
+interface CreditsInteractEvent {
+    name: string;
+    description?: string;
+}
+
+interface ShowPressKeyMessage {
+    command: number; // DOTAKeybindCommand_t
+    text: string // Should contain {key} to show the key
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -81,4 +91,8 @@ interface CustomGameEventDeclarations {
     play_video_continue: {};
     fade_screen: {};
     voice_chat: {};
+    credits_interact: CreditsInteractEvent;
+    credits_interact_stop: {};
+    show_press_key_message: ShowPressKeyMessage;
+    hide_press_key_message: {};
 }

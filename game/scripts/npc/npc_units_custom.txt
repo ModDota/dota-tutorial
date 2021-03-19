@@ -15,11 +15,12 @@
         "Level"						"4"
         "ModelScale" 					"1.1"
         "IsNeutralUnitType"			"1"
+        "ConsideredHero"			"1"
 
         // Abilities
         //----------------------------------------------------------------
-        "Ability1"					"mud_golem_hurl_boulder"			// Ability 1
-        "Ability2"					"mud_golem_rock_destroy"			// Ability 2
+        "Ability1"					""			// Ability 1
+        "Ability2"					""			// Ability 2
         "Ability3"					""			// Ability 3
         "Ability4"					""			// Ability 4
 
@@ -78,11 +79,12 @@
         "Level"						"4"
         "ModelScale" 					"1.1"
         "IsNeutralUnitType"			"1"
+        "ConsideredHero"			"1"
 
         // Abilities
         //----------------------------------------------------------------
-        "Ability1"					"mud_golem_hurl_boulder"			// Ability 1
-        "Ability2"					"mud_golem_rock_destroy"			// Ability 2
+        "Ability1"					""			// Ability 1
+        "Ability2"					""			// Ability 2
         "Ability3"					""			// Ability 3
         "Ability4"					""			// Ability 4
 
@@ -779,9 +781,9 @@
         {
             "AttachWearables"
             {
-                "Wearable1" { "ItemDef" "5302" } // Dreaded Bravo's Scarf
-                "Wearable2" { "ItemDef" "5303" } // Dreaded Bravo's Cape
-                "Wearable3" { "ItemDef" "5304" } // Dreaded Bravo's Guise
+                "Wearable1" { "ItemDef" "7433" } // Timekeeper
+                "Wearable2" { "ItemDef" "7435" }
+                "Wearable3" { "ItemDef" "7436" }
             }
         }
     }

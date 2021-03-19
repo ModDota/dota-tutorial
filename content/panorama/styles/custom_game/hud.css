@@ -566,3 +566,29 @@
     opacity: 1;
     transform: scale3d(1, 1, 1);
 }
+
+#PressKeyMessage {
+    font-size: 24px;
+    margin-top: 5px;
+
+    background-color: #000000ef;
+    padding: 10px;
+    border-radius: 5px;
+
+    color: #EEEEEE;
+
+    horizontal-align: center;
+    vertical-align: center;
+    margin-left: 600px;
+    margin-bottom: 250px;
+
+    opacity: 0.9;
+    transform: scale3d(0, 0, 1);
+
+    text-shadow: 0px 0px 3px 3.0 #000000;
+}
+
+#PressKeyMessage.Visible {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}

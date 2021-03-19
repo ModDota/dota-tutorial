@@ -6,7 +6,7 @@ import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -60,6 +60,7 @@ const onStart = (complete: () => void) => {
     const finalTowerSneakLocation = Vector(-3353, 6014, 128)
 
     const elderDragonFormAbility = "dragon_knight_elder_dragon_form"
+    const elderDragonFormHighlightAbilityPath = getPathToHighlightAbility(3);
 
     const items: CDOTA_Item[] = []
 
@@ -242,7 +243,7 @@ const onStart = (complete: () => void) => {
                             tg.goToLocation(moveAfterTeleportCloseToTowerLocation, []),
                         ]),
                     ]),
-                    
+
                     tg.immediate(() => {
                         goalSneakBackAgain.setValue(4)
                         goalSneakBackAgain.complete()
@@ -349,6 +350,7 @@ const onStart = (complete: () => void) => {
                         tg.seq([
                             tg.immediate(() => {
                                 goalUseUltimate.start()
+                                highlightUiElement(elderDragonFormHighlightAbilityPath)
                                 playerOrderMustCastUltimate = true
                             }),
                             tg.completeOnCheck(() => {
@@ -358,6 +360,7 @@ const onStart = (complete: () => void) => {
                     ]),
                     tg.immediate(() => {
                         goalUseUltimate.complete()
+                        removeHighlight(elderDragonFormHighlightAbilityPath)
                         setUnitPacifist(playerHero, false)
                         playerOrderMustCastUltimate = false
                         const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
