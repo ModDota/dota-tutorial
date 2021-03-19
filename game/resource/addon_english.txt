@@ -232,6 +232,8 @@
         "Goal_6_Opening_1" "Watch Centaur Warrunner's (Strength) skill showcase."
         "Goal_6_Opening_2" "Watch Phantom Assassin's (Agility) skill showcase."
         "Goal_6_Opening_3" "Watch Invoker's (Intelligence) skill showcase."
+        "Goal_6_Closing_1"  "Destroy the enemy towers defending the Ancient"
+        "Goal_6_Closing_2"  "Destroy the enemy Ancient."
 
         // Dialog
         "Script_1_Opening_1" "Oh look at this! New blood! The dragon knight himself!"

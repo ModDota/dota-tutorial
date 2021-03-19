@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index"
 import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
-import { centerCameraOnHero, Distance2D, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { centerCameraOnHero, createPathParticle, Distance2D, getOrError, getPlayerCameraLocation, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
 import { addWorldText, removeWorldText } from "../../WorldText"
 
@@ -142,6 +142,7 @@ const waitNpcsSpawned = () => tg.completeOnCheck(_ => npcs.every(npc => npc.unit
 const clearNpcs = () => npcs.forEach(npc => npc.destroy())
 
 let sectionTimer: string;
+let pathParticleID: ParticleID | undefined = undefined
 
 let worldTexts = new Set<number>()
 function clearWorldTexts() {
@@ -152,14 +153,30 @@ function clearWorldTexts() {
 function cleanup() {
     clearNpcs()
     clearWorldTexts()
+    if (pathParticleID) {
+        ParticleManager.DestroyParticle(pathParticleID, false)
+        ParticleManager.ReleaseParticleIndex(pathParticleID)
+        pathParticleID = undefined
+    }
 }
 
 function onStart(complete: () => void) {
     print("Starting", sectionName)
 
     const goalTracker = new GoalTracker()
+    const goalDestroyTowers = goalTracker.addNumeric(LocalizationKey.Goal_6_Closing_1, 2);
+    const goalDestroyAncient = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2);
 
     const playerHero = getOrError(getPlayerHero(), "Can not get player hero")
+
+    const topTower = getDireAncientTower("top")
+    const botTower = getDireAncientTower("bot")
+    let towersToDestroy: CDOTA_BaseNPC_Building[] = [];
+    if (topTower && unitIsValidAndAlive(topTower)) towersToDestroy.push(topTower)
+    if (botTower && unitIsValidAndAlive(botTower)) towersToDestroy.push(botTower)
+    const ancient = Entities.FindByName(undefined, "dota_badguys_fort") as CDOTA_BaseNPC
+
+    const pathLocations: Vector[] = [Vector(-4422, -3970, 256), Vector(-3966, -3467, 136.75), Vector(-2366, -2057, 133.000000), Vector(-922, -786, 128), Vector(-49, 44, 128), Vector(1559, 1173, 128), Vector(3442, 2938, 136), Vector(4105, 3560, 256), Vector(5093, 4629, 264)]
 
     const slacks = (GameRules.Addon.context[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC)
     const sunsFan = (GameRules.Addon.context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC)
@@ -194,13 +211,59 @@ function onStart(complete: () => void) {
         }),
 
         // Main logic
-        tg.fork([
-            // Play dialog
+        tg.forkAny([
             tg.seq([
+                // Play dialog
                 tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
+
+                tg.withHighlights(tg.forkAny([
+                    tg.seq([
+                        tg.immediate(_ => {
+                            goalDestroyTowers.start()
+                            pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
+                        }),
+                        tg.completeOnCheck(_ => {
+                            towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
+                            goalDestroyTowers.setValue(2 - towersToDestroy.length)
+
+                            return towersToDestroy.length === 0
+                        }, 0.1),
+                    ]),
+
+                    tg.seq([
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
+                        tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
+                        tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
+                        tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
+                        tg.immediate(() => {
+                            playerHero.AddItemByName("item_rapier")
+                            const tpScroll = playerHero.AddItemByName("item_tpscroll")
+                            Timers.CreateTimer(FrameTime(), () => {
+                                tpScroll.EndCooldown()
+                            })
+                        }),
+                        tg.neverComplete(),
+                    ]),
+                ]), {
+                    type: "arrow_enemy",
+                    units: towersToDestroy,
+                    attach: true,
+                }),
+
+                tg.withHighlights(tg.seq([
+                    tg.immediate(_ => {
+                        goalDestroyTowers.complete()
+                        goalDestroyAncient.start()
+                    }),
+                    tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1),
+                ]), {
+                    type: "arrow_enemy",
+                    units: [ancient],
+                    attach: true,
+                })
             ]),
 
             // Make everyone stare at you, little bit creepy
@@ -299,3 +362,14 @@ export const sectionClosing = new tut.FunctionalSection(
     onStop,
     orderFilter
 )
+
+function getDireAncientTower(towerLoc: "top" | "bot"): CDOTA_BaseNPC_Building | undefined {
+    const enemyTowerAncientTopLocation = Vector(4944, 4776, 256)
+    const enemyTowerAncientBotLocation = Vector(5280, 4432, 256)
+
+    const tower = towerLoc === "top" ?
+        Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientTopLocation, 200) as CDOTA_BaseNPC_Building :
+        Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientBotLocation, 200) as CDOTA_BaseNPC_Building
+
+    return tower
+}
