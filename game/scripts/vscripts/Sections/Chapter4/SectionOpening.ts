@@ -251,7 +251,6 @@ function onStop() {
 
 // Scan radius is 900, but check within 500 to avoid the case of not covering target heroes
 function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: TutorialContext): boolean {
-    print("Checking if scan covers location!")
     if (scanLocation) {
         if (scanLocation.__sub(targetScanLocation).Length2D() < 500) {
             return true;

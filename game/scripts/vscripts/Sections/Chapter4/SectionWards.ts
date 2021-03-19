@@ -38,8 +38,6 @@ const cliffLocation3 = Vector(-4354, -1006);
 //radiant top tower
 const cliffLocation4 = Vector(-5371, 2321);
 
-const cameraSpeed = 2500;
-
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },
     { name: "npc_dota_hero_mirana", loc: Vector(-2000, 3800, 256) },
@@ -123,18 +121,18 @@ function onStart(complete: () => void) {
 
             tg.forkAny([
                 tg.seq([
-                    tg.panCamera(_ => getPlayerCameraLocation(), cliffLocation1, _ => cameraSpeed),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), cliffLocation1, 1.5),
                     tg.wait(0.25),
-                    tg.panCamera(cliffLocation1, cliffLocation2, _ => cameraSpeed),
+                    tg.panCameraExponential(cliffLocation1, cliffLocation2, 1.5),
                     tg.wait(0.25),
-                    tg.panCamera(cliffLocation2, cliffLocation3, _ => cameraSpeed),
+                    tg.panCameraExponential(cliffLocation2, cliffLocation3, 1.5),
                     tg.wait(0.25),
-                    tg.panCamera(cliffLocation3, cliffLocation4, _ => cameraSpeed),
-                    tg.wait(2.5),
+                    tg.panCameraExponential(cliffLocation3, cliffLocation4, 1.5),
+                    tg.wait(4),
                 ]),
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
-            tg.panCamera(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1.5),
             tg.immediate(_ => {
                 highlightUiElement(inventorySlot1UIPath);
                 goalPlaceObserverWard.start();
