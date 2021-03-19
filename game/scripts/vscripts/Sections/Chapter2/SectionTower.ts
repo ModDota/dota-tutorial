@@ -7,7 +7,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
-import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
+import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames, TowerHitSources } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
 let graph: tg.TutorialStep | undefined = undefined
@@ -18,6 +18,8 @@ let playerMustOrderGlyph = false
 let hasPlayerOrderedGlyphWhenMust = false
 let playerOrderMustCastUltimate = false
 let radiantCreepTimer: string | undefined;
+
+// Calculate how long you should be dead while Slacks and Sunsfan explain death
 const deathConversations = [LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_6]
 const deathDuration = deathConversations.map(getSoundDuration).reduce((accumulator, current) => accumulator + current + 0.5, 0)
 
@@ -64,8 +66,10 @@ const onStart = (complete: () => void) => {
 
     const items: CDOTA_Item[] = []
 
-    // Get or create the Dire T1 tower
+    // Get the Dire T1 tower
     const direTopTower = getOrError(getDireTopTower());
+    const direTopTowerNoDamageModifier = direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {}) as modifier_nodamage_chapter2_tower
+    direTopTowerNoDamageModifier.hitSources = TowerHitSources.NONE
 
     const goalTracker = new GoalTracker()
     const goalAttemptToAttackTower = goalTracker.addBoolean(LocalizationKey.Goal_2_Tower_1)
@@ -112,11 +116,9 @@ const onStart = (complete: () => void) => {
                 ]),
                 tg.seq([
                     tg.immediate(() => {
-                        // Calculate how long you should be dead while Slacks and Sunsfan explain death
                         setRespawnSettings(Vector(-6700, -6700, 384), deathDuration)
                         goalAttemptToAttackTower.start()
                         playerHero.AddNewModifier(playerHero, undefined, modifier_dk_death_chapter2_tower.name, {});
-                        direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
                     }),
                     tg.withHighlights(tg.completeOnCheck(() => {
                         const modifier = playerHero.FindModifierByName(modifier_dk_death_chapter2_tower.name) as modifier_dk_death_chapter2_tower
@@ -258,8 +260,8 @@ const onStart = (complete: () => void) => {
                         tg.seq([
                             tg.immediate(() => {
                                 goalAttackTowerWeak.start()
-                                direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                                 playerHero.AddNewModifier(playerHero, undefined, modifier_dk_attack_tower_chapter2.name, {})
+                                direTopTowerNoDamageModifier.hitSources = TowerHitSources.DK_ONLY
                             }),
                             tg.withHighlights(tg.completeOnCheck(() => {
                                 const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
@@ -274,13 +276,13 @@ const onStart = (complete: () => void) => {
                     ]),
                     tg.immediate(() => {
                         goalAttackTowerWeak.complete()
+                        direTopTowerNoDamageModifier.hitSources = TowerHitSources.NONE
                         setUnitPacifist(playerHero, true)
-                        ExecuteOrderFromTable(
-                            {
-                                OrderType: UnitOrder.MOVE_TO_POSITION,
-                                Position: moveAfterTeleportCloseToTowerLocation,
-                                UnitIndex: playerHero.entindex()
-                            })
+                        ExecuteOrderFromTable({
+                            OrderType: UnitOrder.MOVE_TO_POSITION,
+                            Position: moveAfterTeleportCloseToTowerLocation,
+                            UnitIndex: playerHero.entindex()
+                        })
                         ignorePlayerOrders = true
                     }),
 
@@ -303,7 +305,6 @@ const onStart = (complete: () => void) => {
                                 playerMustOrderTrainUltimate = true
                                 playerMustOrderTrainAbilities = true
                                 goalTrainUltimate.start()
-                                direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
                             }),
                             tg.immediate(() => {
                                 items.push(playerHero.AddItemByName("item_heart"))
@@ -366,7 +367,7 @@ const onStart = (complete: () => void) => {
                         const modifier = playerHero.FindModifierByName(modifier_dk_attack_tower_chapter2.name) as modifier_dk_attack_tower_chapter2
                         if (!modifier) error("Could not find Dragon Knight's tower attack modifier")
                         modifier.dkCanAttackTowerAgainBeforeGlyph = true
-                        direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
+                        direTopTowerNoDamageModifier.hitSources = TowerHitSources.DK_ONLY
                     }),
 
                     // No fork since it's pretty short dialogue
@@ -403,7 +404,7 @@ const onStart = (complete: () => void) => {
                         goalUseGlyph.start()
                         highlightUiElement(glyphUIPath)
                         playerMustOrderGlyph = true
-                        direTopTower.AddNewModifier(undefined, undefined, modifier_nodamage_chapter2_tower.name, {})
+                        direTopTowerNoDamageModifier.hitSources = TowerHitSources.NONE
                     }),
                     tg.completeOnCheck(() => {
                         return hasPlayerOrderedGlyphWhenMust
@@ -412,7 +413,6 @@ const onStart = (complete: () => void) => {
                         goalUseGlyph.complete()
                         removeHighlight(glyphUIPath)
                         setUnitPacifist(playerHero, false)
-                        direTopTower.RemoveModifierByName(modifier_nodamage_chapter2_tower.name)
                         for (const radiantCreep of radiantCreeps) {
                             radiantCreep.AddNewModifier(undefined, undefined, "modifier_fountain_glyph", { duration: 7 })
                         }
@@ -425,7 +425,10 @@ const onStart = (complete: () => void) => {
                             tg.neverComplete()
                         ]),
                         tg.seq([
-                            tg.immediate(() => goalDestroyTower.start()),
+                            tg.immediate(() => {
+                                goalDestroyTower.start()
+                                direTopTowerNoDamageModifier.hitSources = TowerHitSources.ALL
+                            }),
                             tg.withHighlights(tg.completeOnCheck(() => {
                                 return !IsValidEntity(direTopTower) || !direTopTower.IsAlive()
                             }, 0.1),
