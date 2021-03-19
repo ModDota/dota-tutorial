@@ -1776,6 +1776,18 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Closing_4.vsnd" ]
     }
+    "Script_6_Closing_5" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Closing_5.vsnd" ]
+    }
+    "Script_6_Closing_6" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Closing_6.vsnd" ]
+    }
     "Script_6_anger" =
     {
         type = "dota_src1_2d"
@@ -1829,6 +1841,24 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Bowie.vsnd" ]
+    }
+    "Script_6_Awesome" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Awesome.vsnd" ]
+    }
+    "Script_6_Yodi" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Yodi.vsnd" ]
+    }
+    "Script_6_SUNSfan" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_SUNSfan.vsnd" ]
     }
     "Script_6_Flam3s" =
     {
@@ -1895,12 +1925,6 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Slacks.vsnd" ]
-    }
-    "Script_6_SUNSfan" =
-    {
-        type = "dota_src1_2d"
-        volume = "1.0"
-        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_SUNSfan.vsnd" ]
     }
     "Script_6_valkyrjaRuby" =
     {

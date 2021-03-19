@@ -26,6 +26,7 @@ const requiredState: RequiredState = {
         "item_power_treads": 1,
         "item_heart": 1,
         "item_aegis": 1,
+        "item_rapier": 1,
     },
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -183,6 +184,8 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
+                tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
+                tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // TODO: Get audio
             ]),
 
             // Make everyone stare at you, little bit creepy
