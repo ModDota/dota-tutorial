@@ -48,8 +48,12 @@ const start = (complete: () => void) => {
                 tg.neverComplete()
             ]),
             tg.seq([
-                tg.immediate(_ => goalLevelDragonTail.start()),
+                tg.immediate(_ => {
+                    goalLevelDragonTail.start()
+                    highlightUiElement(getPathToHighlightAbility(1))
+                }),
                 tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg)),
+                tg.immediate(() => removeHighlight(getPathToHighlightAbility(1)))
             ]),
         ]),
         tg.immediate(_ => goalLevelDragonTail.complete()),
@@ -158,7 +162,9 @@ const start = (complete: () => void) => {
                 tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
                 tg.immediate(_ => hero.HeroLevelUp(true)),
                 tg.immediate(_ => goalLevelBreatheFire.start()),
+                tg.immediate(_ => highlightUiElement(getPathToHighlightAbility(0))),
                 tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
+                tg.immediate(_ => removeHighlight(getPathToHighlightAbility(0)))
             ])
         ]),
         tg.immediate(_ => goalLevelBreatheFire.complete()),

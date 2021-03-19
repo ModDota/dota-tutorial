@@ -298,7 +298,7 @@ const onStart = (complete: () => void) => {
                                 playerHero.AddExperience(levelsToGrant, ModifyXpReason.UNSPECIFIED, false, true)
                                 const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
                                 if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
-                                dragonFormAbilityHandle.SetUpgradeRecommended(true)
+                                highlightUiElement(getPathToHighlightAbility(3))
                                 ignorePlayerOrders = false
                                 playerMustOrderTrainUltimate = true
                                 playerMustOrderTrainAbilities = true
@@ -316,7 +316,7 @@ const onStart = (complete: () => void) => {
                                 const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
                                 if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
                                 if (dragonFormAbilityHandle.GetLevel() > 0) {
-                                    dragonFormAbilityHandle.SetUpgradeRecommended(false)
+                                    removeHighlight(getPathToHighlightAbility(3))
                                     playerMustOrderTrainUltimate = false
                                     return true
                                 }
@@ -325,6 +325,9 @@ const onStart = (complete: () => void) => {
                             tg.immediate(() => {
                                 goalTrainUltimate.complete()
                                 goalTrainAbilities.start()
+                                highlightUiElement(getPathToHighlightAbility(0))
+                                highlightUiElement(getPathToHighlightAbility(1))
+                                highlightUiElement(getPathToHighlightAbility(2))
                             }),
                             tg.completeOnCheck(() => {
                                 if (playerHero.GetAbilityPoints() === 0) {
@@ -338,6 +341,9 @@ const onStart = (complete: () => void) => {
                     ]),
                     tg.immediate(() => {
                         goalTrainAbilities.complete()
+                        removeHighlight(getPathToHighlightAbility(0))
+                        removeHighlight(getPathToHighlightAbility(1))
+                        removeHighlight(getPathToHighlightAbility(2))
                     }),
 
                     // Fork use ulti dialogue
@@ -462,6 +468,12 @@ const onStart = (complete: () => void) => {
 
 const onStop = () => {
     print("Stopping", sectionName);
+
+    for (let index = 0; index <= 3; index++) {
+        removeHighlight(getPathToHighlightAbility(index))
+    }
+
+
     removeHighlight(glyphUIPath);
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
