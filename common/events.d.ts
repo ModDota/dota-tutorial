@@ -64,6 +64,21 @@ interface CreditsInteractEvent {
     description?: string;
 }
 
+interface AddWorldTextEvent {
+    index: number;
+    text: string;
+    location: { x: number, y: number, z: number };
+}
+
+interface RemoveWorldTextEvent {
+    index: number;
+}
+
+interface ShowPressKeyMessage {
+    command: number; // DOTAKeybindCommand_t
+    text: string // Should contain {key} to show the key
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -88,4 +103,8 @@ interface CustomGameEventDeclarations {
     voice_chat: {};
     credits_interact: CreditsInteractEvent;
     credits_interact_stop: {};
+    add_world_text: AddWorldTextEvent;
+    remove_world_text: RemoveWorldTextEvent;
+    show_press_key_message: ShowPressKeyMessage;
+    hide_press_key_message: {};
 }

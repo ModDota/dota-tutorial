@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getPlayerHero } from "../../util"
+import { findRealPlayerID, getPlayerCameraLocation, getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
 
@@ -43,7 +43,7 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_8, LocalizationKey.Script_1_Opening_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_9, LocalizationKey.Script_1_Opening_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.panCameraLinear(ctx => playerHero.GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 4),
+        tg.panCameraLinear(_ => playerHero.GetAbsOrigin(), Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), 4),
 
         // Highlight the enemy ancient while talking about it
         tg.withHighlights(
@@ -51,11 +51,11 @@ const onStart = (complete: () => void) => {
                 tg.audioDialog(LocalizationKey.Script_1_Opening_10, LocalizationKey.Script_1_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.audioDialog(LocalizationKey.Script_1_Opening_11, LocalizationKey.Script_1_Opening_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             ]), {
-                type: "circle",
-                units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
-                radius: 400,
-                attach: false
-            }
+            type: "circle",
+            units: [Entities.FindAllByName("dota_badguys_fort")[0]] as CDOTA_BaseNPC[],
+            radius: 400,
+            attach: false
+        }
         ),
         tg.panCameraExponential(Entities.FindAllByName("dota_badguys_fort")[0].GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerHero),

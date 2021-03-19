@@ -29,6 +29,7 @@ declare const enum CustomNpcKeys {
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
+    DireMeleeMegaCreep = "npc_dota_creep_badguys_melee_upgraded_mega",
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     Riki = "npc_dota_hero_riki",
