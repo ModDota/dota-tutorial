@@ -5,6 +5,7 @@ import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { centerCameraOnHero, Distance2D, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
+import { addWorldText, removeWorldText } from "../../WorldText"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
 
@@ -142,6 +143,17 @@ const clearNpcs = () => npcs.forEach(npc => npc.destroy())
 
 let sectionTimer: string;
 
+let worldTexts = new Set<number>()
+function clearWorldTexts() {
+    worldTexts.forEach(removeWorldText)
+    worldTexts.clear()
+}
+
+function cleanup() {
+    clearNpcs()
+    clearWorldTexts()
+}
+
 function onStart(complete: () => void) {
     print("Starting", sectionName)
 
@@ -175,6 +187,12 @@ function onStart(complete: () => void) {
         // Hopefully every npc will be spawned by now and this completes immediately
         waitNpcsSpawned(),
 
+        tg.immediate(_ => {
+            worldTexts.add(addWorldText("Modders", Vector(-6700, -4800, 256)))
+            worldTexts.add(addWorldText("Resources", Vector(-5500, -6000, 256)))
+            worldTexts.add(addWorldText("Resources", Vector(-7000, -6500, 384)))
+        }),
+
         // Main logic
         tg.fork([
             // Play dialog
@@ -194,7 +212,7 @@ function onStart(complete: () => void) {
         ]),
 
         // Should never happen currently
-        tg.immediate(_ => clearNpcs()),
+        tg.immediate(_ => cleanup()),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
@@ -221,7 +239,7 @@ function onStop() {
     slacks.RemoveNoDraw()
     sunsFan.RemoveNoDraw()
 
-    clearNpcs()
+    cleanup()
 }
 
 let talkTarget: ClosingNpc | undefined;
