@@ -1,9 +1,10 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
-import { freezePlayerHero, getOrError, getPathToHighlightAbility, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { slacksFountainLocation } from "./Shared";
+import * as dg from "../../Dialog";
 
 let graph: tg.TutorialStep | undefined = undefined;
 
@@ -17,6 +18,11 @@ const requiredState: RequiredState = {
     lockCameraOnHero: true,
 };
 
+const abilNameBreatheFire = "dragon_knight_breathe_fire"
+let listenerID: EventListenerID | undefined = undefined;
+let currentDialogToken: number | undefined = undefined;
+let eventTimer: string | undefined = undefined;
+
 const start = (complete: () => void) => {
     print("Started section casting");
 
@@ -24,25 +30,52 @@ const start = (complete: () => void) => {
     const goalKillSlacks = goalTracker.addBoolean(LocalizationKey.Goal_1_BreatheFire_1);
     const abilityBreatheFireHighlightPath = getPathToHighlightAbility(0);
 
+    const hero = getOrError(getPlayerHero())
+
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(ctx => {
-            freezePlayerHero(true);
-
-            // Make Slacks attackable
+            // Have Slacks health bar turn red, but make him invulnerable for now
             const slacks = getOrError(ctx[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC | undefined);
-            setUnitPacifist(slacks, false);
+            setUnitPacifist(slacks, true);
             slacks.SetTeam(DotaTeam.NEUTRALS);
             highlightUiElement(abilityBreatheFireHighlightPath)
         }),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.immediate(_ => goalKillSlacks.start()),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-        tg.immediate(_ => freezePlayerHero(false)),
-
-        tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+        
+        // Fork use breathe fire dialogs
+        tg.forkAny([
+            tg.seq([
+                tg.immediate(_ => goalKillSlacks.start()),
+                tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(ctx => {
+                    setUnitPacifist(ctx[CustomNpcKeys.SlacksMudGolem], false);
+                }),
+                tg.immediate(ctx => listenerID = ListenToGameEvent("dota_player_used_ability", (event: DotaPlayerUsedAbilityEvent) => {
+                    if (event.abilityname === abilNameBreatheFire) {
+                        eventTimer = Timers.CreateTimer(1.25, () => {
+                            if (unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem])) {
+                                currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
+                                    currentDialogToken = undefined
+                                    const ability = hero.FindAbilityByName(abilNameBreatheFire)
+                                    if (ability) {
+                                        ability.EndCooldown()
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }, undefined)),
+                tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+            ]),
+        ]),
+        tg.immediate(() => {
+            stopListeningToBreatheFireCasts()
+        }),
         tg.immediate(_ => goalKillSlacks.complete()),
         tg.immediate(() => removeHighlight(abilityBreatheFireHighlightPath)),
 
@@ -57,6 +90,13 @@ const start = (complete: () => void) => {
 };
 
 const stop = () => {
+    if (currentDialogToken !== undefined) {
+        dg.stop(currentDialogToken)
+        currentDialogToken = undefined
+    }
+
+    stopListeningToBreatheFireCasts()
+
     if (graph) {
         graph.stop(GameRules.Addon.context);
         graph = undefined;
@@ -69,3 +109,15 @@ export const sectionCasting = new tut.FunctionalSection(
     start,
     stop
 );
+
+function stopListeningToBreatheFireCasts() {
+    if (listenerID) {
+        StopListeningToGameEvent(listenerID)
+        listenerID = undefined
+    }
+
+    if (eventTimer) {
+        Timers.RemoveTimer(eventTimer)
+        eventTimer = undefined
+    }
+}

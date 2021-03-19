@@ -16,7 +16,7 @@
             <Panel class="BlurBackground" hittest="false" />
             <Panel class="MovieContainerMuting">
                 <Label class="VideoTitle" text="#Muting_Player"/>
-                <MoviePanel class ="CustomMoviePanelMuting" src="s2r://panorama/videos/MutePlayer.webm" repeat="true" autoplay="onload" />
+                <Movie class="CustomMoviePanelMuting TutorialMovie" src="s2r://panorama/videos/MutePlayer.webm" repeat="true" autoplay="onload" />
                 <Button class="VideoContinue" onactivate="OnVideoContinue();">
                     <Label text="#Continue"/>
                 </Button>
@@ -27,7 +27,7 @@
             <Panel class="BlurBackground" hittest="false" />
             <Panel class="MovieContainerGuides">
                 <Label class="VideoTitle" text="#Select_Guide"/>
-                <MoviePanel class ="CustomMoviePanelGuides" src="s2r://panorama/videos/Guides.webm" repeat="true" autoplay="onload" />
+                <Movie class="CustomMoviePanelGuides TutorialMovie" src="s2r://panorama/videos/Guides.webm" repeat="true" autoplay="onload" />
                 <Button class="VideoContinue" onactivate="OnVideoContinue();">
                     <Label text="#Continue"/>
                 </Button>
