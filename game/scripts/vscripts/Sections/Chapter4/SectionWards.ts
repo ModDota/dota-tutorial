@@ -154,11 +154,10 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Wards_9, LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.immediate(_ =>
-                {
-                    allowUseItem = true
-                    goalPlaceSentryWard.start();
-                }),
+            tg.immediate(_ => {
+                allowUseItem = true
+                goalPlaceSentryWard.start();
+            }),
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
             tg.immediate(_ => {
