@@ -1,7 +1,7 @@
 import * as tg from "../../TutorialGraph/index";
 import * as tut from "../../Tutorial/Core";
 import * as shared from "./Shared"
-import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist, getPlayerCameraLocation } from "../../util";
+import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, setUnitPacifist, getPlayerCameraLocation } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 
@@ -27,6 +27,7 @@ const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
 const rikiName = CustomNpcKeys.Riki;
 let allowUseItem = false;
+let wardMarkerActive = false
 
 //dire jungle top
 const cliffLocation1 = Vector(1027, 4881);
@@ -71,6 +72,7 @@ function onStart(complete: () => void) {
     const observerWardItem = CreateItem(observerWardName, undefined, undefined);
     const sentryWardItem = CreateItem(sentryWardName, undefined, undefined);
     allowUseItem = false;
+    wardMarkerActive = false;
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
@@ -117,7 +119,6 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Wards_3, LocalizationKey.Script_4_Wards_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_4, LocalizationKey.Script_4_Wards_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_5, LocalizationKey.Script_4_Wards_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            // tg.immediate(_ => freezePlayerHero(true)),
             tg.audioDialog(LocalizationKey.Script_4_Wards_6, LocalizationKey.Script_4_Wards_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             tg.forkAny([
@@ -134,11 +135,11 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_4_Wards_7, LocalizationKey.Script_4_Wards_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
             tg.panCamera(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), _ => cameraSpeed),
-            tg.immediate(_ => freezePlayerHero(false)),
             tg.immediate(_ => {
                 highlightUiElement(inventorySlot1UIPath);
                 goalPlaceObserverWard.start();
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                wardMarkerActive = true;
             }),
 
             tg.forkAny([
@@ -178,6 +179,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                wardMarkerActive = false;
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
                     const runDirection = hero.GetAbsOrigin().__sub(playerHero.GetAbsOrigin()).Normalized();
@@ -233,6 +235,10 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
+
+    if (wardMarkerActive) {
+        MinimapEvent(DotaTeam.GOODGUYS, getOrError(getPlayerHero()), Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
+    }
 
     if (graph) {
         graph.stop(GameRules.Addon.context);
