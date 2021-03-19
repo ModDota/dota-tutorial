@@ -19,7 +19,11 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
     if (!handleSpecialUnitPortrait(unitName)) {
         dialogImagePortrait.visible = false;
         dialogPortrait.visible = true;
-        dialogPortrait.SetUnit(Entities.GetUnitName(data.DialogEntIndex), "", true);
+        dialogPortrait.SetUnit(
+            Entities.GetUnitName(data.DialogEntIndex),
+            "",
+            true
+        );
     }
     dialogTitle.text = $.Localize(Entities.GetUnitName(data.DialogEntIndex));
 
@@ -33,8 +37,10 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
 
 function handleSpecialUnitPortrait(unitName: string): boolean {
     const unitPortraits: Record<string, string> = {
-        npc_mud_golem_sunsfan: "file://{images}/custom_game/portraits/sunsfan_greevil.png",
-        npc_mud_golem_slacks: "file://{images}/custom_game/portraits/slacks_greevil.png",
+        npc_mud_golem_sunsfan:
+            "file://{images}/custom_game/portraits/sunsfan_greevil.png",
+        npc_mud_golem_slacks:
+            "file://{images}/custom_game/portraits/slacks_greevil.png",
     };
 
     if (unitPortraits[unitName] !== undefined) {
@@ -68,7 +74,8 @@ function AdvanceDialogThink() {
         dialogLabel.text = pendingDialog;
         dialogPanel.SetHasClass("ShowAdvanceButton", false);
     } else {
-        dialogLabel.text = `${pendingDialog.substring(0, currentCharacter)}<span class='HiddenText'>${pendingDialog.substring(currentCharacter, pendingDialog.length)}</span>`;
+        const visibleText = pendingDialog.substring(0, currentCharacter);
+        dialogLabel.text = visibleText;
     }
 
     $.Schedule(characterAdvanceRate, AdvanceDialogThink);
