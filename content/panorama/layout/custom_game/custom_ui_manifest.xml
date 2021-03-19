@@ -9,6 +9,7 @@
         <include src="file://{resources}/scripts/custom_game/shop-detection.js" />
     </scripts>
     <Panel>
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/world_text.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/dialog.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/hud.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/devpanel.xml" />
