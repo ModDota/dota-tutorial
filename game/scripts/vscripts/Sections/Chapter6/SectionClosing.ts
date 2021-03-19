@@ -188,76 +188,77 @@ function onStart(complete: () => void) {
         waitNpcsSpawned(),
 
         // Main logic
-        tg.forkAny([tg.seq([
-            // Play dialog
-            tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
-            tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
-            tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
-            tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
+        tg.forkAny([
+            tg.seq([
+                // Play dialog
+                tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
+                tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
+                tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
+                tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
 
-            tg.withHighlights(tg.forkAny([
-                tg.seq([
-                    tg.immediate(_ => {
-                        goalDestroyTowers.start()
-                        pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
-                    }),
-                    tg.completeOnCheck(_ => {
-                        towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
-                        goalDestroyTowers.setValue(2 - towersToDestroy.length)
+                tg.withHighlights(tg.forkAny([
+                    tg.seq([
+                        tg.immediate(_ => {
+                            goalDestroyTowers.start()
+                            pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
+                        }),
+                        tg.completeOnCheck(_ => {
+                            towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
+                            goalDestroyTowers.setValue(2 - towersToDestroy.length)
 
-                        return towersToDestroy.length === 0
-                    }, 0.1)
-                ]),
+                            return towersToDestroy.length === 0
+                        }, 0.1),
+                    ]),
 
-                tg.seq([
-                    tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
-                    tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan), // This needs to be edited with the new line for Sunsfan for destroying the ancient and the towers protecting it
-                    tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
-                    tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
-                    tg.immediate(() => {
-                        playerHero.AddItemByName("item_rapier")
-                        const tpScroll = playerHero.AddItemByName("item_tpscroll")
-                        Timers.CreateTimer(FrameTime(), () => {
-                            tpScroll.EndCooldown()
-                        })
-                    }),
-                    tg.neverComplete()
-                ]),
-            ]), {
-                type: "arrow_enemy",
-                units: towersToDestroy,
-                attach: true
-            }),
-
-            tg.withHighlights(tg.seq([
-                tg.immediate(_ => {
-                    goalDestroyTowers.complete()
-                    goalDestroyAncient.start()
+                    tg.seq([
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
+                        tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan), // This needs to be edited with the new line for Sunsfan for destroying the ancient and the towers protecting it
+                        tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
+                        tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
+                        tg.immediate(() => {
+                            playerHero.AddItemByName("item_rapier")
+                            const tpScroll = playerHero.AddItemByName("item_tpscroll")
+                            Timers.CreateTimer(FrameTime(), () => {
+                                tpScroll.EndCooldown()
+                            })
+                        }),
+                        tg.neverComplete(),
+                    ]),
+                ]), {
+                    type: "arrow_enemy",
+                    units: towersToDestroy,
+                    attach: true,
                 }),
-                tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1)
-            ]), {
-                type: "arrow_enemy",
-                units: [ancient],
-                attach: true
-            })
-        ]),
 
-        // Make everyone stare at you, little bit creepy
-        tg.loop(true, tg.seq([
-            tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
-            tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
-            tg.wait(0.1),
-        ])),
+                tg.withHighlights(tg.seq([
+                    tg.immediate(_ => {
+                        goalDestroyTowers.complete()
+                        goalDestroyAncient.start()
+                    }),
+                    tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1),
+                ]), {
+                    type: "arrow_enemy",
+                    units: [ancient],
+                    attach: true,
+                })
+            ]),
 
-        // Should never happen currently
-        tg.immediate(_ => {
-            clearNpcs()
-            if (pathParticleID) {
-                ParticleManager.DestroyParticle(pathParticleID, false)
-                ParticleManager.ReleaseParticleIndex(pathParticleID)
-                pathParticleID = undefined
-            }
-        }),
+            // Make everyone stare at you, little bit creepy
+            tg.loop(true, tg.seq([
+                tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
+                tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
+                tg.wait(0.1),
+            ])),
+
+            // Should never happen currently
+            tg.immediate(_ => {
+                clearNpcs()
+                if (pathParticleID) {
+                    ParticleManager.DestroyParticle(pathParticleID, false)
+                    ParticleManager.ReleaseParticleIndex(pathParticleID)
+                    pathParticleID = undefined
+                }
+            }),
         ]),
     ]))
 
