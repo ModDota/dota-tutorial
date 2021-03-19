@@ -188,9 +188,9 @@ function onStart(complete: () => void) {
         waitNpcsSpawned(),
 
         tg.immediate(_ => {
-            worldTexts.add(addWorldText("Modders", Vector(-6700, -4800, 300)))
-            worldTexts.add(addWorldText("Resources", Vector(-5500, -6000, 300)))
-            worldTexts.add(addWorldText("Resources", Vector(-7000, -6500, 400)))
+            worldTexts.add(addWorldText("Modders", Vector(-6700, -4800, 256)))
+            worldTexts.add(addWorldText("Resources", Vector(-5500, -6000, 256)))
+            worldTexts.add(addWorldText("Resources", Vector(-7000, -6500, 384)))
         }),
 
         // Main logic

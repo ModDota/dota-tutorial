@@ -37,8 +37,13 @@ type WorldText = {
                 Game.WorldToScreenY(...location)
             ]
 
-            panel.style.x = `${Math.round(screenLocation[0] * ratio)}px`
-            panel.style.y = `${Math.round(screenLocation[1] * ratio)}px`
+            if (screenLocation[0] !== -1 && screenLocation[1] !== -1) {
+                panel.style.x = `${Math.round(screenLocation[0] * ratio)}px`
+                panel.style.y = `${Math.round(screenLocation[1] * ratio)}px`
+                panel.visible = true
+            } else {
+                panel.visible = false
+            }
         }
 
         $.Schedule(0.01, update);
