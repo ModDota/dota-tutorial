@@ -293,23 +293,26 @@ const onStart = (complete: () => void) => {
             tg.forkAny([
                 tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.seq([
-                    tg.wait(4),
+                    tg.wait(2),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, creepCampCenter, 600, 3, false)),
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), creepCampCenter, 4),
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, creepCampCenter, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), creepCampCenter, 2),
+                        tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [creepCampCenter] }),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, mediumCampLocation, 600, 3, false)),
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), mediumCampLocation, 4),
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, mediumCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), mediumCampLocation, 2),
+                        tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [mediumCampLocation] }),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, bigCampLocation, 600, 3, false)),
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), bigCampLocation, 4),
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, bigCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), bigCampLocation, 2),
+                        tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [bigCampLocation] }),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, ancientCampLocation, 600, 3, false)),
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancientCampLocation, 4),
-                        tg.wait(1),
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, ancientCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancientCampLocation, 2),
+                        tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [ancientCampLocation] }),
                     tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
                     tg.neverComplete(),
