@@ -147,8 +147,8 @@ function onStart(complete: () => void) {
     print("Starting", sectionName)
 
     const goalTracker = new GoalTracker()
-    const goalDestroyTowers = goalTracker.addNumeric("Destroy the enemy towers defending the Ancient", 2);
-    const goalDestroyAncient = goalTracker.addBoolean("Destroy the enemy Ancient.");
+    const goalDestroyTowers = goalTracker.addNumeric(LocalizationKey.Goal_6_Closing_1, 2);
+    const goalDestroyAncient = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2);
 
     const playerHero = getOrError(getPlayerHero(), "Can not get player hero")
 
