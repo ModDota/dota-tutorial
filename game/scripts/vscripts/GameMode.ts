@@ -145,8 +145,6 @@ export class GameMode {
         // Remove Roshan spawner
         const roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
         roshanSpawner.Destroy()
-
-        removeNeutralSpawners()
     }
 
     registerFilters() {

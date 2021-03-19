@@ -16,7 +16,9 @@ const creepCampMin = Vector(-2911, 4373)
 const creepCampMax = Vector(-2142, 5203)
 const creepCampCenter = creepCampMin.__add(creepCampMax).__mul(0.5)
 
+const mediumCampLocation = Vector(-500, 5100, 384)
 const bigCampLocation = Vector(-4300, 3550, 256)
+const ancientCampLocation = Vector(-4700, -300, 256)
 
 const stackClockStartTime = 44
 const stackClockEndTime = 3
@@ -288,7 +290,32 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_3_Opening_1, LocalizationKey.Script_3_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_2, LocalizationKey.Script_3_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_3, LocalizationKey.Script_3_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.forkAny([
+                tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.seq([
+                    tg.wait(4),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, creepCampCenter, 600, 3, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), creepCampCenter, 4),
+                    ]), { type: "circle", radius: 200, locations: [creepCampCenter] }),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, mediumCampLocation, 600, 3, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), mediumCampLocation, 4),
+                    ]), { type: "circle", radius: 200, locations: [mediumCampLocation] }),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, bigCampLocation, 600, 3, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), bigCampLocation, 4),
+                    ]), { type: "circle", radius: 200, locations: [bigCampLocation] }),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, ancientCampLocation, 600, 3, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancientCampLocation, 4),
+                        tg.wait(1),
+                    ]), { type: "circle", radius: 200, locations: [ancientCampLocation] }),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
+                    tg.neverComplete(),
+                ])
+            ]),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
             tg.audioDialog(LocalizationKey.Script_3_Opening_6, LocalizationKey.Script_3_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => freezePlayerHero(false)),
