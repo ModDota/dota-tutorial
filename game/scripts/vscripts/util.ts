@@ -190,11 +190,11 @@ export function removeHighlight(path: string) {
  * Returns the string to highlight in the UI
  * @param item The item you want to highlight
  */
-function getItemInventoryPathString(item:CDOTA_Item): string|undefined {
+function getItemInventoryPathString(item: CDOTA_Item): string | undefined {
     const hero = getOrError(getPlayerHero());
     let slot = undefined;
 
-    if (hero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT) === item ) {
+    if (hero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT) === item) {
         return "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot";
     }
 
@@ -204,7 +204,7 @@ function getItemInventoryPathString(item:CDOTA_Item): string|undefined {
             break;
         }
     }
-    
+
     if (slot === undefined) {
         return;
     }
@@ -221,15 +221,15 @@ function getItemInventoryPathString(item:CDOTA_Item): string|undefined {
  * Highlights the slot of an item if it exists, returns the string for you to remove later
  * @param item the item you want to highlight
  */
-export function highlightItemInUi(item:CDOTA_Item) {
+export function highlightItemInUi(item: CDOTA_Item) {
     const pathString = getItemInventoryPathString(item);
     if (pathString !== undefined) {
         highlightUiElement(pathString!);
     }
-    
+
     return pathString
 }
-      
+
 export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
     if (unit.GetUnitName() === CustomNpcKeys.RadiantMeleeCreep ||
         unit.GetUnitName() === CustomNpcKeys.RadiantRangedCreep ||
@@ -591,4 +591,20 @@ export function randomChoice<T>(choices: T[]) {
  */
 export function getPathToHighlightAbility(index: number) {
     return "HUDElements/lower_hud/center_with_stats/center_block/AbilitiesAndStatBranch/abilities/Ability" + index + "/ButtonAndLevel/ButtonWithLevelUpTab/ButtonWell/ButtonSize/AbilityButton"
+}
+
+/**
+ * Displays a message indicating to the player that they should press a key.
+ * @param command DOTAKeybindCommand_t for which we want to display the hotkey.
+ * @param text Text to display. Should use {key} to display the hotkey.
+ */
+export function showPressKeyMessage(command: number, text: string) {
+    CustomGameEventManager.Send_ServerToAllClients("show_press_key_message", { command, text })
+}
+
+/**
+ * Hides the press key message.
+ */
+export function hidePressKeyMessage() {
+    CustomGameEventManager.Send_ServerToAllClients("hide_press_key_message", {})
 }
