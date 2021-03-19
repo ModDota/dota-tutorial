@@ -117,7 +117,7 @@ const onStart = (complete: () => void) => {
                         tg.neverComplete(),
                     ]),
                     tg.seq([
-                        // Either wait 5s (until Slacks starts talking about the creep strengths) or until dialog is skipped / over
+                        // Either wait until Slacks starts talking about the creep strengths or until dialog is skipped / over
                         tg.forkAny([
                             tg.wait(15),
                             tg.completeOnCheck(_ => creepDialogOver, 0.1),
