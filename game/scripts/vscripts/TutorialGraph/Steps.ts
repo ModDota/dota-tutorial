@@ -1,4 +1,4 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight, unitIsValidAndAlive } from "../util"
+import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight, unitIsValidAndAlive, showPressKeyMessage } from "../util"
 import * as dg from "../Dialog"
 import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
@@ -482,21 +482,22 @@ export const waitForCameraMovement = () => {
 export const waitForVoiceChat = () => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
-    return tg.step((context, complete) => {
-        listenerId = CustomGameEventManager.RegisterListener("voice_chat", _ => {
-            if (listenerId) {
-                CustomGameEventManager.UnregisterListener(listenerId)
-                listenerId = undefined
-            }
+    const cleanup = () => {
+        CustomGameEventManager.Send_ServerToAllClients("hide_press_key_message", {})
 
-            complete()
-        })
-    }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
             listenerId = undefined
         }
-    })
+    }
+
+    return tg.step((context, complete) => {
+        showPressKeyMessage(37, LocalizationKey.PressKey_Voice) // DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_VOICE_TEAM
+        listenerId = CustomGameEventManager.RegisterListener("voice_chat", _ => {
+            cleanup()
+            complete()
+        })
+    }, context => cleanup())
 }
 
 /**
@@ -534,24 +535,25 @@ export const waitForModifierKey = (key: ModifierKey) => {
 export const waitForChatWheel = (phraseIndex?: number) => {
     let listenerId: CustomGameEventListenerID | undefined = undefined
 
-    return tg.step((context, complete) => {
-        listenerId = CustomGameEventManager.RegisterListener("chat_wheel_phrase_selected", (source, event) => {
-            print("Got chat wheel selected", event.phraseIndex)
-            if (phraseIndex === undefined || event.phraseIndex === phraseIndex) {
-                if (listenerId) {
-                    CustomGameEventManager.UnregisterListener(listenerId)
-                    listenerId = undefined
-                }
+    const cleanup = () => {
+        CustomGameEventManager.Send_ServerToAllClients("hide_press_key_message", {})
 
-                complete()
-            }
-        })
-    }, context => {
         if (listenerId) {
             CustomGameEventManager.UnregisterListener(listenerId)
             listenerId = undefined
         }
-    })
+    }
+
+    return tg.step((context, complete) => {
+        showPressKeyMessage(38, LocalizationKey.PressKey_ChatWheel) // DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL
+        listenerId = CustomGameEventManager.RegisterListener("chat_wheel_phrase_selected", (source, event) => {
+            print("Got chat wheel selected", event.phraseIndex)
+            if (phraseIndex === undefined || event.phraseIndex === phraseIndex) {
+                cleanup()
+                complete()
+            }
+        })
+    }, context => cleanup())
 }
 
 /**

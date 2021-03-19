@@ -115,6 +115,10 @@
 
         "dota_item_build_title_default" "Items for future victim"
 
+        // Press key messages
+        "PressKey_ChatWheel" "Hold {s:key} to open the chat wheel."
+        "PressKey_Voice" "Hold {s:key} to speak."
+
         // Errors
         "Error_Leveling_1"     "Train the ability you are instructed to."
         "Error_ShopUI_1"       "Use your gold to buy a Tango."
