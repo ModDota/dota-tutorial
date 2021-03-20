@@ -131,7 +131,7 @@ type WorldText = {
                 const titleCount = localizeIfExists(`${unitName}_titles_num`)
 
                 if (titleCount && parseInt(titleCount) > 0) {
-                    const chosenTitleIndex = (Math.random() * 100000000) % parseInt(titleCount)
+                    const chosenTitleIndex = Math.floor(Math.random() * 100000000) % parseInt(titleCount)
                     worldText.panel.SetDialogVariable("name", name)
                     const chosenTitle = localizeIfExists(`${unitName}_titles_${chosenTitleIndex}`, worldText.panel)
                     if (chosenTitle) {
