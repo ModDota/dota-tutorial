@@ -16,7 +16,7 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 200,
     heroLevel: 25,
     heroAbilityMinLevels: [4, 4, 4, 3],
-    heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis, shared.itemDaedalus].map(itemName => [itemName, 1])),
+    heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis, shared.itemDaedalus, "item_mysterious_hat"].map(itemName => [itemName, 1])),
     blockades: [
         shared.chapter5Blockades.direJungleLowgroundRiver,
         shared.chapter5Blockades.topLaneRiver,

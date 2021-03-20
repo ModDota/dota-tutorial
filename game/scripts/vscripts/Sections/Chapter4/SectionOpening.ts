@@ -17,7 +17,7 @@ const requiredState: RequiredState = {
     heroLocation: Vector(-3000, 3800, 128),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    heroItems: { "item_greater_crit": 1 },
+    heroItems: { "item_greater_crit": 1, "item_mysterious_hat": 1 },
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
     blockades: Object.values(shared.blockades),

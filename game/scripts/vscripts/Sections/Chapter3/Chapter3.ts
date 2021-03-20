@@ -1,10 +1,11 @@
-import * as tg from "../../TutorialGraph/index"
-import * as tut from "../../Tutorial/Core"
-import { DestroyNeutrals, displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
-import { RequiredState } from "../../Tutorial/RequiredState"
+import { Blockade } from "../../Blockade"
 import { GoalTracker } from "../../Goals"
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter"
-import { Blockade } from "../../Blockade"
+import { modifier_no_health_bar } from "../../modifiers/modifier_no_health_bar"
+import * as tut from "../../Tutorial/Core"
+import { RequiredState } from "../../Tutorial/RequiredState"
+import * as tg from "../../TutorialGraph/index"
+import { DestroyNeutrals, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -24,18 +25,20 @@ const stackClockStartTime = 44
 const stackClockEndTime = 3
 
 const stackTryCount = 5
-const giveAwayItemName = "item_arcane_ring"
-const dropInStashItemName = "item_mysterious_hat"
-const keepItemName = "item_possessed_mask"
+const firstNeutralItemName = "item_arcane_ring"
+const secondNeutralItemName = "item_mysterious_hat"
 
-const neutralSlotUIPath =
+const firstNeutralSlotUIPath =
     "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot"
-const inventorySlot6UIPath =
+const secondNeutralItemUIPath =
     "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_backpack_list/inventory_slot_6/ButtonAndLevel"
 const clockUIPath =
     "HUDElements/topbar/TimeOfDay"
 
 let fowViewer: ViewerID | undefined
+
+let playerExpectedToSendToNeutralStash = false
+let playerCanMoveNeutralFromBackpack = false
 
 class NeutralDetector {
     private _neutrals = new Set<CDOTA_BaseNPC>()
@@ -140,8 +143,6 @@ const requiredState: RequiredState = {
     heroLocation: Vector(-3500, 4500, 128),
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    requireODPixelGolem: true,
-
     requireRiki: true,
     heroItems: { item_greater_crit: 1 },
     blockades: [
@@ -271,24 +272,32 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
 const onStart = (complete: () => void) => {
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: SectionName.Chapter3_Opening, })
 
-    const goalTracker = new GoalTracker()
-    const goalMoveToCamp = goalTracker.addBoolean(LocalizationKey.Goal_3_1)
-    const goalKillFirstSpawn = goalTracker.addBoolean(LocalizationKey.Goal_3_2)
-    const goalMoveToTarget = goalTracker.addBoolean(LocalizationKey.Goal_3_3)
-    const goalPressAlt = goalTracker.addBoolean(LocalizationKey.Goal_3_4)
-    const goalStackCreeps = goalTracker.addBoolean(LocalizationKey.Goal_3_5)
-    const goalTryStackCreeps = goalTracker.addNumeric(LocalizationKey.Goal_3_6, 5)
-    const goalOptionalStackCreeps = goalTracker.addNumeric(LocalizationKey.Goal_3_7, 5)
-    const goalKillStackedCreeps = goalTracker.addBoolean(LocalizationKey.Goal_3_8)
-    const goalPickupItem = goalTracker.addBoolean(LocalizationKey.Goal_3_9)
-    const goalKillThirdSpawn = goalTracker.addBoolean(LocalizationKey.Goal_3_10)
-    const goalStash = goalTracker.addBoolean(LocalizationKey.Goal_3_11)
-    const goalMoveToRiki = goalTracker.addBoolean(LocalizationKey.Goal_3_12)
+    let useFirstGoalTracker = true
+
+    const goalTrackerCamp = new GoalTracker()
+    const goalMoveToCamp = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_1)
+    const goalKillFirstSpawn = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_2)
+    const goalMoveToTarget = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_3)
+    const goalPressAlt = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_4)
+    const goalStackCreeps = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_5)
+    const goalTryStackCreeps = goalTrackerCamp.addNumeric(LocalizationKey.Goal_3_6, 5)
+    const goalOptionalStackCreeps = goalTrackerCamp.addNumeric(LocalizationKey.Goal_3_7, 5)
+    const goalKillStackedCreeps = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_8)
+
+    const goalTrackerNeutrals = new GoalTracker()
+    const goalPickupItem = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_9)
+    const goalPrepareToKillThirdSpawn = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_13)
+    const goalKillThirdSpawn = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_10)
+    const goalPickUpSecondItem = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_14)
+    const goalStash = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_11)
+    const goalSwapItems = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_15)
+    const goalMoveToRiki = goalTrackerNeutrals.addBoolean(LocalizationKey.Goal_3_12)
 
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
     movedToStash = false
-
+    playerExpectedToSendToNeutralStash = false
+    playerCanMoveNeutralFromBackpack = false
     requestedSkipStacking = false
 
     const neutralDetector = new NeutralDetector(creepCampMin, creepCampMax, addedNeutrals => {
@@ -445,12 +454,13 @@ const onStart = (complete: () => void) => {
     const stackCreepsMultiple = () => {
         return [
             tg.audioDialog(LocalizationKey.Script_3_Opening_18, LocalizationKey.Script_3_Opening_18, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.spawnUnit(CustomNpcKeys.ODPixel, odPixelLocation, DotaTeam.GOODGUYS, CustomNpcKeys.ODPixel, true),
             tg.immediate(ctx => {
                 goalOptionalStackCreeps.start()
                 goalTryStackCreeps.start()
                 const odPixel = ctx[CustomNpcKeys.ODPixel] as CDOTA_BaseNPC
-                FindClearSpaceForUnit(odPixel, odPixelLocation, false)
                 setUnitPacifist(odPixel, true)
+                if (!odPixel.HasModifier(modifier_no_health_bar.name)) odPixel.AddNewModifier(undefined, undefined, modifier_no_health_bar.name, {})
             }),
             tg.audioDialog(LocalizationKey.Script_3_Opening_19, LocalizationKey.Script_3_Opening_19, ctx => ctx[CustomNpcKeys.ODPixel]),
 
@@ -476,7 +486,7 @@ const onStart = (complete: () => void) => {
             ),
             tg.immediate(_ => neutralDetector.removeNew = true),
 
-            tg.immediate(_ => {
+            tg.immediate(context => {
                 removeHighlight(clockUIPath)
                 playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
                 playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
@@ -490,29 +500,38 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_3_Opening_26, LocalizationKey.Script_3_Opening_26, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(_ => goalKillStackedCreeps.start()),
         tg.completeOnCheck(_ => neutralDetector.neutralCount === 0, 0.1),
-        tg.immediate(_ => goalKillStackedCreeps.complete()),
+        tg.immediate(_ => {
+            goalKillStackedCreeps.complete()
+            useFirstGoalTracker = false
+        }),
     ]
 
     const pickUpItems = () => [
-        tg.immediate(_ => DropNeutralItemAtPositionForHero(giveAwayItemName, creepCampCenter, playerHero, 0, true)),
+        tg.immediate(_ => DropNeutralItemAtPositionForHero(firstNeutralItemName, creepCampCenter, playerHero, 0, true)),
         tg.immediate(_ => goalPickupItem.start()),
-        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(giveAwayItemName), 0.1), {
+        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(firstNeutralItemName), 0.1), {
             type: "arrow",
             locations: [creepCampCenter],
         }),
+        tg.immediate(_ => {
+            highlightUiElement(firstNeutralSlotUIPath)
+            goalPickupItem.complete()
+        }),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_1, LocalizationKey.Script_3_Neutrals_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.immediate(_ => highlightUiElement(neutralSlotUIPath)),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_2, LocalizationKey.Script_3_Neutrals_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_3, LocalizationKey.Script_3_Neutrals_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(_ => {
-            goalPickupItem.complete()
-            removeHighlight(neutralSlotUIPath)
+            removeHighlight(firstNeutralSlotUIPath)
         }),
     ]
 
     const killThirdSpawn = () => [
-        tg.immediate(_ => goalKillThirdSpawn.start()),
+        tg.immediate(_ => goalPrepareToKillThirdSpawn.start()),
         tg.goToLocation(markerLocation),
+        tg.immediate(_ => {
+            goalPrepareToKillThirdSpawn.complete()
+            goalKillThirdSpawn.start()
+        }),
 
         respawnNeutrals(neutralDetector),
 
@@ -520,29 +539,65 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_5, LocalizationKey.Script_3_Neutrals_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
         tg.completeOnCheck(_ => neutralDetector.neutralCount === 0, 0.1),
-        tg.immediate(_ => goalKillThirdSpawn.complete()),
+        tg.immediate(_ => {
+            goalKillThirdSpawn.complete()
+            goalPickUpSecondItem.start()
+        }),
 
-        tg.immediate(_ => DropNeutralItemAtPositionForHero(dropInStashItemName, creepCampCenter, playerHero, 0, true)),
+        tg.immediate(_ => DropNeutralItemAtPositionForHero(secondNeutralItemName, creepCampCenter, playerHero, 0, true)),
 
         // Wait for player to pick up item
-        tg.immediate(_ => goalPickupItem.start()),
-        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(dropInStashItemName), 0.1), {
+        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(secondNeutralItemName), 0.1), {
             type: "arrow",
             locations: [creepCampCenter],
         }),
-        tg.immediate(_ => goalPickupItem.complete()),
+        tg.immediate(_ => goalPickUpSecondItem.complete()),
     ]
 
     const stashItem = () => [
-        tg.immediate(_ => goalStash.start()),
-        tg.immediate(_ => highlightUiElement(inventorySlot6UIPath)),
+        tg.immediate(_ => highlightUiElement(secondNeutralItemUIPath)),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_6, LocalizationKey.Script_3_Neutrals_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_3_Neutrals_7, LocalizationKey.Script_3_Neutrals_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        tg.forkAny([
+            tg.seq([
+                tg.immediate(_ => {
+                    goalStash.start()
+                    removeHighlight(secondNeutralItemUIPath)
+                    highlightUiElement(firstNeutralSlotUIPath)
+                }),
+                tg.neverComplete()
+            ]),
+            tg.audioDialog(LocalizationKey.Script_3_Neutrals_7, LocalizationKey.Script_3_Neutrals_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+        ]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_8, LocalizationKey.Script_3_Neutrals_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.completeOnCheck(_ => movedToStash === true, 0.1),
-        tg.immediate(_ => goalStash.complete()),
-        tg.immediate(_ => removeHighlight(inventorySlot6UIPath)),
+        tg.immediate(_ => playerExpectedToSendToNeutralStash = true),
+        tg.completeOnCheck(_ => movedToStash, 0.1),
+        tg.immediate(_ => {
+            goalStash.complete()
+            removeHighlight(firstNeutralSlotUIPath)
+        }),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_9, LocalizationKey.Script_3_Neutrals_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+
+        // Wait until Fairy Trinket is in the Neutral Slot
+        tg.immediate(_ => {
+            playerCanMoveNeutralFromBackpack = true
+            goalSwapItems.start()
+            highlightUiElement(firstNeutralSlotUIPath)
+            highlightUiElement(secondNeutralItemUIPath)
+        }),
+        tg.completeOnCheck(_ => {
+            const item = playerHero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT)
+            if (item) {
+                const itemName = item.GetAbilityName()
+                return itemName === secondNeutralItemName
+            }
+
+            return false
+        }, 0.1),
+        tg.immediate(() => {
+            goalSwapItems.complete()
+            removeHighlight(firstNeutralSlotUIPath)
+            removeHighlight(secondNeutralItemUIPath)
+        }),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_10, LocalizationKey.Script_3_Neutrals_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_11, LocalizationKey.Script_3_Neutrals_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_12, LocalizationKey.Script_3_Neutrals_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -599,10 +654,11 @@ const onStart = (complete: () => void) => {
             tg.immediate(() => freezePlayerHero(false)),
             tg.goToLocation(belowRamp),
             tg.immediate(ctx => removeContextEntityIfExists(ctx, CustomNpcKeys.Riki)),
+            tg.immediate(ctx => removeContextEntityIfExists(ctx, CustomNpcKeys.ODPixel))
         ]
     }
 
-    graph = tg.withGoals(_ => goalTracker.getGoals(), tg.forkAny([
+    graph = tg.withGoals(_ => useFirstGoalTracker ? goalTrackerCamp.getGoals() : goalTrackerNeutrals.getGoals(), tg.forkAny([
         tg.seq([
             ...goToCamp(),
             ...spawnAndKillFirstRound(),
@@ -648,6 +704,10 @@ const onStop = () => {
         }
 
         removeContextEntityIfExists(GameRules.Addon.context, CustomNpcKeys.Riki)
+        removeContextEntityIfExists(GameRules.Addon.context, CustomNpcKeys.ODPixel)
+
+        removeHighlight(firstNeutralSlotUIPath)
+        removeHighlight(secondNeutralItemUIPath)
 
         DestroyNeutrals()
 
@@ -665,43 +725,40 @@ export const sectionOpening = new tut.FunctionalSection(
 
 // Certain order will need to be filtered, if the player sabotages themselves they will get stuck
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
-    const unitIndex = event.units["0"]
-    if (!unitIndex) {
-        return true
-    }
+    if (event.issuer_player_id_const !== findRealPlayerID()) return true
 
-    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
+    if (event.order_type === UnitOrder.DROP_ITEM) {
         displayDotaErrorMessage(LocalizationKey.Error_Chapter3_1)
         return false
     }
 
-    const itemIndex = event.entindex_ability
-    if (!itemIndex) {
-        return true
-    }
-    const item = EntIndexToHScript(itemIndex) as CDOTA_Item
+    if (event.order_type === UnitOrder.MOVE_ITEM) {
 
-    if (event.order_type === UnitOrder.GIVE_ITEM) {
-        if (item.GetAbilityName() === giveAwayItemName) {
-            return true
-        } else if (item.GetAbilityName() === keepItemName) {
-            // Warn the player that they are giving away the wrong item, you want to keep that!
-            return false
-        } else if (item.GetAbilityName() === dropInStashItemName) {
-            // Warn the player that they are giving away the wrong item, warlock doesnt want that item right now
-            return false
+        if (playerCanMoveNeutralFromBackpack) {
+            if (event.entindex_ability) {
+                const item = EntIndexToHScript(event.entindex_ability) as CDOTA_Item
+                if (item.GetAbilityName() === secondNeutralItemName) return true
+            }
         }
+
+        displayDotaErrorMessage(LocalizationKey.Error_Chapter3_4)
+        return false
     }
 
-    if (event.order_type === UnitOrder.DROP_ITEM_AT_FOUNTAIN) {
-        if (item.GetAbilityName() === dropInStashItemName) {
-            movedToStash = true
-            return true
-        } else if (item.GetAbilityName() === keepItemName) {
-            // Warn the player that they are dropping the wrong item, you want to keep that!
-            return false
-        } else if (item.GetAbilityName() === dropInStashItemName) {
-            // Warn the player that they are dropping  the wrong item, warlock wants it.
+    const item = EntIndexToHScript(event.entindex_ability) as CDOTA_Item
+
+    if (item && event.order_type === UnitOrder.DROP_ITEM_AT_FOUNTAIN) {
+        if (playerExpectedToSendToNeutralStash) {
+            if (item.GetAbilityName() === firstNeutralItemName) {
+                movedToStash = true
+                return true
+            } else {
+                displayDotaErrorMessage(LocalizationKey.Error_Chapter3_2)
+                return false
+            }
+        }
+        else {
+            displayDotaErrorMessage(LocalizationKey.Error_Chapter3_3)
             return false
         }
     }

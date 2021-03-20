@@ -27,6 +27,7 @@ const requiredState: RequiredState = {
         "item_power_treads": 1,
         "item_heart": 1,
         "item_aegis": 1,
+        "item_mysterious_hat": 1
     },
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,

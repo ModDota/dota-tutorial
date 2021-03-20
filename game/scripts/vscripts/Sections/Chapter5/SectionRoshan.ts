@@ -32,7 +32,7 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
     outpostTeam: DotaTeam.GOODGUYS,
-    heroItems: { [shared.itemDaedalus]: 1 },
+    heroItems: { [shared.itemDaedalus]: 1, "item_mysterious_hat": 1 },
 };
 
 const roshanMusic = "valve_ti10.music.roshan"
