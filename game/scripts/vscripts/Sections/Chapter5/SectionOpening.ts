@@ -168,7 +168,7 @@ function onStart(complete: () => void) {
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], true)),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(RuneType.DOUBLEDAMAGE, ctx[CustomNpcKeys.Juggernaut])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Juggernaut], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_8, LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Juggernaut]),
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], false)),
             tg.completeOnCheck((ctx) => !unitIsValidAndAlive(ctx[CustomNpcKeys.Sniper]), 1),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], rangerLineStart),
@@ -183,7 +183,7 @@ function onStart(complete: () => void) {
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Mirana], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(RuneType.ILLUSION, ctx[CustomNpcKeys.Mirana])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.Mirana], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_9, LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.Mirana]),
             tg.immediate((ctx) => {
                 const miranaEntities = Entities.FindAllByNameWithin(CustomNpcKeys.Mirana, ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), 400) as CDOTA_BaseNPC_Hero[]
                 for (const miranaEntity of miranaEntities) {
