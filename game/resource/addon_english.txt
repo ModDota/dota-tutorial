@@ -611,7 +611,7 @@
         "MessageToTheNoobs_38" "Try to remember that the purpose of a game is not to win, it is to enjoy yourself passing time, otherwise it would be a job"
         "MessageToTheNoobs_39" "love yourself"
         "MessageToTheNoobs_40" "Heroes in Dota tend to provide control or damage. For best results find an ally with the component your hero lacks and go nuts!"
-        "MessageToTheNoobs_41" "Dota's like an instrument. You'll imrove with time, and improving's fun. Don't beat yourself (or others!) up for not being amazing right away. I believe in you :)"
+        "MessageToTheNoobs_41" "Dota's like an instrument. You'll improve with time, and improving's fun. Don't beat yourself (or others!) up for not being amazing right away. I believe in you :)"
         "MessageToTheNoobs_42" "A good support can carry the game."
         "MessageToTheNoobs_43" "The only player in all of your losses was you. Focus on improving from your mistakes rather than what your teammates did wrong."
         "MessageToTheNoobs_44" "Everyone has a bad game every once in a while, don't let it bog you down too much"

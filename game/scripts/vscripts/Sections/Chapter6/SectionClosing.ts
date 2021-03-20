@@ -404,11 +404,44 @@ function getDireAncientTower(towerLoc: "top" | "bot"): CDOTA_BaseNPC_Building | 
 }
 
 let partyParticles: ParticleID[] = [];
+let discoTimer: string | undefined;
+
+const discoLocations = [
+    Vector(-7000, -6480, 0),
+    Vector(-5850, -5400, 0),
+    Vector(-6000, -4000, 0),
+    Vector(-5400, -6000, 0),
+]
 
 function startParty() {
     for (const npc of npcs) {
         partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment.ABSORIGIN_FOLLOW, npc.unit))
     }
+
+    discoTimer = Timers.CreateTimer(() => {
+
+        // Spawn some discoballs
+        for (const discoLocation of discoLocations) {
+            const position = GetGroundPosition(discoLocation, undefined) + Vector(0, 0, 400) as Vector;
+            const particle = ParticleManager.CreateParticle(ParticleName.DiscoBall, ParticleAttachment.CUSTOMORIGIN, undefined);
+            ParticleManager.SetParticleControl(particle, 0, position);
+            ParticleManager.SetParticleControl(particle, 1, position);
+            ParticleManager.ReleaseParticleIndex(particle);
+        }
+
+        // Make a random npc set off some fireworks
+        const randomNpc = npcs[RandomInt(0, npcs.length - 1)];
+        if (randomNpc.unit) {
+            const location = randomNpc.unit.GetAbsOrigin();
+            const particle = ParticleManager.CreateParticle(ParticleName.Firework, ParticleAttachment.CUSTOMORIGIN, undefined);
+            ParticleManager.SetParticleControl(particle, 0, location);
+            ParticleManager.SetParticleControl(particle, 1, location + Vector(0, 0, 500) as Vector);
+            ParticleManager.ReleaseParticleIndex(particle);
+        }
+
+        return 2;
+    })
+    
 }
 
 function stopParty() {
@@ -416,4 +449,8 @@ function stopParty() {
         ParticleManager.DestroyParticle(particle, false);
     }
     partyParticles = [];
+
+    if (discoTimer) {
+        Timers.RemoveTimer(discoTimer)
+    }
 }
