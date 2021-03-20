@@ -34,38 +34,45 @@ const start = (complete: () => void) => {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(ctx => {
-            freezePlayerHero(true);
-
-            // Make Slacks attackable
+            // Have Slacks health bar turn red, but make him invulnerable for now
             const slacks = getOrError(ctx[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC | undefined);
-            setUnitPacifist(slacks, false);
+            setUnitPacifist(slacks, true);
             slacks.SetTeam(DotaTeam.NEUTRALS);
             highlightUiElement(abilityBreatheFireHighlightPath)
         }),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.immediate(_ => goalKillSlacks.start()),
-        tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-        tg.immediate(_ => freezePlayerHero(false)),
-        tg.immediate(ctx => listenerID = ListenToGameEvent("dota_player_used_ability", (event: DotaPlayerUsedAbilityEvent) => {
-            if (event.abilityname === abilNameBreatheFire) {
-                eventTimer = Timers.CreateTimer(1.25, () => {
-                    if (unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem])) {
-                        currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
-                            currentDialogToken = undefined
-                            const ability = hero.FindAbilityByName(abilNameBreatheFire)
-                            if (ability) {
-                                ability.EndCooldown()
+        
+        // Fork use breathe fire dialogs
+        tg.forkAny([
+            tg.seq([
+                tg.immediate(_ => goalKillSlacks.start()),
+                tg.audioDialog(LocalizationKey.Script_1_BreatheFire_2, LocalizationKey.Script_1_BreatheFire_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_1_BreatheFire_3, LocalizationKey.Script_1_BreatheFire_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(ctx => {
+                    setUnitPacifist(ctx[CustomNpcKeys.SlacksMudGolem], false);
+                }),
+                tg.immediate(ctx => listenerID = ListenToGameEvent("dota_player_used_ability", (event: DotaPlayerUsedAbilityEvent) => {
+                    if (event.abilityname === abilNameBreatheFire) {
+                        eventTimer = Timers.CreateTimer(1.25, () => {
+                            if (unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem])) {
+                                currentDialogToken = dg.playAudio(LocalizationKey.Script_1_BreatheFire_3_failed, LocalizationKey.Script_1_BreatheFire_3_failed, ctx[CustomNpcKeys.SlacksMudGolem], undefined, () => {
+                                    currentDialogToken = undefined
+                                    const ability = hero.FindAbilityByName(abilNameBreatheFire)
+                                    if (ability) {
+                                        ability.EndCooldown()
+                                    }
+                                })
                             }
                         })
                     }
-                })
-            }
-        }, undefined)),
-
-        tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+                }, undefined)),
+                tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[CustomNpcKeys.SlacksMudGolem]), 0.1),
+            ]),
+        ]),
         tg.immediate(() => {
             stopListeningToBreatheFireCasts()
         }),

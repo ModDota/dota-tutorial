@@ -1,12 +1,11 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, randomChoice, removeContextEntityIfExists, setUnitPacifist } from "../../util"
+import { freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, randomChoice, removeContextEntityIfExists, setUnitPacifist } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation, sunsfanFountainLocation } from "./Shared"
 
 let graph: tg.TutorialStep | undefined = undefined
-let canPlayerIssueOrders = false;
 
 const requiredState: RequiredState = {
     requireSunsfanGolem: true,
@@ -45,28 +44,32 @@ const onStart = (complete: () => void) => {
     let miranaHitKey: LocalizationKey = getMiranaHitKey()
 
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
-        tg.immediate(_ => canPlayerIssueOrders = false),
         tg.fork([
             tg.seq([
                 tg.goToLocation(topLeftMarkerLocation),
                 tg.immediate(_ => {
                     goalMoveToFirstMarker.complete()
-                    canPlayerIssueOrders = false
+                    freezePlayerHero(true)
                 }),
             ]),
             tg.seq([
-                tg.audioDialog(LocalizationKey.Script_1_Movement_1, LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_2, LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.audioDialog(LocalizationKey.Script_1_Movement_3, LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                tg.immediate(_ => {
-                    goalMoveToFirstMarker.start()
-                    canPlayerIssueOrders = true
-                }),
-                tg.completeOnCheck(_ => playerHero.IsMoving(), 0.1),
+                tg.forkAny([
+                    tg.seq([
+                        tg.audioDialog(LocalizationKey.Script_1_Movement_1, LocalizationKey.Script_1_Movement_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                        tg.audioDialog(LocalizationKey.Script_1_Movement_2, LocalizationKey.Script_1_Movement_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.audioDialog(LocalizationKey.Script_1_Movement_3, LocalizationKey.Script_1_Movement_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                        tg.neverComplete()
+                    ]),
+                    tg.seq([
+                        tg.immediate(_ => {
+                            goalMoveToFirstMarker.start()
+                        }),
+                        tg.completeOnCheck(_ => playerHero.IsMoving(), 0.1),
+                    ]),
+                ]),
                 tg.audioDialog(LocalizationKey.Script_1_Movement_4, LocalizationKey.Script_1_Movement_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             ]),
         ]),
-
 
         // Spawn Mirana
         tg.spawnUnit(CustomNpcKeys.Mirana, miranaSpawnLocation, DotaTeam.BADGUYS, CustomNpcKeys.Mirana, true),
@@ -115,7 +118,7 @@ const onStart = (complete: () => void) => {
                         tg.wait(1),
                         tg.panCameraExponential(botRightMarkerLocation, _ => playerHero.GetAbsOrigin(), 2),
                         tg.setCameraTarget(playerHero),
-                        tg.immediate(_ => canPlayerIssueOrders = true),
+                        tg.immediate(_ => freezePlayerHero(false)),
                     ]),
                     tg.goToLocation(botRightMarkerLocation),
                 ]),
@@ -168,17 +171,7 @@ export const sectionMovement = new tut.FunctionalSection(
     requiredState,
     onStart,
     onStop,
-    sectionOneMovementOrderFilter
 )
-
-function sectionOneMovementOrderFilter(event: ExecuteOrderFilterEvent): boolean {
-    // Allow all orders that aren't done by the player
-    if (event.issuer_player_id_const != findRealPlayerID()) return true;
-
-    if (!canPlayerIssueOrders) return false;
-
-    return true;
-}
 
 /**
  * Creates a tutorial step that orders mirana to fire arrows at points on a line connecting two end points. Runs forever.
@@ -218,7 +211,7 @@ const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, start
             else
                 i += 1
 
-            checkTimer = Timers.CreateTimer(0.4, () => checkDkReachedDestination())
+            checkTimer = Timers.CreateTimer(1.2, () => checkDkReachedDestination())
         }
 
         checkDkReachedDestination()

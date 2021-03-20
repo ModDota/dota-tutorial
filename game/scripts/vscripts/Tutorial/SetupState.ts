@@ -107,12 +107,12 @@ function handleBlockades(state: FilledRequiredState) {
 function handleUnits(state: FilledRequiredState) {
     // Golems
     const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
-        const shouldGolemBeHidden = unit.GetAbsOrigin() === Vector(0, 0, 0);
+        const shouldGolemBeHidden = unit.GetAbsOrigin().__sub(Vector(0, 0, 0)).Length2D() < 100
 
         if (shouldGolemBeHidden) {
             unit.SetTeam(DotaTeam.BADGUYS)
             unit.AddNewModifier(undefined, undefined, "modifier_invisible", {})
-            setUnitPacifist(unit, false);
+            setUnitPacifist(unit, true);
             return
         } else if (!created) {
             if (unit.HasModifier("modifier_invisible")) unit.RemoveModifierByName("modifier_invisible")
@@ -240,9 +240,9 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     // TODO: Skipping backwards combined with removeUnrequiredItems might have undesired consequences (keeping items from later sections).
 
     // Find out how many of each item currently in the inventory we have.
-    let numEmptyItemSlots = DOTA_ITEM_INVENTORY_SIZE - hero.GetNumItemsInInventory();
+    let numEmptyItemSlots = InventorySlot.NEUTRAL_SLOT - hero.GetNumItemsInInventory();
     let currentItems: Record<string, number> = {}
-    for (let i = 0; i < DOTA_ITEM_INVENTORY_SIZE; i++) {
+    for (let i = 0; i <= InventorySlot.NEUTRAL_SLOT; i++) {
         const item = hero.GetItemInSlot(i)
         if (item) {
             const itemName = item.GetName()
@@ -257,7 +257,6 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
         for (const [itemName, currentItemCount] of Object.entries(currentItems)) {
             const desiredItemCount = state.heroItems[itemName] ?? 0
             const toRemoveCount = currentItemCount - desiredItemCount
-
             for (let i = 0; i < toRemoveCount; i++) {
                 const itemToDelete = hero.FindItemInInventory(itemName)
                 if (itemToDelete) {
@@ -280,7 +279,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
 
     // Then clear hero inventory if we don't have enough empty slots.
     if (numEmptyItemSlots < numAdditionalDesiredItems) {
-        for (let i = 0; i < DOTA_ITEM_INVENTORY_SIZE; i++) {
+        for (let i = 0; i <= InventorySlot.NEUTRAL_SLOT; i++) {
             const item = hero.GetItemInSlot(i)
             if (item) {
                 item.RemoveSelf()

@@ -16,7 +16,9 @@ const creepCampMin = Vector(-2911, 4373)
 const creepCampMax = Vector(-2142, 5203)
 const creepCampCenter = creepCampMin.__add(creepCampMax).__mul(0.5)
 
+const mediumCampLocation = Vector(-500, 5200, 384)
 const bigCampLocation = Vector(-4300, 3550, 256)
+const ancientCampLocation = Vector(-4870, -390, 256)
 
 const stackClockStartTime = 44
 const stackClockEndTime = 3
@@ -154,6 +156,33 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 }
 
+// Player skipping
+
+let requestedSkipStacking = false
+let skipButtonListener: CustomGameEventListenerID | undefined
+
+function cleanupSkipListener() {
+    if (skipButtonListener) {
+        CustomGameEventManager.UnregisterListener(skipButtonListener)
+        skipButtonListener = undefined
+    }
+}
+
+function onSkipRequested() {
+    requestedSkipStacking = true
+    cleanupSkipListener()
+}
+
+function showSkipButton() {
+    skipButtonListener = CustomGameEventManager.RegisterListener("skip_chapter3", _ => onSkipRequested())
+    CustomGameEventManager.Send_ServerToAllClients("show_chapter3_skip_button", { show: true })
+}
+
+function hideSkipButton() {
+    CustomGameEventManager.Send_ServerToAllClients("show_chapter3_skip_button", { show: false })
+    cleanupSkipListener()
+}
+
 const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (tries: number, stacks: number) => tg.TutorialStep, onFailure: (tries: number, stacks: number) => tg.TutorialStep) => {
     const timeManager = GameRules.Addon.customTimeManager
 
@@ -171,6 +200,7 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
 
     return tg.seq([
         tg.immediate(_ => {
+            showSkipButton()
             timeManager.customTimeEnabled = true
             timeManager.time = stackClockStartTime
 
@@ -209,7 +239,7 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
                 stacks++
             }
         }),
-        tg.loop(_ => !done, _ => tg.seq([
+        tg.loop(_ => !done && !requestedSkipStacking, _ => tg.seq([
             // Check if there was a try and the time is shortly after zero (after creeps are supposed to be spawned).
             (didTry() && (timeManager.time % 60) > 0.1 && (timeManager.time % 60) < 59) ? tg.seq([
                 (didStack() ? onStacked(tries, stacks) : onFailure(tries, stacks)),
@@ -228,9 +258,9 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
                     previousStacks = stacks
                 }),
             ]) : tg.wait(0),
-
         ])),
         tg.immediate(_ => {
+            hideSkipButton()
             timers.forEach(timer => timeManager.unregisterCallBackOnTime(timer))
             timers.clear()
             timeManager.customTimeEnabled = false
@@ -259,6 +289,8 @@ const onStart = (complete: () => void) => {
 
     movedToStash = false
 
+    requestedSkipStacking = false
+
     const neutralDetector = new NeutralDetector(creepCampMin, creepCampMax, addedNeutrals => {
         highlight({
             units: addedNeutrals,
@@ -280,16 +312,43 @@ const onStart = (complete: () => void) => {
                 goalKillFirstSpawn.start()
                 neutralDetector.neutrals.forEach(neutral => neutral.RemoveSelf())
             }),
-            tg.wait(0.1),
+            tg.wait(0.2),
 
             respawnNeutrals(neutralDetector),
 
             // Dialog
             tg.audioDialog(LocalizationKey.Script_3_Opening_1, LocalizationKey.Script_3_Opening_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_3_Opening_2, LocalizationKey.Script_3_Opening_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_3_Opening_3, LocalizationKey.Script_3_Opening_3, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_3_Opening_4, LocalizationKey.Script_3_Opening_4, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.audioDialog(LocalizationKey.Script_3_Opening_3, LocalizationKey.Script_3_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.forkAny([
+                tg.audioDialog(LocalizationKey.Script_3_Opening_5, LocalizationKey.Script_3_Opening_5, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.seq([
+                    tg.wait(2),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, creepCampCenter, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), creepCampCenter, 2),
+                        tg.wait(2),
+                    ]), { type: "circle", radius: 200, locations: [creepCampCenter] }),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, mediumCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), mediumCampLocation, 2),
+                        tg.wait(2),
+                    ]), { type: "circle", radius: 200, locations: [mediumCampLocation] }),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, bigCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), bigCampLocation, 2),
+                        tg.wait(2),
+                    ]), { type: "circle", radius: 200, locations: [bigCampLocation] }),
+                    tg.withHighlights(tg.seq([
+                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, ancientCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancientCampLocation, 2),
+                        tg.wait(2),
+                    ]), { type: "circle", radius: 200, locations: [ancientCampLocation] }),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
+                    tg.neverComplete(),
+                ])
+            ]),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
             tg.audioDialog(LocalizationKey.Script_3_Opening_6, LocalizationKey.Script_3_Opening_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => freezePlayerHero(false)),
@@ -591,6 +650,8 @@ const onStop = () => {
         removeContextEntityIfExists(GameRules.Addon.context, CustomNpcKeys.Riki)
 
         DestroyNeutrals()
+
+        hideSkipButton()
     }
 }
 

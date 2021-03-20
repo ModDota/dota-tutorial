@@ -1,7 +1,7 @@
 import * as dg from "../Dialog"
 import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
 import { LastHitStages } from "../Sections/Chapter2/shared";
-import { isCustomLaneCreepUnit, unitIsValidAndAlive } from "../util";
+import { isCustomLaneCreepUnit, randomChoice, unitIsValidAndAlive } from "../util";
 
 @registerModifier()
 export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
@@ -108,11 +108,11 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
                 if (event.unit) {
                     const distance = ((this.GetParent().GetAbsOrigin() - event.unit.GetAbsOrigin()) as Vector).Length2D()
                     if (distance <= 300) {
-                        // Play "you missed!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
-                        const chosenLocalizaionKey = this.missLocalizationKeys[RandomInt(0, this.missLocalizationKeys.length - 1)];
+                        // Play "you missed!" sound from Sheepsticked
+                        const chosenLocalizaionKey = randomChoice(this.missLocalizationKeys);
 
-                        if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
-                            dg.playText(chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+                        if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.Sheepsticked])) {
+                            dg.playAudio(chosenLocalizaionKey, chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.Sheepsticked])
                         }
 
                         SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_MISS, event.unit, 0, undefined)
@@ -128,18 +128,18 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             if (event.unit.GetTeamNumber() == this.GetParent().GetTeamNumber()) return;
         }
 
-        // Play "nice hit!" sound from Godz - currently text, later will change to audio when we'll have actual sounds
-        const chosenLocalizationKey = this.successLocalizationKeys[RandomInt(0, this.successLocalizationKeys.length - 1)]
+        // Play "nice hit!" sound from Sheepsticked
+        const chosenLocalizationKey = randomChoice(this.successLocalizationKeys)
 
         // Only the last dialog tags dialogFinishedPlaying
         if (this.lastHits && this.lastHits - 1 === this.GetStackCount()) {
-            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
-                dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.Sheepsticked])) {
+                dg.playAudio(chosenLocalizationKey, chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.Sheepsticked])
             }
         }
         else {
-            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.GodzMudGolem])) {
-                dg.playText(chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.GodzMudGolem], 3)
+            if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.Sheepsticked])) {
+                dg.playAudio(chosenLocalizationKey, chosenLocalizationKey, GameRules.Addon.context[CustomNpcKeys.Sheepsticked])
             }
         }
 

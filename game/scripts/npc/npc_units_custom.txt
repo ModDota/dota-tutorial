@@ -133,67 +133,14 @@
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
     }
 
-    "npc_mud_golem_godz"
+    "npc_dota_tutorial_sheepsticked"
     {
-        // General
-        //----------------------------------------------------------------
-        "Model"						"models/creeps/neutral_creeps/n_creep_golem_b/n_creep_golem_b.vmdl"	// Model.
+        "Model"						"models/items/hex/sheep_hex/sheep_hex.vmdl"
+        "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
-        "SoundSet"					"n_creep_Melee"
-        "Level"						"4"
-        "ModelScale" 					"1.1"
-        "IsNeutralUnitType"			"1"
-
-        // Abilities
-        //----------------------------------------------------------------
-        "Ability1"					"mud_golem_hurl_boulder"			// Ability 1
-        "Ability2"					"mud_golem_rock_destroy"			// Ability 2
-        "Ability3"					""			// Ability 3
-        "Ability4"					""			// Ability 4
-
-        // Armor
-        //----------------------------------------------------------------
-        "ArmorPhysical"				"0"			// Physical protection.
-        "MagicalResistance"			"50"		// Magical protection.
-
-        // Attack
-        //----------------------------------------------------------------
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
-
-        // Bounds
-        //----------------------------------------------------------------
-        "RingRadius"				"60"
-        "HealthBarOffset"			"190"
-
-        // Bounty
-        //----------------------------------------------------------------
-        "BountyXP"					"0"		// Experience earn.
-        "BountyGoldMin"				"0"		// Gold earned min.
-        "BountyGoldMax"				"0"		// Gold earned max.
-
-        // Movement
-        //----------------------------------------------------------------
-        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
-        "MovementSpeed"				"310"		// Speed.
-
-        // Status
-        //----------------------------------------------------------------
-        "StatusHealth"				"1"		// Base health.
-        "StatusHealthRegen"			"0.5"		// Health regeneration rate.
-        "StatusMana"				"400"		// Base mana.
-        "StatusManaRegen"			"1"			// Mana regeneration rate.
-
-        // Vision
-        //----------------------------------------------------------------
-        "VisionDaytimeRange"		"800"		// Range of vision during day light.
-        "VisionNighttimeRange"		"800"		// Range of vision at night time.
-
-        // Team
-        //----------------------------------------------------------------
-        "TeamName"					"DOTA_TEAM_NEUTRALS"							// Team name.
-        "CombatClassAttack"			"DOTA_COMBAT_CLASS_ATTACK_BASIC"
-        "CombatClassDefend"			"DOTA_COMBAT_CLASS_DEFEND_BASIC"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
     }
 
     "npc_dota_tutorial_odpixel"

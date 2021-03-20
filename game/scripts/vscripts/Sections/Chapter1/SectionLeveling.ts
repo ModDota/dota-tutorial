@@ -36,17 +36,30 @@ const start = (complete: () => void) => {
     const goalKillPurge = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_1)
     const goalLevelBreatheFire = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_3)
 
+    const dragonTailNotFoundMsg = "Dragon Tail was not found."
+
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         tg.immediate(_ => learnAbilityAllowedName = abilNameDragonTail),
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_1, LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // take W
-        tg.immediate(_ => goalLevelDragonTail.start()),
-        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), "Dragon Tail was not found.")),
+        tg.forkAny([
+            tg.seq([
+                // Check if level is 0 incase we skipped from a later section
+                tg.completeOnCheck(_ => getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg).GetLevel() === 0, 1),
+                tg.audioDialog(LocalizationKey.Script_1_Leveling_1, LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // take W
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(_ => {
+                    goalLevelDragonTail.start()
+                    highlightUiElement(getPathToHighlightAbility(1))
+                }),
+                tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg)),
+                tg.immediate(() => removeHighlight(getPathToHighlightAbility(1)))
+            ]),
+        ]),
         tg.immediate(_ => goalLevelDragonTail.complete()),
-
         tg.audioDialog(LocalizationKey.Script_1_Leveling_2, LocalizationKey.Script_1_Leveling_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // hover over abil
 
-        // Spawn purge and freeze player during initial dialog
-        tg.immediate(_ => freezePlayerHero(true)),
+        // Spawn purge
         tg.fork([
             tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // here comes pugna
             tg.seq([
@@ -72,20 +85,21 @@ const start = (complete: () => void) => {
                 AbilityIndex: blinkItem.entindex(),
                 Position: pugnaBlinkLocation
             })
-            setUnitPacifist(pugna, false)
         }),
         tg.panCameraLinear(pugnaMoveToLocation, pugnaBlinkLocation, 0.5),
+        tg.setCameraTarget(getOrError(getPlayerHero())),
         tg.audioDialog(LocalizationKey.Script_1_Leveling_4, LocalizationKey.Script_1_Leveling_4, ctx => ctx[CustomNpcKeys.PurgePugna]), // yellow everybody
         tg.audioDialog(LocalizationKey.Script_1_Leveling_5, LocalizationKey.Script_1_Leveling_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // make him stop, press W
+        // Don't fork this so we show purge's long monologue
         tg.audioDialog(LocalizationKey.Script_1_Leveling_6, LocalizationKey.Script_1_Leveling_6, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // use W
 
-        // Unfreeze player and wait for them to stun purge while he performs his monologue.
+        // Unpacify Purge and wait for player to stun purge while he performs his monologue.
         tg.immediate(_ => goalKillPurge.start()),
         tg.immediate(_ => {
             hero.SetIdleAcquire(false)
-            freezePlayerHero(false)
             highlightUiElement(abilityDragonTailHighlightPath)
         }),
+        tg.immediate(context => setUnitPacifist(context[CustomNpcKeys.PurgePugna], false)),
 
         tg.forkAny([
             // Loop while purge is alive
@@ -139,11 +153,20 @@ const start = (complete: () => void) => {
         ]),
 
         // Excellent work, skill Q
-        tg.audioDialog(LocalizationKey.Script_1_Leveling_9, LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
-        tg.immediate(_ => hero.HeroLevelUp(true)),
-        tg.immediate(_ => goalLevelBreatheFire.start()),
-        tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
+        tg.forkAny([
+            tg.seq([
+                tg.audioDialog(LocalizationKey.Script_1_Leveling_9, LocalizationKey.Script_1_Leveling_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.neverComplete()
+            ]),
+            tg.seq([
+                tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
+                tg.immediate(_ => hero.HeroLevelUp(true)),
+                tg.immediate(_ => goalLevelBreatheFire.start()),
+                tg.immediate(_ => highlightUiElement(getPathToHighlightAbility(0))),
+                tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
+                tg.immediate(_ => removeHighlight(getPathToHighlightAbility(0)))
+            ])
+        ]),
         tg.immediate(_ => goalLevelBreatheFire.complete()),
 
         // Explain Q and W
@@ -172,6 +195,9 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 const stop = () => {
     const hero = getOrError(getPlayerHero())
     hero.SetIdleAcquire(true)
+
+    removeHighlight(getPathToHighlightAbility(0))
+    removeHighlight(getPathToHighlightAbility(1))
 
     if (graph) {
         graph.stop(GameRules.Addon.context)

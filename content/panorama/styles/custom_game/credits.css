@@ -1,7 +1,7 @@
 .CreditsRoot {
     width: 100%;
     height: 100%;
-    position: -500px 0px 0px;
+    position: -610px 0px 0px;
     transition: position 0.1s ease-in-out 0.0s;
 }
 
@@ -11,7 +11,7 @@
 }
 
 #CreditsContainer {
-    width: 500px;
+    width: 610px;
     height: 160px;
     align: left top;
     margin-top: 240px;
@@ -23,13 +23,13 @@
 }
 
 .CreditsContainerLeft {
-    width: 33%;
+    width: 30%;
     height: 100%;
 }
 
 .AvatarContainer {
-    width: 90%;
-    height: 90%;
+    width: 60%;
+    height: 70%;
     align: center center;
     border-radius: 5px;
     background-image: url("file://{images}/custom_game/credits/Avatar_Container.png");
@@ -60,7 +60,7 @@
 }
 
 .CreditsContainerRight {
-    width: 65%;
+    width: 67%;
     height: 100%;
     horizontal-align: right;
     margin-top: 5px;
@@ -91,7 +91,7 @@
 }
 
 #CreditsSocialsColumn1, #CreditsSocialsColumn2 {
-    width: 50%;
+    width: 49%;
     height: 100%;
     flow-children: down;
     margin-top: 5px;
@@ -141,10 +141,11 @@
     width: 24px;
     height: 24px;
     background-image: url("file://{images}/custom_game/credits/Twitch.png");
-    background-size: 100% 100%;
+    background-size: 90% 95%;
     background-repeat: no-repeat;
     wash-color: #cdf;
     margin-left: 10px;
+    margin-top: 2px;
 }
 
 .SocialContainer {
@@ -154,18 +155,19 @@
 
 .SocialMedia {
     text-transform: uppercase;
-    color: #cdf;
-    text-shadow: 0px 0px 3px 3.0 #000000;
-    font-weight: bold;
-    font-size: 11px;
-    margin-left: 3px;
-    margin-top: 3px;
+    color: white;
+    text-shadow: 0px 0px 3px 2.0 #000000;
+    font-weight: normal;
+    font-size: 14px;
+    margin-left: 2px;
+    margin-top: 4px;
     font-family: defaultFont;
-    max-width: 140px;
+    max-width: 155px;
+    text-overflow: shrink;
 }
 
 #CreditsDescriptionContainer {
-    width: 500px;
+    width: 610px;
     max-height: 500px;
     padding: 8px;
     align: left top;

@@ -12,6 +12,12 @@ export enum LastHitStages {
     LAST_HIT_DENY = 3,
 }
 
+export enum TowerHitSources {
+    NONE = 1,
+    DK_ONLY = 2,
+    ALL = 3
+}
+
 export const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 export const direCreepNames = [CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireMeleeCreep, CustomNpcKeys.DireRangedCreep];
 
