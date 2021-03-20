@@ -4,6 +4,7 @@ import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
 import { GoalTracker } from "../../Goals";
+import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
 
@@ -107,6 +108,7 @@ function onStart(complete: () => void) {
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                riki.AddNewModifier(undefined, undefined, modifier_abs_no_damage.name, {})
                 const smokeScreen = riki.GetAbilityByIndex(0);
                 if (smokeScreen) {
                     riki.CastAbilityOnPosition(playerHero.GetAbsOrigin().__add(Vector(100, 100)), smokeScreen, 0);
@@ -159,6 +161,7 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                riki.RemoveModifierByName(modifier_abs_no_damage.name)
                 riki.SetAttackCapability(UnitAttackCapability.MELEE_ATTACK);
                 riki.MoveToTargetToAttack(playerHero);
             }),
