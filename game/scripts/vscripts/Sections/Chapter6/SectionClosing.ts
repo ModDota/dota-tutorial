@@ -5,7 +5,7 @@ import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { centerCameraOnHero, createPathParticle, Distance2D, getOrError, getPlayerCameraLocation, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
-import { addWorldText, removeWorldText } from "../../WorldText"
+import { addWorldTextAtLocation, removeWorldText } from "../../WorldText"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
 
@@ -205,9 +205,9 @@ function onStart(complete: () => void) {
         waitNpcsSpawned(),
 
         tg.immediate(_ => {
-            worldTexts.add(addWorldText("Modders", Vector(-6700, -4800, 256)))
-            worldTexts.add(addWorldText("Resources", Vector(-5500, -6000, 256)))
-            worldTexts.add(addWorldText("Resources", Vector(-7000, -6500, 384)))
+            worldTexts.add(addWorldTextAtLocation("Modders", Vector(-6700, -4800, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-5500, -6000, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-7000, -6500, 384), "credit_section"))
         }),
 
         // Main logic
@@ -237,7 +237,7 @@ function onStart(complete: () => void) {
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
                         tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
                         tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
-                        tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
+                        tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
                         tg.immediate(() => {
                             playerHero.AddItemByName("item_rapier")
                             const tpScroll = playerHero.AddItemByName("item_tpscroll")

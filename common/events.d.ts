@@ -64,10 +64,14 @@ interface CreditsInteractEvent {
     description?: string;
 }
 
-interface AddWorldTextEvent {
+type WorldTextType = "credit_section" | "npc_title"
+
+type AddWorldTextEvent = {
+    type: WorldTextType;
     index: number;
     text: string;
     location: { x: number, y: number, z: number };
+    entity?: EntityIndex;
 }
 
 interface RemoveWorldTextEvent {
@@ -77,6 +81,10 @@ interface RemoveWorldTextEvent {
 interface ShowPressKeyMessage {
     command: number; // DOTAKeybindCommand_t
     text: string // Should contain {key} to show the key
+}
+
+interface ShowChapter3SkipButtonEvent {
+    show: boolean
 }
 
 interface CustomGameEventDeclarations {
@@ -107,4 +115,6 @@ interface CustomGameEventDeclarations {
     remove_world_text: RemoveWorldTextEvent;
     show_press_key_message: ShowPressKeyMessage;
     hide_press_key_message: {};
+    show_chapter3_skip_button: ShowChapter3SkipButtonEvent;
+    skip_chapter3: {}
 }
