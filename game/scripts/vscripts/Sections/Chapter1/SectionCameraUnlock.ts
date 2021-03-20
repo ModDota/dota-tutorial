@@ -93,7 +93,6 @@ const onStart = (complete: () => void) => {
 
         // Level up and done
         tg.immediate(_ => getOrError(getPlayerHero()).HeroLevelUp(true)),
-        tg.wait(1),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
