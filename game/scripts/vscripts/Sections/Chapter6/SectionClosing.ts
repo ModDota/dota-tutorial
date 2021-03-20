@@ -47,6 +47,14 @@ class ClosingNpc {
 
     }
 
+    public static fromExistingUnit(unit: CDOTA_BaseNPC, name: string, location: Vector, text: string, soundName?: string): ClosingNpc {
+        const npc = new ClosingNpc(name, location, text, soundName);
+        npc._unit = unit;
+        npc.spawned = true;
+
+        return npc;
+    }
+
     public get playing() {
         return this.dialogToken !== undefined
     }
@@ -196,13 +204,21 @@ function onStart(complete: () => void) {
 
         // Spawn our NPCs and make Slacks and SUNSfan visible again
         tg.immediate(_ => spawnNpcs()),
+        tg.wait(1),
         tg.immediate(_ => slacks.RemoveNoDraw()),
         tg.immediate(_ => sunsFan.RemoveNoDraw()),
+        tg.immediate(_ => {
+            // Add slacks and sunsfan to closing npcs
+            npcs.push(
+                ClosingNpc.fromExistingUnit(slacks, CustomNpcKeys.SlacksMudGolem, slacks.GetAbsOrigin(), LocalizationKey.Script_6_Slacks, LocalizationKey.Script_6_Slacks),
+                ClosingNpc.fromExistingUnit(sunsFan, CustomNpcKeys.SunsFanMudGolem, sunsFan.GetAbsOrigin(), LocalizationKey.Script_6_SUNSfan, LocalizationKey.Script_6_SUNSfan),
+            )
+        }),
         tg.immediate(_ => centerCameraOnHero()),
-        tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
+        tg.immediate(_ => npcs.forEach(npc => { if (npc.unit) { npc.unit!.FaceTowards(playerHero.GetAbsOrigin()) } })),
 
         // Wait to fade back in
-        tg.wait(2),
+        tg.wait(1),
 
         // Hopefully every npc will be spawned by now and this completes immediately
         waitNpcsSpawned(),

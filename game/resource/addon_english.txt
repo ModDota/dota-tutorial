@@ -56,6 +56,17 @@
         "npc_dota_tutorial_flam3s" "Flam3s"
         "npc_dota_tutorial_ruby" "valkyrjaRuby"
 
+        "npc_mud_golem_sunsfan_twitter" "SUNSfanTV"
+        "npc_mud_golem_sunsfan_youtube" "DotaCinema"
+        "npc_mud_golem_sunsfan_discord" "sunsfan"
+        "npc_mud_golem_sunsfan_website" "sunsfan.gg"
+        "npc_mud_golem_sunsfan_twitch" "sunsfantv"
+
+        "npc_mud_golem_slacks_twitter" "SirActionSlacks"
+        "npc_mud_golem_slacks_youtube" "SirActionSlacks"
+        "npc_mud_golem_slacks_discord" "mKDAZnM"
+        "npc_mud_golem_slacks_twitch" "SirActionSlacks"
+
         "npc_dota_tutorial_coccia_twitter" "AlexanderCoccia"
         "npc_dota_tutorial_coccia_youtube" "AlexanderCoccia"
         "npc_dota_tutorial_coccia_twitch" "AlexanderCoccia"
