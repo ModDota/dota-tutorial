@@ -375,7 +375,7 @@ export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_B
 
     return particleID;
 }
-export type HighlightType = "circle" | "arrow" | "arrow_enemy" | "dialog_circle"
+export type HighlightType = "circle" | "arrow" | "arrow_enemy" | "dialog_circle" | "arrow_trees"
 
 type HighlightParticleDescriptor = {
     name: string // Particle name
@@ -390,6 +390,10 @@ const highlightTypeParticleNames: Record<HighlightType, HighlightParticleDescrip
     "arrow": [
         { name: ParticleName.HighlightOrangeCircle },
         { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+    ],
+    "arrow_trees": [
+        { name: ParticleName.HighlightOrangeCircle },
+        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 200) },
     ],
     "arrow_enemy": [
         { name: ParticleName.HighlightRedCircle },

@@ -280,7 +280,7 @@ function onStart(complete: () => void) {
                                 tpScroll.EndCooldown()
                             })
                         }),
-                        tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
+                        tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
                         tg.neverComplete(),
                     ]),
                 ]), {

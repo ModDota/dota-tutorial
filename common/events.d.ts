@@ -83,6 +83,10 @@ interface ShowPressKeyMessage {
     text: string // Should contain {key} to show the key
 }
 
+interface ShowChapter3SkipButtonEvent {
+    show: boolean
+}
+
 interface CustomGameEventDeclarations {
     section_started: SectionStartedEvent;
     skip_to_section: SkipToSectionEvent;
@@ -112,4 +116,6 @@ interface CustomGameEventDeclarations {
     remove_world_text: RemoveWorldTextEvent;
     show_press_key_message: ShowPressKeyMessage;
     hide_press_key_message: {};
+    show_chapter3_skip_button: ShowChapter3SkipButtonEvent;
+    skip_chapter3: {}
 }

@@ -156,6 +156,33 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 }
 
+// Player skipping
+
+let requestedSkipStacking = false
+let skipButtonListener: CustomGameEventListenerID | undefined
+
+function cleanupSkipListener() {
+    if (skipButtonListener) {
+        CustomGameEventManager.UnregisterListener(skipButtonListener)
+        skipButtonListener = undefined
+    }
+}
+
+function onSkipRequested() {
+    requestedSkipStacking = true
+    cleanupSkipListener()
+}
+
+function showSkipButton() {
+    skipButtonListener = CustomGameEventManager.RegisterListener("skip_chapter3", _ => onSkipRequested())
+    CustomGameEventManager.Send_ServerToAllClients("show_chapter3_skip_button", { show: true })
+}
+
+function hideSkipButton() {
+    CustomGameEventManager.Send_ServerToAllClients("show_chapter3_skip_button", { show: false })
+    cleanupSkipListener()
+}
+
 const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (tries: number, stacks: number) => tg.TutorialStep, onFailure: (tries: number, stacks: number) => tg.TutorialStep) => {
     const timeManager = GameRules.Addon.customTimeManager
 
@@ -173,6 +200,7 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
 
     return tg.seq([
         tg.immediate(_ => {
+            showSkipButton()
             timeManager.customTimeEnabled = true
             timeManager.time = stackClockStartTime
 
@@ -211,7 +239,7 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
                 stacks++
             }
         }),
-        tg.loop(_ => !done, _ => tg.seq([
+        tg.loop(_ => !done && !requestedSkipStacking, _ => tg.seq([
             // Check if there was a try and the time is shortly after zero (after creeps are supposed to be spawned).
             (didTry() && (timeManager.time % 60) > 0.1 && (timeManager.time % 60) < 59) ? tg.seq([
                 (didStack() ? onStacked(tries, stacks) : onFailure(tries, stacks)),
@@ -230,9 +258,9 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
                     previousStacks = stacks
                 }),
             ]) : tg.wait(0),
-
         ])),
         tg.immediate(_ => {
+            hideSkipButton()
             timers.forEach(timer => timeManager.unregisterCallBackOnTime(timer))
             timers.clear()
             timeManager.customTimeEnabled = false
@@ -260,6 +288,8 @@ const onStart = (complete: () => void) => {
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.")
 
     movedToStash = false
+
+    requestedSkipStacking = false
 
     const neutralDetector = new NeutralDetector(creepCampMin, creepCampMax, addedNeutrals => {
         highlight({
@@ -620,6 +650,8 @@ const onStop = () => {
         removeContextEntityIfExists(GameRules.Addon.context, CustomNpcKeys.Riki)
 
         DestroyNeutrals()
+
+        hideSkipButton()
     }
 }
 

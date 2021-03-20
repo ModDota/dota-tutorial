@@ -1,7 +1,7 @@
-import { getCameraDummy, findAllPlayersID, getPlayerHero, setGoalsUI, setUnitVisibilityThroughFogOfWar, createPathParticle, getOrError, HighlightProps, highlight, unitIsValidAndAlive, showPressKeyMessage } from "../util"
 import * as dg from "../Dialog"
-import * as tg from "./Core"
 import { getSoundDuration } from "../Sounds"
+import { createPathParticle, findAllPlayersID, getCameraDummy, getOrError, getPlayerHero, highlight, HighlightProps, setGoalsUI, setUnitVisibilityThroughFogOfWar, showPressKeyMessage, unitIsValidAndAlive } from "../util"
+import * as tg from "./Core"
 
 const isPlayerHeroNearby = (location: Vector, radius: number) => getOrError(getPlayerHero()).GetAbsOrigin().__sub(location).Length2D() < radius
 
@@ -431,11 +431,8 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>, minim
         const actualAbility = tg.getArg(ability, context)
         const actualMinimumLevel = tg.getOptionalArg(minimumLevel, context) ?? 1
 
-        actualAbility.SetUpgradeRecommended(true)
-
         const checkAbilityLevel = () => {
             if (actualAbility.GetLevel() >= actualMinimumLevel) {
-                actualAbility.SetUpgradeRecommended(false)
                 complete()
             } else {
                 checkTimer = Timers.CreateTimer(0.1, () => checkAbilityLevel())
@@ -444,9 +441,7 @@ export const upgradeAbility = (ability: tg.StepArgument<CDOTABaseAbility>, minim
         checkAbilityLevel()
     }, context => {
         if (checkTimer) {
-            const actualAbility = tg.getArg(ability, context)
             Timers.RemoveTimer(checkTimer)
-            actualAbility.SetUpgradeRecommended(false)
             checkTimer = undefined
         }
     })
