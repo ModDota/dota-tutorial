@@ -587,7 +587,7 @@
         "Script_6_SmashTheState" "Hi I'm SmashTheState from the modding team."
         "Script_6_Tora" "Heya this is Tora! Did you know this tutorial was funded entirely by the Dota 2 community? For some reason people thought making this was a good idea. Jokes aside, good luck and have fun playing the game!"
         "Script_6_Toyoka" "Hi I'm Toyoka from the modding team."
-        "Script_6_VicFrank" "Please for the love of god play my custom games"
+        "Script_6_VicFrank" "Please for the love of god play my custom games."
         "Script_6_Yoyo" "Hi I'm Yoyo from the modding team."
         "Script_6_Slacks" "Slacks dialog"
         "Script_6_valkyrjaRuby" "Congratulations on finishing the tutorial! I hope to see you in one of our Dota communities on Discord soon!"
