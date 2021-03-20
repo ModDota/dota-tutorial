@@ -32,7 +32,7 @@
 
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
-        "npc_mud_golem_godz" "GoDz"
+        "npc_dota_tutorial_sheepsticked" "Sheepsticked"
         "npc_dota_tutorial_odpixel" "ODPixel"
 
         "npc_dota_tutorial_coccia" "Alexander Coccia"
@@ -669,6 +669,7 @@
         "npc_dota_hero_riki_titles_name" "Arteezy"
         "npc_dota_hero_kunkka_titles_name" "Mason"
         "npc_dota_hero_mirana_titles_name" "Sheever"
+        "npc_dota_tutorial_sheepsticked_titles_name" "Sheepsticked"
         "npc_dota_hero_sniper_titles_name" "Jenkins"
         "npc_dota_tutorial_odpixel_titles_name" "ODPixel"
         "npc_dota_tutorial_tora_titles_name" "Tora"
