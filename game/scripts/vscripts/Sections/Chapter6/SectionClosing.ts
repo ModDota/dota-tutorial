@@ -210,7 +210,7 @@ function onStart(complete: () => void) {
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         // Fade to black and wait some time until the clients are hopefully faded out.
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen", {})),
-        
+
         tg.wait(1.5),
 
         // Spawn our NPCs and make Slacks and SUNSfan visible again
@@ -246,61 +246,59 @@ function onStart(complete: () => void) {
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen_in", {})),
 
         // Main logic
-        tg.forkAny([
-            tg.seq([
-                // Play dialog
-                tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
-                tg.immediate(() => goalTalkToNpcs.start()),
-                tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
-                tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
-                tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
+        tg.seq([
+            // Play dialog
+            tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
+            tg.immediate(() => goalTalkToNpcs.start()),
+            tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
+            tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
+            tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
 
-                tg.withHighlights(tg.forkAny([
-                    tg.seq([
-                        tg.immediate(_ => {
-                            goalDestroyTowers.start()
-                            pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
-                        }),
-                        tg.completeOnCheck(_ => {
-                            towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
-                            goalDestroyTowers.setValue(2 - towersToDestroy.length)
-
-                            return towersToDestroy.length === 0
-                        }, 0.1),
-                    ]),
-
-                    tg.seq([
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
-                        tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
-                        tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
-                        tg.immediate(() => {
-                            playerHero.AddItemByName("item_rapier")
-                            const tpScroll = playerHero.AddItemByName("item_tpscroll")
-                            Timers.CreateTimer(FrameTime(), () => {
-                                tpScroll.EndCooldown()
-                            })
-                        }),
-                        tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
-                        tg.neverComplete(),
-                    ]),
-                ]), {
-                    type: "arrow_enemy",
-                    units: towersToDestroy,
-                    attach: true,
-                }),
-
-                tg.withHighlights(tg.seq([
+            tg.withHighlights(tg.forkAny([
+                tg.seq([
                     tg.immediate(_ => {
-                        goalDestroyTowers.complete()
-                        goalDestroyAncient.start()
+                        goalDestroyTowers.start()
+                        pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
                     }),
-                    tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1),
-                ]), {
-                    type: "arrow_enemy",
-                    units: [ancient],
-                    attach: true,
-                })
-            ]),
+                    tg.completeOnCheck(_ => {
+                        towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
+                        goalDestroyTowers.setValue(2 - towersToDestroy.length)
+
+                        return towersToDestroy.length === 0
+                    }, 0.1),
+                ]),
+
+                tg.seq([
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
+                    tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
+                    tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
+                    tg.immediate(() => {
+                        playerHero.AddItemByName("item_rapier")
+                        const tpScroll = playerHero.AddItemByName("item_tpscroll")
+                        Timers.CreateTimer(FrameTime(), () => {
+                            tpScroll.EndCooldown()
+                        })
+                    }),
+                    tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
+                    tg.neverComplete(),
+                ]),
+            ]), {
+                type: "arrow_enemy",
+                units: towersToDestroy,
+                attach: true,
+            }),
+
+            tg.withHighlights(tg.seq([
+                tg.immediate(_ => {
+                    goalDestroyTowers.complete()
+                    goalDestroyAncient.start()
+                }),
+                tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1),
+            ]), {
+                type: "arrow_enemy",
+                units: [ancient],
+                attach: true,
+            })
         ]),
 
         // Should never happen currently
@@ -441,7 +439,6 @@ function startParty() {
 
         return 2;
     })
-    
 }
 
 function stopParty() {
