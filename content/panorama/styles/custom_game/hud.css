@@ -458,34 +458,17 @@
     width: 100%;
     height: 100%;
     z-index: 100;
-}
 
-.FadeScreenAnimation {
-    width: 100%;
-    height: 100%;
     background-color: black;
-    z-index: 100;
     opacity: 0;
 
-    animation-name: fadescreen;
-    animation-duration: 3s;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-in-out;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+    transition-timing-function: linear;
 }
 
-@keyframes 'fadescreen' {
-    0% {
-        opacity: 0;
-    }
-    30% {
-        opacity: 1;
-    }
-    70% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+#FadeScreenContainer.Visible {
+    opacity: 1;
 }
 
 #MessageToTheNoobsButton {

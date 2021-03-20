@@ -2,17 +2,17 @@ const overlayDuration = 10; // Should match the css animation duration of FadeSc
 
 (() => {
     const container = $("#FadeScreenContainer");
+    container.RemoveClass("Visible");
 
     function fadeBlack() {
-        const overlay = $.CreatePanel("Panel", container, "");
-        overlay.AddClass("FadeScreenAnimation");
+        container.AddClass("Visible");
         $.Schedule(overlayDuration, () => {
             fadeIn();
         });
     }
 
     function fadeIn() {
-        container.RemoveAndDeleteChildren();
+        container.RemoveClass("Visible");
     }
 
     GameEvents.Subscribe("fade_screen", event => {
