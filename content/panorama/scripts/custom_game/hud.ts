@@ -237,6 +237,10 @@ function hidePressKeyMessage() {
 GameEvents.Subscribe("show_press_key_message", event => showPressKeyMessage(event.command, event.text));
 GameEvents.Subscribe("hide_press_key_message", event => hidePressKeyMessage());
 
+// Disable scroll-pitching
+GameUI.SetCameraPitchMin(60)
+GameUI.SetCameraPitchMax(60)
+
 // Chapter 3 skip
 const chapter3SkipButton = $("#Chapter3SkipButton");
 chapter3SkipButton.visible = false;
