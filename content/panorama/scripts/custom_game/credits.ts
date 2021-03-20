@@ -87,6 +87,10 @@ GameEvents.Subscribe("credits_interact_stop", () => {
     $.GetContextPanel().RemoveClass("Visible");
 });
 
+GameEvents.Subscribe("section_started", () => {
+    $.GetContextPanel().RemoveClass("Visible");
+});
+
 function addSocialIfExists(social: SocialType, unitName: string, container: Panel) {
     const linkLocalizationKey = `${unitName}_${social}`;
     const socialId = $.Localize(linkLocalizationKey);

@@ -69,7 +69,6 @@
         "npc_dota_tutorial_dotafromzero_discord" "HCyXbmCtpS"
         "npc_dota_tutorial_bsj_youtube" "BananaSlamJamma"
         "npc_dota_tutorial_bsj_twitter" "bananaslamjamma"
-        "npc_dota_tutorial_bsj_twitter" "bananaslamjamma"
         "npc_dota_tutorial_bowie_youtube" "D2BOWIE"
         "npc_dota_tutorial_bowie_twitter" "D2BOWIE"
         "npc_dota_tutorial_bowie_twitch" "d2bowi3"
@@ -141,7 +140,7 @@
         "Error_Wards_5"        "Moving items is currently disabled."
         "Error_Wards_6"        "Toggling items is currently disabled."
         "Error_Wards_7"        "Locking or combining items is currently disabled."
-        "Error_Communications_1" "You cannot pick up item in this section."
+        "Error_Communications_1" "You cannot pick up items in this section."
         "Error_Communications_2" "You cannot destroy items in this section."
         "Error_Teamfight_1"    "Teleport to your fountain by double-tapping the Town Portal Scroll."
 
@@ -166,7 +165,7 @@
         "Goal_2_Opening_5" "Wait for the creeps to reach combat positions."
         "Goal_2_Opening_6" "Move behind the creeps and prepare for combat."
         "Goal_2_Creeps_1" "Last hit enemy creeps"
-        "Goal_2_Creeps_2" "Last hit enemy creeps using Breath Fire"
+        "Goal_2_Creeps_2" "Last hit enemy creeps using Breathe Fire"
         "Goal_2_Creeps_3" "Deny friendly creeps"
         "Goal_2_Creeps_4" "Kill Sniper."
         "Goal_2_Tower_1" "Attack the enemy's top tower."
@@ -234,6 +233,7 @@
         "Goal_6_Opening_3" "Watch Invoker's (Intelligence) skill showcase."
         "Goal_6_Closing_1"  "Destroy the enemy towers defending the Ancient"
         "Goal_6_Closing_2"  "Destroy the enemy Ancient."
+        "Goal_6_Closing_3"  "(Optional) Right click people in your base to talk to them!"
 
         // Dialog
         "Script_1_Opening_1" "Oh look at this! New blood! The dragon knight himself!"

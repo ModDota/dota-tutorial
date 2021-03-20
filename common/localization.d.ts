@@ -90,6 +90,7 @@ declare const enum LocalizationKey {
     Goal_6_Opening_3 = "#Goal_6_Opening_3",
     Goal_6_Closing_1 = "#Goal_6_Closing_1",
     Goal_6_Closing_2 = "#Goal_6_Closing_2",
+    Goal_6_Closing_3 = "#Goal_6_Closing_3",
 
     Script_1_Opening_1 = "Script_1_Opening_1",
     Script_1_Opening_2 = "Script_1_Opening_2",

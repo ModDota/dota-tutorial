@@ -164,6 +164,7 @@ function onStart(complete: () => void) {
     print("Starting", sectionName)
 
     const goalTracker = new GoalTracker()
+    const goalTalkToNpcs = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_3);
     const goalDestroyTowers = goalTracker.addNumeric(LocalizationKey.Goal_6_Closing_1, 2);
     const goalDestroyAncient = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2);
 
@@ -190,6 +191,7 @@ function onStart(complete: () => void) {
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         // Fade to black and wait some time until the clients are hopefully faded out.
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen", {})),
+        
         tg.wait(1.5),
 
         // Spawn our NPCs and make Slacks and SUNSfan visible again
@@ -197,6 +199,7 @@ function onStart(complete: () => void) {
         tg.immediate(_ => slacks.RemoveNoDraw()),
         tg.immediate(_ => sunsFan.RemoveNoDraw()),
         tg.immediate(_ => centerCameraOnHero()),
+        tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
 
         // Wait to fade back in
         tg.wait(2),
@@ -215,6 +218,7 @@ function onStart(complete: () => void) {
             tg.seq([
                 // Play dialog
                 tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
+                tg.immediate(() => goalTalkToNpcs.start()),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
                 tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
@@ -237,7 +241,6 @@ function onStart(complete: () => void) {
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
                         tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
                         tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
-                        tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
                         tg.immediate(() => {
                             playerHero.AddItemByName("item_rapier")
                             const tpScroll = playerHero.AddItemByName("item_tpscroll")
@@ -245,6 +248,7 @@ function onStart(complete: () => void) {
                                 tpScroll.EndCooldown()
                             })
                         }),
+                        tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
                         tg.neverComplete(),
                     ]),
                 ]), {
@@ -265,13 +269,6 @@ function onStart(complete: () => void) {
                     attach: true,
                 })
             ]),
-
-            // Make everyone stare at you, little bit creepy
-            tg.loop(true, tg.seq([
-                tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
-                tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
-                tg.wait(0.1),
-            ])),
         ]),
 
         // Should never happen currently
