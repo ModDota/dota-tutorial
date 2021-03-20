@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, unitIsValidAndAlive, highlightUiElement, removeHighlight, freezePlayerHero, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID, printEventTable } from "../../util";
+import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
 import { GoalTracker } from "../../Goals";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
@@ -17,7 +17,7 @@ const requiredState: RequiredState = {
     rikiLocation: Vector(-1000, 4400, 256),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    heroItems: { "item_greater_crit": 1 },
+    heroItems: { "item_greater_crit": 1, "item_mysterious_hat": 1 },
     blockades: Object.values(shared.blockades),
     clearWards: false,
     topDireT1TowerStanding: false,

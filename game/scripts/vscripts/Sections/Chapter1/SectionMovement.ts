@@ -211,7 +211,7 @@ const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, start
             else
                 i += 1
 
-            checkTimer = Timers.CreateTimer(0.4, () => checkDkReachedDestination())
+            checkTimer = Timers.CreateTimer(1.2, () => checkDkReachedDestination())
         }
 
         checkDkReachedDestination()

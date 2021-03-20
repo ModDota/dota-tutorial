@@ -40,7 +40,7 @@ const onStart = (complete: () => void) => {
         tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DotaTeam.NEUTRALS, CustomNpcKeys.TargetDummy, true),
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.TargetDummy], true)),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.TargetDummy]),
-        tg.textDialog(LocalizationKey.Script_1_Camera_4, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
+        tg.textDialog(LocalizationKey.Ogre_Spawn, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
         tg.forkAny([
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_1_Camera_5, LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -61,7 +61,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => goalKillDummy.complete()),
 
         // Target dummy died dialog
-        tg.textDialog(LocalizationKey.Script_1_Camera_6, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
+        tg.textDialog(LocalizationKey.Ogre_Die, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
         tg.forkAny([
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_1_Camera_7, LocalizationKey.Script_1_Camera_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -93,7 +93,6 @@ const onStart = (complete: () => void) => {
 
         // Level up and done
         tg.immediate(_ => getOrError(getPlayerHero()).HeroLevelUp(true)),
-        tg.wait(1),
     ]))
 
     graph.start(GameRules.Addon.context, () => {

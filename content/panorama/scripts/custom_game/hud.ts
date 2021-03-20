@@ -194,6 +194,7 @@ const chapterSections = [
     SectionName.Chapter3_Opening,
     SectionName.Chapter4_Opening,
     SectionName.Chapter5_Opening,
+    SectionName.Chapter6_Opening,
 ];
 
 function playChapter(chapterNumber: number) {
@@ -236,3 +237,22 @@ function hidePressKeyMessage() {
 
 GameEvents.Subscribe("show_press_key_message", event => showPressKeyMessage(event.command, event.text));
 GameEvents.Subscribe("hide_press_key_message", event => hidePressKeyMessage());
+
+// Disable scroll-pitching
+GameUI.SetCameraPitchMin(60)
+GameUI.SetCameraPitchMax(60)
+
+// Chapter 3 skip
+const chapter3SkipButton = $("#Chapter3SkipButton");
+chapter3SkipButton.visible = false;
+
+function skipChapter3() {
+    GameEvents.SendCustomGameEventToServer("skip_chapter3", {});
+    chapter3SkipButton.visible = false;
+}
+
+function onShowSkipChapter3Button(show: boolean) {
+    chapter3SkipButton.visible = show;
+}
+
+GameEvents.Subscribe("show_chapter3_skip_button", event => onShowSkipChapter3Button(event.show !== 0));

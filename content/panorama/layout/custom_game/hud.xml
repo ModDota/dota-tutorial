@@ -38,6 +38,10 @@
 
         <Label id="PressKeyMessage" />
 
+        <Button id="Chapter3SkipButton" class="ButtonBevel" onactivate="skipChapter3()">
+            <Label text="#Misc_3_SkipStacking" />
+        </Button>
+
         <Panel id="ChaptersMenu" hittest="false">
             <Panel class="ChaptersMenuHeader">
                 <Label class="ChaptersTitle" text="#Chapters" hittest="false"/>

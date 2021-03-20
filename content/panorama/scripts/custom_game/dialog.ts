@@ -77,7 +77,8 @@ function AdvanceDialogThink() {
         dialogLabel.text = pendingDialog;
         dialogPanel.SetHasClass("ShowAdvanceButton", false);
     } else {
-        dialogLabel.text = `${pendingDialog.substring(0, currentCharacter)}<span class='HiddenText'>${pendingDialog.substring(currentCharacter, pendingDialog.length)}</span>`;
+        const visibleText = pendingDialog.substring(0, currentCharacter);
+        dialogLabel.text = visibleText;
     }
 
     $.Schedule(characterAdvanceRate, AdvanceDialogThink);

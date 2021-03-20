@@ -64,9 +64,27 @@ interface CreditsInteractEvent {
     description?: string;
 }
 
+type WorldTextType = "credit_section" | "npc_title"
+
+type AddWorldTextEvent = {
+    type: WorldTextType;
+    index: number;
+    text: string;
+    location: { x: number, y: number, z: number };
+    entity?: EntityIndex;
+}
+
+interface RemoveWorldTextEvent {
+    index: number;
+}
+
 interface ShowPressKeyMessage {
     command: number; // DOTAKeybindCommand_t
     text: string // Should contain {key} to show the key
+}
+
+interface ShowChapter3SkipButtonEvent {
+    show: boolean
 }
 
 interface CustomGameEventDeclarations {
@@ -90,9 +108,14 @@ interface CustomGameEventDeclarations {
     hide_video: {};
     play_video_continue: {};
     fade_screen: {};
+    fade_screen_in: {};
     voice_chat: {};
     credits_interact: CreditsInteractEvent;
     credits_interact_stop: {};
+    add_world_text: AddWorldTextEvent;
+    remove_world_text: RemoveWorldTextEvent;
     show_press_key_message: ShowPressKeyMessage;
     hide_press_key_message: {};
+    show_chapter3_skip_button: ShowChapter3SkipButtonEvent;
+    skip_chapter3: {}
 }

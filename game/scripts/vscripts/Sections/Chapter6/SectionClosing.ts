@@ -3,8 +3,9 @@ import * as tg from "../../TutorialGraph/index"
 import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
-import { centerCameraOnHero, Distance2D, getOrError, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { centerCameraOnHero, createPathParticle, Distance2D, getOrError, getPlayerCameraLocation, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
+import { addWorldTextAtLocation, removeWorldText } from "../../WorldText"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
 
@@ -26,6 +27,7 @@ const requiredState: RequiredState = {
         "item_power_treads": 1,
         "item_heart": 1,
         "item_aegis": 1,
+        "item_mysterious_hat": 1
     },
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -33,7 +35,7 @@ const requiredState: RequiredState = {
 }
 
 const INTERACTION_DISTANCE = 200;
-const MAX_INTERACTION_DISTANCE = 300;
+const MAX_INTERACTION_DISTANCE = 500;
 
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
@@ -42,8 +44,20 @@ class ClosingNpc {
 
     private dialogToken: DialogToken | undefined
 
+    private canBeDestroyed = true;
+
     constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName?: string) {
 
+    }
+
+    public static fromExistingUnit(unit: CDOTA_BaseNPC, name: string, location: Vector, text: string, soundName?: string): ClosingNpc {
+        const npc = new ClosingNpc(name, location, text, soundName);
+        npc._unit = unit;
+        npc.spawned = true;
+
+        npc.canBeDestroyed = false;
+
+        return npc;
     }
 
     public get playing() {
@@ -55,32 +69,38 @@ class ClosingNpc {
     }
 
     spawn() {
-        this.spawned = true
+        if (!this.spawned) {
+            this.spawned = true
 
-        CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
-            this._unit = unit
-            unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
+            CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
+                this._unit = unit
+                unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
 
-            // destroy() could have been called before this callback was called
-            if (!this.spawned) {
+                // destroy() could have been called before this callback was called
+                if (!this.spawned) {
+                    if (unitIsValidAndAlive(this._unit)) {
+                        this._unit.RemoveSelf()
+                    }
+
+                    this._unit = undefined
+                }
+            })
+        }
+    }
+
+    destroy() {
+        if (this.canBeDestroyed) {
+            this.spawned = false
+
+            if (this._unit) {
                 if (unitIsValidAndAlive(this._unit)) {
                     this._unit.RemoveSelf()
                 }
 
                 this._unit = undefined
             }
-        })
-    }
-
-    destroy() {
-        this.spawned = false
-
-        if (this._unit) {
-            if (unitIsValidAndAlive(this._unit)) {
-                this._unit.RemoveSelf()
-            }
-
-            this._unit = undefined
+        } else {
+            print(this.name)
         }
     }
 
@@ -141,13 +161,43 @@ const waitNpcsSpawned = () => tg.completeOnCheck(_ => npcs.every(npc => npc.unit
 const clearNpcs = () => npcs.forEach(npc => npc.destroy())
 
 let sectionTimer: string;
+let pathParticleID: ParticleID | undefined = undefined
+
+let worldTexts = new Set<number>()
+function clearWorldTexts() {
+    worldTexts.forEach(removeWorldText)
+    worldTexts.clear()
+}
+
+function cleanup() {
+    clearNpcs()
+    clearWorldTexts()
+    stopParty()
+    if (pathParticleID) {
+        ParticleManager.DestroyParticle(pathParticleID, false)
+        ParticleManager.ReleaseParticleIndex(pathParticleID)
+        pathParticleID = undefined
+    }
+}
 
 function onStart(complete: () => void) {
     print("Starting", sectionName)
 
     const goalTracker = new GoalTracker()
+    const goalTalkToNpcs = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_3);
+    const goalDestroyTowers = goalTracker.addNumeric(LocalizationKey.Goal_6_Closing_1, 2);
+    const goalDestroyAncient = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2);
 
     const playerHero = getOrError(getPlayerHero(), "Can not get player hero")
+
+    const topTower = getDireAncientTower("top")
+    const botTower = getDireAncientTower("bot")
+    let towersToDestroy: CDOTA_BaseNPC_Building[] = [];
+    if (topTower && unitIsValidAndAlive(topTower)) towersToDestroy.push(topTower)
+    if (botTower && unitIsValidAndAlive(botTower)) towersToDestroy.push(botTower)
+    const ancient = Entities.FindByName(undefined, "dota_badguys_fort") as CDOTA_BaseNPC
+
+    const pathLocations: Vector[] = [Vector(-4422, -3970, 256), Vector(-3966, -3467, 136.75), Vector(-2366, -2057, 133.000000), Vector(-922, -786, 128), Vector(-49, 44, 128), Vector(1559, 1173, 128), Vector(3442, 2938, 136), Vector(4105, 3560, 256), Vector(5093, 4629, 264)]
 
     const slacks = (GameRules.Addon.context[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC)
     const sunsFan = (GameRules.Addon.context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC)
@@ -161,40 +211,99 @@ function onStart(complete: () => void) {
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         // Fade to black and wait some time until the clients are hopefully faded out.
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen", {})),
+
         tg.wait(1.5),
 
         // Spawn our NPCs and make Slacks and SUNSfan visible again
         tg.immediate(_ => spawnNpcs()),
+        tg.wait(1),
         tg.immediate(_ => slacks.RemoveNoDraw()),
         tg.immediate(_ => sunsFan.RemoveNoDraw()),
+        tg.immediate(_ => {
+            // Add slacks and sunsfan to closing npcs if not there yet
+            if (!npcs.some(npc => npc.unit === slacks)) {
+                npcs.push(
+                    ClosingNpc.fromExistingUnit(slacks, CustomNpcKeys.SlacksMudGolem, slacks.GetAbsOrigin(), LocalizationKey.Script_6_Slacks, LocalizationKey.Script_6_Slacks),
+                    ClosingNpc.fromExistingUnit(sunsFan, CustomNpcKeys.SunsFanMudGolem, sunsFan.GetAbsOrigin(), LocalizationKey.Script_6_SUNSfan, LocalizationKey.Script_6_SUNSfan),
+                )
+            }
+        }),
         tg.immediate(_ => centerCameraOnHero()),
+        tg.immediate(_ => npcs.forEach(npc => { if (npc.unit) { npc.unit!.FaceTowards(playerHero.GetAbsOrigin()) } })),
 
-        // Wait to fade back in
-        tg.wait(2),
+        tg.immediate(_ => {
+            worldTexts.add(addWorldTextAtLocation("Modders", Vector(-6700, -4800, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-5500, -6000, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-7000, -6500, 384), "credit_section"))
+        }),
 
         // Hopefully every npc will be spawned by now and this completes immediately
         waitNpcsSpawned(),
 
-        // Main logic
-        tg.fork([
-            // Play dialog
-            tg.seq([
-                tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
-                tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
-                tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
-                tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
-            ]),
+        // Spawn some party stuff
+        tg.immediate(_ => startParty()),
 
-            // Make everyone stare at you, little bit creepy
-            tg.loop(true, tg.seq([
-                tg.completeOnCheck(_ => playerHero.IsIdle(), 0.1),
-                tg.immediate(_ => npcs.forEach(npc => npc.unit!.FaceTowards(playerHero.GetAbsOrigin()))),
-                tg.wait(0.1),
-            ])),
+        // Fade back in
+        tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen_in", {})),
+
+        // Main logic
+        tg.seq([
+            // Play dialog
+            tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
+            tg.immediate(() => goalTalkToNpcs.start()),
+            tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
+            tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
+            tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
+
+            tg.withHighlights(tg.forkAny([
+                tg.seq([
+                    tg.immediate(_ => {
+                        goalDestroyTowers.start()
+                        pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
+                    }),
+                    tg.completeOnCheck(_ => {
+                        towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
+                        goalDestroyTowers.setValue(2 - towersToDestroy.length)
+
+                        return towersToDestroy.length === 0
+                    }, 0.1),
+                ]),
+
+                tg.seq([
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
+                    tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
+                    tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
+                    tg.immediate(() => {
+                        playerHero.AddItemByName("item_rapier")
+                        const tpScroll = playerHero.AddItemByName("item_tpscroll")
+                        Timers.CreateTimer(FrameTime(), () => {
+                            tpScroll.EndCooldown()
+                        })
+                    }),
+                    tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
+                    tg.neverComplete(),
+                ]),
+            ]), {
+                type: "arrow_enemy",
+                units: towersToDestroy,
+                attach: true,
+            }),
+
+            tg.withHighlights(tg.seq([
+                tg.immediate(_ => {
+                    goalDestroyTowers.complete()
+                    goalDestroyAncient.start()
+                }),
+                tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1),
+            ]), {
+                type: "arrow_enemy",
+                units: [ancient],
+                attach: true,
+            })
         ]),
 
         // Should never happen currently
-        tg.immediate(_ => clearNpcs()),
+        tg.immediate(_ => cleanup()),
     ]))
 
     graph.start(GameRules.Addon.context, () => {
@@ -221,7 +330,7 @@ function onStop() {
     slacks.RemoveNoDraw()
     sunsFan.RemoveNoDraw()
 
-    clearNpcs()
+    cleanup()
 }
 
 let talkTarget: ClosingNpc | undefined;
@@ -281,3 +390,65 @@ export const sectionClosing = new tut.FunctionalSection(
     onStop,
     orderFilter
 )
+
+function getDireAncientTower(towerLoc: "top" | "bot"): CDOTA_BaseNPC_Building | undefined {
+    const enemyTowerAncientTopLocation = Vector(4944, 4776, 256)
+    const enemyTowerAncientBotLocation = Vector(5280, 4432, 256)
+
+    const tower = towerLoc === "top" ?
+        Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientTopLocation, 200) as CDOTA_BaseNPC_Building :
+        Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientBotLocation, 200) as CDOTA_BaseNPC_Building
+
+    return tower
+}
+
+let partyParticles: ParticleID[] = [];
+let discoTimer: string | undefined;
+
+const discoLocations = [
+    Vector(-7000, -6480, 0),
+    Vector(-5850, -5400, 0),
+    Vector(-6000, -4000, 0),
+    Vector(-5400, -6000, 0),
+]
+
+function startParty() {
+    for (const npc of npcs) {
+        partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment.ABSORIGIN_FOLLOW, npc.unit))
+    }
+
+    discoTimer = Timers.CreateTimer(() => {
+
+        // Spawn some discoballs
+        for (const discoLocation of discoLocations) {
+            const position = GetGroundPosition(discoLocation, undefined) + Vector(0, 0, 400) as Vector;
+            const particle = ParticleManager.CreateParticle(ParticleName.DiscoBall, ParticleAttachment.CUSTOMORIGIN, undefined);
+            ParticleManager.SetParticleControl(particle, 0, position);
+            ParticleManager.SetParticleControl(particle, 1, position);
+            ParticleManager.ReleaseParticleIndex(particle);
+        }
+
+        // Make a random npc set off some fireworks
+        const randomNpc = npcs[RandomInt(0, npcs.length - 1)];
+        if (randomNpc.unit) {
+            const location = randomNpc.unit.GetAbsOrigin();
+            const particle = ParticleManager.CreateParticle(ParticleName.Firework, ParticleAttachment.CUSTOMORIGIN, undefined);
+            ParticleManager.SetParticleControl(particle, 0, location);
+            ParticleManager.SetParticleControl(particle, 1, location + Vector(0, 0, 500) as Vector);
+            ParticleManager.ReleaseParticleIndex(particle);
+        }
+
+        return 2;
+    })
+}
+
+function stopParty() {
+    for (const particle of partyParticles) {
+        ParticleManager.DestroyParticle(particle, false);
+    }
+    partyParticles = [];
+
+    if (discoTimer) {
+        Timers.RemoveTimer(discoTimer)
+    }
+}

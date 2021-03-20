@@ -9,6 +9,7 @@
         <include src="file://{resources}/scripts/custom_game/shop-detection.js" />
     </scripts>
     <Panel>
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/world_text.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/dialog.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/hud.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/devpanel.xml" />
@@ -28,6 +29,7 @@
     This does not have to be uncommented, panorama is too dumb to realise
     <Image src="file://{images}/custom_game/portraits/sunsfan_greevil.png" />
     <Image src="file://{images}/custom_game/portraits/slacks_greevil.png" />
+    <Image src="file://{images}/custom_game/credits/avatars/AngerMania.png" />
     <Image src="file://{images}/custom_game/credits/avatars/Tsunami.png" />
     <Image src="file://{images}/custom_game/credits/avatars/alexander_coccia.png" />
     <Image src="file://{images}/custom_game/credits/avatars/bsj.png" />
@@ -39,5 +41,7 @@
     <Image src="file://{images}/custom_game/credits/avatars/redditdota2.png" />
     <Image src="file://{images}/custom_game/credits/avatars/moddota.png" />
     <Image src="file://{images}/custom_game/credits/avatars/Ruby.png" />
+    <Image src="file://{images}/custom_game/credits/avatars/Slacks.png" />
+    <Image src="file://{images}/custom_game/credits/avatars/sunsfan.png" />
     <Image src="file://{images}/custom_game/portraits/odpixel_lion.png" />
 -->

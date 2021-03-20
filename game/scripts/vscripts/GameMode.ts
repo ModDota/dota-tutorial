@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
+import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
 
 declare global {
@@ -54,6 +54,9 @@ export class GameMode {
         PrecacheResource("particle", ParticleName.Path, context);
         PrecacheResource("particle", ParticleName.MoveToLocation, context)
         PrecacheResource("particle", ParticleName.DialogCircle, context)
+        PrecacheResource("particle", ParticleName.DiscoLights, context)
+        PrecacheResource("particle", ParticleName.DiscoBall, context)
+        PrecacheResource("particle", ParticleName.Firework, context)
     }
 
     public static Activate(this: void) {
@@ -68,6 +71,8 @@ export class GameMode {
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
+            // Always center camera on hero when skipping between sections
+            centerCameraOnHero();
         })
 
         dg.init();
@@ -145,8 +150,6 @@ export class GameMode {
         // Remove Roshan spawner
         const roshanSpawner = getOrError(Entities.FindByClassname(undefined, "npc_dota_roshan_spawner"))
         roshanSpawner.Destroy()
-
-        removeNeutralSpawners()
     }
 
     registerFilters() {
@@ -218,6 +221,11 @@ export class GameMode {
 
         // Start game once pregame hits
         if (state === GameState.PRE_GAME) {
+            // Day-night stuff
+            print("setting daynight stuff")
+            GameRules.SetTimeOfDay(0.5) // Set to day
+            this.Game.SetDaynightCycleDisabled(true)
+
             Timers.CreateTimer(3, () => this.StartGame());
         }
 

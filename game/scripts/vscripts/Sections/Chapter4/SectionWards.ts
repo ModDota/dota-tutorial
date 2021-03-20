@@ -4,6 +4,7 @@ import * as shared from "./Shared"
 import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement, removeHighlight, freezePlayerHero, setUnitPacifist, getPlayerCameraLocation } from "../../util";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
+import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
 
 const sectionName: SectionName = SectionName.Chapter4_Wards;
 
@@ -15,7 +16,7 @@ const requiredState: RequiredState = {
     heroLocation: Vector(-3000, 3800, 128),
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    heroItems: { "item_greater_crit": 1 },
+    heroItems: { "item_greater_crit": 1, "item_mysterious_hat": 1 },
     requireRiki: true,
     rikiLocation: Vector(-1800, 4000, 256),
     blockades: Object.values(shared.blockades),
@@ -85,7 +86,6 @@ function onStart(complete: () => void) {
                     setUnitPacifist(hero, true);
 
                     // For some reason this modifier does not make heroes semi-transparent?
-                    //hero.AddNewModifier(undefined, undefined, "modifier_invisible", undefined);
                     // Riki ult does
                     const ability = hero.AddAbility("riki_permanent_invisibility");
                     ability.SetLevel(1);
@@ -144,18 +144,20 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Wards_8, LocalizationKey.Script_4_Wards_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.immediate(_ => allowUseItem = true),
-            tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), 1),
+            tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_dispenser"), FrameTime()),
 
             tg.immediate(_ => {
                 goalPlaceObserverWard.complete();
                 allowUseItem = false;
-                goalPlaceSentryWard.start();
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Wards_9, LocalizationKey.Script_4_Wards_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Wards_12, LocalizationKey.Script_4_Wards_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.immediate(_ => allowUseItem = true),
+            tg.immediate(_ => {
+                allowUseItem = true
+                goalPlaceSentryWard.start();
+            }),
             tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
 
             tg.immediate(_ => {
@@ -173,7 +175,9 @@ function onStart(complete: () => void) {
                     hero.MoveToPosition(hero.GetAbsOrigin().__add(runDirection.__mul(5000)));
                 }
                 goalAttackRiki.start();
-                context[rikiName].StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
+                const riki = context[rikiName] as CDOTA_BaseNPC
+                riki.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
+                riki.AddNewModifier(undefined, undefined, modifier_abs_no_damage.name, {})
                 setUnitPacifist(playerHero, false);
             }),
 
@@ -194,9 +198,10 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalHoldAlt.start()),
             tg.audioDialog(LocalizationKey.Script_4_Wards_15, LocalizationKey.Script_4_Wards_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.waitForModifierKey(ModifierKey.Alt),
-            tg.immediate(_ => {
+            tg.immediate(context => {
                 goalHoldAlt.complete();
                 disposeHeroes();
+                (context[rikiName] as CDOTA_BaseNPC).RemoveModifierByName(modifier_abs_no_damage.name)
             }),
         ])
     )
@@ -209,6 +214,8 @@ function onStart(complete: () => void) {
 
 function onStop() {
     print("Stopping", sectionName);
+
+    (GameRules.Addon.context[rikiName] as CDOTA_BaseNPC).RemoveModifierByName(modifier_abs_no_damage.name)
 
     if (graph) {
         graph.stop(GameRules.Addon.context);

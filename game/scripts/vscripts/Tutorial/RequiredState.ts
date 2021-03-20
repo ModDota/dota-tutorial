@@ -25,8 +25,6 @@ export type RequiredState = {
     sunsFanLocation?: Vector
     requireSlacksGolem?: boolean
     slacksLocation?: Vector
-    requireODPixelGolem?: boolean
-    odPixelLocation?: Vector
 
     // Elder Dragon Form
     removeElderDragonForm?: boolean,
@@ -92,8 +90,6 @@ export const defaultRequiredState: FilledRequiredState = {
     sunsFanLocation: Vector(0, 0, 0),
     requireSlacksGolem: false,
     slacksLocation: Vector(0, 0, 0),
-    requireODPixelGolem: false,
-    odPixelLocation: Vector(0, 0, 0),
 
     // Elder Dragon Form
     removeElderDragonForm: true,

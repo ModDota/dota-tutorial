@@ -24,11 +24,12 @@ declare const enum SectionName {
 declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
-    GodzMudGolem = "npc_mud_golem_godz",
+    Sheepsticked = "npc_dota_tutorial_sheepsticked",
     ODPixel = "npc_dota_tutorial_odpixel",
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
     DireMeleeCreep = "npc_dota_tutorial_dire_melee_creep",
+    DireMeleeMegaCreep = "npc_dota_creep_badguys_melee_upgraded_mega",
     RadiantRangedCreep = "npc_dota_tutorial_radiant_ranged_creep",
     RadiantMeleeCreep = "npc_dota_tutorial_radiant_melee_creep",
     Riki = "npc_dota_hero_riki",
@@ -125,6 +126,9 @@ declare const enum ParticleName {
     QuestionMarks = "particles/tutorial_question_marks.vpcf",
     MoveToLocation = "particles/tutorial_moveto_goal.vpcf",
     DialogCircle = "particles/tutorial_unit_speaker.vpcf",
+    DiscoLights = "particles/econ/events/ti10/hot_potato/disco_ball_channel.vpcf",
+    DiscoBall = "particles/tutorial_disco.vpcf",
+    Firework = "particles/econ/events/consolation/consolation_fireworks_1.vpcf",
 }
 
 type VideoName = "guides" | "muting"
