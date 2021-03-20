@@ -103,7 +103,7 @@ function addSocialIfExists(social: SocialType, unitName: string, container: Pane
 
         const socialName = $.CreatePanel("Label", socialContainer, "");
         socialName.AddClass("SocialMedia");
-        socialName.text = socialId;
+        socialName.text = social === SocialType.Discord ? "Discord" : socialId;
         socialName.hittest = true;
 
         socialName.SetPanelEvent("onactivate", () => $.DispatchEvent("ExternalBrowserGoToURL", socialName, makeSocialUrl(socialId, social)));
