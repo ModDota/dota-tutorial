@@ -90,6 +90,8 @@ class ClosingNpc {
     }
 
     destroy() {
+        this.stopInteracting()
+
         if (this.canBeDestroyed) {
             this.spawned = false
 
