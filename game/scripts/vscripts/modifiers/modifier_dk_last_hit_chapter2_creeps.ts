@@ -108,7 +108,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
                 if (event.unit) {
                     const distance = ((this.GetParent().GetAbsOrigin() - event.unit.GetAbsOrigin()) as Vector).Length2D()
                     if (distance <= 300) {
-                        // Play "you missed!" sound from Sheepsticked - currently text, later will change to audio when we'll have actual sounds
+                        // Play "you missed!" sound from Sheepsticked
                         const chosenLocalizaionKey = randomChoice(this.missLocalizationKeys);
 
                         if (unitIsValidAndAlive(GameRules.Addon.context[CustomNpcKeys.Sheepsticked])) {
@@ -128,7 +128,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             if (event.unit.GetTeamNumber() == this.GetParent().GetTeamNumber()) return;
         }
 
-        // Play "nice hit!" sound from Sheepsticked - currently text, later will change to audio when we'll have actual sounds
+        // Play "nice hit!" sound from Sheepsticked
         const chosenLocalizationKey = randomChoice(this.successLocalizationKeys)
 
         // Only the last dialog tags dialogFinishedPlaying
