@@ -49,7 +49,7 @@ const onStart = (complete: () => void) => {
 
     const radiantCreepsSpawnLocation = Vector(-6288, 3280, 128)
     const direCreepsSpawnLocation = Vector(-5911, 5187, 128)
-    const godzSpawnLocation = Vector(-6715, 4402, 128)
+    const sheepstickedSpawnLocation = Vector(-6715, 4402, 128)
     const sniperSpawnLocation = Vector(-5700, 5555, 128)
 
     const sniperTalkShitLocalizationOptions: LocalizationKey[] = [LocalizationKey.Script_2_Creeps_17, LocalizationKey.Script_2_Creeps_18, LocalizationKey.Script_2_Creeps_18_1]
@@ -148,14 +148,14 @@ const onStart = (complete: () => void) => {
                     tg.forkAny([
                         tg.seq([
                             tg.audioDialog(LocalizationKey.Script_2_Creeps_3, LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-                            tg.immediate(_ => GridNav.DestroyTreesAroundPoint(godzSpawnLocation, 300, true)),
+                            tg.immediate(_ => GridNav.DestroyTreesAroundPoint(sheepstickedSpawnLocation, 300, true)),
                             tg.wait(1),
-                            tg.spawnUnit(CustomNpcKeys.GodzMudGolem, godzSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.GodzMudGolem, false),
+                            tg.spawnUnit(CustomNpcKeys.Sheepsticked, sheepstickedSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.Sheepsticked, false),
                             tg.immediate(context => {
-                                const godzMudGolem = context[CustomNpcKeys.GodzMudGolem]
-                                setUnitPacifist(godzMudGolem, true);
+                                const sheepsticked = context[CustomNpcKeys.Sheepsticked]
+                                setUnitPacifist(sheepsticked, true);
                             }),
-                            tg.textDialog(LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.GodzMudGolem], 3),
+                            tg.audioDialog(LocalizationKey.Script_2_Creeps_4, LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.Sheepsticked]),
                             tg.neverComplete()
                         ]),
                         tg.seq([
@@ -234,11 +234,11 @@ const onStart = (complete: () => void) => {
                         stopListeningToBreatheFireCasts()
                     }),
 
-                    tg.textDialog(LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.GodzMudGolem], 3),
+                    tg.audioDialog(LocalizationKey.Script_2_Creeps_12, LocalizationKey.Script_2_Creeps_12, context => context[CustomNpcKeys.Sheepsticked]),
                     tg.immediate(context => {
-                        const godzMudGolem = (context[CustomNpcKeys.GodzMudGolem] as CDOTA_BaseNPC);
-                        godzMudGolem.ForceKill(false)
-                        context[CustomNpcKeys.GodzMudGolem] = undefined;
+                        const sheepsticked = (context[CustomNpcKeys.Sheepsticked] as CDOTA_BaseNPC);
+                        sheepsticked.ForceKill(false)
+                        context[CustomNpcKeys.Sheepsticked] = undefined;
                     }),
                     tg.spawnUnit(CustomNpcKeys.Sniper, sniperSpawnLocation, DotaTeam.BADGUYS, Chapter2SpecificKeys.sniperEnemyHero, true),
                     tg.immediate(context => {
@@ -261,7 +261,7 @@ const onStart = (complete: () => void) => {
                     }),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_14, LocalizationKey.Script_2_Creeps_14, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_15, LocalizationKey.Script_2_Creeps_15, context => context[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(chosenSniperTalkShitLocalizationOption, chosenSniperTalkShitLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero], 3),
+                    tg.audioDialog(chosenSniperTalkShitLocalizationOption, chosenSniperTalkShitLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero]),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_19, LocalizationKey.Script_2_Creeps_19, context => context[CustomNpcKeys.SunsFanMudGolem]),
                     tg.setCameraTarget(undefined),
                     tg.audioDialog(LocalizationKey.Script_2_Creeps_20, LocalizationKey.Script_2_Creeps_20, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -378,7 +378,7 @@ const onStop = () => {
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
     removeContextEntityIfExists(context, Chapter2SpecificKeys.DireCreeps)
     removeContextEntityIfExists(context, Chapter2SpecificKeys.sniperEnemyHero)
-    removeContextEntityIfExists(context, CustomNpcKeys.GodzMudGolem)
+    removeContextEntityIfExists(context, CustomNpcKeys.Sheepsticked)
 
     if (graph) {
         graph.stop(GameRules.Addon.context);

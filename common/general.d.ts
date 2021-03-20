@@ -24,7 +24,7 @@ declare const enum SectionName {
 declare const enum CustomNpcKeys {
     SlacksMudGolem = "npc_mud_golem_slacks",
     SunsFanMudGolem = "npc_mud_golem_sunsfan",
-    GodzMudGolem = "npc_mud_golem_godz",
+    Sheepsticked = "npc_dota_tutorial_sheepsticked",
     ODPixel = "npc_dota_tutorial_odpixel",
     Mirana = "npc_dota_hero_mirana",
     DireRangedCreep = "npc_dota_tutorial_dire_ranged_creep",
