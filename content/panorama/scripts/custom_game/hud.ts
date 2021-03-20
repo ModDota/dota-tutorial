@@ -236,3 +236,7 @@ function hidePressKeyMessage() {
 
 GameEvents.Subscribe("show_press_key_message", event => showPressKeyMessage(event.command, event.text));
 GameEvents.Subscribe("hide_press_key_message", event => hidePressKeyMessage());
+
+// Disable scroll-pitching
+GameUI.SetCameraPitchMin(60)
+GameUI.SetCameraPitchMax(60)
