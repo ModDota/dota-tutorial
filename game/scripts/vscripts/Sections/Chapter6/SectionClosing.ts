@@ -36,6 +36,8 @@ const requiredState: RequiredState = {
 const INTERACTION_DISTANCE = 200;
 const MAX_INTERACTION_DISTANCE = 500;
 
+let canInteract = false
+
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
 
@@ -104,22 +106,26 @@ class ClosingNpc {
     }
 
     interact() {
-        if (this.spawned && this.unit && unitIsValidAndAlive(this.unit)) {
-            // Play dialog
-            if (this.soundName) {
-                this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
-            } else {
-                this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
+        if (canInteract) {
+            if (this.spawned && this.unit && unitIsValidAndAlive(this.unit)) {
+                // Play dialog
+                if (this.soundName) {
+                    this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
+                } else {
+                    this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
+                }
             }
+            CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
         }
-        CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
     }
 
     stopInteracting() {
-        CustomGameEventManager.Send_ServerToAllClients("credits_interact_stop", {});
-        if (this.dialogToken) {
-            dg.stop(this.dialogToken);
-            this.dialogToken = undefined;
+        if (canInteract) {
+            CustomGameEventManager.Send_ServerToAllClients("credits_interact_stop", {});
+            if (this.dialogToken) {
+                dg.stop(this.dialogToken);
+                this.dialogToken = undefined;
+            }
         }
     }
 }
@@ -207,6 +213,8 @@ function onStart(complete: () => void) {
     slacks.AddNoDraw()
     sunsFan.AddNoDraw()
 
+    canInteract = false
+
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         // Fade to black and wait some time until the clients are hopefully faded out.
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen", {})),
@@ -280,6 +288,7 @@ function onStart(complete: () => void) {
                         })
                     }),
                     tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
+                    tg.immediate(_ => canInteract = true),
                     tg.neverComplete(),
                 ]),
             ]), {
