@@ -108,26 +108,22 @@ class ClosingNpc {
     }
 
     interact() {
-        if (canInteract) {
-            if (this.spawned && this.unit && unitIsValidAndAlive(this.unit)) {
-                // Play dialog
-                if (this.soundName) {
-                    this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
-                } else {
-                    this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
-                }
+        if (this.spawned && this.unit && unitIsValidAndAlive(this.unit)) {
+            // Play dialog
+            if (this.soundName) {
+                this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
+            } else {
+                this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
             }
-            CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
         }
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
     }
 
     stopInteracting() {
-        if (canInteract) {
-            CustomGameEventManager.Send_ServerToAllClients("credits_interact_stop", {});
-            if (this.dialogToken) {
-                dg.stop(this.dialogToken);
-                this.dialogToken = undefined;
-            }
+        CustomGameEventManager.Send_ServerToAllClients("credits_interact_stop", {});
+        if (this.dialogToken) {
+            dg.stop(this.dialogToken);
+            this.dialogToken = undefined;
         }
     }
 }
@@ -380,14 +376,16 @@ function orderFilter(order: ExecuteOrderFilterEvent) {
         return true;
     }
 
-    const target = EntIndexToHScript(order.entindex_target);
+    if (canInteract) {
+        const target = EntIndexToHScript(order.entindex_target);
 
-    const closingNpc = npcs.find(npc => npc.unit === target);
-    if (closingNpc) {
-        talkTarget = closingNpc;
-        order.order_type = UnitOrder.MOVE_TO_TARGET;
-    } else {
-        talkTarget = undefined;
+        const closingNpc = npcs.find(npc => npc.unit === target);
+        if (closingNpc) {
+            talkTarget = closingNpc;
+            order.order_type = UnitOrder.MOVE_TO_TARGET;
+        } else {
+            talkTarget = undefined;
+        }
     }
 
     return true;
