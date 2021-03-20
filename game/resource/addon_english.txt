@@ -115,6 +115,9 @@
 
         "dota_item_build_title_default" "Items for future victim"
 
+        // Misc things for sections
+        "Misc_3_SkipStacking" "Skip stacking"
+
         // Press key messages
         "PressKey_ChatWheel" "Hold {s:key} to open the chat wheel."
         "PressKey_Voice" "Hold {s:key} to speak."
