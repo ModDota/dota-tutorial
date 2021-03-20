@@ -134,12 +134,6 @@ function handleUnits(state: FilledRequiredState) {
         clearUnit(CustomNpcKeys.SunsFanMudGolem)
     }
 
-    if (state.requireODPixelGolem) {
-        createOrMoveUnit(CustomNpcKeys.ODPixel, DotaTeam.GOODGUYS, state.odPixelLocation, state.heroLocation, (unit, created) => setUnitPacifist(unit, true))
-    } else {
-        clearUnit(CustomNpcKeys.ODPixel)
-    }
-
     // Riki
     if (state.requireRiki) {
         createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {

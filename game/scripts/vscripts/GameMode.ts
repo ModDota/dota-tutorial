@@ -216,6 +216,11 @@ export class GameMode {
 
         // Start game once pregame hits
         if (state === GameState.PRE_GAME) {
+            // Day-night stuff
+            print("setting daynight stuff")
+            GameRules.SetTimeOfDay(0.5) // Set to day
+            this.Game.SetDaynightCycleDisabled(true)
+
             Timers.CreateTimer(3, () => this.StartGame());
         }
 
