@@ -27,6 +27,8 @@ const portraits: Record<string, string> = {
     [CustomNpcKeys.VicFrank]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.Yoyo]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.ValkyrjaRuby]: "file://{images}/custom_game/credits/avatars/Ruby.png",
+    [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/credits/avatars/Slacks.png",
+    [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/credits/avatars/Sunsfan.png",
 };
 
 enum SocialType {
@@ -87,6 +89,10 @@ GameEvents.Subscribe("credits_interact_stop", () => {
     $.GetContextPanel().RemoveClass("Visible");
 });
 
+GameEvents.Subscribe("section_started", () => {
+    $.GetContextPanel().RemoveClass("Visible");
+});
+
 function addSocialIfExists(social: SocialType, unitName: string, container: Panel) {
     const linkLocalizationKey = `${unitName}_${social}`;
     const socialId = $.Localize(linkLocalizationKey);
@@ -99,7 +105,7 @@ function addSocialIfExists(social: SocialType, unitName: string, container: Pane
 
         const socialName = $.CreatePanel("Label", socialContainer, "");
         socialName.AddClass("SocialMedia");
-        socialName.text = socialId;
+        socialName.text = social === SocialType.Discord ? "Discord" : socialId;
         socialName.hittest = true;
 
         socialName.SetPanelEvent("onactivate", () => $.DispatchEvent("ExternalBrowserGoToURL", socialName, makeSocialUrl(socialId, social)));

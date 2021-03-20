@@ -108,6 +108,7 @@ interface CustomGameEventDeclarations {
     hide_video: {};
     play_video_continue: {};
     fade_screen: {};
+    fade_screen_in: {};
     voice_chat: {};
     credits_interact: CreditsInteractEvent;
     credits_interact_stop: {};
