@@ -467,6 +467,8 @@ function createBountyRunes() {
     if (!IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
         context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, RuneType.BOUNTY)
     }
+    
+    context[CustomEntityKeys.RadiantTopBountyRuneEntIndex] = context[CustomEntityKeys.RadiantTopBountyRune].entindex()
 
     if (!IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
         context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, RuneType.BOUNTY)

@@ -2,14 +2,13 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, DirectionToPosition, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
+import { centerCameraOnHero, DirectionToPosition, displayDotaErrorMessage, Distance2D, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
 import * as shared from "./Shared";
 import { HeroInfo } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Opening;
 
 let graph: tg.TutorialStep | undefined = undefined
-let canPlayerIssueOrders = false;
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
@@ -61,8 +60,7 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero())
 
     const visionRevealDuration = 1
-    const slowerCameraSpeedFunc = () => 2500
-    const fasterCameraSpeedFunc = () => 5000
+    const panCameraBountiesAlpha = 2
 
     const goalTracker = new GoalTracker();
     const goalMoveToRune = goalTracker.addBoolean(LocalizationKey.Goal_5_Opening_1);
@@ -80,75 +78,78 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.immediate(_ => canPlayerIssueOrders = false),
             tg.wait(1),
-            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
             tg.audioDialog(LocalizationKey.Script_5_Opening_1, LocalizationKey.Script_5_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_Opening_2, LocalizationKey.Script_5_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.forkAny([
-                tg.audioDialog(LocalizationKey.Script_5_Opening_3, LocalizationKey.Script_5_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                tg.seq([
+                    tg.wait(1),
+                    tg.audioDialog(LocalizationKey.Script_5_Opening_3, LocalizationKey.Script_5_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem], 2.5),
+                ]),
 
                 // Pan camera over bounty rune spawns
                 tg.seq([
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.radiantTopBountyPos, 1),
-                    tg.panCamera(shared.runeSpawnsLocations.radiantTopBountyPos, shared.runeSpawnsLocations.radiantAncientsBountyPos, slowerCameraSpeedFunc),
-                    // Slightly correct panCamera targeting
-                    tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.RadiantAncientsBountyRune]),
+                    tg.panCameraLinear(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.radiantTopBountyPos, 0.5),
                     tg.immediate((ctx) => {
+                        ctx[CustomEntityKeys.RadiantTopBountyFOWViewer] = AddFOWViewer(DotaTeam.GOODGUYS, shared.runeSpawnsLocations.radiantTopBountyPos, 800, visionRevealDuration, false)
+                    }),
+                    tg.wait(visionRevealDuration),
+                    tg.panCameraExponential(shared.runeSpawnsLocations.radiantTopBountyPos, shared.runeSpawnsLocations.radiantAncientsBountyPos, panCameraBountiesAlpha),
+                    tg.immediate((ctx) => {
+                        if (ctx[CustomEntityKeys.RadiantTopBountyFOWViewer]) {
+                            ctx[CustomEntityKeys.RadiantTopBountyFOWViewer] = undefined
+                        }
                         ctx[CustomEntityKeys.RadiantAncientsBountyFOWViewer] = AddFOWViewer(DotaTeam.GOODGUYS, shared.runeSpawnsLocations.radiantAncientsBountyPos, 800, visionRevealDuration, false)
                     }),
                     tg.wait(visionRevealDuration),
 
-                    tg.panCamera(shared.runeSpawnsLocations.radiantAncientsBountyPos, shared.runeSpawnsLocations.direBotBountyPos, fasterCameraSpeedFunc),
+                    tg.panCameraExponential(shared.runeSpawnsLocations.radiantAncientsBountyPos, shared.runeSpawnsLocations.direBotBountyPos, panCameraBountiesAlpha),
                     tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.DireBotBountyRune]),
                     tg.immediate((ctx) => {
-                        RemoveFOWViewer(DotaTeam.GOODGUYS, ctx[CustomEntityKeys.RadiantAncientsBountyFOWViewer])
                         ctx[CustomEntityKeys.DireBotBountyFOWViewer] = AddFOWViewer(DotaTeam.GOODGUYS, shared.runeSpawnsLocations.direBotBountyPos, 800, visionRevealDuration, false)
                     }),
                     tg.wait(visionRevealDuration),
 
-                    tg.panCamera(shared.runeSpawnsLocations.direBotBountyPos, shared.runeSpawnsLocations.direAncientsBountyPos, slowerCameraSpeedFunc),
+                    tg.panCameraExponential(shared.runeSpawnsLocations.direBotBountyPos, shared.runeSpawnsLocations.direAncientsBountyPos, panCameraBountiesAlpha),
                     tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.DireAncientsBountyRune]),
                     tg.immediate((ctx) => {
-                        RemoveFOWViewer(DotaTeam.GOODGUYS, ctx[CustomEntityKeys.DireBotBountyFOWViewer])
                         ctx[CustomEntityKeys.DireAncientsBountyFOWViewer] = AddFOWViewer(DotaTeam.GOODGUYS, shared.runeSpawnsLocations.direAncientsBountyPos, 800, visionRevealDuration, false)
                     }),
                     tg.wait(visionRevealDuration),
-
-                    tg.immediate(ctx => {
-                        RemoveFOWViewer(DotaTeam.GOODGUYS, ctx[CustomEntityKeys.DireAncientsBountyFOWViewer])
-                    }),
                 ]),
             ]),
 
             // Return camera to player
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_5_Opening_4, LocalizationKey.Script_5_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
+                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), panCameraBountiesAlpha),
             ]),
 
             tg.audioDialog(LocalizationKey.Script_5_Opening_5, LocalizationKey.Script_5_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_5_Opening_6, LocalizationKey.Script_5_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
-            tg.fork([
+            tg.forkAny([
                 tg.seq([
-                    tg.panCamera(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.topPowerUpRunePos, slowerCameraSpeedFunc),
-                    tg.wait(1),
-                    tg.setCameraTarget(undefined),
-                    tg.immediate(_ => centerCameraOnHero()),
-                    tg.immediate((ctx) => {
-                        canPlayerIssueOrders = true
-                        goalMoveToRune.start()
-                        if (IsValidEntity(ctx[CustomEntityKeys.TopPowerRune])) {
-                            ctx[CustomEntityKeys.TopPowerRune].Destroy()
-                            ctx[CustomEntityKeys.TopPowerRune] = undefined
-                        }
-                    }),
+                    tg.audioDialog(LocalizationKey.Script_5_Opening_6, LocalizationKey.Script_5_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.neverComplete()
                 ]),
-                tg.goToLocation(shared.runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3250, 1600), undefined)]),
+                tg.fork([
+                    tg.seq([
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.topPowerUpRunePos, panCameraBountiesAlpha),
+                        tg.wait(1),
+                        tg.setCameraTarget(undefined),
+                        tg.immediate(_ => centerCameraOnHero()),
+                        tg.immediate((ctx) => {
+                            goalMoveToRune.start()
+                            if (IsValidEntity(ctx[CustomEntityKeys.TopPowerRune])) {
+                                ctx[CustomEntityKeys.TopPowerRune].Destroy()
+                                ctx[CustomEntityKeys.TopPowerRune] = undefined
+                            }
+                        }),
+                    ]),
+                    tg.goToLocation(shared.runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3250, 1600), undefined)]),
+                ])
             ]),
             tg.immediate(_ => {
-                canPlayerIssueOrders = false
                 setUnitPacifist(playerHero, true)
                 goalMoveToRune.complete()
             }),
@@ -172,7 +173,7 @@ function onStart(complete: () => void) {
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], false)),
             tg.completeOnCheck((ctx) => !unitIsValidAndAlive(ctx[CustomNpcKeys.Sniper]), 1),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], rangerLineStart),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.Juggernaut], () => playerHero.GetAbsOrigin()),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Juggernaut], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.wait(1),
 
             // Illusions power rune ranger sequence
@@ -201,9 +202,9 @@ function onStart(complete: () => void) {
                 tg.moveUnit(ctx => ctx[CustomNpcKeys.MiranaIllusionTwo], rangerLineStart.__add(rangerFirstLineDirection * 350 as Vector)),
             ]),
             tg.fork([
-                tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], () => playerHero.GetAbsOrigin()),
-                tg.faceTowards(ctx => ctx[CustomNpcKeys.MiranaIllusionOne], () => playerHero.GetAbsOrigin()),
-                tg.faceTowards(ctx => ctx[CustomNpcKeys.MiranaIllusionTwo], () => playerHero.GetAbsOrigin()),
+                tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], shared.runeSpawnsLocations.topPowerUpRunePos),
+                tg.faceTowards(ctx => ctx[CustomNpcKeys.MiranaIllusionOne], shared.runeSpawnsLocations.topPowerUpRunePos),
+                tg.faceTowards(ctx => ctx[CustomNpcKeys.MiranaIllusionTwo], shared.runeSpawnsLocations.topPowerUpRunePos),
             ]),
 
             // Invisibility power rune ranger sequence
@@ -219,13 +220,14 @@ function onStart(complete: () => void) {
                 ctx[CustomNpcKeys.CrystalMaiden].AddNewModifier(ctx[CustomNpcKeys.CrystalMaiden], undefined, "modifier_rune_invis", { duration: runesDuration })
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.CrystalMaiden], rangerLineStart.__add(rangerFirstLineDirection * 600 as Vector)),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.CrystalMaiden], () => playerHero.GetAbsOrigin()),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.CrystalMaiden], shared.runeSpawnsLocations.topPowerUpRunePos),
 
             // Arcane power rune ranger sequence
             tg.spawnUnit(CustomNpcKeys.Zuus, powerRangerSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.Zuus, true),
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Zuus]),
             tg.immediate(ctx => {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.ARCANE)
+
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Zuus], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(RuneType.ARCANE, ctx[CustomNpcKeys.Zuus])),
@@ -237,7 +239,7 @@ function onStart(complete: () => void) {
             tg.immediate((ctx) => useAbility(ctx[CustomNpcKeys.Zuus], shared.runeSpawnsLocations.topPowerUpRunePos.__add(Vector(0, 200, 0)), "zuus_lightning_bolt", UnitOrder.CAST_POSITION)),
             tg.wait(1),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Zuus], rangerMiddlePoint.__add(rangerSecondLineDirection * 300 as Vector)),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.Zuus], () => playerHero.GetAbsOrigin()),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Zuus], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => {
                 const zuusUnit = ctx[CustomNpcKeys.Zuus] as CDOTA_BaseNPC_Hero
                 const lightingBolt = zuusUnit.FindAbilityByName("zuus_lightning_bolt")
@@ -266,7 +268,7 @@ function onStart(complete: () => void) {
                     ]
                 }),
             ]),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.Lion], () => playerHero.GetAbsOrigin()),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Lion], shared.runeSpawnsLocations.topPowerUpRunePos),
 
             // Regen power rune ranger sequence
             tg.spawnUnit(CustomNpcKeys.StormSpirit, powerRangerSpawnLocation, DotaTeam.GOODGUYS, CustomNpcKeys.StormSpirit, true),
@@ -297,7 +299,7 @@ function onStart(complete: () => void) {
                 }
             }),
             tg.wait(1),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.StormSpirit], () => playerHero.GetAbsOrigin()),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.StormSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
 
             // Start Roshan sequence
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.CrystalMaiden]),
@@ -307,6 +309,9 @@ function onStart(complete: () => void) {
                 shared.chapter5Blockades.roshan.destroy()
             }),
             tg.playGlobalSound("RoshanDT.Scream"),
+            tg.fork(powerRuneRangersInfo.map((powerRuneRanger) =>
+                tg.faceTowards(ctx => ctx[powerRuneRanger.name], shared.outsidePitLocation)
+            )),
             tg.fork([
                 tg.moveUnit(roshan, shared.runeSpawnsLocations.topPowerUpRunePos),
                 tg.setCameraTarget(roshan),
@@ -326,7 +331,7 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_5_Opening_16, LocalizationKey.Script_5_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.seq([
                     tg.fork(powerRuneRangersInfo.map((powerRuneRanger) =>
-                        tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[powerRuneRanger.name]), 2)
+                        tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[powerRuneRanger.name]), 2),
                     )),
                     tg.moveUnit(roshan, shared.roshanLocation),
                     tg.faceTowards(roshan, shared.outsidePitLocation),
@@ -363,7 +368,13 @@ function chapterFiveOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean 
     // Allow all orders that aren't done by the player
     if (event.issuer_player_id_const != findRealPlayerID()) return true;
 
-    if (!canPlayerIssueOrders) return false;
+    if (event.order_type === UnitOrder.PICKUP_RUNE) {
+        // Only allow picking up the first bounty rune
+        if (event.entindex_target !== GameRules.Addon.context[CustomEntityKeys.RadiantTopBountyRuneEntIndex]) {
+            displayDotaErrorMessage(LocalizationKey.Error_Chapter5_1)
+            return false
+        }
+    }
 
     return true;
 }

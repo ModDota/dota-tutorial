@@ -431,5 +431,7 @@ declare const enum LocalizationKey {
     Error_Wards_7 = "Error_Wards_7",
     Error_Communications_1 = "Error_Communications_1",
     Error_Communications_2 = "Error_Communications_2",
+    Error_Chapter5_1 = "Error_Chapter5_1",
+    Error_Roshan_1 = "Error_Roshan_1",
     Error_Teamfight_1 = "Error_Teamfight_1",
 }

@@ -116,6 +116,7 @@ const onStart = (complete: () => void) => {
             ])
         ]),
         tg.immediate(() => {
+            goalMoveToSecretShop.complete()
         }),
 
         // Don't fork this since dialogue only mentions buying the Demon Edge at the end, so maybe it'll confuse player if he follows the highlights immediately

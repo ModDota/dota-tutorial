@@ -93,6 +93,7 @@ declare const enum CustomEntityKeys {
     DireBotBountyFOWViewer = "dire_bot_bounty_fow_viewer",
     DireAncientsBountyFOWViewer = "dire_ancients_bounty_fow_viewer",
     RadiantTopBountyRune = "radiant_top_bounty_rune",
+    RadiantTopBountyRuneEntIndex = "radiant_top_bounty_rune_entindex",
     RadiantAncientsBountyRune = "radiant_ancients_bounty_rune",
     DireBotBountyRune = "dire_bot_bounty_rune",
     DireAncientsBountyRune = "dire_ancients_bounty_rune",

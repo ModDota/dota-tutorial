@@ -143,6 +143,8 @@
         "Error_Wards_7"        "Locking or combining items is currently disabled."
         "Error_Communications_1" "You cannot pick up item in this section."
         "Error_Communications_2" "You cannot destroy items in this section."
+        "Error_Chapter5_1"     "Picking up runes is currently disabled."
+        "Error_Roshan_1"       "Upgrading talents or abilities is currently disabled."
         "Error_Teamfight_1"    "Teleport to your fountain by double-tapping the Town Portal Scroll."
 
         // Goals
