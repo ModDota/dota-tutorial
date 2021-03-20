@@ -23,7 +23,7 @@ const ancientCampLocation = Vector(-4870, -390, 256)
 const stackClockStartTime = 44
 const stackClockEndTime = 3
 
-const stackTryCount = 5
+const stackTryCount = 1
 const giveAwayItemName = "item_arcane_ring"
 const dropInStashItemName = "item_mysterious_hat"
 const keepItemName = "item_possessed_mask"
@@ -144,6 +144,7 @@ const requiredState: RequiredState = {
 
     requireRiki: true,
     heroItems: { item_greater_crit: 1 },
+    removeUnrequiredItems : true,
     blockades: [
         new Blockade(Vector(-1550, 4800), Vector(-2600, 6400)),
         new Blockade(Vector(-2600, 6400), Vector(-3700, 6400)),
