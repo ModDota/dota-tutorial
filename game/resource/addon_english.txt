@@ -279,7 +279,7 @@
         "Script_1_Camera_5" "This is the new player that showed up yesterday! He didn't make it past the movement part. Hover your mouse over the dummy and right click him to attack!"
         "Script_1_Camera_6" "Dying Line"
         "Script_1_Camera_7" "Oh my that was very violent. Wait, why do I have a health bar over my head now?"
-        "Script_1_Camera_8" "Come on you know you want too. Do it. Attack the man."
+        "Script_1_Camera_8" "Come on you know you want to. Do it. Attack the man."
         "Script_1_Camera_9" "AUGGGGHH WHYYY WHY GOD IT HURTS!"
         "Script_1_Camera_10" "WHAT ARE YOU DOING?!"
         "Script_1_Leveling_1" "Oh look at that you leveled up and got a ton of gold! Killing enemies, or just being in the general area of killed enemies allows you to gain experience and gold. Gaining experience allows you to level up, like in an RPG game. As you can see, you were already provided your third skill, Dragon Blood, which is a passive, meaning it just works. Now, you can select another skill! Let’s have you select an active ability. Click on the plus sign over Dragon Tail."
