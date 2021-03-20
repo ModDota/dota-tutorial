@@ -637,5 +637,34 @@
         "MessageToTheNoobs_75" "A good player carries a TP scroll. A great player carries two"
         "MessageToTheNoobs_76" "point and click stuns == win"
         "MessageToTheNoobs_77" "Many players like to think there's a 'right' and 'wrong' way to play Dota, but it's a complicated game with many viable playstyles. Keep an open mind as you learn the game!"
+
+        // Names and titles
+        "npc_mud_golem_slacks_titles_name" "Slacks"
+        "npc_mud_golem_slacks_titles_num" "2"
+        "npc_mud_golem_slacks_titles_0" "{s:name} the Windbag Ranger"
+        "npc_mud_golem_slacks_titles_1" "{s:name}, Hotkey Denier"
+
+        "npc_dota_hero_keeper_of_the_light_titles_name" "Tsunami"
+        "npc_dota_hero_keeper_of_the_light_titles_num" "3"
+        "npc_dota_hero_keeper_of_the_light_titles_0" "{s:name} the Gamesplainer"
+        "npc_dota_hero_keeper_of_the_light_titles_1" "{s:name} the Bewhiskered"
+        "npc_dota_hero_keeper_of_the_light_titles_2" "{s:name} the Luscious"
+
+        "npc_dota_hero_sniper_titles_name" "Jenkins"
+        "npc_dota_hero_sniper_titles_num" "1"
+        "npc_dota_hero_sniper_titles_0" "Perplexing Informant {s:name}"
+
+        "npc_dota_hero_storm_spirit_titles_name" "Pyrion"
+        "npc_dota_hero_storm_spirit_titles_num" "1"
+        "npc_dota_hero_storm_spirit_titles_0" "{s:name} the Jumbled Mess"
+
+        "npc_mud_golem_sunsfan_titles_name" "SUNSfan"
+        "npc_dota_hero_pugna_titles_name" "Purge"
+        "npc_dota_hero_riki_titles_name" "Arteezy"
+        "npc_dota_hero_kunkka_titles_name" "Mason"
+        "npc_dota_hero_mirana_titles_name" "Sheever"
+        "npc_dota_hero_sniper_titles_name" "Jenkins"
+        "npc_dota_tutorial_odpixel_titles_name" "ODPixel"
+        "npc_dota_tutorial_tora_titles_name" "Tora"
     }
 }

@@ -64,10 +64,14 @@ interface CreditsInteractEvent {
     description?: string;
 }
 
-interface AddWorldTextEvent {
+type WorldTextType = "credit_section" | "npc_title"
+
+type AddWorldTextEvent = {
+    type: WorldTextType;
     index: number;
     text: string;
     location: { x: number, y: number, z: number };
+    entity?: EntityIndex;
 }
 
 interface RemoveWorldTextEvent {

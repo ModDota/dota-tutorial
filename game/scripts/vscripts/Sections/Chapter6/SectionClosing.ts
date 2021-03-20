@@ -5,7 +5,7 @@ import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { centerCameraOnHero, createPathParticle, Distance2D, getOrError, getPlayerCameraLocation, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
-import { addWorldText, removeWorldText } from "../../WorldText"
+import { addWorldTextAtLocation, removeWorldText } from "../../WorldText"
 
 const sectionName: SectionName = SectionName.Chapter6_Closing
 
@@ -205,9 +205,9 @@ function onStart(complete: () => void) {
         waitNpcsSpawned(),
 
         tg.immediate(_ => {
-            worldTexts.add(addWorldText("Modders", Vector(-6700, -4800, 256)))
-            worldTexts.add(addWorldText("Resources", Vector(-5500, -6000, 256)))
-            worldTexts.add(addWorldText("Resources", Vector(-7000, -6500, 384)))
+            worldTexts.add(addWorldTextAtLocation("Modders", Vector(-6700, -4800, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-5500, -6000, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-7000, -6500, 384), "credit_section"))
         }),
 
         // Main logic
