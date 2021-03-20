@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
+import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
 
 declare global {
@@ -68,6 +68,8 @@ export class GameMode {
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
             this.tutorial.startBySectionName(event.section);
+            // Always center camera on hero when skipping between sections
+            centerCameraOnHero();
         })
 
         dg.init();

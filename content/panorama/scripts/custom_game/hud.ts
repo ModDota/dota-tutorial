@@ -194,6 +194,7 @@ const chapterSections = [
     SectionName.Chapter3_Opening,
     SectionName.Chapter4_Opening,
     SectionName.Chapter5_Opening,
+    SectionName.Chapter6_Opening,
 ];
 
 function playChapter(chapterNumber: number) {
