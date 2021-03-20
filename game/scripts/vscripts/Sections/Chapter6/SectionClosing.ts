@@ -37,6 +37,8 @@ const requiredState: RequiredState = {
 const INTERACTION_DISTANCE = 200;
 const MAX_INTERACTION_DISTANCE = 500;
 
+let canInteract = false
+
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
 
@@ -89,6 +91,8 @@ class ClosingNpc {
     }
 
     destroy() {
+        this.stopInteracting()
+
         if (this.canBeDestroyed) {
             this.spawned = false
 
@@ -208,6 +212,8 @@ function onStart(complete: () => void) {
     slacks.AddNoDraw()
     sunsFan.AddNoDraw()
 
+    canInteract = false
+
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         // Fade to black and wait some time until the clients are hopefully faded out.
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen", {})),
@@ -281,6 +287,7 @@ function onStart(complete: () => void) {
                         })
                     }),
                     tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
+                    tg.immediate(_ => canInteract = true),
                     tg.neverComplete(),
                 ]),
             ]), {
@@ -370,14 +377,16 @@ function orderFilter(order: ExecuteOrderFilterEvent) {
         return true;
     }
 
-    const target = EntIndexToHScript(order.entindex_target);
+    if (canInteract) {
+        const target = EntIndexToHScript(order.entindex_target);
 
-    const closingNpc = npcs.find(npc => npc.unit === target);
-    if (closingNpc) {
-        talkTarget = closingNpc;
-        order.order_type = UnitOrder.MOVE_TO_TARGET;
-    } else {
-        talkTarget = undefined;
+        const closingNpc = npcs.find(npc => npc.unit === target);
+        if (closingNpc) {
+            talkTarget = closingNpc;
+            order.order_type = UnitOrder.MOVE_TO_TARGET;
+        } else {
+            talkTarget = undefined;
+        }
     }
 
     return true;
