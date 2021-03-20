@@ -49,6 +49,10 @@ const rightOfFountain = Vector(-5400, -6400, 256)
 const overFountain = Vector(-6700, -5500, 256)
 const inFrontOfBarracksLocation = Vector(-6200, -4350, 256)
 
+const treeLocationStart = Vector(-6800, -5800, 256)
+const treeLocationEnd = Vector(-6300, -6300, 256)
+const getTreeLocation = (alpha: number) => treeLocationStart.__mul(alpha).__add(treeLocationEnd.__mul(1 - alpha))
+
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
@@ -125,11 +129,13 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(LocalizationKey.Script_1_Closing_2, LocalizationKey.Script_1_Closing_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                     tg.neverComplete()
                 ]),
-                tg.seq([
+                tg.withHighlights(tg.seq([
                     tg.immediate(_ => goalEatTree.start()),
                     // Wait for the player to use their tango to escape.
                     tg.completeOnCheck(_ => playerHero.HasModifier("modifier_tango_heal"), 0.2),
-                ])
+                ]), {
+                    type: "arrow_trees", locations: getAllTreeLocations(), radius: 50
+                })
             ]),
             tg.immediate(_ => {
                 goalEatTree.complete();
@@ -249,4 +255,15 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 function checkPlayerHeroTryingToEscape(startPos: Vector, endPos: Vector): boolean {
     const heroesTryingToEscape = FindUnitsInLine(DotaTeam.GOODGUYS, startPos, endPos, undefined, 180, UnitTargetTeam.FRIENDLY, UnitTargetType.HERO, UnitTargetFlags.NONE)
     return heroesTryingToEscape.length > 0
+}
+
+function getAllTreeLocations() {
+    const treeCount = 6
+    const treeLocations: Vector[] = []
+    for (let i = 0; i < treeCount; i++) {
+        treeLocations.push(getTreeLocation(i / (treeCount - 1)))
+    }
+
+    return treeLocations
+
 }
