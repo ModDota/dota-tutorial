@@ -237,7 +237,7 @@ function onStart(complete: () => void) {
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), ancient.GetAbsOrigin(), 2),
                         tg.audioDialog(LocalizationKey.Script_6_Closing_5, LocalizationKey.Script_6_Closing_5, sunsFan),
                         tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 2),
-                        tg.textDialog(LocalizationKey.Script_6_Closing_6, slacks, 6), // This needs to be edited with the new line for Slacks for getting a Divine Rapier, and to destroy the ancient
+                        tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
                         tg.immediate(() => {
                             playerHero.AddItemByName("item_rapier")
                             const tpScroll = playerHero.AddItemByName("item_tpscroll")
