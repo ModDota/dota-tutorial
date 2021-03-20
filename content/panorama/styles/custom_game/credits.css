@@ -166,6 +166,14 @@
     text-overflow: shrink;
 }
 
+.SocialContainer:hover {
+    brightness: 1.5;
+}
+
+.SocialContainer:hover Label {
+    text-shadow: 0px 0px 3px 2.0 #0000aa;
+}
+
 #CreditsDescriptionContainer {
     width: 610px;
     max-height: 500px;
