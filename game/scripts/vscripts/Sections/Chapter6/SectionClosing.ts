@@ -34,7 +34,7 @@ const requiredState: RequiredState = {
 }
 
 const INTERACTION_DISTANCE = 200;
-const MAX_INTERACTION_DISTANCE = 300;
+const MAX_INTERACTION_DISTANCE = 500;
 
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
@@ -42,6 +42,8 @@ class ClosingNpc {
     private spawned = false
 
     private dialogToken: DialogToken | undefined
+
+    private canBeDestroyed = true;
 
     constructor(public readonly name: string, public readonly location: Vector, readonly text: string, readonly soundName?: string) {
 
@@ -51,6 +53,8 @@ class ClosingNpc {
         const npc = new ClosingNpc(name, location, text, soundName);
         npc._unit = unit;
         npc.spawned = true;
+
+        npc.canBeDestroyed = false;
 
         return npc;
     }
@@ -64,32 +68,38 @@ class ClosingNpc {
     }
 
     spawn() {
-        this.spawned = true
+        if (!this.spawned) {
+            this.spawned = true
 
-        CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
-            this._unit = unit
-            unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
+            CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
+                this._unit = unit
+                unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
 
-            // destroy() could have been called before this callback was called
-            if (!this.spawned) {
+                // destroy() could have been called before this callback was called
+                if (!this.spawned) {
+                    if (unitIsValidAndAlive(this._unit)) {
+                        this._unit.RemoveSelf()
+                    }
+
+                    this._unit = undefined
+                }
+            })
+        }
+    }
+
+    destroy() {
+        if (this.canBeDestroyed) {
+            this.spawned = false
+
+            if (this._unit) {
                 if (unitIsValidAndAlive(this._unit)) {
                     this._unit.RemoveSelf()
                 }
 
                 this._unit = undefined
             }
-        })
-    }
-
-    destroy() {
-        this.spawned = false
-
-        if (this._unit) {
-            if (unitIsValidAndAlive(this._unit)) {
-                this._unit.RemoveSelf()
-            }
-
-            this._unit = undefined
+        } else {
+            print(this.name)
         }
     }
 
@@ -161,6 +171,7 @@ function clearWorldTexts() {
 function cleanup() {
     clearNpcs()
     clearWorldTexts()
+    stopParty()
     if (pathParticleID) {
         ParticleManager.DestroyParticle(pathParticleID, false)
         ParticleManager.ReleaseParticleIndex(pathParticleID)
@@ -208,26 +219,31 @@ function onStart(complete: () => void) {
         tg.immediate(_ => slacks.RemoveNoDraw()),
         tg.immediate(_ => sunsFan.RemoveNoDraw()),
         tg.immediate(_ => {
-            // Add slacks and sunsfan to closing npcs
-            npcs.push(
-                ClosingNpc.fromExistingUnit(slacks, CustomNpcKeys.SlacksMudGolem, slacks.GetAbsOrigin(), LocalizationKey.Script_6_Slacks, LocalizationKey.Script_6_Slacks),
-                ClosingNpc.fromExistingUnit(sunsFan, CustomNpcKeys.SunsFanMudGolem, sunsFan.GetAbsOrigin(), LocalizationKey.Script_6_SUNSfan, LocalizationKey.Script_6_SUNSfan),
-            )
+            // Add slacks and sunsfan to closing npcs if not there yet
+            if (!npcs.some(npc => npc.unit === slacks)) {
+                npcs.push(
+                    ClosingNpc.fromExistingUnit(slacks, CustomNpcKeys.SlacksMudGolem, slacks.GetAbsOrigin(), LocalizationKey.Script_6_Slacks, LocalizationKey.Script_6_Slacks),
+                    ClosingNpc.fromExistingUnit(sunsFan, CustomNpcKeys.SunsFanMudGolem, sunsFan.GetAbsOrigin(), LocalizationKey.Script_6_SUNSfan, LocalizationKey.Script_6_SUNSfan),
+                )
+            }
         }),
         tg.immediate(_ => centerCameraOnHero()),
         tg.immediate(_ => npcs.forEach(npc => { if (npc.unit) { npc.unit!.FaceTowards(playerHero.GetAbsOrigin()) } })),
-
-        // Wait to fade back in
-        tg.wait(1),
-
-        // Hopefully every npc will be spawned by now and this completes immediately
-        waitNpcsSpawned(),
 
         tg.immediate(_ => {
             worldTexts.add(addWorldTextAtLocation("Modders", Vector(-6700, -4800, 256), "credit_section"))
             worldTexts.add(addWorldTextAtLocation("Resources", Vector(-5500, -6000, 256), "credit_section"))
             worldTexts.add(addWorldTextAtLocation("Resources", Vector(-7000, -6500, 384), "credit_section"))
         }),
+
+        // Hopefully every npc will be spawned by now and this completes immediately
+        waitNpcsSpawned(),
+
+        // Spawn some party stuff
+        tg.immediate(_ => startParty()),
+
+        // Fade back in
+        tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen_in", {})),
 
         // Main logic
         tg.forkAny([
@@ -385,4 +401,19 @@ function getDireAncientTower(towerLoc: "top" | "bot"): CDOTA_BaseNPC_Building | 
         Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientBotLocation, 200) as CDOTA_BaseNPC_Building
 
     return tower
+}
+
+let partyParticles: ParticleID[] = [];
+
+function startParty() {
+    for (const npc of npcs) {
+        partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment.ABSORIGIN_FOLLOW, npc.unit))
+    }
+}
+
+function stopParty() {
+    for (const particle of partyParticles) {
+        ParticleManager.DestroyParticle(particle, false);
+    }
+    partyParticles = [];
 }

@@ -112,7 +112,6 @@ type WorldText = {
         // Check if unit has a name
         const name = localizeIfExists(`${unitName}_titles_name`)
         if (name) {
-            $.Msg("Has name", name, unitName)
             // Add name floating text
             const index = getLocalWorldTextIndex()
 
