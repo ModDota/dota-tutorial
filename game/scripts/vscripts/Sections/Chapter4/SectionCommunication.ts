@@ -119,11 +119,10 @@ function onStart(complete: () => void) {
             tg.waitForChatWheel(),
             tg.immediate(_ => goalChatWheelWP.complete()),
             tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[tsunamiName].GetAbsOrigin(), 1),
-            tg.setCameraTarget(context => context[tsunamiName]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[tsunamiName]),
             tg.immediate(ctx => tpHome(ctx, tsunamiName)),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[kunkkaName].GetAbsOrigin(), 1),
 
-            tg.setCameraTarget(context => context[kunkkaName]),
             tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
             tg.audioDialog(LocalizationKey.Script_4_Communication_8, LocalizationKey.Script_4_Communication_8, ctx => ctx[kunkkaName]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_9, LocalizationKey.Script_4_Communication_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -137,7 +136,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Communication_15, LocalizationKey.Script_4_Communication_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Kunkka destroy items
-            tg.setCameraTarget(context => context[kunkkaName]),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[kunkkaName].GetAbsOrigin(), 1),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_4_mason_mad, LocalizationKey.Script_4_mason_mad, ctx => ctx[kunkkaName]),
                 tg.loop(context => {
@@ -170,8 +169,6 @@ function onStart(complete: () => void) {
 
             tg.immediate(ctx => tpHome(ctx, kunkkaName)),
             tg.wait(3),
-
-            tg.setCameraTarget(undefined),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 

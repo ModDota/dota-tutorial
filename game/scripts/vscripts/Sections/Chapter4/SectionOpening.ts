@@ -35,6 +35,8 @@ const outpostHighgroundCenter = Vector(-1800, 4000);
 let currentRequiredScanLocation = firstScanLocation;
 let waitingForPlayerToScan = false
 
+let failedScanDialogToken: number | undefined = undefined;
+
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 let radiantCreeps: CDOTA_BaseNPC[] = [];
 
@@ -112,7 +114,6 @@ function onStart(complete: () => void) {
                             tg.immediate(context => {
                                 const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
                                 setUnitVisibilityThroughFogOfWar(mirana, true);
-                                // Miiiiiiiirana: TODO maybe get a better voice line here?
                                 EmitSoundOn("Script_1_Movement_9_1", mirana);
                             }),
                             tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
@@ -194,24 +195,16 @@ function onStart(complete: () => void) {
             tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
-            tg.forkAny([
-                tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                    tg.neverComplete()
-                ]),
-                tg.seq([
-                    tg.immediate(_ => {
-                        scanLocation = undefined;
-                        waitingForPlayerToScan = true
-                        currentRequiredScanLocation = secondScanLocation;
-                        goalScanSucceed.start();
-                        highlightUiElement(scanUIPath);
-                        MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
-                    }),
-
-                    tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
-                ])
-            ]),
+            tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.immediate(_ => {
+                scanLocation = undefined;
+                waitingForPlayerToScan = true
+                currentRequiredScanLocation = secondScanLocation;
+                goalScanSucceed.start();
+                highlightUiElement(scanUIPath);
+                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+            }),
+            tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
             tg.immediate(_ => {
                 waitingForPlayerToScan = false
                 goalScanSucceed.complete();
@@ -241,6 +234,9 @@ function onStop() {
         MinimapEvent(DotaTeam.GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
     }
 
+    if (failedScanDialogToken)
+        dg.stop(failedScanDialogToken)
+
     if (graph) {
         graph.stop(GameRules.Addon.context);
         disposeCreeps();
@@ -257,7 +253,7 @@ function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: Tutor
         }
         displayDotaErrorMessage(LocalizationKey.Error_Opening_1);
         if (targetScanLocation === secondScanLocation)
-            dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem]);
+            failedScanDialogToken = dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem], undefined, () => failedScanDialogToken = undefined);
         scanLocation = undefined;
     }
     return false;
