@@ -75,7 +75,7 @@
         "npc_dota_tutorial_dotau_website" "dota-university.com"
         "npc_dota_tutorial_dotau_twitter" "dotau_official"
         "npc_dota_tutorial_dotau_twitch" "dotauniversity_official"
-        "npc_dota_tutorial_dotau_discord" "dnSDApG"
+        "npc_dota_tutorial_dotau_discord" "ymSCwmSaTj"
         "npc_dota_tutorial_dotafromzero_twitter" "dotafromzero"
         "npc_dota_tutorial_dotafromzero_website" "dotafromzero.com"
         "npc_dota_tutorial_dotafromzero_twitch" "dotafromzero"
