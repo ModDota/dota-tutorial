@@ -4,6 +4,7 @@ import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
 import { GoalTracker } from "../../Goals";
+import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
 
@@ -56,14 +57,21 @@ function onStart(complete: () => void) {
             tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
             tg.immediate(_ => setUnitPacifist(playerHero, true)),
             // Part 0: Pick up and use dust
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_1, LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
                     goalPickupDust.start();
                     CreateItemOnPositionSync(dustLocation, CreateItem(dustName, undefined, undefined));
                 }),
-                tg.audioDialog(LocalizationKey.Script_4_Outpost_2, LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.completeOnCheck(_ => playerHero.HasItemInInventory(dustName), 0.2)
+                tg.forkAny([
+                    tg.seq([
+                        tg.audioDialog(LocalizationKey.Script_4_Outpost_1, LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.audioDialog(LocalizationKey.Script_4_Outpost_2, LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.neverComplete()
+                    ]),
+                    tg.seq([
+                        tg.completeOnCheck(_ => playerHero.HasItemInInventory(dustName), 0.2)
+                    ])
+                ])
             ]), { type: "arrow", locations: [dustLocation] }),
 
             tg.immediate(_ => {
@@ -79,18 +87,28 @@ function onStart(complete: () => void) {
                 allowUseItem = true;
                 highlightUiElement(inventorySlot1UIPath);
             }),
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 0.2),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 0.2),
+                ])
+            ]),
             tg.immediate(_ => {
                 goalUseDust.complete();
                 removeHighlight(inventorySlot1UIPath);
                 setUnitPacifist(playerHero, false);
             }),
 
+            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
+
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                riki.AddNewModifier(undefined, undefined, modifier_abs_no_damage.name, {})
                 const smokeScreen = riki.GetAbilityByIndex(0);
                 if (smokeScreen) {
                     riki.CastAbilityOnPosition(playerHero.GetAbsOrigin().__add(Vector(100, 100)), smokeScreen, 0);
@@ -107,7 +125,6 @@ function onStart(complete: () => void) {
                 }
             }),
             tg.wait(0.5),
-            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 const tricksOfTheTrade = riki.GetAbilityByIndex(2);
@@ -144,16 +161,23 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                riki.RemoveModifierByName(modifier_abs_no_damage.name)
                 riki.SetAttackCapability(UnitAttackCapability.MELEE_ATTACK);
                 riki.MoveToTargetToAttack(playerHero);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-            tg.completeOnCheck(context => {
-                const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                return !IsValidEntity(riki) || !riki.IsAlive();
-            }, 1),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.completeOnCheck(context => {
+                        const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                        return !IsValidEntity(riki) || !riki.IsAlive();
+                    }, 1),
+                ])
+            ]),
             tg.audioDialog(LocalizationKey.Script_4_RTZ_pain, LocalizationKey.Script_4_RTZ_pain, ctx => ctx[rikiName]),
             tg.audioDialog(LocalizationKey.Script_4_RTZ_death, LocalizationKey.Script_4_RTZ_death, ctx => ctx[rikiName]),
             tg.immediate(_ => goalKillRiki.complete()),
