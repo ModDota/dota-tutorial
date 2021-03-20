@@ -85,7 +85,7 @@ type WorldText = {
             }
 
             if (screenLocation[0] !== -1 && screenLocation[1] !== -1) {
-                panel.style.x = `${Math.round(screenLocation[0] * ratio)}px`
+                panel.style.x = `${Math.round(screenLocation[0] * ratio - panel.actuallayoutwidth * 0.5)}px`
                 panel.style.y = `${Math.round(screenLocation[1] * ratio)}px`
                 panel.visible = true
             } else {
@@ -120,7 +120,7 @@ type WorldText = {
             addWorldText({
                 type: "npc_title",
                 index: index,
-                location: { x: -100, y: 0, z: 300 },
+                location: { x: 0, y: 0, z: 300 },
                 text: name,
                 entity: event.entindex,
             })
