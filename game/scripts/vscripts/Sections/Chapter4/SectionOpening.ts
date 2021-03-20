@@ -234,8 +234,10 @@ function onStop() {
         MinimapEvent(DotaTeam.GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
     }
 
-    if (failedScanDialogToken)
+    if (failedScanDialogToken) {
         dg.stop(failedScanDialogToken)
+        failedScanDialogToken = undefined
+    }
 
     if (graph) {
         graph.stop(GameRules.Addon.context);
