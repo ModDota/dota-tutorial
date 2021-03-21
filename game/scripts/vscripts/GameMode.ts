@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
+import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
 
 declare global {
@@ -46,6 +46,7 @@ export class GameMode {
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/community.vsndevts", context);
         PrecacheResource("particle", ParticleName.HighlightCircle, context);
         PrecacheResource("particle", ParticleName.HighlightOrangeArrow, context);
         PrecacheResource("particle", ParticleName.HighlightOrangeCircle, context);

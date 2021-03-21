@@ -1,4 +1,4 @@
-import { getOrError } from "./util"
+import { getOrError, randomChoice } from "./util"
 
 /**
  * Returns the duration of the given sound in seconds.
@@ -443,6 +443,19 @@ export const soundDurations: Record<string, number> = {
     "Ogre_Spawn_514": 1.358367,
     "Ogre_Spawn_641": 3.291429,
     "Ogre_Spawn_717": 2.298776,
+}
+
+export function getRandomCommunitySound(key: LocalizationKey): string {
+    const sounds = communitySounds[key]
+    if (!sounds) {
+        error(`Could not get community sounds for ${key}`)
+    }
+
+    return randomChoice(sounds)
+}
+
+export function getCommunitySpeaker() {
+    return getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC)
 }
 
 const communitySounds: Record<string, string[]> = {

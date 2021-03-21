@@ -30,6 +30,8 @@
         "RandomTip" "Random Tip"
         "RandomTipHover" "Random tips from our community"
 
+        "ent_dota_fountain_good" "Community"
+
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
         "npc_dota_tutorial_sheepsticked" "Sheepsticked"
@@ -295,9 +297,9 @@
         "Script_1_Camera_1" "Whoa whoa where are you goin'?! This guy's out of his mind! Reel it back in kiddo."
         "Script_1_Camera_2" "In the game of Dota, you will need to move your camera while simultaneously moving your hero to a selected spot. This is difficult to master but is step one. We will help you, but first we need to get you ready to fight if you want to survive outside of the safety of your fountain."
         "Script_1_Camera_3" "Here is a target dummy."
-        "Ogre_Spawn" "Spawn Line"
+        "Ogre_Spawn" "*Greeting*"
         "Script_1_Camera_5" "This is the new player that showed up yesterday! He didn't make it past the movement part. Hover your mouse over the dummy and right click him to attack!"
-        "Ogre_Die" "Dying Line"
+        "Ogre_Die" "*Dies*"
         "Script_1_Camera_7" "Oh my that was very violent. Wait, why do I have a health bar over my head now?"
         "Script_1_Camera_8" "Come on you know you want to. Do it. Attack the man."
         "Script_1_Camera_9" "AUGGGGHH WHYYY WHY GOD IT HURTS!"
