@@ -2,7 +2,6 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { neverComplete } from "../../TutorialGraph/index";
 import { findRealPlayerID, freezePlayerHero, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 

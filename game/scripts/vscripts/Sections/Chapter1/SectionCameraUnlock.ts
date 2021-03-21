@@ -4,6 +4,7 @@ import { freezePlayerHero, getOrError, getPlayerHero, setUnitPacifist } from "..
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation, sunsfanFountainLocation } from "./Shared"
+import { getRandomCommunitySound } from "../../Sounds"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -40,7 +41,7 @@ const onStart = (complete: () => void) => {
         tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DOTATeam_t.DOTA_TEAM_NEUTRALS, CustomNpcKeys.TargetDummy, true),
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.TargetDummy], true)),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.TargetDummy]),
-        tg.textDialog(LocalizationKey.Ogre_Spawn, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
+        tg.audioDialog(getRandomCommunitySound(LocalizationKey.Ogre_Spawn), LocalizationKey.Ogre_Spawn, ctx => ctx[CustomNpcKeys.TargetDummy]),
         tg.forkAny([
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_1_Camera_5, LocalizationKey.Script_1_Camera_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -61,7 +62,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(_ => goalKillDummy.complete()),
 
         // Target dummy died dialog
-        tg.textDialog(LocalizationKey.Ogre_Die, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
+        tg.audioDialog(getRandomCommunitySound(LocalizationKey.Ogre_Die), LocalizationKey.Ogre_Die, ctx => ctx[CustomNpcKeys.TargetDummy]),
         tg.forkAny([
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_1_Camera_7, LocalizationKey.Script_1_Camera_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),

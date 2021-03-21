@@ -170,7 +170,7 @@ const onStart = (complete: () => void) => {
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
-                    tg.wait(1.5),
+                    tg.wait(1),
                     tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 2),
                     tg.immediate(_ => blockadeRadiantBaseBottom.spawn()),
                     tg.wait(0.4),

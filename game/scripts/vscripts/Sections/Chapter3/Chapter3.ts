@@ -2,6 +2,7 @@ import { Blockade } from "../../Blockade"
 import { GoalTracker } from "../../Goals"
 import { BaseModifier, registerModifier } from "../../lib/dota_ts_adapter"
 import { modifier_no_health_bar } from "../../modifiers/modifier_no_health_bar"
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds"
 import * as tut from "../../Tutorial/Core"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import * as tg from "../../TutorialGraph/index"
@@ -364,6 +365,7 @@ const onStart = (complete: () => void) => {
 
             // Wait until the neutrals are cleared
             tg.completeOnCheck(_ => neutralDetector.neutralCount === 0, 0),
+            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Hurt), LocalizationKey.General_Hurt, _ => getCommunitySpeaker()),
 
             tg.immediate(_ => goalKillFirstSpawn.complete()),
         ]
@@ -497,6 +499,7 @@ const onStart = (complete: () => void) => {
     }
 
     const killStackedCamp = () => [
+        tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Cheer), LocalizationKey.General_Cheer, _ => getCommunitySpeaker()),
         tg.audioDialog(LocalizationKey.Script_3_Opening_26, LocalizationKey.Script_3_Opening_26, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.immediate(_ => goalKillStackedCreeps.start()),
         tg.completeOnCheck(_ => neutralDetector.neutralCount === 0, 0.1),
