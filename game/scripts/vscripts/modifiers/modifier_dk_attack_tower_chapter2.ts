@@ -12,9 +12,11 @@ export class modifier_dk_attack_tower_chapter2 extends BaseModifier {
     IsDebuff() { return false }
     RemoveOnDeath() { return false }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.ON_ATTACK_LANDED,
-        ModifierFunction.ON_DEATH]
+    DeclareFunctions(): modifierfunction[] {
+        return [
+            modifierfunction.MODIFIER_EVENT_ON_ATTACK_LANDED,
+            modifierfunction.MODIFIER_EVENT_ON_DEATH
+        ]
     }
 
     OnAttackLanded(event: ModifierAttackEvent) {

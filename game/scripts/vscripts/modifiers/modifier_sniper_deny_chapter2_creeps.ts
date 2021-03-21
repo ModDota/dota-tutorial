@@ -26,10 +26,10 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
                 this.GetParent().GetAbsOrigin(),
                 undefined,
                 1800,
-                UnitTargetTeam.FRIENDLY,
-                UnitTargetType.BASIC,
-                UnitTargetFlags.NONE,
-                FindOrder.CLOSEST,
+                DOTA_UNIT_TARGET_TEAM.DOTA_UNIT_TARGET_TEAM_FRIENDLY,
+                DOTA_UNIT_TARGET_TYPE.DOTA_UNIT_TARGET_BASIC,
+                DOTA_UNIT_TARGET_FLAGS.DOTA_UNIT_TARGET_FLAG_NONE,
+                FindOrder.FIND_CLOSEST,
                 false)
 
             const denyableCreeps = alliedCreeps.filter(creep => creep.GetHealthPercent() <= 50);
@@ -40,13 +40,13 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
                 const distance = Distance2D(closestCreep.GetAbsOrigin(), this.GetParent().GetAbsOrigin())
                 if (distance > this.GetParent().Script_GetAttackRange()) {
                     ExecuteOrderFromTable({
-                        OrderType: UnitOrder.MOVE_TO_TARGET,
+                        OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_TARGET,
                         UnitIndex: this.GetParent().entindex(),
                         TargetIndex: closestCreep.entindex(),
                     })
                 } else {
                     ExecuteOrderFromTable({
-                        OrderType: UnitOrder.ATTACK_TARGET,
+                        OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
                         UnitIndex: this.GetParent().entindex(),
                         TargetIndex: closestCreep.entindex(),
                     })
@@ -62,7 +62,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
 
                     if (Distance2D(this.GetParent().GetAbsOrigin(), position) > 100) {
                         ExecuteOrderFromTable({
-                            OrderType: UnitOrder.MOVE_TO_POSITION,
+                            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION,
                             UnitIndex: this.GetParent().entindex(),
                             Position: position
                         })
@@ -71,7 +71,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
 
                     if (Distance2D(this.GetParent().GetAbsOrigin(), this.anchorPoint) > 100) {
                         ExecuteOrderFromTable({
-                            OrderType: UnitOrder.MOVE_TO_POSITION,
+                            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION,
                             UnitIndex: this.GetParent().entindex(),
                             Position: this.anchorPoint
                         })
@@ -88,7 +88,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
             const playerHero = getPlayerHero();
             if (playerHero && attackTarget != playerHero) {
                 ExecuteOrderFromTable({
-                    OrderType: UnitOrder.ATTACK_TARGET,
+                    OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
                     UnitIndex: this.GetParent().entindex(),
                     TargetIndex: playerHero.entindex()
                 })
@@ -96,18 +96,20 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
         }
     }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
+    CheckState(): Partial<Record<modifierstate, boolean>> {
         return {
-            [ModifierState.INVULNERABLE]: this.sniperDenyingOwnCreeps,
-            [ModifierState.PROVIDES_VISION]: true,
-            [ModifierState.DISARMED]: !this.isSniperActive
+            [modifierstate.MODIFIER_STATE_INVULNERABLE]: this.sniperDenyingOwnCreeps,
+            [modifierstate.MODIFIER_STATE_PROVIDES_VISION]: true,
+            [modifierstate.MODIFIER_STATE_DISARMED]: !this.isSniperActive
         }
     }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.PREATTACK_BONUS_DAMAGE,
-        ModifierFunction.ATTACKSPEED_BONUS_CONSTANT,
-        ModifierFunction.ON_DEATH]
+    DeclareFunctions(): modifierfunction[] {
+        return [
+            modifierfunction.MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+            modifierfunction.MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+            modifierfunction.MODIFIER_EVENT_ON_DEATH
+        ]
     }
 
     OnDeath(event: ModifierAttackEvent) {
@@ -119,7 +121,7 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
             if (!isCustomLaneCreepUnit(event.unit)) return;
             if (event.unit.GetTeamNumber() != this.GetParent().GetTeamNumber()) return;
 
-            SendOverheadEventMessage(undefined, OverheadAlert.DENY, event.unit, 0, undefined)
+            SendOverheadEventMessage(undefined, DOTA_OVERHEAD_ALERT.OVERHEAD_ALERT_DENY, event.unit, 0, undefined)
         }
     }
 

@@ -699,7 +699,6 @@
         "npc_dota_hero_kunkka_titles_name" "Mason"
         "npc_dota_hero_mirana_titles_name" "Sheever"
         "npc_dota_tutorial_sheepsticked_titles_name" "Sheepsticked"
-        "npc_dota_hero_sniper_titles_name" "Jenkins"
         "npc_dota_tutorial_odpixel_titles_name" "ODPixel"
 
         "npc_dota_tutorial_coccia_titles_name" "Alexander Coccia"

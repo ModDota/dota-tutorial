@@ -4,7 +4,7 @@ import { BaseModifier, registerModifier } from "../lib/dota_ts_adapter";
 export class modifier_particle_attach extends BaseModifier {
     particleID?: ParticleID
 
-    GetAttributes() { return ModifierAttribute.MULTIPLE }
+    GetAttributes() { return DOTAModifierAttribute_t.MODIFIER_ATTRIBUTE_MULTIPLE }
 
     IsHidden() { return true }
     IsPurgable() { return false }
