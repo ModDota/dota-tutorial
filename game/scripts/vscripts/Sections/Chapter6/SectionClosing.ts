@@ -31,11 +31,13 @@ const requiredState: RequiredState = {
     },
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS,
 }
 
 const INTERACTION_DISTANCE = 200;
 const MAX_INTERACTION_DISTANCE = 500;
+
+let canInteract = false
 
 class ClosingNpc {
     private _unit: CDOTA_BaseNPC | undefined
@@ -72,7 +74,7 @@ class ClosingNpc {
         if (!this.spawned) {
             this.spawned = true
 
-            CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
+            CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_GOODGUYS, unit => {
                 this._unit = unit
                 unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
 
@@ -89,6 +91,8 @@ class ClosingNpc {
     }
 
     destroy() {
+        this.stopInteracting()
+
         if (this.canBeDestroyed) {
             this.spawned = false
 
@@ -135,16 +139,18 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.DotaU, Vector(-6900, -7050, 384), LocalizationKey.Script_6_DotaU, LocalizationKey.Script_6_DotaU),
     new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5170, -5300, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
     new ClosingNpc(CustomNpcKeys.BSJ, Vector(-4800, -5450, 256), "TODO"),
-    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4440, -5620, 256), "TODO"),
+    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4550, -5300, 256), "TODO"),
     new ClosingNpc(CustomNpcKeys.Angermania, Vector(-4530, -5940, 256), LocalizationKey.Script_6_anger, LocalizationKey.Script_6_anger),
     new ClosingNpc(CustomNpcKeys.RedditDota, Vector(-4820, -6330, 256), LocalizationKey.Script_6_Reddit, LocalizationKey.Script_6_Reddit),
     new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6540, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
+    new ClosingNpc(CustomNpcKeys.ZQ, Vector(-3700, -5200, 256), LocalizationKey.Script_6_ZQ, LocalizationKey.Script_6_ZQ),
+    new ClosingNpc(CustomNpcKeys.Yodi, Vector(-3970, -5120, 256), LocalizationKey.Script_6_Yodi, LocalizationKey.Script_6_Yodi),
 
     // Modders
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),
     new ClosingNpc(CustomNpcKeys.Perry, Vector(-5150, -3540, 256), LocalizationKey.Script_6_Perry),
     new ClosingNpc(CustomNpcKeys.PongPing, Vector(-5750, -3850, 256), LocalizationKey.Script_6_PongPing),
-    new ClosingNpc(CustomNpcKeys.Shush, Vector(-5450, -3850, 256), LocalizationKey.Script_6_Shush),
+    new ClosingNpc(CustomNpcKeys.Shush, Vector(-5450, -3850, 256), LocalizationKey.Script_6_Shush, LocalizationKey.Script_6_Shush),
     new ClosingNpc(CustomNpcKeys.SinZ, Vector(-5330, -4250, 256), LocalizationKey.Script_6_SinZ),
     new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5400, -4600, 256), LocalizationKey.Script_6_SmashTheState),
     new ClosingNpc(CustomNpcKeys.Tora, Vector(-6300, -4160, 256), LocalizationKey.Script_6_Tora),
@@ -208,6 +214,8 @@ function onStart(complete: () => void) {
     slacks.AddNoDraw()
     sunsFan.AddNoDraw()
 
+    canInteract = false
+
     graph = tg.withGoals(_ => goalTracker.getGoals(), tg.seq([
         // Fade to black and wait some time until the clients are hopefully faded out.
         tg.immediate(_ => CustomGameEventManager.Send_ServerToAllClients("fade_screen", {})),
@@ -249,6 +257,7 @@ function onStart(complete: () => void) {
         // Main logic
         tg.seq([
             // Play dialog
+            tg.audioDialog(LocalizationKey.Script_6_Surprise, LocalizationKey.Script_6_Surprise, getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good")) as CDOTA_BaseNPC),
             tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
             tg.immediate(() => goalTalkToNpcs.start()),
             tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),
@@ -281,6 +290,7 @@ function onStart(complete: () => void) {
                         })
                     }),
                     tg.audioDialog(LocalizationKey.Script_6_Closing_6, LocalizationKey.Script_6_Closing_6, slacks),
+                    tg.immediate(_ => canInteract = true),
                     tg.neverComplete(),
                 ]),
             ]), {
@@ -370,14 +380,16 @@ function orderFilter(order: ExecuteOrderFilterEvent) {
         return true;
     }
 
-    const target = EntIndexToHScript(order.entindex_target);
+    if (canInteract) {
+        const target = EntIndexToHScript(order.entindex_target);
 
-    const closingNpc = npcs.find(npc => npc.unit === target);
-    if (closingNpc) {
-        talkTarget = closingNpc;
-        order.order_type = UnitOrder.MOVE_TO_TARGET;
-    } else {
-        talkTarget = undefined;
+        const closingNpc = npcs.find(npc => npc.unit === target);
+        if (closingNpc) {
+            talkTarget = closingNpc;
+            order.order_type = dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_TARGET;
+        } else {
+            talkTarget = undefined;
+        }
     }
 
     return true;
@@ -414,7 +426,7 @@ const discoLocations = [
 
 function startParty() {
     for (const npc of npcs) {
-        partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment.ABSORIGIN_FOLLOW, npc.unit))
+        partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, npc.unit))
     }
 
     discoTimer = Timers.CreateTimer(() => {
@@ -422,7 +434,7 @@ function startParty() {
         // Spawn some discoballs
         for (const discoLocation of discoLocations) {
             const position = GetGroundPosition(discoLocation, undefined) + Vector(0, 0, 400) as Vector;
-            const particle = ParticleManager.CreateParticle(ParticleName.DiscoBall, ParticleAttachment.CUSTOMORIGIN, undefined);
+            const particle = ParticleManager.CreateParticle(ParticleName.DiscoBall, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined);
             ParticleManager.SetParticleControl(particle, 0, position);
             ParticleManager.SetParticleControl(particle, 1, position);
             ParticleManager.ReleaseParticleIndex(particle);
@@ -432,7 +444,7 @@ function startParty() {
         const randomNpc = npcs[RandomInt(0, npcs.length - 1)];
         if (randomNpc.unit) {
             const location = randomNpc.unit.GetAbsOrigin();
-            const particle = ParticleManager.CreateParticle(ParticleName.Firework, ParticleAttachment.CUSTOMORIGIN, undefined);
+            const particle = ParticleManager.CreateParticle(ParticleName.Firework, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined);
             ParticleManager.SetParticleControl(particle, 0, location);
             ParticleManager.SetParticleControl(particle, 1, location + Vector(0, 0, 500) as Vector);
             ParticleManager.ReleaseParticleIndex(particle);

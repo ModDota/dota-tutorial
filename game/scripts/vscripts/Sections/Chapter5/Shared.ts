@@ -67,7 +67,7 @@ function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: Dota
                         setUnitPacifist(ctx[heroInfo.name], true)
                     }
                 }),
-                tg.immediate((ctx) => ctx[heroInfo.name].AddExperience(24, ModifyXpReason.UNSPECIFIED, true, false)),
+                tg.immediate((ctx) => ctx[heroInfo.name].AddExperience(24, EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, true, false)),
             ])
         }
 
@@ -78,11 +78,11 @@ function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: Dota
 }
 
 export function spawnFriendlyHeroes(location: Vector, pacifists: boolean = false) {
-    return spawnHeroesIfNeeded(location, friendlyHeroesInfo, DotaTeam.GOODGUYS, pacifists)
+    return spawnHeroesIfNeeded(location, friendlyHeroesInfo, DOTATeam_t.DOTA_TEAM_GOODGUYS, pacifists)
 }
 
 export function spawnEnemyHeroes(location: Vector, pacifists: boolean = false) {
-    return spawnHeroesIfNeeded(location, enemyHeroesInfo, DotaTeam.BADGUYS, pacifists)
+    return spawnHeroesIfNeeded(location, enemyHeroesInfo, DOTATeam_t.DOTA_TEAM_BADGUYS, pacifists)
 }
 
 export function disposeHeroes(context: tg.TutorialContext, heroesInfo: HeroInfo[]) {

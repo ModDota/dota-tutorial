@@ -6,8 +6,8 @@ export class modifier_visible_through_fog extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.PROVIDES_FOW_POSITION]
+    DeclareFunctions(): modifierfunction[] {
+        return [modifierfunction.MODIFIER_PROPERTY_PROVIDES_FOW_POSITION]
     }
 
     GetModifierProvidesFOWVision(): 0 | 1 {

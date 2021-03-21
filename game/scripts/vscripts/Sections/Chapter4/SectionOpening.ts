@@ -24,7 +24,6 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 };
 
-let canPlayerIssueOrders = true;
 let scanLocation: Vector | undefined = undefined;
 
 const miranaName = "npc_dota_hero_mirana";
@@ -35,6 +34,8 @@ const secondScanLocation = Vector(-2000, 3800);
 const outpostHighgroundCenter = Vector(-1800, 4000);
 let currentRequiredScanLocation = firstScanLocation;
 let waitingForPlayerToScan = false
+
+let failedScanDialogToken: number | undefined = undefined;
 
 const radiantCreepsNames = [CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantMeleeCreep, CustomNpcKeys.RadiantRangedCreep];
 let radiantCreeps: CDOTA_BaseNPC[] = [];
@@ -66,7 +67,7 @@ function onStart(complete: () => void) {
             tg.panCameraExponential(_ => getPlayerCameraLocation(), outpostHighgroundCenter, 0.9),
             tg.audioDialog(LocalizationKey.Script_4_Opening_3, LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             //Part1: Creep wave explains vision
-            tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),
+            tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DOTATeam_t.DOTA_TEAM_GOODGUYS, undefined))),
             tg.immediate(_ => {
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
                 for (const creep of creeps) {
@@ -75,7 +76,7 @@ function onStart(complete: () => void) {
                     }
                 }
             }),
-            tg.immediate(_ => canPlayerIssueOrders = false),
+
             tg.setCameraTarget(_ => radiantCreeps[0]),
 
             tg.forkAny([
@@ -95,63 +96,69 @@ function onStart(complete: () => void) {
             }),
 
             //Part2: Juke
-            tg.audioDialog(LocalizationKey.Script_4_Opening_7, LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
-            tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
-            tg.setCameraTarget(context => context[slarkName]),
-
-            tg.fork([
+            tg.forkAny([
                 tg.seq([
-                    tg.immediate(context => context[miranaName].SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(600, -3700), undefined)),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(1600, -3280), undefined)),
-                    tg.immediate(context => {
-                        const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
-                        setUnitVisibilityThroughFogOfWar(mirana, true);
-                        // Miiiiiiiirana: TODO maybe get a better voice line here?
-                        EmitSoundOn("Script_1_Movement_9_1", mirana);
-                    }),
-                    tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
-                    tg.immediate(context => {
-                        const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
-                        setUnitVisibilityThroughFogOfWar(mirana, false);
-                    }),
-
+                    tg.audioDialog(LocalizationKey.Script_4_Opening_7, LocalizationKey.Script_4_Opening_7, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.neverComplete()
                 ]),
-
                 tg.seq([
-                    tg.wait(2), // Give slark some time to hit and follow mirana
-                    // Take over control
-                    tg.immediate(context => setUnitPacifist(context[slarkName], true)),
-                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(1050, -3680), undefined)),
-                    tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3800), undefined)),
-                    // Show ??? particle
-                    tg.immediate(context => {
-                        const slark: CDOTA_BaseNPC_Hero = context[slarkName];
-                        const particle = createParticleAtLocation(ParticleName.QuestionMarks, slark.GetAbsOrigin());
-                        ParticleManager.ReleaseParticleIndex(particle);
-                    }),
-                    tg.wait(5)
-                ]),
+                    tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DOTATeam_t.DOTA_TEAM_BADGUYS, miranaName),
+                    tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DOTATeam_t.DOTA_TEAM_GOODGUYS, slarkName),
+                    tg.setCameraTarget(context => context[slarkName]),
 
-                // Reveal riki for a short time, otherwise the successful scan later won't show up
-                // because of a Dota bug. Hope the player won't notice!
-                tg.seq([
-                    tg.immediate(ctx => {
-                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
-                        const backstab = riki.FindAbilityByName("riki_backstab")
-                        backstab!.SetLevel(0)
-                        riki.RemoveModifierByName("modifier_invisible")
-                        riki.RemoveModifierByName("modifier_riki_backstab")
-                    }),
-                    tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
-                    tg.wait(0.1),
-                    tg.immediate(ctx => {
-                        const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
-                        const backstab = riki.FindAbilityByName("riki_backstab")
-                        backstab!.SetLevel(1)
-                    }),
-                ]),
+                    tg.fork([
+                        tg.seq([
+                            tg.immediate(context => context[miranaName].SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK)),
+                            tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(600, -3700), undefined)),
+                            tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(1600, -3280), undefined)),
+                            tg.immediate(context => {
+                                const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
+                                setUnitVisibilityThroughFogOfWar(mirana, true);
+                                EmitSoundOn("Script_1_Movement_9_1", mirana);
+                            }),
+                            tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(2000, -2350), undefined)),
+                            tg.immediate(context => {
+                                const mirana: CDOTA_BaseNPC_Hero = context[miranaName];
+                                setUnitVisibilityThroughFogOfWar(mirana, false);
+                            }),
+
+                        ]),
+
+                        tg.seq([
+                            tg.wait(2), // Give slark some time to hit and follow mirana
+                            // Take over control
+                            tg.immediate(context => setUnitPacifist(context[slarkName], true)),
+                            tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(1050, -3680), undefined)),
+                            tg.moveUnit(context => context[slarkName], GetGroundPosition(Vector(400, -3800), undefined)),
+                            // Show ??? particle
+                            tg.immediate(context => {
+                                const slark: CDOTA_BaseNPC_Hero = context[slarkName];
+                                const particle = createParticleAtLocation(ParticleName.QuestionMarks, slark.GetAbsOrigin());
+                                ParticleManager.ReleaseParticleIndex(particle);
+                            }),
+                            tg.wait(5)
+                        ]),
+
+                        // Reveal riki for a short time, otherwise the successful scan later won't show up
+                        // because of a Dota bug. Hope the player won't notice!
+                        tg.seq([
+                            tg.immediate(ctx => {
+                                const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                                const backstab = riki.FindAbilityByName("riki_backstab")
+                                backstab!.SetLevel(0)
+                                riki.RemoveModifierByName("modifier_invisible")
+                                riki.RemoveModifierByName("modifier_riki_backstab")
+                            }),
+                            tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, secondScanLocation, 2000, 0.1, false)),
+                            tg.wait(0.1),
+                            tg.immediate(ctx => {
+                                const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
+                                const backstab = riki.FindAbilityByName("riki_backstab")
+                                backstab!.SetLevel(1)
+                            }),
+                        ]),
+                    ]),
+                ])
             ]),
 
             tg.setCameraTarget(undefined),
@@ -168,15 +175,13 @@ function onStart(complete: () => void) {
                 goalScanFailed.start();
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_10, LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
-            tg.immediate(_ => canPlayerIssueOrders = true),
             tg.audioDialog(LocalizationKey.Script_4_Opening_11, LocalizationKey.Script_4_Opening_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
             //Part3: 1st scan, failed
             tg.immediate(_ => {
                 waitingForPlayerToScan = true
                 scanLocation = undefined;
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_12, LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -187,7 +192,7 @@ function onStart(complete: () => void) {
                 removeHighlight(scanUIPath);
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_13, LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
+            tg.immediate(_ => MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
             tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -197,16 +202,14 @@ function onStart(complete: () => void) {
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
                 highlightUiElement(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
             }),
-
             tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
-
             tg.immediate(_ => {
                 waitingForPlayerToScan = false
                 goalScanSucceed.complete();
                 removeHighlight(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_16, LocalizationKey.Script_4_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -228,7 +231,12 @@ function onStop() {
     const playerHero = getOrError(getPlayerHero())
 
     if (waitingForPlayerToScan) {
-        MinimapEvent(DotaTeam.GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
+        MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1)
+    }
+
+    if (failedScanDialogToken) {
+        dg.stop(failedScanDialogToken)
+        failedScanDialogToken = undefined
     }
 
     if (graph) {
@@ -246,7 +254,8 @@ function checkIfScanCoversTheLocation(targetScanLocation: Vector, context: Tutor
             return true;
         }
         displayDotaErrorMessage(LocalizationKey.Error_Opening_1);
-        dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem]);
+        if (targetScanLocation === secondScanLocation)
+            failedScanDialogToken = dg.playAudio(LocalizationKey.Script_4_Opening_15, LocalizationKey.Script_4_Opening_15, context[CustomNpcKeys.SlacksMudGolem], undefined, () => failedScanDialogToken = undefined);
         scanLocation = undefined;
     }
     return false;
@@ -282,12 +291,12 @@ export const sectionOpening = new tut.FunctionalSection(
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true;
 
-    if (event.order_type === UnitOrder.RADAR) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_RADAR) {
         if (!waitingForPlayerToScan) return false
 
         scanLocation = Vector(event.position_x, event.position_y);
         return checkIfScanCoversTheLocation(currentRequiredScanLocation, GameRules.Addon.context);
     }
 
-    return canPlayerIssueOrders;
+    return true;
 }

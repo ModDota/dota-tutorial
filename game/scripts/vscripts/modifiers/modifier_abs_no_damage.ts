@@ -7,8 +7,8 @@ export class modifier_abs_no_damage extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.INCOMING_DAMAGE_PERCENTAGE]
+    DeclareFunctions(): modifierfunction[] {
+        return [modifierfunction.MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE]
     }
 
     GetModifierIncomingDamage_Percentage(): number {

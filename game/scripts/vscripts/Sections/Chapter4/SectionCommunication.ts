@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists } from "../../util";
 import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter4_Communication;
@@ -20,7 +20,7 @@ const requiredState: RequiredState = {
     clearWards: false,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
@@ -57,8 +57,8 @@ function onStart(complete: () => void) {
         tg.seq([
             tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
 
-            tg.spawnUnit(tsunamiName, allyHeroStartLocation, DotaTeam.GOODGUYS, tsunamiName, true),
-            tg.spawnUnit(kunkkaName, allyHeroStartLocation, DotaTeam.GOODGUYS, kunkkaName, true),
+            tg.spawnUnit(tsunamiName, allyHeroStartLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, tsunamiName, true),
+            tg.spawnUnit(kunkkaName, allyHeroStartLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, kunkkaName, true),
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
                 kunkka.AddItemByName("item_lotus_orb");
@@ -89,8 +89,8 @@ function onStart(complete: () => void) {
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
                 kunkka.FaceTowards(playerHero.GetAbsOrigin());
-                const luna = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
-                luna.FaceTowards(playerHero.GetAbsOrigin());
+                const kotl = getOrError(context[tsunamiName] as CDOTA_BaseNPC | undefined);
+                kotl.FaceTowards(playerHero.GetAbsOrigin());
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Communication_1, LocalizationKey.Script_4_Communication_1, ctx => ctx[tsunamiName]),
@@ -119,11 +119,10 @@ function onStart(complete: () => void) {
             tg.waitForChatWheel(),
             tg.immediate(_ => goalChatWheelWP.complete()),
             tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[tsunamiName].GetAbsOrigin(), 1),
-            tg.setCameraTarget(context => context[tsunamiName]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_7, LocalizationKey.Script_4_Communication_7, ctx => ctx[tsunamiName]),
             tg.immediate(ctx => tpHome(ctx, tsunamiName)),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[kunkkaName].GetAbsOrigin(), 1),
 
-            tg.setCameraTarget(context => context[kunkkaName]),
             tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
             tg.audioDialog(LocalizationKey.Script_4_Communication_8, LocalizationKey.Script_4_Communication_8, ctx => ctx[kunkkaName]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_9, LocalizationKey.Script_4_Communication_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -137,7 +136,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Communication_15, LocalizationKey.Script_4_Communication_15, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Kunkka destroy items
-            tg.setCameraTarget(context => context[kunkkaName]),
+            tg.panCameraLinear(_ => getPlayerCameraLocation(), context => context[kunkkaName].GetAbsOrigin(), 1),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_4_mason_mad, LocalizationKey.Script_4_mason_mad, ctx => ctx[kunkkaName]),
                 tg.loop(context => {
@@ -159,7 +158,7 @@ function onStart(complete: () => void) {
                     tg.completeOnCheck(context => !context[kunkkaName].HasItemInInventory((context["ItemToDestroy"] as CDOTA_Item).GetName()), 0.8),
                     tg.immediate(context => {
                         ExecuteOrderFromTable({
-                            OrderType: UnitOrder.ATTACK_TARGET,
+                            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
                             UnitIndex: context[kunkkaName].entindex(),
                             TargetIndex: (context["ItemToDestroy"] as CDOTA_Item).GetContainer()!.entindex(),
                         });
@@ -171,14 +170,19 @@ function onStart(complete: () => void) {
             tg.immediate(ctx => tpHome(ctx, kunkkaName)),
             tg.wait(3),
 
-            tg.setCameraTarget(undefined),
-
             tg.audioDialog(LocalizationKey.Script_4_Communication_16, LocalizationKey.Script_4_Communication_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.immediate(_ => goalGoToTopBountyRune.start()),
-            tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
-            tg.goToLocation(bountyRuneLocation, [], false),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Communication_17, LocalizationKey.Script_4_Communication_17, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.immediate(_ => goalGoToTopBountyRune.start()),
+                    tg.immediate(_ => shared.blockades.direJungleLowgroundRiver.destroy()),
+                    tg.goToLocation(bountyRuneLocation, [], false),
+                ])
+            ]),
             tg.immediate(_ => goalGoToTopBountyRune.complete()),
         ])
     )
@@ -213,12 +217,12 @@ export const sectionCommunication = new tut.FunctionalSection(
 
 function orderFilter(event: ExecuteOrderFilterEvent) {
     if (event.issuer_player_id_const == findRealPlayerID()) {
-        if (event.order_type == UnitOrder.PICKUP_ITEM) {
+        if (event.order_type == dotaunitorder_t.DOTA_UNIT_ORDER_PICKUP_ITEM) {
             displayDotaErrorMessage(LocalizationKey.Error_Communications_1)
             return false
         }
 
-        if (event.order_type === UnitOrder.ATTACK_TARGET) {
+        if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET) {
             displayDotaErrorMessage(LocalizationKey.Error_Communications_2)
             return false
         }

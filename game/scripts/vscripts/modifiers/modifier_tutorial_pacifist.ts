@@ -6,10 +6,10 @@ export class modifier_tutorial_pacifist extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
+    CheckState(): Partial<Record<modifierstate, boolean>> {
         return {
-            [ModifierState.DISARMED]: true,
-            [ModifierState.INVULNERABLE]: true
+            [modifierstate.MODIFIER_STATE_DISARMED]: true,
+            [modifierstate.MODIFIER_STATE_INVULNERABLE]: true
         }
     }
 }

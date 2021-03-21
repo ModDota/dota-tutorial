@@ -4,6 +4,7 @@ import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
 import { GoalTracker } from "../../Goals";
+import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
 
 const sectionName: SectionName = SectionName.Chapter4_Outpost;
 
@@ -47,7 +48,7 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
     const direOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"));
-    if (direOutpost && direOutpost.GetTeamNumber() === DotaTeam.GOODGUYS) direOutpost.SetTeam(DotaTeam.BADGUYS)
+    if (direOutpost && direOutpost.GetTeamNumber() === DOTATeam_t.DOTA_TEAM_GOODGUYS) direOutpost.SetTeam(DOTATeam_t.DOTA_TEAM_BADGUYS)
     allowUseItem = false;
     canPlayerTakeOutpost = false
 
@@ -56,14 +57,21 @@ function onStart(complete: () => void) {
             tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
             tg.immediate(_ => setUnitPacifist(playerHero, true)),
             // Part 0: Pick up and use dust
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_1, LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
                     goalPickupDust.start();
                     CreateItemOnPositionSync(dustLocation, CreateItem(dustName, undefined, undefined));
                 }),
-                tg.audioDialog(LocalizationKey.Script_4_Outpost_2, LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.completeOnCheck(_ => playerHero.HasItemInInventory(dustName), 0.2)
+                tg.forkAny([
+                    tg.seq([
+                        tg.audioDialog(LocalizationKey.Script_4_Outpost_1, LocalizationKey.Script_4_Outpost_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.audioDialog(LocalizationKey.Script_4_Outpost_2, LocalizationKey.Script_4_Outpost_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        tg.neverComplete()
+                    ]),
+                    tg.seq([
+                        tg.completeOnCheck(_ => playerHero.HasItemInInventory(dustName), 0.2)
+                    ])
+                ])
             ]), { type: "arrow", locations: [dustLocation] }),
 
             tg.immediate(_ => {
@@ -72,25 +80,35 @@ function onStart(complete: () => void) {
             }),
 
             tg.goToLocation(GetGroundPosition(lastSawRikiLocation, undefined)),
-            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.NONE)),
+            tg.immediate(_ => playerHero.SetMoveCapability(DOTAUnitMoveCapability_t.DOTA_UNIT_CAP_MOVE_NONE)),
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
                 allowUseItem = true;
                 highlightUiElement(inventorySlot1UIPath);
             }),
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 0.2),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Outpost_3, LocalizationKey.Script_4_Outpost_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory(dustName), 0.2),
+                ])
+            ]),
             tg.immediate(_ => {
                 goalUseDust.complete();
                 removeHighlight(inventorySlot1UIPath);
                 setUnitPacifist(playerHero, false);
             }),
 
+            tg.immediate(_ => playerHero.SetMoveCapability(DOTAUnitMoveCapability_t.DOTA_UNIT_CAP_MOVE_GROUND)),
+
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                riki.AddNewModifier(undefined, undefined, modifier_abs_no_damage.name, {})
                 const smokeScreen = riki.GetAbilityByIndex(0);
                 if (smokeScreen) {
                     riki.CastAbilityOnPosition(playerHero.GetAbsOrigin().__add(Vector(100, 100)), smokeScreen, 0);
@@ -107,7 +125,6 @@ function onStart(complete: () => void) {
                 }
             }),
             tg.wait(0.5),
-            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 const tricksOfTheTrade = riki.GetAbilityByIndex(2);
@@ -132,7 +149,7 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_4_Outpost_8, LocalizationKey.Script_4_Outpost_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
                 tg.completeOnCheck(_ => {
-                    return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
+                    return direOutpost.GetTeam() === DOTATeam_t.DOTA_TEAM_GOODGUYS;
                 }, 1),
             ]), { type: "circle", units: [direOutpost as CDOTA_BaseNPC_Building], radius: 300 }),
 
@@ -144,16 +161,23 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                riki.SetAttackCapability(UnitAttackCapability.MELEE_ATTACK);
+                riki.RemoveModifierByName(modifier_abs_no_damage.name)
+                riki.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_MELEE_ATTACK);
                 riki.MoveToTargetToAttack(playerHero);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-            tg.completeOnCheck(context => {
-                const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                return !IsValidEntity(riki) || !riki.IsAlive();
-            }, 1),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    tg.completeOnCheck(context => {
+                        const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                        return !IsValidEntity(riki) || !riki.IsAlive();
+                    }, 1),
+                ])
+            ]),
             tg.audioDialog(LocalizationKey.Script_4_RTZ_pain, LocalizationKey.Script_4_RTZ_pain, ctx => ctx[rikiName]),
             tg.audioDialog(LocalizationKey.Script_4_RTZ_death, LocalizationKey.Script_4_RTZ_death, ctx => ctx[rikiName]),
             tg.immediate(_ => goalKillRiki.complete()),
@@ -180,7 +204,7 @@ function onStop() {
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true
 
-    if (event.order_type === UnitOrder.ATTACK_TARGET && event.entindex_target) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET && event.entindex_target) {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost && !canPlayerTakeOutpost) {
@@ -189,11 +213,11 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         }
     }
 
-    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_DROP_ITEM || event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_ITEM) {
         displayDotaErrorMessage(LocalizationKey.Error_Outpost_2)
         return false;
     }
-    if (event.order_type === UnitOrder.CAST_NO_TARGET && !allowUseItem) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET && !allowUseItem) {
         displayDotaErrorMessage(LocalizationKey.Error_Outpost_3)
         return false;
     }

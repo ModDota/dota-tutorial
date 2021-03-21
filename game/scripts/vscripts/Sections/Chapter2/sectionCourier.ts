@@ -96,8 +96,8 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_2_Courier_1, LocalizationKey.Script_2_Courier_1, context => context[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_2_Courier_2, LocalizationKey.Script_2_Courier_2, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(context => {
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 5)
-            MinimapEvent(DotaTeam.GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, MinimapEventType.TEAMMATE_TELEPORTING, 5)
+            MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, context[CustomNpcKeys.SlacksMudGolem], radiantSecretShopLocation.x, radiantSecretShopLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TEAMMATE_TELEPORTING, 5)
+            MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, context[CustomNpcKeys.SunsFanMudGolem], direSecretShopLocation.x, direSecretShopLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TEAMMATE_TELEPORTING, 5)
         }),
 
         // Fork secret shop waypoint dialog
@@ -293,10 +293,10 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
     const units: CDOTA_BaseNPC[] = []
 
     if (playerOrderMustBuyDemonEdge) {
-        if (event.order_type === UnitOrder.MOVE_TO_POSITION)
+        if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION)
             return true
 
-        if (event.order_type !== UnitOrder.PURCHASE_ITEM || event.shop_item_name !== demonEdgeName) {
+        if (event.order_type !== dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM || event.shop_item_name !== demonEdgeName) {
             displayDotaErrorMessage(LocalizationKey.Error_Courier_1)
             return false;
         }
@@ -305,10 +305,10 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
     }
 
     if (playerOrderMustBuyRecipeAndCrystalis) {
-        if (event.order_type === UnitOrder.MOVE_TO_POSITION)
+        if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION)
             return true
 
-        if (event.order_type !== UnitOrder.PURCHASE_ITEM) {
+        if (event.order_type !== dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
             displayDotaErrorMessage(LocalizationKey.Error_Courier_2)
             return false
         }
@@ -333,7 +333,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
 
         if (units.length == 1 && event.entindex_ability > 0) {
             const unit = units[0]
-            if (unit.GetName() === "npc_dota_courier" && UnitOrder.CAST_NO_TARGET) {
+            if (unit.GetName() === "npc_dota_courier" && dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET) {
 
                 const ability = EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility
                 if (ability && IsValidEntity(ability) && ability.GetAbilityName() === "courier_take_stash_and_transfer_items") {
@@ -345,7 +345,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
         } else if (units.length === 1) {
             const unit = units[0]
 
-            if (unit.GetName() === getOrError(getPlayerHero()).GetName() && UnitOrder.MOVE_TO_POSITION)
+            if (unit.GetName() === getOrError(getPlayerHero()).GetName() && dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION)
                 return true
         }
 

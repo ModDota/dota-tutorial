@@ -37,7 +37,7 @@ const onStart = (complete: () => void) => {
 
         // Spawn dummy, pacify it and play some dialog about it. Focus camera on the dummy during this.
         tg.audioDialog(LocalizationKey.Script_1_Camera_3, LocalizationKey.Script_1_Camera_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DotaTeam.NEUTRALS, CustomNpcKeys.TargetDummy, true),
+        tg.spawnUnit(CustomNpcKeys.TargetDummy, radiantFountain.GetAbsOrigin().__add(targetDummySpawnOffset), DOTATeam_t.DOTA_TEAM_NEUTRALS, CustomNpcKeys.TargetDummy, true),
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.TargetDummy], true)),
         tg.setCameraTarget(ctx => ctx[CustomNpcKeys.TargetDummy]),
         tg.textDialog(LocalizationKey.Ogre_Spawn, ctx => ctx[CustomNpcKeys.TargetDummy], 3),
@@ -75,7 +75,7 @@ const onStart = (complete: () => void) => {
                 tg.immediate(_ => goalKillSunsfan.start()),
                 tg.immediate(_ => getOrError(getPlayerHero()).SetIdleAcquire(false)),
                 tg.immediate(context => setUnitPacifist(getOrError(context[CustomNpcKeys.SunsFanMudGolem]), false)),
-                tg.immediate(context => getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC).SetTeam(DotaTeam.NEUTRALS)),
+                tg.immediate(context => getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC).SetTeam(DOTATeam_t.DOTA_TEAM_NEUTRALS)),
                 // Wait for player to kill SUNSfan.
                 tg.completeOnCheck(context => {
                     const golem = getOrError(context[CustomNpcKeys.SunsFanMudGolem] as CDOTA_BaseNPC | undefined)

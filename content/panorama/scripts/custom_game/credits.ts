@@ -27,6 +27,8 @@ const portraits: Record<string, string> = {
     [CustomNpcKeys.VicFrank]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.Yoyo]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.ValkyrjaRuby]: "file://{images}/custom_game/credits/avatars/Ruby.png",
+    [CustomNpcKeys.ZQ]: "file://{images}/custom_game/credits/avatars/ZQ.png",
+    [CustomNpcKeys.Yodi]: "file://{images}/custom_game/credits/avatars/Yodi.png",
     [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/credits/avatars/Slacks.png",
     [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/credits/avatars/Sunsfan.png",
 };

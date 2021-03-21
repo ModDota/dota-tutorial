@@ -166,7 +166,7 @@ function playCommon(line: string, unit: CDOTA_BaseNPC, duration: number, onEnded
         speaker: unit,
         text: line,
         advanceTime: duration,
-        gesture: GameActivity.DOTA_ATTACK,
+        gesture: GameActivity_t.ACT_DOTA_ATTACK,
         sound: soundName,
     };
 

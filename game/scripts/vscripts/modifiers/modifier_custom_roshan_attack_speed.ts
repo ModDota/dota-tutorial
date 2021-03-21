@@ -7,8 +7,8 @@ export class modifier_custom_roshan_attack_speed extends BaseModifier {
     IsDebuff() { return false }
     RemoveOnDeath() { return false }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.ATTACKSPEED_BONUS_CONSTANT,]
+    DeclareFunctions(): modifierfunction[] {
+        return [modifierfunction.MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT]
     }
 
     GetModifierAttackSpeedBonus_Constant() {
