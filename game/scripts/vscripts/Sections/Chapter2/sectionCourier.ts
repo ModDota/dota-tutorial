@@ -47,6 +47,8 @@ const crystalisRecipe = "item_recipe_lesser_crit"
 
 const allowedItems: Set<String> = new Set()
 
+let playerBoughtDemonEdge = false;
+
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
     CustomGameEventManager.Send_ServerToAllClients("section_started", { section: sectionName });
@@ -73,6 +75,7 @@ const onStart = (complete: () => void) => {
     const deliverItemsUIPath = "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton"
     requiredItemCount = 0;
 
+    playerBoughtDemonEdge = false
     playerOrderMustBuyDemonEdge = false
     playerOrderMustBuyRecipeAndCrystalis = false
     playerOrderMustDeliverItemsFromCourier = false
@@ -292,6 +295,8 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
     const units: CDOTA_BaseNPC[] = []
 
     if (playerOrderMustBuyDemonEdge) {
+        if (playerBoughtDemonEdge) return false
+
         if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION)
             return true
 
@@ -300,6 +305,7 @@ export function chapter2CourierOrderFilter(event: ExecuteOrderFilterEvent): bool
             return false;
         }
 
+        playerBoughtDemonEdge = true
         return true
     }
 
