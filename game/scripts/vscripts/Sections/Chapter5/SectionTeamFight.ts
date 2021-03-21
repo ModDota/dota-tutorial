@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
@@ -48,6 +48,9 @@ function onStart(complete: () => void) {
     const goalKillEnemyHeroes = goalTracker.addNumeric(LocalizationKey.Goal_5_5v5_2, totalEnemyCount)
     const goalUseTp = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_3)
     const goalPromiseCarryTp = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_4)
+
+    const tpScrollSlotUIPath =
+        "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_tpscroll_container/inventory_tpscroll_slot"
 
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero")
 
@@ -167,13 +170,15 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_5_5v5_6, LocalizationKey.Script_5_5v5_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_7, LocalizationKey.Script_5_5v5_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_8, LocalizationKey.Script_5_5v5_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+            tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
 
             // Wait for player to try to use the tp
             tg.immediate(_ => goalUseTp.start()),
             tg.immediate(_ => waitingForPlayerTp = true),
             tg.completeOnCheck(_ => playerUsedTp, 0.1),
             tg.immediate(_ => goalUseTp.complete()),
-
+            tg.immediate(_ => removeHighlight(tpScrollSlotUIPath)),
+            
             // More dialog about importance of tps and bait player into using voice
             tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_10, LocalizationKey.Script_5_5v5_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),

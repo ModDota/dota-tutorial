@@ -18,16 +18,7 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 2000,
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    blockades: [
-        chapter5Blockades.direJungleLowgroundRiver,
-        chapter5Blockades.topLaneRiver,
-        chapter5Blockades.radiantSecretShopRiver,
-        chapter5Blockades.direOutpostRiver,
-        chapter5Blockades.radiantAncientsRiver,
-        chapter5Blockades.radiantMidTopRiver,
-        chapter5Blockades.direMidTopRiver,
-        chapter5Blockades.midRiverTopSide,
-    ],
+    blockades: Object.values(chapter5Blockades).filter(blockade => blockade !== chapter5Blockades.roshan),
     requireRoshan: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -51,6 +42,7 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero())
 
     let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
+    let droppedAegisLocation: Vector | undefined = undefined;
 
     // DK lvl 25 talents
     const dragonBlood25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight")
@@ -148,7 +140,38 @@ function onStart(complete: () => void) {
             tg.immediate(() => {
                 goalPickupAegis.start()
                 canPlayerIssueOrders = true
+
+                const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+
+                if (droppedItems) {
+                    for (const droppedItem of droppedItems) {
+                        const itemEntity = droppedItem.GetContainedItem()
+                        print("Iterating droppped items inside Section Roshan")
+                        print(itemEntity.GetAbilityName())
+                        if (itemEntity.GetAbilityName() === shared.itemAegis) {
+                            print("Found Aegis")
+                            droppedAegisLocation = itemEntity.GetAbsOrigin()
+                            print(droppedAegisLocation)
+                        }
+                    }
+                }
+
+                if (droppedAegisLocation) {
+                    AddFOWViewer(DotaTeam.GOODGUYS, droppedAegisLocation, 500, 50, false)
+                }
             }),
+            tg.withHighlights(
+                tg.completeOnCheck(() => !playerHero.HasItemInInventory(shared.itemAegis), 0.2),
+                // {
+                //     type: "circle",
+                //     locations: droppedAegisLocation ? [droppedAegisLocation] : undefined,
+                //     // units: (GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] as CDOTA_BaseNPC[]).concat(GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] as CDOTA_BaseNPC[]),
+                //     radius: 100
+                // }
+                _ => {
+                    return { type: "arrow", locations: droppedAegisLocation ? [droppedAegisLocation] : undefined }
+                }
+            ),
             tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 0.2),
             tg.immediate(() => goalPickupAegis.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
