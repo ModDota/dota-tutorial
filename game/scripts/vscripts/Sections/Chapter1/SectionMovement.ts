@@ -72,7 +72,7 @@ const onStart = (complete: () => void) => {
         ]),
 
         // Spawn Mirana
-        tg.spawnUnit(CustomNpcKeys.Mirana, miranaSpawnLocation, DotaTeam.BADGUYS, CustomNpcKeys.Mirana, true),
+        tg.spawnUnit(CustomNpcKeys.Mirana, miranaSpawnLocation, DOTATeam_t.DOTA_TEAM_BADGUYS, CustomNpcKeys.Mirana, true),
         tg.immediate(ctx => setUnitPacifist(ctx[CustomNpcKeys.Mirana], true)),
 
         // Introduce mirana, walk her to the shooting location, pan camera on her
@@ -194,7 +194,7 @@ const fireArrowsInArea = (miranaUnit: tg.StepArgument<CDOTA_BaseNPC_Hero>, start
 
         let order: ExecuteOrderOptions = {
             UnitIndex: actualMiranaUnit.GetEntityIndex(),
-            OrderType: UnitOrder.CAST_POSITION,
+            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION,
             AbilityIndex: customArrow.GetEntityIndex(),
             Queue: true
         };

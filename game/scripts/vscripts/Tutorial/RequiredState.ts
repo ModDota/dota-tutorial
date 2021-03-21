@@ -99,7 +99,7 @@ export const defaultRequiredState: FilledRequiredState = {
     topDireT2TowerStanding: true,
 
     // Outpost
-    outpostTeam: DotaTeam.BADGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_BADGUYS,
 
     // Riki
     requireRiki: false,

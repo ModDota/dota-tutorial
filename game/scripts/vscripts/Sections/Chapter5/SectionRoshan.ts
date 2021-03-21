@@ -31,7 +31,7 @@ const requiredState: RequiredState = {
     requireRoshan: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS,
     heroItems: { [shared.itemDaedalus]: 1, "item_mysterious_hat": 1 },
 };
 
@@ -80,7 +80,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_5_Roshan_3, LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.immediate(() => {
                 // Lvl up to 25, assuming 1 xp per level
-                playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
+                playerHero.AddExperience(25 - playerHero.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, true, false)
                 shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
                 // Apply DD rune with infinite duration
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)

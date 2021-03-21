@@ -62,7 +62,7 @@ function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: Dota
         if (!unitIsValidAndAlive(context[heroInfo.name])) {
             return tg.seq([
                 tg.spawnUnit(heroInfo.name, location.__add(RandomVector(200)), team, heroInfo.name, true),
-                tg.immediate((ctx) => ctx[heroInfo.name].AddExperience(24, ModifyXpReason.UNSPECIFIED, true, false)),
+                tg.immediate((ctx) => ctx[heroInfo.name].AddExperience(24, EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, true, false)),
             ])
         }
 
@@ -73,11 +73,11 @@ function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: Dota
 }
 
 export function spawnFriendlyHeroes(location: Vector) {
-    return spawnHeroesIfNeeded(location, friendlyHeroesInfo, DotaTeam.GOODGUYS)
+    return spawnHeroesIfNeeded(location, friendlyHeroesInfo, DOTATeam_t.DOTA_TEAM_GOODGUYS)
 }
 
 export function spawnEnemyHeroes(location: Vector) {
-    return spawnHeroesIfNeeded(location, enemyHeroesInfo, DotaTeam.BADGUYS)
+    return spawnHeroesIfNeeded(location, enemyHeroesInfo, DOTATeam_t.DOTA_TEAM_BADGUYS)
 }
 
 export function disposeHeroes(context: tg.TutorialContext, heroesInfo: HeroInfo[]) {

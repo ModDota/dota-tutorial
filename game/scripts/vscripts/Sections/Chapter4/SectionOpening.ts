@@ -67,7 +67,7 @@ function onStart(complete: () => void) {
             tg.panCameraExponential(_ => getPlayerCameraLocation(), outpostHighgroundCenter, 0.9),
             tg.audioDialog(LocalizationKey.Script_4_Opening_3, LocalizationKey.Script_4_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             //Part1: Creep wave explains vision
-            tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DotaTeam.GOODGUYS, undefined))),
+            tg.fork(radiantCreepsNames.map(unit => tg.spawnUnit(unit, Vector(-3700, -6100, 256), DOTATeam_t.DOTA_TEAM_GOODGUYS, undefined))),
             tg.immediate(_ => {
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];
                 for (const creep of creeps) {
@@ -102,13 +102,13 @@ function onStart(complete: () => void) {
                     tg.neverComplete()
                 ]),
                 tg.seq([
-                    tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DotaTeam.BADGUYS, miranaName),
-                    tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DotaTeam.GOODGUYS, slarkName),
+                    tg.spawnUnit(miranaName, GetGroundPosition(Vector(2200, -3700), undefined), DOTATeam_t.DOTA_TEAM_BADGUYS, miranaName),
+                    tg.spawnUnit(slarkName, GetGroundPosition(Vector(2500, -3800), undefined), DOTATeam_t.DOTA_TEAM_GOODGUYS, slarkName),
                     tg.setCameraTarget(context => context[slarkName]),
 
                     tg.fork([
                         tg.seq([
-                            tg.immediate(context => context[miranaName].SetAttackCapability(UnitAttackCapability.NO_ATTACK)),
+                            tg.immediate(context => context[miranaName].SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK)),
                             tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(600, -3700), undefined)),
                             tg.moveUnit(context => context[miranaName], GetGroundPosition(Vector(1600, -3280), undefined)),
                             tg.immediate(context => {
@@ -149,7 +149,7 @@ function onStart(complete: () => void) {
                                 riki.RemoveModifierByName("modifier_invisible")
                                 riki.RemoveModifierByName("modifier_riki_backstab")
                             }),
-                            tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, secondScanLocation, 2000, 0.1, false)),
+                            tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, secondScanLocation, 2000, 0.1, false)),
                             tg.wait(0.1),
                             tg.immediate(ctx => {
                                 const riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC;
@@ -181,7 +181,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 waitingForPlayerToScan = true
                 scanLocation = undefined;
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_12, LocalizationKey.Script_4_Opening_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -192,7 +192,7 @@ function onStart(complete: () => void) {
                 removeHighlight(scanUIPath);
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_13, LocalizationKey.Script_4_Opening_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.immediate(_ => MinimapEvent(DotaTeam.GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)),
+            tg.immediate(_ => MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, firstScanLocation.x, firstScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1)),
 
             //Part4: 2nd scan, succeed
             tg.audioDialog(LocalizationKey.Script_4_Opening_14, LocalizationKey.Script_4_Opening_14, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -202,14 +202,14 @@ function onStart(complete: () => void) {
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
                 highlightUiElement(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
             }),
             tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),
             tg.immediate(_ => {
                 waitingForPlayerToScan = false
                 goalScanSucceed.complete();
                 removeHighlight(scanUIPath);
-                MinimapEvent(DotaTeam.GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1);
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_16, LocalizationKey.Script_4_Opening_16, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -231,7 +231,7 @@ function onStop() {
     const playerHero = getOrError(getPlayerHero())
 
     if (waitingForPlayerToScan) {
-        MinimapEvent(DotaTeam.GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
+        MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, Vector(0, 0, 0).x, Vector(0, 0, 0).y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1)
     }
 
     if (failedScanDialogToken) {
@@ -291,7 +291,7 @@ export const sectionOpening = new tut.FunctionalSection(
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true;
 
-    if (event.order_type === UnitOrder.RADAR) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_RADAR) {
         if (!waitingForPlayerToScan) return false
 
         scanLocation = Vector(event.position_x, event.position_y);

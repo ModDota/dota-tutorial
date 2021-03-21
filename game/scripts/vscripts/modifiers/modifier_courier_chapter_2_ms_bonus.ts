@@ -6,9 +6,11 @@ export class modifier_courier_chapter_2_ms_bonus extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.MOVESPEED_BONUS_CONSTANT,
-        ModifierFunction.IGNORE_MOVESPEED_LIMIT]
+    DeclareFunctions(): modifierfunction[] {
+        return [
+            modifierfunction.MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+            modifierfunction.MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT
+        ]
     }
 
     GetModifierMoveSpeedBonus_Constant(): number {

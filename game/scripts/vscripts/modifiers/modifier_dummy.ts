@@ -6,26 +6,26 @@ export class modifier_dummy extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
+    CheckState(): Partial<Record<modifierstate, boolean>> {
         return {
-            [ModifierState.NO_UNIT_COLLISION]: true,
-            [ModifierState.NO_TEAM_MOVE_TO]: true,
-            [ModifierState.NO_TEAM_SELECT]: true,
-            [ModifierState.COMMAND_RESTRICTED]: true,
-            [ModifierState.ATTACK_IMMUNE]: true,
-            [ModifierState.INVULNERABLE]: true,
-            [ModifierState.NOT_ON_MINIMAP]: true,
-            [ModifierState.UNSELECTABLE]: true,
-            [ModifierState.OUT_OF_GAME]: true,
-            [ModifierState.NO_HEALTH_BAR]: true,
-            [ModifierState.FLYING_FOR_PATHING_PURPOSES_ONLY]: true,
+            [modifierstate.MODIFIER_STATE_NO_UNIT_COLLISION]: true,
+            [modifierstate.MODIFIER_STATE_NO_TEAM_MOVE_TO]: true,
+            [modifierstate.MODIFIER_STATE_NO_TEAM_SELECT]: true,
+            [modifierstate.MODIFIER_STATE_COMMAND_RESTRICTED]: true,
+            [modifierstate.MODIFIER_STATE_ATTACK_IMMUNE]: true,
+            [modifierstate.MODIFIER_STATE_INVULNERABLE]: true,
+            [modifierstate.MODIFIER_STATE_NOT_ON_MINIMAP]: true,
+            [modifierstate.MODIFIER_STATE_UNSELECTABLE]: true,
+            [modifierstate.MODIFIER_STATE_OUT_OF_GAME]: true,
+            [modifierstate.MODIFIER_STATE_NO_HEALTH_BAR]: true,
+            [modifierstate.MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY]: true,
 
         }
     }
 
     DeclareFunctions() {
         return [
-            ModifierFunction.IGNORE_MOVESPEED_LIMIT
+            modifierfunction.MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT
         ];
     }
 

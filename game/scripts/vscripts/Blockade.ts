@@ -46,7 +46,7 @@ export class Blockade {
 
         // Spawn particle if not yet spawned
         if (!this.particle) {
-            this.particle = ParticleManager.CreateParticle(Blockade.blockerParticleName, ParticleAttachment.CUSTOMORIGIN, undefined)
+            this.particle = ParticleManager.CreateParticle(Blockade.blockerParticleName, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined)
             ParticleManager.SetParticleControl(this.particle, 0, this.startLocation)
             ParticleManager.SetParticleControl(this.particle, 1, this.endLocation)
             ParticleManager.SetParticleShouldCheckFoW(this.particle, false)
