@@ -479,11 +479,13 @@
     flow-children: right;
     margin-top: 520px;
     margin-left: 0px;
+    padding-right: 10px;
     background-color: #000000ef;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     box-shadow: #000000aa -4px -4px 8px 8px;
     tooltip-position: top;
+    width: fit-children;
 }
 
 .MinimapExtraLarge #MessageToTheNoobsButton {
