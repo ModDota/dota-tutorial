@@ -174,7 +174,7 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Scared), LocalizationKey.General_Scared, _ => getCommunitySpeaker()),
                 ]),
                 tg.seq([
-                    tg.wait(1.5),
+                    tg.wait(1),
                     tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 2),
                     tg.immediate(_ => blockadeRadiantBaseBottom.spawn()),
                     tg.wait(0.4),

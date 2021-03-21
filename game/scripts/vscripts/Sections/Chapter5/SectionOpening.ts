@@ -1,4 +1,5 @@
 import { GoalTracker } from "../../Goals";
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
@@ -323,6 +324,7 @@ function onStart(complete: () => void) {
                     tg.fork(powerRuneRangersInfo.map((powerRuneRanger) =>
                         tg.completeOnCheck(ctx => !unitIsValidAndAlive(ctx[powerRuneRanger.name]), 2),
                     )),
+                    tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Boo), LocalizationKey.General_Boo, _ => getCommunitySpeaker()),
                     tg.moveUnit(roshan, shared.roshanLocation),
                     tg.faceTowards(roshan, shared.outsidePitLocation),
                 ]),

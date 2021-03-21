@@ -30,7 +30,7 @@
         "RandomTip" "Random Tip"
         "RandomTipHover" "Random tips from our community"
 
-        "ent_dota_fountain_good" "Community"
+        "dota_fountain" "Community"
 
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"

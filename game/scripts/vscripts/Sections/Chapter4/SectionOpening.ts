@@ -6,6 +6,7 @@ import { displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerHero, u
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { TutorialContext } from "../../TutorialGraph/index";
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 
 const sectionName: SectionName = SectionName.Chapter4_Opening;
 
@@ -168,6 +169,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalWatchJuke.complete()),
 
             tg.audioDialog(LocalizationKey.Script_4_Opening_8, LocalizationKey.Script_4_Opening_8, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Cheer), LocalizationKey.General_Cheer, _ => getCommunitySpeaker()),
             tg.audioDialog(LocalizationKey.Script_4_Opening_9, LocalizationKey.Script_4_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             // Behold the scan icon
             tg.immediate(_ => {

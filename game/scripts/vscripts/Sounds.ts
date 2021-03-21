@@ -455,6 +455,7 @@ export function getRandomCommunitySound(key: LocalizationKey): string {
 }
 
 export function getCommunitySpeaker() {
+    print(getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC).GetUnitName())
     return getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good") as CDOTA_BaseNPC)
 }
 

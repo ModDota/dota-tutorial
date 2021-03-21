@@ -5,6 +5,7 @@ import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement,
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 
 const sectionName: SectionName = SectionName.Chapter4_Wards;
 
@@ -169,7 +170,7 @@ function onStart(complete: () => void) {
                         allowUseItem = true
                         goalPlaceSentryWard.start();
                     }),
-                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
+                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 0.2),
                 ])
             ]),
             tg.immediate(_ => {
@@ -177,7 +178,7 @@ function onStart(complete: () => void) {
                 removeHighlight(inventorySlot1UIPath);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Scared), LocalizationKey.General_Scared, _ => getCommunitySpeaker()),
 
             tg.immediate(context => {
                 MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1);

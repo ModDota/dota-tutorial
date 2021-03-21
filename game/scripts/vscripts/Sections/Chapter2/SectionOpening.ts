@@ -1,4 +1,5 @@
 import { GoalTracker } from "../../Goals";
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
@@ -183,6 +184,7 @@ const onStart = (complete: () => void) => {
             }),
             tg.audioDialog(LocalizationKey.Script_2_Opening_10, LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Opening_13, LocalizationKey.Script_2_Opening_13, context => context[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Boo), LocalizationKey.General_Boo, _ => getCommunitySpeaker()),
 
             tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, undefined, true))),
             tg.immediate(context => {
