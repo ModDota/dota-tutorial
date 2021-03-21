@@ -128,18 +128,16 @@ function onStart(complete: () => void) {
                     tg.audioDialog(LocalizationKey.Script_5_Opening_6, LocalizationKey.Script_5_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                     tg.neverComplete()
                 ]),
-                tg.fork([
-                    tg.seq([
-                        tg.immediate((ctx) => {
-                            goalMoveToRune.start()
-                            if (IsValidEntity(ctx[CustomEntityKeys.TopPowerRune])) {
-                                ctx[CustomEntityKeys.TopPowerRune].Destroy()
-                                ctx[CustomEntityKeys.TopPowerRune] = undefined
-                            }
-                        }),
-                    ]),
+                tg.seq([
+                    tg.immediate((ctx) => {
+                        goalMoveToRune.start()
+                        if (IsValidEntity(ctx[CustomEntityKeys.TopPowerRune])) {
+                            ctx[CustomEntityKeys.TopPowerRune].Destroy()
+                            ctx[CustomEntityKeys.TopPowerRune] = undefined
+                        }
+                    }),
                     tg.goToLocation(shared.runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3250, 1600), undefined)]),
-                ])
+                ]),
             ]),
             tg.immediate(_ => {
                 setUnitPacifist(playerHero, true)

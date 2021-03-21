@@ -64,7 +64,7 @@ function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: Dota
                 tg.spawnUnit(heroInfo.name, location.__add(RandomVector(200)), team, heroInfo.name, true),
                 tg.immediate((ctx) => {
                     if (pacifists) {
-                        return setUnitPacifist(ctx[heroInfo.name], true)
+                        setUnitPacifist(ctx[heroInfo.name], true)
                     }
                 }),
                 tg.immediate((ctx) => ctx[heroInfo.name].AddExperience(24, ModifyXpReason.UNSPECIFIED, true, false)),

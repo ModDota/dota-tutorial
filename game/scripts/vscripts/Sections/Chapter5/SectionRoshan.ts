@@ -68,17 +68,15 @@ function onStart(complete: () => void) {
                 ])
             ]),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_2, LocalizationKey.Script_5_Roshan_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.fork([
-                tg.audioDialog(LocalizationKey.Script_5_Roshan_3, LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                tg.immediate(_ => {
-                    // Lvl up to 25, assuming 1 xp per level
-                    playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
-                    shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
-                    // Apply DD rune with infinite duration
-                    playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
-                    maxLevelAbilities(playerHero)
-                }),
-            ]),
+            tg.immediate(_ => {
+                // Lvl up to 25, assuming 1 xp per level
+                playerHero.AddExperience(25 - playerHero.GetLevel(), ModifyXpReason.UNSPECIFIED, true, false)
+                shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
+                // Apply DD rune with infinite duration
+                playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
+                maxLevelAbilities(playerHero)
+            }),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_3, LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.wait(1),
             tg.immediate(() => goalUpgradeTalents.start()),
             // Don't fork since it seems there's no way to prevent a player from upgrading talents, so let the dialogue play out normally - player can skip it if needed
