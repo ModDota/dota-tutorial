@@ -279,7 +279,7 @@ const onStart = (complete: () => void) => {
                         direTopTowerNoDamageModifier.hitSources = TowerHitSources.NONE
                         setUnitPacifist(playerHero, true)
                         ExecuteOrderFromTable({
-                            OrderType: UnitOrder.MOVE_TO_POSITION,
+                            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION,
                             Position: moveAfterTeleportCloseToTowerLocation,
                             UnitIndex: playerHero.entindex()
                         })
@@ -297,7 +297,7 @@ const onStart = (complete: () => void) => {
                                 const currentHeroLevel = playerHero.GetLevel()
                                 const ultimateLevel = 6
                                 const levelsToGrant = ultimateLevel - currentHeroLevel
-                                playerHero.AddExperience(levelsToGrant, ModifyXpReason.UNSPECIFIED, false, true)
+                                playerHero.AddExperience(levelsToGrant, EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, true)
                                 const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
                                 if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
                                 highlightUiElement(getPathToHighlightAbility(3))
@@ -397,7 +397,7 @@ const onStart = (complete: () => void) => {
                         goalAttackTowerStrong.complete()
                         ExecuteOrderFromTable(
                             {
-                                OrderType: UnitOrder.GLYPH,
+                                OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_GLYPH,
                                 UnitIndex: direTopTower.entindex(),
                             })
                     }),
@@ -515,8 +515,8 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     // Allow all orders that aren't done by the player
     if (event.issuer_player_id_const != findRealPlayerID()) return true;
 
-    if (playerMustOrderTrainUltimate && event.order_type != UnitOrder.MOVE_TO_POSITION) {
-        if (event.order_type != UnitOrder.TRAIN_ABILITY) {
+    if (playerMustOrderTrainUltimate && event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION) {
+        if (event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_TRAIN_ABILITY) {
             displayDotaErrorMessage(LocalizationKey.Error_Tower_1)
             return false
         }
@@ -534,7 +534,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     }
 
     if (playerMustOrderTrainAbilities) {
-        if (event.order_type != UnitOrder.TRAIN_ABILITY && event.order_type != UnitOrder.MOVE_TO_POSITION) {
+        if (event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_TRAIN_ABILITY && event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION) {
             displayDotaErrorMessage(LocalizationKey.Error_Tower_2)
             return false
         }
@@ -542,12 +542,12 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     }
 
     if (playerMustOrderGlyph) {
-        if (event.order_type != UnitOrder.GLYPH && event.order_type != UnitOrder.MOVE_TO_POSITION) {
+        if (event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_GLYPH && event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION) {
             displayDotaErrorMessage(LocalizationKey.Error_Tower_3)
             return false
         }
 
-        if (event.order_type === UnitOrder.GLYPH) {
+        if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_GLYPH) {
             playerMustOrderGlyph = false
             hasPlayerOrderedGlyphWhenMust = true
         }
@@ -556,7 +556,7 @@ export function chapter2TowerOrderFilter(event: ExecuteOrderFilterEvent): boolea
     }
 
     if (playerOrderMustCastUltimate) {
-        if (event.order_type != UnitOrder.CAST_NO_TARGET && event.order_type != UnitOrder.MOVE_TO_POSITION) {
+        if (event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET && event.order_type != dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION) {
             displayDotaErrorMessage(LocalizationKey.Error_Tower_4)
             return false
         }
@@ -580,7 +580,7 @@ function createRadiantLaneCreeps(): CDOTA_BaseNPC[] {
     const radiantCreepsArray = [];
 
     for (const creepName of radiantCreepsNames) {
-        const creep = CreateUnitByName(creepName, radiantCreepsSpawnLocation, true, undefined, undefined, DotaTeam.GOODGUYS)
+        const creep = CreateUnitByName(creepName, radiantCreepsSpawnLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_GOODGUYS)
         radiantCreepsArray.push(creep);
 
         Timers.CreateTimer(0.1, () => SendCreepToKillTower(creep))
@@ -595,7 +595,7 @@ function SendCreepToKillTower(unit: CDOTA_BaseNPC) {
     const direTower = getOrError(getDireTopTower());
 
     ExecuteOrderFromTable({
-        OrderType: UnitOrder.ATTACK_TARGET,
+        OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
         TargetIndex: direTower.entindex(),
         UnitIndex: unit.entindex()
     })

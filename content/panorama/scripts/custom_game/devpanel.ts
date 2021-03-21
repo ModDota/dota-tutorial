@@ -9,6 +9,26 @@ collapseButton.SetPanelEvent("onactivate", () => {
     Game.EmitSound("ui_chat_slide_in");
 });
 
+// Set hittest to false by default
+$.GetContextPanel().hittest = false;
+$.GetContextPanel().hittestchildren = false;
+
+function enable() {
+    $.GetContextPanel().hittest = true;
+    $.GetContextPanel().hittestchildren = true;
+    $.GetContextPanel().AddClass("Enabled");
+}
+
+// Enable when in tools
+if (Game.IsInToolsMode()) {
+    enable();
+}
+
+// Enable when we get the command to do so
+GameEvents.Subscribe("devpanel_enable", () => {
+    enable();
+});
+
 /* Skip to section buttons */
 const sections = {
     "CH1 - Opening": SectionName.Chapter1_Opening,

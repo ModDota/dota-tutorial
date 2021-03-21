@@ -1,0 +1,645 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+    "General_Boo_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_1.vsnd" ]
+    }
+    "General_Boo_159" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_159.vsnd" ]
+    }
+    "General_Boo_166" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_166.vsnd" ]
+    }
+    "General_Boo_17" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_17.vsnd" ]
+    }
+    "General_Boo_224" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_224.vsnd" ]
+    }
+    "General_Boo_248" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_248.vsnd" ]
+    }
+    "General_Boo_261" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_261.vsnd" ]
+    }
+    "General_Boo_277" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_277.vsnd" ]
+    }
+    "General_Boo_341" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_341.vsnd" ]
+    }
+    "General_Boo_344" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_344.vsnd" ]
+    }
+    "General_Boo_35" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_35.vsnd" ]
+    }
+    "General_Boo_38" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_38.vsnd" ]
+    }
+    "General_Boo_420" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_420.vsnd" ]
+    }
+    "General_Boo_422" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_422.vsnd" ]
+    }
+    "General_Boo_48" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_48.vsnd" ]
+    }
+    "General_Boo_514" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_514.vsnd" ]
+    }
+    "General_Boo_641" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_641.vsnd" ]
+    }
+    "General_Boo_717" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Boo_717.vsnd" ]
+    }
+    "General_Cheer_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_1.vsnd" ]
+    }
+    "General_Cheer_159" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_159.vsnd" ]
+    }
+    "General_Cheer_166" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_166.vsnd" ]
+    }
+    "General_Cheer_17" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_17.vsnd" ]
+    }
+    "General_Cheer_224" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_224.vsnd" ]
+    }
+    "General_Cheer_248" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_248.vsnd" ]
+    }
+    "General_Cheer_261" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_261.vsnd" ]
+    }
+    "General_Cheer_277" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_277.vsnd" ]
+    }
+    "General_Cheer_341" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_341.vsnd" ]
+    }
+    "General_Cheer_344" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_344.vsnd" ]
+    }
+    "General_Cheer_35" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_35.vsnd" ]
+    }
+    "General_Cheer_38" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_38.vsnd" ]
+    }
+    "General_Cheer_420" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_420.vsnd" ]
+    }
+    "General_Cheer_422" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_422.vsnd" ]
+    }
+    "General_Cheer_48" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_48.vsnd" ]
+    }
+    "General_Cheer_514" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_514.vsnd" ]
+    }
+    "General_Cheer_641" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_641.vsnd" ]
+    }
+    "General_Cheer_717" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Cheer_717.vsnd" ]
+    }
+    "General_Hurt_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_1.vsnd" ]
+    }
+    "General_Hurt_159" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_159.vsnd" ]
+    }
+    "General_Hurt_166" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_166.vsnd" ]
+    }
+    "General_Hurt_17" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_17.vsnd" ]
+    }
+    "General_Hurt_224" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_224.vsnd" ]
+    }
+    "General_Hurt_248" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_248.vsnd" ]
+    }
+    "General_Hurt_261" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_261.vsnd" ]
+    }
+    "General_Hurt_277" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_277.vsnd" ]
+    }
+    "General_Hurt_341" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_341.vsnd" ]
+    }
+    "General_Hurt_344" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_344.vsnd" ]
+    }
+    "General_Hurt_35" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_35.vsnd" ]
+    }
+    "General_Hurt_38" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_38.vsnd" ]
+    }
+    "General_Hurt_420" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_420.vsnd" ]
+    }
+    "General_Hurt_422" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_422.vsnd" ]
+    }
+    "General_Hurt_48" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_48.vsnd" ]
+    }
+    "General_Hurt_514" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_514.vsnd" ]
+    }
+    "General_Hurt_641" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_641.vsnd" ]
+    }
+    "General_Hurt_717" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Hurt_717.vsnd" ]
+    }
+    "General_Scared_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_1.vsnd" ]
+    }
+    "General_Scared_159" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_159.vsnd" ]
+    }
+    "General_Scared_166" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_166.vsnd" ]
+    }
+    "General_Scared_17" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_17.vsnd" ]
+    }
+    "General_Scared_224" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_224.vsnd" ]
+    }
+    "General_Scared_248" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_248.vsnd" ]
+    }
+    "General_Scared_261" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_261.vsnd" ]
+    }
+    "General_Scared_277" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_277.vsnd" ]
+    }
+    "General_Scared_341" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_341.vsnd" ]
+    }
+    "General_Scared_344" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_344.vsnd" ]
+    }
+    "General_Scared_35" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_35.vsnd" ]
+    }
+    "General_Scared_38" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_38.vsnd" ]
+    }
+    "General_Scared_420" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_420.vsnd" ]
+    }
+    "General_Scared_422" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_422.vsnd" ]
+    }
+    "General_Scared_48" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_48.vsnd" ]
+    }
+    "General_Scared_514" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_514.vsnd" ]
+    }
+    "General_Scared_641" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_641.vsnd" ]
+    }
+    "General_Scared_717" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/General_Scared_717.vsnd" ]
+    }
+    "Ogre_Die_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_1.vsnd" ]
+    }
+    "Ogre_Die_159" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_159.vsnd" ]
+    }
+    "Ogre_Die_166" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_166.vsnd" ]
+    }
+    "Ogre_Die_17" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_17.vsnd" ]
+    }
+    "Ogre_Die_224" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_224.vsnd" ]
+    }
+    "Ogre_Die_248" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_248.vsnd" ]
+    }
+    "Ogre_Die_261" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_261.vsnd" ]
+    }
+    "Ogre_Die_277" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_277.vsnd" ]
+    }
+    "Ogre_Die_341" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_341.vsnd" ]
+    }
+    "Ogre_Die_344" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_344.vsnd" ]
+    }
+    "Ogre_Die_35" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_35.vsnd" ]
+    }
+    "Ogre_Die_38" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_38.vsnd" ]
+    }
+    "Ogre_Die_420" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_420.vsnd" ]
+    }
+    "Ogre_Die_422" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_422.vsnd" ]
+    }
+    "Ogre_Die_48" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_48.vsnd" ]
+    }
+    "Ogre_Die_641" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_641.vsnd" ]
+    }
+    "Ogre_Die_717" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Die_717.vsnd" ]
+    }
+    "Ogre_Spawn_1" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_1.vsnd" ]
+    }
+    "Ogre_Spawn_159" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_159.vsnd" ]
+    }
+    "Ogre_Spawn_166" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_166.vsnd" ]
+    }
+    "Ogre_Spawn_17" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_17.vsnd" ]
+    }
+    "Ogre_Spawn_224" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_224.vsnd" ]
+    }
+    "Ogre_Spawn_248" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_248.vsnd" ]
+    }
+    "Ogre_Spawn_261" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_261.vsnd" ]
+    }
+    "Ogre_Spawn_277" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_277.vsnd" ]
+    }
+    "Ogre_Spawn_341" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_341.vsnd" ]
+    }
+    "Ogre_Spawn_344" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_344.vsnd" ]
+    }
+    "Ogre_Spawn_35" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_35.vsnd" ]
+    }
+    "Ogre_Spawn_38" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_38.vsnd" ]
+    }
+    "Ogre_Spawn_420" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_420.vsnd" ]
+    }
+    "Ogre_Spawn_422" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_422.vsnd" ]
+    }
+    "Ogre_Spawn_48" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_48.vsnd" ]
+    }
+    "Ogre_Spawn_514" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_514.vsnd" ]
+    }
+    "Ogre_Spawn_641" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_641.vsnd" ]
+    }
+    "Ogre_Spawn_717" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/community/Ogre_Spawn_717.vsnd" ]
+    }
+}

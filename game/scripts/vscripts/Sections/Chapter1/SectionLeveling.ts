@@ -63,12 +63,12 @@ const start = (complete: () => void) => {
         tg.fork([
             tg.audioDialog(LocalizationKey.Script_1_Leveling_3, LocalizationKey.Script_1_Leveling_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // here comes pugna
             tg.seq([
-                tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DotaTeam.BADGUYS, CustomNpcKeys.PurgePugna, true),
+                tg.spawnUnit(CustomNpcKeys.PurgePugna, pugnaLocation, DOTATeam_t.DOTA_TEAM_BADGUYS, CustomNpcKeys.PurgePugna, true),
                 tg.setCameraTarget(context => context[CustomNpcKeys.PurgePugna]),
                 tg.wait(FrameTime()),
                 tg.immediate(ctx => {
                     const pugna = getOrError(ctx[CustomNpcKeys.PurgePugna] as CDOTA_BaseNPC)
-                    pugna.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+                    pugna.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK)
                     setUnitPacifist(pugna, true)
                 }),
                 tg.moveUnit(context => context[CustomNpcKeys.PurgePugna], pugnaMoveToLocation)
@@ -80,7 +80,7 @@ const start = (complete: () => void) => {
             const blinkItem = pugna.AddItemByName("item_blink")
 
             ExecuteOrderFromTable({
-                OrderType: UnitOrder.CAST_POSITION,
+                OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION,
                 UnitIndex: pugna.entindex(),
                 AbilityIndex: blinkItem.entindex(),
                 Position: pugnaBlinkLocation
@@ -181,7 +181,7 @@ const start = (complete: () => void) => {
 
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     // Only allow to train the allowed ability if set.
-    if (learnAbilityAllowedName && event.order_type === UnitOrder.TRAIN_ABILITY) {
+    if (learnAbilityAllowedName && event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_TRAIN_ABILITY) {
         const ability = getOrError(EntIndexToHScript(event.entindex_ability), "Could not find ability being trained") as CDOTABaseAbility
         if (ability.GetAbilityName() !== learnAbilityAllowedName) {
             displayDotaErrorMessage(LocalizationKey.Error_Leveling_1)

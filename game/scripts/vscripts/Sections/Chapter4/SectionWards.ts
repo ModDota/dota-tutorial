@@ -5,6 +5,7 @@ import { getOrError, getPlayerHero, displayDotaErrorMessage, highlightUiElement,
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
 import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 
 const sectionName: SectionName = SectionName.Chapter4_Wards;
 
@@ -78,12 +79,12 @@ function onStart(complete: () => void) {
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
             tg.immediate(_ => setUnitPacifist(playerHero, true)),
-            tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DotaTeam.BADGUYS, hero.name, true))),
+            tg.fork(invisHeroInfo.map(hero => tg.spawnUnit(hero.name, hero.loc, DOTATeam_t.DOTA_TEAM_BADGUYS, hero.name, true))),
 
             tg.immediate(context => {
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
-                    hero.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
+                    hero.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK);
                     hero.FaceTowards(playerHero.GetAbsOrigin());
                     setUnitPacifist(hero, true);
 
@@ -138,7 +139,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => {
                 highlightUiElement(inventorySlot1UIPath);
                 goalPlaceObserverWard.start();
-                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_ACTIVE, 1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
                 wardMarkerActive = true;
             }),
 
@@ -169,7 +170,7 @@ function onStart(complete: () => void) {
                         allowUseItem = true
                         goalPlaceSentryWard.start();
                     }),
-                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 1),
+                    tg.completeOnCheck(_ => !playerHero.HasItemInInventory("item_ward_sentry"), 0.2),
                 ])
             ]),
             tg.immediate(_ => {
@@ -177,10 +178,10 @@ function onStart(complete: () => void) {
                 removeHighlight(inventorySlot1UIPath);
             }),
 
-            tg.audioDialog(LocalizationKey.Script_4_Wards_13, LocalizationKey.Script_4_Wards_13, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Scared), LocalizationKey.General_Scared, _ => getCommunitySpeaker()),
 
             tg.immediate(context => {
-                MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+                MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1);
                 wardMarkerActive = false;
                 for (const invisHero of invisHeroInfo) {
                     const hero: CDOTA_BaseNPC_Hero = context[invisHero.name];
@@ -189,7 +190,7 @@ function onStart(complete: () => void) {
                 }
                 goalAttackRiki.start();
                 const riki = context[rikiName] as CDOTA_BaseNPC
-                riki.StartGesture(GameActivity.DOTA_GENERIC_CHANNEL_1);
+                riki.StartGesture(GameActivity_t.ACT_DOTA_GENERIC_CHANNEL_1);
                 riki.AddNewModifier(undefined, undefined, modifier_abs_no_damage.name, {})
                 setUnitPacifist(playerHero, false);
             }),
@@ -212,7 +213,7 @@ function onStart(complete: () => void) {
             }),
 
             tg.audioDialog(LocalizationKey.Script_4_RTZ_cya, LocalizationKey.Script_4_RTZ_cya, ctx => ctx[rikiName], 2.5),
-            tg.immediate(context => context[rikiName].FadeGesture(GameActivity.DOTA_GENERIC_CHANNEL_1)),
+            tg.immediate(context => context[rikiName].FadeGesture(GameActivity_t.ACT_DOTA_GENERIC_CHANNEL_1)),
             tg.immediate(_ => goalHoldAlt.start()),
 
             tg.forkAny([
@@ -242,7 +243,7 @@ function onStop() {
     print("Stopping", sectionName);
 
     if (wardMarkerActive) {
-        MinimapEvent(DotaTeam.GOODGUYS, getOrError(getPlayerHero()), Vector(0, 0, 0).x, Vector(0, 0, 0).y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1)
+        MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, getOrError(getPlayerHero()), Vector(0, 0, 0).x, Vector(0, 0, 0).y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1)
     }
     (GameRules.Addon.context[rikiName] as CDOTA_BaseNPC).RemoveModifierByName(modifier_abs_no_damage.name)
 
@@ -263,7 +264,7 @@ function disposeHeroes() {
 }
 
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
-    if (event.order_type === UnitOrder.CAST_POSITION) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION) {
         if (!allowUseItem) {
             displayDotaErrorMessage(LocalizationKey.Error_Wards_1)
             return false;
@@ -285,7 +286,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         return true;
     }
 
-    if (event.order_type === UnitOrder.ATTACK_TARGET && event.entindex_target) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET && event.entindex_target) {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost) {
@@ -294,19 +295,19 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         }
     }
 
-    if (event.order_type === UnitOrder.DROP_ITEM) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_DROP_ITEM) {
         displayDotaErrorMessage(LocalizationKey.Error_Wards_4)
         return false;
     }
-    if (event.order_type === UnitOrder.MOVE_ITEM) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_ITEM) {
         displayDotaErrorMessage(LocalizationKey.Error_Wards_5)
         return false;
     }
-    if (event.order_type === UnitOrder.CAST_TOGGLE) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TOGGLE) {
         displayDotaErrorMessage(LocalizationKey.Error_Wards_6)
         return false;
     }
-    if (event.order_type === UnitOrder.SET_ITEM_COMBINE_LOCK) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_SET_ITEM_COMBINE_LOCK) {
         displayDotaErrorMessage(LocalizationKey.Error_Wards_7)
         return false;
     }

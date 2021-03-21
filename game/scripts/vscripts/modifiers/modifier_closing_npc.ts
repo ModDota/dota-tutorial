@@ -6,9 +6,9 @@ export class modifier_closing_npc extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
+    CheckState(): Partial<Record<modifierstate, boolean>> {
         return {
-            [ModifierState.NO_HEALTH_BAR]: true,
+            [modifierstate.MODIFIER_STATE_NO_HEALTH_BAR]: true,
         }
     }
 }

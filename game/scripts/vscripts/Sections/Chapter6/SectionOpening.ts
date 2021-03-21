@@ -24,7 +24,7 @@ const requiredState: RequiredState = {
     },
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS,
 };
 
 const axeName = CustomNpcKeys.Axe;
@@ -56,24 +56,24 @@ function onStart(complete: () => void) {
         tg.audioDialog(LocalizationKey.Script_6_Opening_3, LocalizationKey.Script_6_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
         // Spawn Axe
-        tg.spawnUnit(axeName, dummyLocation, DotaTeam.BADGUYS, axeName, true),
+        tg.spawnUnit(axeName, dummyLocation, DOTATeam_t.DOTA_TEAM_BADGUYS, axeName, true),
         tg.immediate(context => {
             const axe: CDOTA_BaseNPC_Hero = context[axeName];
-            axe.AddExperience(30 - axe.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false);
+            axe.AddExperience(30 - axe.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, false);
             axe.AddItemByName("item_heart");
             axe.AddItemByName("item_assault");
-            axe.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
+            axe.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK);
             axe.FaceTowards(showcaseHeroLocation);
         }),
 
         // CW part
         tg.immediate(_ => goalWatchCW.start()),
-        tg.spawnUnit(centaurName, showcaseHeroLocation, DotaTeam.GOODGUYS, centaurName, true),
+        tg.spawnUnit(centaurName, showcaseHeroLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, centaurName, true),
         tg.setCameraTarget(context => context[centaurName]),
         tg.immediate(context => {
             const centaur: CDOTA_BaseNPC_Hero = context[centaurName];
             centaur.AddItemByName("item_blink");
-            centaur.AddExperience(30 - centaur.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false);
+            centaur.AddExperience(30 - centaur.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, false);
             const basicAbilities = [0, 1, 2].map(abilityIndex => getOrError(centaur.GetAbilityByIndex(abilityIndex)));
             const ultAbility = getOrError(centaur.GetAbilityByIndex(5));
             basicAbilities.forEach(ab => ab.SetLevel(4));
@@ -104,12 +104,12 @@ function onStart(complete: () => void) {
 
         // PA part
         tg.immediate(_ => goalWatchPA.start()),
-        tg.spawnUnit(paName, showcaseHeroLocation, DotaTeam.GOODGUYS, paName, true),
+        tg.spawnUnit(paName, showcaseHeroLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, paName, true),
         tg.setCameraTarget(context => context[paName]),
         tg.immediate(context => {
             const pa: CDOTA_BaseNPC_Hero = context[paName];
             pa.AddItemByName("item_moon_shard");
-            pa.AddExperience(30 - pa.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false);
+            pa.AddExperience(30 - pa.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, false);
             const basicAbilities = [0, 1, 2].map(abilityIndex => getOrError(pa.GetAbilityByIndex(abilityIndex)));
             const ultAbility = getOrError(pa.GetAbilityByIndex(5));
             basicAbilities.forEach(ab => ab.SetLevel(4));
@@ -135,14 +135,14 @@ function onStart(complete: () => void) {
 
         // Invoker part
         tg.immediate(_ => goalWatchInvoker.start()),
-        tg.spawnUnit(invokerName, showcaseHeroLocation, DotaTeam.GOODGUYS, invokerName, true),
+        tg.spawnUnit(invokerName, showcaseHeroLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, invokerName, true),
         tg.setCameraTarget(context => context[invokerName]),
         tg.immediate(context => {
             const invoker: CDOTA_BaseNPC_Hero = context[invokerName];
-            invoker.SetAttackCapability(UnitAttackCapability.NO_ATTACK);
+            invoker.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK);
             invoker.AddItemByName("item_bloodstone");
             invoker.AddItemByName("item_aghanims_shard");
-            invoker.AddExperience(30 - invoker.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false);
+            invoker.AddExperience(30 - invoker.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, false);
             const basicAbilities = [0, 1, 2].map(abilityIndex => getOrError(invoker.GetAbilityByIndex(abilityIndex)));
             const ultAbility = getOrError(invoker.GetAbilityByIndex(5));
             basicAbilities.forEach(ab => ab.SetLevel(7));
@@ -225,7 +225,7 @@ function onStart(complete: () => void) {
             castNoTarget(invokerName, 5, 0.5),
 
             // cast alacrity
-            tg.immediate(context => context[invokerName].SetAttackCapability(UnitAttackCapability.RANGED_ATTACK)),
+            tg.immediate(context => context[invokerName].SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_RANGED_ATTACK)),
             castOnTarget(invokerName, invokerName, 3, 0.3),
 
             tg.wait(3),

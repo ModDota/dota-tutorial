@@ -26,3 +26,5 @@ notebooks/tiers/*
 notebooks/results_tiers/*
 notebooks/translations/*
 notebooks/results_translations/*
+notebooks/results_community/*
+scripts/parse.js

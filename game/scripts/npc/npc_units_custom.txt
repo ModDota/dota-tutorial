@@ -665,7 +665,7 @@
 
     "npc_dota_tutorial_sinz"
     {
-        "Model"						"models/courier/octopus/octopus.vmdl"
+        "Model"						"models/items/courier/boooofus_courier/boooofus_courier.vmdl"
         "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
@@ -810,6 +810,49 @@
     "npc_dota_tutorial_redditdota"
     {
         "Model"						"models/items/courier/vaal_the_animated_constructradiant/vaal_the_animated_constructradiant.vmdl"
+        "ModelScale" 				"2.0"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
+
+    "npc_dota_tutorial_zq"
+    {
+        "Model"						"models/items/courier/coco_the_courageous/coco_the_courageous.vmdl"
+        "ModelScale" 				"2.0"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
+
+    "npc_dota_tutorial_yodi"
+    {
+        "Model"						"models/heroes/invoker/invoker.vmdl"
+        "ModelScale" 				"1"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+
+        "Creature"
+        {
+            "AttachWearables"
+            {
+                "Wearable1" { "ItemDef" "7979" } // Dark Artistry
+                "Wearable2" { "ItemDef" "7986" }
+                "Wearable3" { "ItemDef" "7987" }
+                "Wearable4" { "ItemDef" "7988" }
+                "Wearable5" { "ItemDef" "7989" }
+                "Wearable6" { "ItemDef" "98" } // Head
+            }
+        }
+    }
+
+    "npc_dota_tutorial_dotabuff"
+    {
+        "Model"						"models/items/courier/ig_dragon/ig_dragon.vmdl"
         "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"

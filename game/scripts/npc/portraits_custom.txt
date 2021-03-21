@@ -1,0 +1,190 @@
+"Portraits"
+{
+    "models/courier/seekling/seekling.vmdl"
+	{
+        "PortraitLightPosition"		"113.84 36.72 182.67"
+		"PortraitLightAngles"		"46.66 201.60 0.00"
+		"PortraitLightFOV"		    "55"
+		"PortraitLightDistance"		"232"
+		"PortraitLightColor"		"254 240 224"
+		"PortraitShadowColor"		"79 79 38"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"97 136 136"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitBackgroundColor1"	"0 0 0"
+		"PortraitBackgroundColor2"	".6 1 .2"
+		"PortraitBackgroundColor3"	".8 1 0"
+		"PortraitBackgroundColor4"	"1 1 1"
+		"PortraitLightScale"		"1.600000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-24.790 15.480 1.020"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"199.90 76.94 106.75"
+				"PortraitAngles"	"13.80 201.81 0.00"
+				"PortraitFOV"		"22"
+			}
+		}
+	}
+
+    "models/items/courier/amaterasu/amaterasu.vmdl"
+	{
+        "PortraitLightPosition"		"113.84 26.72 182.67"
+		"PortraitLightAngles"		"46.66 201.60 0.00"
+		"PortraitLightFOV"		    "55"
+		"PortraitLightDistance"		"232"
+		"PortraitLightColor"		"254 240 224"
+		"PortraitShadowColor"		"79 79 38"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"97 136 136"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitBackgroundColor1"	"0 0 0"
+		"PortraitBackgroundColor2"	".6 1 .2"
+		"PortraitBackgroundColor3"	".8 1 0"
+		"PortraitBackgroundColor4"	"1 1 1"
+		"PortraitLightScale"		"1.600000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-24.790 15.480 1.020"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"130.90 46.94 106.75"
+				"PortraitAngles"	"13.80 201.81 0.00"
+				"PortraitFOV"		"40"
+			}
+		}
+	}
+
+    "models/creeps/neutral_creeps/n_creep_dragonspawn_a/n_creep_dragonspawn_a.vmdl"
+	{
+        "PortraitLightPosition"		"169.95 22.54 327.93"
+		"PortraitLightAngles"		"54.11 166.17 0.00"
+		"PortraitLightFOV"		    "90"
+		"PortraitLightDistance"		"99"
+		"PortraitLightColor"		"254 248 242"
+		"PortraitShadowColor"		"74 74 74"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"79 108 108"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+        "PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitLightScale"		"4.500000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-79.070 -84.150 -25.320"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"361.91 -201.86 294.33"
+				"PortraitAngles"	"16.35 146.02 0.0"
+				"PortraitFOV"		"16"
+			}
+		}
+	}
+
+    "models/items/courier/enno_the_underlord/enno_the_underlord.vmdl"
+	{
+        "PortraitLightPosition"		"113.84 26.72 182.67"
+		"PortraitLightAngles"		"46.66 201.60 0.00"
+		"PortraitLightFOV"		    "55"
+		"PortraitLightDistance"		"232"
+		"PortraitLightColor"		"254 240 224"
+		"PortraitShadowColor"		"79 79 38"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"97 136 136"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitBackgroundColor1"	"0 0 0"
+		"PortraitBackgroundColor2"	".6 1 .2"
+		"PortraitBackgroundColor3"	".8 1 0"
+		"PortraitBackgroundColor4"	"1 1 1"
+		"PortraitLightScale"		"1.600000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-24.790 15.480 1.020"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"130.90 46.94 106.75"
+				"PortraitAngles"	"13.80 201.81 0.00"
+				"PortraitFOV"		"40"
+			}
+		}
+	}
+
+    "models/items/courier/spooky_tear_of_the_swamp/spooky_tear_of_the_swamp.vmdl"
+	{
+        "PortraitLightPosition"		"113.84 26.72 182.67"
+		"PortraitLightAngles"		"46.66 201.60 0.00"
+		"PortraitLightFOV"		    "55"
+		"PortraitLightDistance"		"232"
+		"PortraitLightColor"		"254 240 224"
+		"PortraitShadowColor"		"79 79 38"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"97 136 136"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitBackgroundColor1"	"0 0 0"
+		"PortraitBackgroundColor2"	".6 1 .2"
+		"PortraitBackgroundColor3"	".8 1 0"
+		"PortraitBackgroundColor4"	"1 1 1"
+		"PortraitLightScale"		"1.600000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-24.790 15.480 1.020"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"150.90 46.94 106.75"
+				"PortraitAngles"	"13.80 201.81 0.00"
+				"PortraitFOV"		"40"
+			}
+		}
+	}
+
+    "models/items/courier/mole_messenger/mole_messenger.vmdl"
+	{
+        "PortraitLightPosition"		"113.84 26.72 182.67"
+		"PortraitLightAngles"		"46.66 201.60 0.00"
+		"PortraitLightFOV"		    "55"
+		"PortraitLightDistance"		"232"
+		"PortraitLightColor"		"254 240 224"
+		"PortraitShadowColor"		"79 79 38"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"97 136 136"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitBackgroundColor1"	"0 0 0"
+		"PortraitBackgroundColor2"	".6 1 .2"
+		"PortraitBackgroundColor3"	".8 1 0"
+		"PortraitBackgroundColor4"	"1 1 1"
+		"PortraitLightScale"		"1.600000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-24.790 15.480 1.020"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"130.90 46.94 106.75"
+				"PortraitAngles"	"13.80 201.81 0.00"
+				"PortraitFOV"		"40"
+			}
+		}
+	}
+}

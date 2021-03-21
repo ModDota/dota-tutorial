@@ -1806,6 +1806,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Closing_6.vsnd" ]
     }
+    "Script_6_Surprise" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Surprise.vsnd" ]
+    }
     "Script_6_anger" =
     {
         type = "dota_src1_2d"
@@ -1883,6 +1889,18 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_ZQ.vsnd" ]
+    }
+    "Script_6_Alex" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Alex.vsnd" ]
+    }
+    "Script_6_Dotabuff" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Dotabuff.vsnd" ]
     }
     "Script_6_Flam3s" =
     {

@@ -396,6 +396,7 @@ declare const enum LocalizationKey {
     Script_6_Closing_4 = "Script_6_Closing_4",
     Script_6_Closing_5 = "Script_6_Closing_5",
     Script_6_Closing_6 = "Script_6_Closing_6",
+    Script_6_Surprise = "Script_6_Surprise",
     Script_6_anger = "Script_6_anger",
     Script_6_BSJ = "Script_6_BSJ",
     Script_6_Purge = "Script_6_Purge",
@@ -409,6 +410,8 @@ declare const enum LocalizationKey {
     Script_6_Yodi = "Script_6_Yodi",
     Script_6_SUNSfan = "Script_6_SUNSfan",
     Script_6_ZQ = "Script_6_ZQ",
+    Script_6_Alex = "Script_6_Alex",
+    Script_6_Dotabuff = "Script_6_Dotabuff",
     Script_6_Flam3s = "Script_6_Flam3s",
     Script_6_Perry = "Script_6_Perry",
     Script_6_PongPing = "Script_6_PongPing",
@@ -448,5 +451,6 @@ declare const enum LocalizationKey {
     Error_Wards_7 = "Error_Wards_7",
     Error_Communications_1 = "Error_Communications_1",
     Error_Communications_2 = "Error_Communications_2",
+    Error_Chapter5_1 = "Error_Chapter5_1",
     Error_Teamfight_1 = "Error_Teamfight_1",
 }

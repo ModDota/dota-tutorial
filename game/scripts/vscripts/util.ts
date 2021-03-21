@@ -13,7 +13,7 @@ let respawnListener: EventListenerID | undefined
 export function findAllPlayersID(): PlayerID[] {
     const players: PlayerID[] = [];
 
-    for (let playerID = 0; playerID < DOTA_MAX_TEAM_PLAYERS; playerID++) {
+    for (let playerID = 0; playerID < DOTALimits_t.DOTA_MAX_TEAM_PLAYERS; playerID++) {
         if (PlayerResource.IsValidPlayer(playerID)) {
             players.push(playerID);
         }
@@ -98,7 +98,7 @@ export function freezePlayerHero(frozen: boolean) {
     if (frozen) {
         hero.Stop();
     }
-    hero.SetMoveCapability(frozen ? UnitMoveCapability.NONE : UnitMoveCapability.GROUND);
+    hero.SetMoveCapability(frozen ? DOTAUnitMoveCapability_t.DOTA_UNIT_CAP_MOVE_NONE : DOTAUnitMoveCapability_t.DOTA_UNIT_CAP_MOVE_GROUND);
     playerHeroFrozen = frozen;
 }
 
@@ -113,9 +113,9 @@ export function setGameFrozen(freeze: boolean) {
         if (entity.IsBaseNPC()) {
             if (entity.IsAlive() && entity.IsCreep() || entity.IsHero()) {
                 if (freeze) {
-                    entity.StartGesture(GameActivity.DOTA_IDLE);
+                    entity.StartGesture(GameActivity_t.ACT_DOTA_IDLE);
                 } else {
-                    entity.RemoveGesture(GameActivity.DOTA_IDLE);
+                    entity.RemoveGesture(GameActivity_t.ACT_DOTA_IDLE);
                 }
             }
         }
@@ -147,7 +147,7 @@ export function setGoalsUI(goals: Goal[]) {
 */
 export function DestroyNeutrals() {
     const units = Entities.FindAllByClassname("npc_dota_creep_neutral") as CDOTA_BaseNPC[];
-    units.filter(x => x.GetTeamNumber() == DotaTeam.NEUTRALS && !x.IsInvulnerable());
+    units.filter(x => x.GetTeamNumber() == DOTATeam_t.DOTA_TEAM_NEUTRALS && !x.IsInvulnerable());
     units.forEach(x => x.Destroy());
 }
 
@@ -194,7 +194,7 @@ function getItemInventoryPathString(item: CDOTA_Item): string | undefined {
     const hero = getOrError(getPlayerHero());
     let slot = undefined;
 
-    if (hero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT) === item) {
+    if (hero.GetItemInSlot(DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT) === item) {
         return "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot";
     }
 
@@ -208,11 +208,11 @@ function getItemInventoryPathString(item: CDOTA_Item): string | undefined {
     if (slot === undefined) {
         return;
     }
-    if (slot <= InventorySlot.SLOT_3) {
+    if (slot <= DOTAScriptInventorySlot_t.DOTA_ITEM_SLOT_3) {
         return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_" + slot;
-    } else if (slot <= InventorySlot.SLOT_6) {
+    } else if (slot <= DOTAScriptInventorySlot_t.DOTA_ITEM_SLOT_6) {
         return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list2/inventory_slot_" + slot;
-    } else if (slot <= InventorySlot.SLOT_9) {
+    } else if (slot <= DOTAScriptInventorySlot_t.DOTA_ITEM_SLOT_9) {
         return "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_backpack_list/inventory_slot_" + slot;
     }
 }
@@ -246,7 +246,7 @@ export function isCustomLaneCreepUnit(unit: CDOTA_BaseNPC): boolean {
  * @param location Location to spawn the dummy at.
  */
 export function createDummy(location: Vector) {
-    const dummy = CreateUnitByName("npc_dummy_unit", GetGroundPosition(location, undefined), false, undefined, undefined, DotaTeam.GOODGUYS)
+    const dummy = CreateUnitByName("npc_dummy_unit", GetGroundPosition(location, undefined), false, undefined, undefined, DOTATeam_t.DOTA_TEAM_GOODGUYS)
     dummy.AddNewModifier(dummy, undefined, "modifier_dummy", {})
     return dummy
 }
@@ -286,7 +286,7 @@ export const useAbility = (caster: CDOTA_BaseNPC, target: CDOTA_BaseNPC | Vector
     };
 
     if (typeof target === typeof CDOTA_BaseNPC) {
-        if (orderType === UnitOrder.CAST_TARGET)
+        if (orderType === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET)
             order.TargetIndex = (target as CDOTA_BaseNPC).GetEntityIndex()
         else
             order.Position = (target as CDOTA_BaseNPC).GetAbsOrigin()
@@ -334,7 +334,7 @@ export function getPathToItemInGuideByID(itemID: number): string {
 }
 
 export function createPathParticle(locations: Vector[]): ParticleID {
-    const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment.CUSTOMORIGIN, undefined)
+    const particle = ParticleManager.CreateParticle(ParticleName.Path, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined)
 
     for (let i = 0; i < locations.length; i++) {
         ParticleManager.SetParticleControl(particle, i, locations[i])
@@ -353,7 +353,7 @@ export function createPathParticle(locations: Vector[]): ParticleID {
  * @returns The created particle.
  */
 export const createParticleAtLocation = (particleName: string, location: Vector) => {
-    const particle = ParticleManager.CreateParticle(particleName, ParticleAttachment.CUSTOMORIGIN, undefined)
+    const particle = ParticleManager.CreateParticle(particleName, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined)
     ParticleManager.SetParticleControl(particle, 0, location)
     return particle
 }
@@ -365,7 +365,7 @@ export const createParticleAtLocation = (particleName: string, location: Vector)
  * @param attachPoint Optional parameter for where and how to attach the particle.
  * @returns The created particle.
  */
-export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment.ABSORIGIN_FOLLOW) => {
+export const createParticleAttachedToUnit = (particleName: string, unit: CDOTA_BaseNPC, attach: ParticleAttachment = ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW) => {
     const particleID = ParticleManager.CreateParticle(particleName, attach, unit)
     const modifier = unit.AddNewModifier(undefined, undefined, modifier_particle_attach.name, {}) as modifier_particle_attach
     if (modifier) {
@@ -389,15 +389,15 @@ const highlightTypeParticleNames: Record<HighlightType, HighlightParticleDescrip
     ],
     "arrow": [
         { name: ParticleName.HighlightOrangeCircle },
-        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment_t.PATTACH_OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
     ],
     "arrow_trees": [
         { name: ParticleName.HighlightOrangeCircle },
-        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 200) },
+        { name: ParticleName.HighlightOrangeArrow, attach: ParticleAttachment_t.PATTACH_OVERHEAD_FOLLOW, offset: Vector(0, 0, 200) },
     ],
     "arrow_enemy": [
         { name: ParticleName.HighlightRedCircle },
-        { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment.OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
+        { name: ParticleName.HighlightRedArrow, attach: ParticleAttachment_t.PATTACH_OVERHEAD_FOLLOW, offset: Vector(0, 0, 50) },
     ],
     "dialog_circle": [
         { name: ParticleName.DialogCircle },
@@ -451,7 +451,7 @@ export function highlight(props: HighlightProps): ParticleID[] {
         if (units) {
             for (const unit of units) {
                 particles.push(attach !== false ?
-                    createParticleAttachedToUnit(desc.name, unit, desc.attach ?? ParticleAttachment.ABSORIGIN_FOLLOW) :
+                    createParticleAttachedToUnit(desc.name, unit, desc.attach ?? ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW) :
                     createParticleAtLocation(desc.name, GetGroundPosition(unit.GetAbsOrigin(), undefined).__add(desc.offset ?? Vector(0, 0, 0)))
                 )
             }

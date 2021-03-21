@@ -1,4 +1,5 @@
 import { GoalTracker } from "../../Goals";
+import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
@@ -20,7 +21,7 @@ const requiredState: RequiredState = {
     clearWards: false,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
@@ -57,8 +58,8 @@ function onStart(complete: () => void) {
         tg.seq([
             tg.immediate(_ => shared.blockades.direJungleLowToHighground.destroy()),
 
-            tg.spawnUnit(tsunamiName, allyHeroStartLocation, DotaTeam.GOODGUYS, tsunamiName, true),
-            tg.spawnUnit(kunkkaName, allyHeroStartLocation, DotaTeam.GOODGUYS, kunkkaName, true),
+            tg.spawnUnit(tsunamiName, allyHeroStartLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, tsunamiName, true),
+            tg.spawnUnit(kunkkaName, allyHeroStartLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, kunkkaName, true),
             tg.immediate(context => {
                 const kunkka = getOrError(context[kunkkaName] as CDOTA_BaseNPC | undefined);
                 kunkka.AddItemByName("item_lotus_orb");
@@ -125,6 +126,7 @@ function onStart(complete: () => void) {
 
             tg.moveUnit(context => context[kunkkaName], context => context[kunkkaName].GetAbsOrigin().__add(Vector(100, 100))),
             tg.audioDialog(LocalizationKey.Script_4_Communication_8, LocalizationKey.Script_4_Communication_8, ctx => ctx[kunkkaName]),
+            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Boo), LocalizationKey.General_Boo, _ => getCommunitySpeaker()),
             tg.audioDialog(LocalizationKey.Script_4_Communication_9, LocalizationKey.Script_4_Communication_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_10, LocalizationKey.Script_4_Communication_10, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_4_Communication_11, LocalizationKey.Script_4_Communication_11, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -158,7 +160,7 @@ function onStart(complete: () => void) {
                     tg.completeOnCheck(context => !context[kunkkaName].HasItemInInventory((context["ItemToDestroy"] as CDOTA_Item).GetName()), 0.8),
                     tg.immediate(context => {
                         ExecuteOrderFromTable({
-                            OrderType: UnitOrder.ATTACK_TARGET,
+                            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
                             UnitIndex: context[kunkkaName].entindex(),
                             TargetIndex: (context["ItemToDestroy"] as CDOTA_Item).GetContainer()!.entindex(),
                         });
@@ -217,12 +219,12 @@ export const sectionCommunication = new tut.FunctionalSection(
 
 function orderFilter(event: ExecuteOrderFilterEvent) {
     if (event.issuer_player_id_const == findRealPlayerID()) {
-        if (event.order_type == UnitOrder.PICKUP_ITEM) {
+        if (event.order_type == dotaunitorder_t.DOTA_UNIT_ORDER_PICKUP_ITEM) {
             displayDotaErrorMessage(LocalizationKey.Error_Communications_1)
             return false
         }
 
-        if (event.order_type === UnitOrder.ATTACK_TARGET) {
+        if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET) {
             displayDotaErrorMessage(LocalizationKey.Error_Communications_2)
             return false
         }

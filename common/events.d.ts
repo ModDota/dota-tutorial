@@ -118,4 +118,5 @@ interface CustomGameEventDeclarations {
     hide_press_key_message: {};
     show_chapter3_skip_button: ShowChapter3SkipButtonEvent;
     skip_chapter3: {}
+    devpanel_enable: {}
 }

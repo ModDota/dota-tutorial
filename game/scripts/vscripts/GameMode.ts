@@ -3,7 +3,7 @@ import * as chapters from "./Sections/index";
 import { CustomTimeManager } from "./TimeManager";
 import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
-import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, removeNeutralSpawners, setUnitPacifist } from "./util";
+import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
 
 declare global {
@@ -46,6 +46,7 @@ export class GameMode {
 
     public static Precache(this: void, context: CScriptPrecacheContext) {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/community.vsndevts", context);
         PrecacheResource("particle", ParticleName.HighlightCircle, context);
         PrecacheResource("particle", ParticleName.HighlightOrangeArrow, context);
         PrecacheResource("particle", ParticleName.HighlightOrangeCircle, context);
@@ -67,6 +68,11 @@ export class GameMode {
         this.configure();
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
         ListenToGameEvent("npc_spawned", event => this.OnNpcSpawned(event), undefined);
+        ListenToGameEvent("player_chat", event => {
+            if (event.text.startsWith("-dev")) {
+                CustomGameEventManager.Send_ServerToAllClients("devpanel_enable", {});
+            }
+        }, undefined);
 
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
@@ -87,8 +93,8 @@ export class GameMode {
         print("Setting Gamerules");
 
         // Player/Team rules
-        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.GOODGUYS, 5);
-        GameRules.SetCustomGameTeamMaxPlayers(DotaTeam.BADGUYS, 5);
+        GameRules.SetCustomGameTeamMaxPlayers(DOTATeam_t.DOTA_TEAM_GOODGUYS, 5);
+        GameRules.SetCustomGameTeamMaxPlayers(DOTATeam_t.DOTA_TEAM_BADGUYS, 5);
 
         // Game loading rules
         GameRules.EnableCustomGameSetupAutoLaunch(true);
@@ -123,14 +129,14 @@ export class GameMode {
         this.Game.SetLoseGoldOnDeath(false);
 
         // Runes rules
-        this.Game.SetRuneEnabled(RuneType.BOUNTY, false);
-        this.Game.SetRuneEnabled(RuneType.ARCANE, false);
-        this.Game.SetRuneEnabled(RuneType.DOUBLEDAMAGE, false);
-        this.Game.SetRuneEnabled(RuneType.HASTE, false);
-        this.Game.SetRuneEnabled(RuneType.ILLUSION, false);
-        this.Game.SetRuneEnabled(RuneType.INVISIBILITY, false);
-        this.Game.SetRuneEnabled(RuneType.REGENERATION, false);
-        this.Game.SetRuneEnabled(RuneType.XP, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_BOUNTY, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_ARCANE, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_DOUBLEDAMAGE, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_HASTE, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_ILLUSION, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_INVISIBILITY, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_REGENERATION, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_XP, false);
 
         // Leveling rules
         // +1 exp = 1 level, to make it easy to level up our hero in code later.
@@ -209,10 +215,10 @@ export class GameMode {
         const state = GameRules.State_Get();
         print(`OnStateChanged", ${state}`);
 
-        if (state === GameState.CUSTOM_GAME_SETUP) {
+        if (state === DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
 
             for (const pID of findAllPlayersID()) {
-                PlayerResource.SetCustomTeamAssignment(pID, DotaTeam.GOODGUYS);
+                PlayerResource.SetCustomTeamAssignment(pID, DOTATeam_t.DOTA_TEAM_GOODGUYS);
             }
 
             // Finish setup phase
@@ -220,7 +226,7 @@ export class GameMode {
         }
 
         // Start game once pregame hits
-        if (state === GameState.PRE_GAME) {
+        if (state === DOTA_GameState.DOTA_GAMERULES_STATE_PRE_GAME) {
             // Day-night stuff
             print("setting daynight stuff")
             GameRules.SetTimeOfDay(0.5) // Set to day
@@ -229,7 +235,7 @@ export class GameMode {
             Timers.CreateTimer(3, () => this.StartGame());
         }
 
-        if (state === GameState.GAME_IN_PROGRESS) { }
+        if (state === DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) { }
     }
 
     private StartGame(): void {

@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero } from "../../util"
+import { findRealPlayerID, getOrError, getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
 

@@ -43,8 +43,6 @@ declare const enum CustomNpcKeys {
     CrystalMaiden = "npc_dota_hero_crystal_maiden",
     Lion = "npc_dota_hero_lion",
     StormSpirit = "npc_dota_hero_storm_spirit",
-    MiranaIllusionOne = "mirana_illusion_one",
-    MiranaIllusionTwo = "mirana_illusion_two",
     Tidehunter = "npc_dota_hero_tidehunter",
     Antimage = "npc_dota_hero_antimage",
     Luna = "npc_dota_hero_luna",
@@ -61,6 +59,13 @@ declare const enum CustomNpcKeys {
     Invoker = "npc_dota_hero_invoker",
     PhantomAssassin = "npc_dota_hero_phantom_assassin",
     Windrunner = "npc_dota_hero_windrunner",
+    Undying = "npc_dota_hero_undying",
+    EmberSpirit = "npc_dota_hero_ember_spirit",
+    EmberIllusionOne = "ember_spirit_illusion_one",
+    EmberIllusionTwo = "ember_spirit_illusion_two",
+    Grimstroke = "npc_dota_hero_grimstroke",
+    Ursa = "npc_dota_hero_ursa",
+    ShadowShaman = "npc_dota_hero_shadow_shaman",
 
     // Guides / Personalities
     Coccia = "npc_dota_tutorial_coccia",
@@ -71,6 +76,9 @@ declare const enum CustomNpcKeys {
     Bowie = "npc_dota_tutorial_bowie",
     Angermania = "npc_dota_tutorial_angermania",
     RedditDota = "npc_dota_tutorial_redditdota",
+    ZQ = "npc_dota_tutorial_zq",
+    Yodi = "npc_dota_tutorial_yodi",
+    Dotabuff = "npc_dota_tutorial_dotabuff",
 
     // Modders (have no personalities apparently)
     Flam3s = "npc_dota_tutorial_flam3s",
@@ -94,6 +102,7 @@ declare const enum CustomEntityKeys {
     DireBotBountyFOWViewer = "dire_bot_bounty_fow_viewer",
     DireAncientsBountyFOWViewer = "dire_ancients_bounty_fow_viewer",
     RadiantTopBountyRune = "radiant_top_bounty_rune",
+    RadiantTopBountyRuneEntIndex = "radiant_top_bounty_rune_entindex",
     RadiantAncientsBountyRune = "radiant_ancients_bounty_rune",
     DireBotBountyRune = "dire_bot_bounty_rune",
     DireAncientsBountyRune = "dire_ancients_bounty_rune",

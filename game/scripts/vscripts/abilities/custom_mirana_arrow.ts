@@ -16,7 +16,7 @@ export class custom_mirana_arrow extends BaseAbility {
         const distance = this.GetSpecialValueFor("arrow_range");
 
         this.caster.EmitSoundParams(this.soundCast, 0, this.soundCastVolume, 0);
-        this.caster.StartGesture(GameActivity.DOTA_CAST_ABILITY_2);
+        this.caster.StartGesture(GameActivity_t.ACT_DOTA_CAST_ABILITY_2);
         ProjectileManager.CreateLinearProjectile({
             Ability: this,
             EffectName: this.arrowParticle,
@@ -29,8 +29,8 @@ export class custom_mirana_arrow extends BaseAbility {
             bDrawsOnMinimap: false,
             bProvidesVision: false,
             bVisibleToEnemies: true,
-            iUnitTargetTeam: UnitTargetTeam.ENEMY,
-            iUnitTargetType: UnitTargetType.HERO,
+            iUnitTargetTeam: DOTA_UNIT_TARGET_TEAM.DOTA_UNIT_TARGET_TEAM_ENEMY,
+            iUnitTargetType: DOTA_UNIT_TARGET_TYPE.DOTA_UNIT_TARGET_HERO,
             vVelocity: (direction * arrowSpeed * Vector(1, 1, 0)) as Vector,
         });
     }
