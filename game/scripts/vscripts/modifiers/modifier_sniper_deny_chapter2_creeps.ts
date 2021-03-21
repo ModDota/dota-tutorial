@@ -108,7 +108,8 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
         return [
             modifierfunction.MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
             modifierfunction.MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-            modifierfunction.MODIFIER_EVENT_ON_DEATH
+            modifierfunction.MODIFIER_EVENT_ON_DEATH,
+            modifierfunction.MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
         ]
     }
 
@@ -135,5 +136,13 @@ export class modifier_sniper_deny_chapter2_creeps extends BaseModifier {
     GetModifierAttackSpeedBonus_Constant(): number {
         if (this.sniperDenyingOwnCreeps) return 50;
         return 0;
+    }
+
+    GetModifierIncomingDamage_Percentage(event: ModifierAttackEvent): number
+    {
+        if (!IsServer()) return 0
+
+        if (event.attacker === getPlayerHero()) return 0
+        return -90
     }
 }
