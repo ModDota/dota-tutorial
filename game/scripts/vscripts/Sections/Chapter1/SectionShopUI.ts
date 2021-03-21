@@ -5,7 +5,6 @@ import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, fr
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 import { Blockade } from "../../Blockade";
-import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds";
 
 const sectionName: SectionName = SectionName.Chapter1_ShopUI;
 let graph: tg.TutorialStep | undefined = undefined
@@ -169,10 +168,7 @@ const onStart = (complete: () => void) => {
             // Spawn blockades to guide player upwards while dialog is playing.
             tg.immediate(_ => freezePlayerHero(true)),
             tg.fork([
-                tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                    tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Scared), LocalizationKey.General_Scared, _ => getCommunitySpeaker()),
-                ]),
+                tg.audioDialog(LocalizationKey.Script_1_Closing_5, LocalizationKey.Script_1_Closing_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
                     tg.wait(1),
                     tg.panCameraExponential(_ => getPlayerCameraLocation(), bottomMidPoint, 2),

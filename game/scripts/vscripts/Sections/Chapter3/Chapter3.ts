@@ -602,7 +602,6 @@ const onStart = (complete: () => void) => {
             removeHighlight(secondNeutralItemUIPath)
         }),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_10, LocalizationKey.Script_3_Neutrals_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Cheer), LocalizationKey.General_Cheer, _ => getCommunitySpeaker()),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_11, LocalizationKey.Script_3_Neutrals_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_12, LocalizationKey.Script_3_Neutrals_12, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
     ]

@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import { modifier_dk_attack_tower_chapter2 } from "../../modifiers/modifier_dk_attack_tower_chapter2";
 import { modifier_dk_death_chapter2_tower } from "../../modifiers/modifier_dk_death_chapter2_tower";
 import { modifier_nodamage_chapter2_tower } from "../../modifiers/modifier_nodamage_chapter2_tower";
-import { getCommunitySpeaker, getRandomCommunitySound, getSoundDuration } from "../../Sounds";
+import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
@@ -137,7 +137,6 @@ const onStart = (complete: () => void) => {
                 freezePlayerHero(true)
             }),
 
-            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Scared), LocalizationKey.General_Scared, _ => getCommunitySpeaker()),
             tg.audioDialog(LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_3, context => context[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_4, LocalizationKey.Script_2_Tower_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Tower_5, LocalizationKey.Script_2_Tower_5, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -290,7 +289,6 @@ const onStart = (complete: () => void) => {
                     // Fork upgrade abilities dialogue
                     tg.forkAny([
                         tg.seq([
-                            tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Cheer), LocalizationKey.General_Cheer, _ => getCommunitySpeaker()),
                             tg.audioDialog(LocalizationKey.Script_2_Tower_12, LocalizationKey.Script_2_Tower_12, context => context[CustomNpcKeys.SunsFanMudGolem]),
                             tg.neverComplete()
                         ]),

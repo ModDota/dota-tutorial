@@ -4,7 +4,6 @@ import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPathToHighlig
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation } from "./Shared"
-import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -152,8 +151,6 @@ const start = (complete: () => void) => {
                 }),
             ])
         ]),
-
-        tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Cheer), LocalizationKey.General_Cheer, _ => getCommunitySpeaker()),
 
         // Excellent work, skill Q
         tg.forkAny([

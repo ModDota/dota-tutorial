@@ -1,9 +1,8 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero } from "../../util"
+import { findRealPlayerID, getOrError, getPlayerHero } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
-import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds"
 
 let graph: tg.TutorialStep | undefined = undefined
 let canPlayerIssueOrders = true;
@@ -41,7 +40,6 @@ const onStart = (complete: () => void) => {
         tg.audioDialog(LocalizationKey.Script_1_Opening_2, LocalizationKey.Script_1_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_3, LocalizationKey.Script_1_Opening_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_4, LocalizationKey.Script_1_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(getRandomCommunitySound(LocalizationKey.General_Boo), LocalizationKey.General_Boo, _ => getCommunitySpeaker()),
         tg.audioDialog(LocalizationKey.Script_1_Opening_5, LocalizationKey.Script_1_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_6, LocalizationKey.Script_1_Opening_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_1_Opening_7, LocalizationKey.Script_1_Opening_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
