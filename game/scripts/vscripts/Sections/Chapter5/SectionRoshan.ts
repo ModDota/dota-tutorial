@@ -139,7 +139,7 @@ function onStart(complete: () => void) {
                     tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0, 0, 0)))),
                 ]),
                 tg.seq([
-                    // Don't fork with goal, it is a short dialogue and gives good info about aegis
+                    // Don't fork with goal complete check, it is a short dialogue and gives good info about aegis
                     tg.fork([
                         tg.immediate(_ => goalPickupAegis.start()),
                         tg.audioDialog(LocalizationKey.Script_5_Roshan_7, LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
