@@ -85,6 +85,7 @@
         "npc_dota_tutorial_dotafromzero_discord" "HCyXbmCtpS"
         "npc_dota_tutorial_bsj_youtube" "BananaSlamJamma"
         "npc_dota_tutorial_bsj_twitter" "bananaslamjamma"
+        "npc_dota_tutorial_bsj_twitch" "bananaslamjamma"
         "npc_dota_tutorial_bowie_youtube" "D2BOWIE"
         "npc_dota_tutorial_bowie_twitter" "D2BOWIE"
         "npc_dota_tutorial_bowie_twitch" "d2bowi3"
