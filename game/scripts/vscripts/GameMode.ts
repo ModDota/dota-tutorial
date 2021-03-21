@@ -67,6 +67,11 @@ export class GameMode {
         this.configure();
         ListenToGameEvent("game_rules_state_change", () => this.OnStateChange(), undefined);
         ListenToGameEvent("npc_spawned", event => this.OnNpcSpawned(event), undefined);
+        ListenToGameEvent("player_chat", event => {
+            if (event.text.startsWith("-dev")) {
+                CustomGameEventManager.Send_ServerToAllClients("devpanel_enable", {});
+            }
+        }, undefined);
 
         CustomGameEventManager.RegisterListener("skip_to_section", (_, event) => {
             print("Request to skip to section:", event.section);
