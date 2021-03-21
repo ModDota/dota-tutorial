@@ -134,12 +134,12 @@ const npcs = [
 
     // Personalities / Guides
     new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6400, 384), LocalizationKey.Script_6_Purge, LocalizationKey.Script_6_Purge),
-    new ClosingNpc(CustomNpcKeys.Coccia, Vector(-7050, -6050, 384), "TODO"),
+    new ClosingNpc(CustomNpcKeys.Coccia, Vector(-7050, -6050, 384), LocalizationKey.Script_6_Alex, LocalizationKey.Script_6_Alex),
     new ClosingNpc(CustomNpcKeys.Tsunami, Vector(-7270, -6800, 384), LocalizationKey.Script_6_Tsunami, LocalizationKey.Script_6_Tsunami),
     new ClosingNpc(CustomNpcKeys.DotaU, Vector(-6900, -7050, 384), LocalizationKey.Script_6_DotaU, LocalizationKey.Script_6_DotaU),
     new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5170, -5300, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
-    new ClosingNpc(CustomNpcKeys.BSJ, Vector(-4800, -5450, 256), "TODO"),
-    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4550, -5300, 256), "TODO"),
+    new ClosingNpc(CustomNpcKeys.BSJ, Vector(-4800, -5450, 256), LocalizationKey.Script_6_BSJ, LocalizationKey.Script_6_BSJ),
+    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4550, -5300, 256), LocalizationKey.Script_6_Bowie, LocalizationKey.Script_6_Bowie),
     new ClosingNpc(CustomNpcKeys.Angermania, Vector(-4530, -5940, 256), LocalizationKey.Script_6_anger, LocalizationKey.Script_6_anger),
     new ClosingNpc(CustomNpcKeys.RedditDota, Vector(-4820, -6330, 256), LocalizationKey.Script_6_Reddit, LocalizationKey.Script_6_Reddit),
     new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6540, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),

@@ -665,7 +665,7 @@
 
     "npc_dota_tutorial_sinz"
     {
-        "Model"						"models/courier/octopus/octopus.vmdl"
+        "Model"						"models/items/courier/boooofus_courier/boooofus_courier.vmdl"
         "ModelScale" 				"2.0"
         "BaseClass"					"npc_dota_creature"
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"

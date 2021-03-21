@@ -195,7 +195,7 @@ export const soundDurations: Record<string, number> = {
     "Script_3_Neutrals_5": 0.711688,
     "Script_3_Neutrals_6": 19.059687,
     "Script_3_Neutrals_7": 1.884500,
-    "Script_3_Neutrals_8": 3.865250,
+    "Script_3_Neutrals_8": 4.125875,
     "Script_3_Neutrals_9": 9.468687,
     "Script_3_Neutrals_10": 4.256188,
     "Script_3_Neutrals_11": 8.035250,
@@ -334,7 +334,9 @@ export const soundDurations: Record<string, number> = {
     "Script_6_Yodi": 25.497125,
     "Script_6_SUNSfan": 45.070062,
     "Script_6_ZQ": 16.505562,
+    "Script_6_Alex": 21.416000,
     "Script_6_Shush": 12.987125,
+    "Script_6_Slacks": 21.733878,
 
     "General_Boo_1": 1.436735,
     "General_Boo_159": 3.448163,
