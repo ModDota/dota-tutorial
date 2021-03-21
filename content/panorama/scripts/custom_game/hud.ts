@@ -218,7 +218,14 @@ function showMessageToTheNoobs() {
     const message = `#MessageToTheNoobs_${Math.round(Math.random() * 1000000000) % numMessagesToTheNoobs}`;
     messageToTheNoobsMessage.text = $.Localize(message);
     messageToTheNoobsMessage.visible = true;
-    hideMessageToTheNoobsTimer = $.Schedule(5, () => {
+
+    // Estimate duration to show from the number of words
+    const numWords = messageToTheNoobsMessage.text.split(" ").length;
+    const minDuration = 5;
+    const maxDuration = 12;
+    const showDuration = Math.max(minDuration, Math.min(maxDuration, numWords * 0.4/*s*/));
+
+    hideMessageToTheNoobsTimer = $.Schedule(showDuration, () => {
         messageToTheNoobsMessage.visible = false;
         hideMessageToTheNoobsTimer = undefined;
     });
