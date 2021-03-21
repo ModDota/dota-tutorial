@@ -145,43 +145,35 @@ const onStart = (complete: () => void) => {
                         }
                     ),
 
-                    // Fork dialogue instructing last hitting
-                    tg.forkAny([
-                        tg.seq([
-                            tg.audioDialog(LocalizationKey.Script_2_Creeps_3, LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem]),
-                            tg.immediate(_ => GridNav.DestroyTreesAroundPoint(sheepstickedSpawnLocation, 300, true)),
-                            tg.wait(1),
-                            tg.spawnUnit(CustomNpcKeys.Sheepsticked, sheepstickedSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Sheepsticked, false),
-                            tg.immediate(context => {
-                                const sheepsticked = context[CustomNpcKeys.Sheepsticked] as CDOTA_BaseNPC;
-                                setUnitPacifist(sheepsticked, true);
-                                sheepsticked.AddNewModifier(undefined, undefined, modifier_no_health_bar.name, {});
-                            }),
-                            tg.audioDialog(LocalizationKey.Script_2_Creeps_4, LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.Sheepsticked]),
-                            tg.neverComplete()
-                        ]),
-                        tg.seq([
-                            tg.immediate(() => {
-                                goalLastHitCreeps.start()
-                                currentLastHitStage = LastHitStages.LAST_HIT
-                                if (direCreeps) {
-                                    highlight({
-                                        type: "arrow_enemy",
-                                        attach: true,
-                                        units: direCreeps
-                                    })
-                                }
-                                const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
-                                if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT);
-                            }),
-                            tg.completeOnCheck(_ => {
-                                const lastHitModifier = getOrError(playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name)) as modifier_dk_last_hit_chapter2_creeps
-                                const currentLastHits = lastHitModifier.GetStackCount()
-                                goalLastHitCreeps.setValue(currentLastHits)
-                                return currentLastHits >= lastHitCount;
-                            }, 0.1),
-                        ])
-                    ]),
+                    tg.audioDialog(LocalizationKey.Script_2_Creeps_3, LocalizationKey.Script_2_Creeps_3, context => context[CustomNpcKeys.SlacksMudGolem]),
+                    tg.immediate(_ => GridNav.DestroyTreesAroundPoint(sheepstickedSpawnLocation, 300, true)),
+                    tg.wait(1),
+                    tg.spawnUnit(CustomNpcKeys.Sheepsticked, sheepstickedSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Sheepsticked, false),
+                    tg.immediate(context => {
+                        const sheepsticked = context[CustomNpcKeys.Sheepsticked] as CDOTA_BaseNPC;
+                        setUnitPacifist(sheepsticked, true);
+                        sheepsticked.AddNewModifier(undefined, undefined, modifier_no_health_bar.name, {});
+                    }),
+                    tg.audioDialog(LocalizationKey.Script_2_Creeps_4, LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.Sheepsticked]),
+                    tg.immediate(() => {
+                        goalLastHitCreeps.start()
+                        currentLastHitStage = LastHitStages.LAST_HIT
+                        if (direCreeps) {
+                            highlight({
+                                type: "arrow_enemy",
+                                attach: true,
+                                units: direCreeps
+                            })
+                        }
+                        const modifier = playerHero.AddNewModifier(playerHero, undefined, modifier_dk_last_hit_chapter2_creeps.name, { lastHits: lastHitCount, lastHitBreatheFire: lastHitBreathFireCount, denies: denyCount }) as modifier_dk_last_hit_chapter2_creeps
+                        if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT);
+                    }),
+                    tg.completeOnCheck(_ => {
+                        const lastHitModifier = getOrError(playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name)) as modifier_dk_last_hit_chapter2_creeps
+                        const currentLastHits = lastHitModifier.GetStackCount()
+                        goalLastHitCreeps.setValue(currentLastHits)
+                        return currentLastHits >= lastHitCount;
+                    }, 0.1),
                     tg.immediate(_ => goalLastHitCreeps.complete()),
 
                     // Fork dialogue instructing breathe fire
