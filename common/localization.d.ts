@@ -412,6 +412,8 @@ declare const enum LocalizationKey {
     Script_6_ZQ = "Script_6_ZQ",
     Script_6_Alex = "Script_6_Alex",
     Script_6_Dotabuff = "Script_6_Dotabuff",
+    Script_6_Indiegogo = "Script_6_Indiegogo",
+    Script_6_Translators = "Script_6_Translators",
     Script_6_Flam3s = "Script_6_Flam3s",
     Script_6_Perry = "Script_6_Perry",
     Script_6_PongPing = "Script_6_PongPing",
