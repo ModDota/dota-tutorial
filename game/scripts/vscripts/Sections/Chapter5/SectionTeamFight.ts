@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
@@ -21,17 +21,7 @@ const requiredState: RequiredState = {
     heroLevel: 25,
     heroAbilityMinLevels: [4, 4, 4, 3],
     heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis, shared.itemDaedalus, "item_mysterious_hat"].map(itemName => [itemName, 1])),
-    blockades: [
-        shared.chapter5Blockades.direJungleLowgroundRiver,
-        shared.chapter5Blockades.topLaneRiver,
-        shared.chapter5Blockades.radiantSecretShopRiver,
-        shared.chapter5Blockades.direOutpostRiver,
-        shared.chapter5Blockades.radiantAncientsRiver,
-        shared.chapter5Blockades.radiantMidTopRiver,
-        shared.chapter5Blockades.direMidTopRiver,
-        shared.chapter5Blockades.midRiverTopSide,
-        shared.chapter5Blockades.roshan,
-    ],
+    blockades: Object.values(shared.chapter5Blockades).filter(blockade => blockade !== shared.chapter5Blockades.roshan),
     removeElderDragonForm: false,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -52,6 +42,9 @@ function onStart(complete: () => void) {
     const goalKillEnemyHeroes = goalTracker.addNumeric(LocalizationKey.Goal_5_5v5_2, totalEnemyCount)
     const goalUseTp = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_3)
     const goalPromiseCarryTp = goalTracker.addBoolean(LocalizationKey.Goal_5_5v5_4)
+
+    const tpScrollSlotUIPath =
+        "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_tpscroll_container/inventory_tpscroll_slot"
 
     const playerHero = getOrError(getPlayerHero(), "Could not get player hero")
 
@@ -112,7 +105,6 @@ function onStart(complete: () => void) {
                 ]),
 
                 // Friendlies teamfight logic
-                useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION),
                 tg.seq([
                     tg.fork(shared.friendlyHeroesInfo.map(friendlyHeroInfo => {
                         return tg.completeOnCheck(ctx => ctx[friendlyHeroInfo.name].IsAttacking(), 1)
@@ -122,6 +114,7 @@ function onStart(complete: () => void) {
                         tg.seq([
                             useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
                             useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.ShadowShaman], ctx => ctx[CustomNpcKeys.Luna], "shadow_shaman_shackles", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                             tg.completeOnCheck(ctx => !ctx[CustomNpcKeys.Windrunner].IsStunned(), 1),
                             useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                             tg.wait(2),
@@ -156,9 +149,10 @@ function onStart(complete: () => void) {
             // Play win dialog
             tg.immediate(ctx => shared.getLivingFriendlyHeroes(ctx).forEach(hero => hero.StartGesture(GameActivity_t.ACT_DOTA_VICTORY))),
             tg.audioDialog(LocalizationKey.Script_5_5v5_5, LocalizationKey.Script_5_5v5_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-            // Add tp scroll
+            
+            // Add tp scroll and highlight it
             tg.immediate(_ => playerHero.AddItemByName("item_tpscroll").EndCooldown()),
+            tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
             tg.audioDialog(LocalizationKey.Script_5_5v5_6, LocalizationKey.Script_5_5v5_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_7, LocalizationKey.Script_5_5v5_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.forkAny([
@@ -174,7 +168,8 @@ function onStart(complete: () => void) {
                 ])
             ]),
             tg.immediate(_ => goalUseTp.complete()),
-
+            tg.immediate(_ => removeHighlight(tpScrollSlotUIPath)),
+            
             // More dialog about importance of tps and bait player into using voice
             tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_10, LocalizationKey.Script_5_5v5_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),

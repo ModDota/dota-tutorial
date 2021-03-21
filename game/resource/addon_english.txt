@@ -696,6 +696,11 @@
         "npc_dota_hero_storm_spirit_titles_name" "Pyrion"
         "npc_dota_hero_storm_spirit_titles_num" "1"
         "npc_dota_hero_storm_spirit_titles_0" "{s:name} the Jumbled Mess"
+        "npc_dota_hero_ursa_titles_name" "Cap"
+        "npc_dota_hero_ember_spirit_titles_name" "Blitz"
+        "npc_dota_hero_grimstroke_titles_name" "Trent"
+        "npc_dota_hero_zuus_titles_name" "Lyrical"
+        "npc_dota_hero_undying_titles_name" "syndereN"
 
         "npc_mud_golem_sunsfan_titles_name" "SUNSfan"
         "npc_dota_hero_pugna_titles_name" "Purge"
