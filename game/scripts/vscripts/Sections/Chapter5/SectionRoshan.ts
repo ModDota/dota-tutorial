@@ -2,14 +2,13 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, Distance2D, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
 import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
 let graph: tg.TutorialStep | undefined = undefined
-let canPlayerIssueOrders = false;
 
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
@@ -50,27 +49,18 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.immediate(() => canPlayerIssueOrders = false),
+            tg.immediate(_ => setUnitPacifist(roshan, true)),
             tg.wait(1),
-            tg.immediate(() => setUnitPacifist(roshan, true)),
             tg.fork([
+                tg.audioDialog(LocalizationKey.Script_5_Roshan_1, LocalizationKey.Script_5_Roshan_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
-                    tg.audioDialog(LocalizationKey.Script_5_Roshan_1, LocalizationKey.Script_5_Roshan_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(() => goalEnterRoshPit.start()),
                     tg.goToLocation(roshPitGoalPosition),
-                ]),
-                tg.seq([
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), roshPitGoalPosition, 1),
-                    tg.wait(2),
-                    tg.immediate(() => canPlayerIssueOrders = true),
-                    tg.setCameraTarget(undefined),
-                    tg.immediate(_ => centerCameraOnHero()),
-                ]),
+                    tg.immediate(() => goalEnterRoshPit.complete()),
+                ])
             ]),
-            tg.immediate(() => goalEnterRoshPit.complete()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_2, LocalizationKey.Script_5_Roshan_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_5_Roshan_3, LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.immediate(() => {
+            tg.immediate(_ => {
                 // Lvl up to 25, assuming 1 xp per level
                 playerHero.AddExperience(25 - playerHero.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, true, false)
                 shared.preRoshKillItems.forEach(itemName => playerHero.AddItemByName(itemName))
@@ -78,12 +68,12 @@ function onStart(complete: () => void) {
                 playerHero.AddNewModifier(playerHero, undefined, "modifier_rune_doubledamage", undefined)
                 maxLevelAbilities(playerHero)
             }),
-            tg.immediate(() => canPlayerIssueOrders = false),
+            tg.audioDialog(LocalizationKey.Script_5_Roshan_3, LocalizationKey.Script_5_Roshan_3, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.wait(1),
             tg.immediate(() => goalUpgradeTalents.start()),
+            // Don't fork since it seems there's no way to prevent a player from upgrading talents, so let the dialogue play out normally - player can skip it if needed
             tg.audioDialog(LocalizationKey.Script_5_Roshan_4, LocalizationKey.Script_5_Roshan_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.immediate(() => canPlayerIssueOrders = true),
-            tg.completeOnCheck(() => {
+            tg.completeOnCheck(_ => {
                 if (dragonBlood25Talent && dragonTail25Talent)
                     return ((dragonBlood25Talent.GetLevel() >= 1 || dragonTail25Talent.GetLevel() >= 1))
                 else {
@@ -116,11 +106,10 @@ function onStart(complete: () => void) {
             tg.immediate(_ => centerCameraOnHero()),
             tg.audioDialog(LocalizationKey.Script_5_Roshan_6, LocalizationKey.Script_5_Roshan_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.completeOnCheck(() => !unitIsValidAndAlive(roshan), 0.2),
-            tg.immediate(() => {
+            tg.immediate(_ => {
                 goalDefeatRoshan.complete()
                 StopGlobalSound(roshanMusic)
                 playerHero.RemoveModifierByName("modifier_rune_doubledamage")
-                canPlayerIssueOrders = false
             }),
             tg.immediate(context => {
                 for (const friendlyHero of friendlyHeroesInfo) {
@@ -128,61 +117,80 @@ function onStart(complete: () => void) {
                     hero.SetForceAttackTarget(undefined)
                 }
             }),
-            // Move units assuming offlane -> carry -> pos 4 -> pos 5 ordering in friendlyHeroesInfo
             tg.fork([
-                tg.audioDialog(LocalizationKey.Script_5_Roshan_7, LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
-                tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                tg.seq([
+                    // Make our heroes leave the pit and face map center
+                    tg.fork([
+                        tg.moveUnit(ctx => ctx[friendlyHeroesInfo[0].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                        tg.moveUnit(ctx => ctx[friendlyHeroesInfo[1].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                        tg.moveUnit(ctx => ctx[friendlyHeroesInfo[2].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                        tg.moveUnit(ctx => ctx[friendlyHeroesInfo[3].name], shared.outsidePitLocation.__add(RandomVector(200)), true),
+                    ]),
+                    tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0, 0, 0)))),
+                ]),
+                tg.seq([
+                    // Don't fork with goal complete check, it is a short dialogue and gives good info about aegis
+                    tg.fork([
+                        tg.immediate(_ => goalPickupAegis.start()),
+                        tg.immediate(() => {
+
+                            const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
+            
+                            if (droppedItems) {
+                                for (const droppedItem of droppedItems) {
+                                    const itemEntity = droppedItem.GetContainedItem()
+                                    print("Iterating droppped items inside Section Roshan")
+                                    print(itemEntity.GetAbilityName())
+                                    if (itemEntity.GetAbilityName() === shared.itemAegis) {
+                                        print("Found Aegis")
+                                        droppedAegisLocation = itemEntity.GetAbsOrigin()
+                                        print(droppedAegisLocation)
+                                    }
+                                }
+                            }
+            
+                            if (droppedAegisLocation) {
+                                AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, droppedAegisLocation, 500, 50, false)
+                            }
+                        }),
+                        tg.withHighlights(
+                            tg.completeOnCheck(() => !playerHero.HasItemInInventory(shared.itemAegis), 0.2),
+                            // {
+                            //     type: "circle",
+                            //     locations: droppedAegisLocation ? [droppedAegisLocation] : undefined,
+                            //     // units: (GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] as CDOTA_BaseNPC[]).concat(GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] as CDOTA_BaseNPC[]),
+                            //     radius: 100
+                            // }
+                            _ => {
+                                return { type: "arrow", locations: droppedAegisLocation ? [droppedAegisLocation] : undefined }
+                            }
+                        ),
+                        tg.audioDialog(LocalizationKey.Script_5_Roshan_7, LocalizationKey.Script_5_Roshan_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    ]),
+                    tg.completeOnCheck(_ => playerHero.HasItemInInventory(shared.itemAegis), 0.2),
+                    tg.immediate(_ => goalPickupAegis.complete()),
+                    tg.forkAny([
+                        tg.seq([
+                            // Only play dialog if player is not already in the gotoLocation radius
+                            tg.completeOnCheck(_ => Distance2D(playerHero.GetAbsOrigin(), shared.outsidePitLocation) > 200, 1),
+                            tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                            tg.neverComplete()
+                        ]),
+                        tg.seq([
+                            tg.immediate(() => goalLeaveRoshPit.start()),
+                            tg.goToLocation(shared.outsidePitLocation),
+                        ])
+                    ]),
+                    tg.immediate(_ => goalLeaveRoshPit.complete()),
+                    tg.immediate(_ => shared.chapter5Blockades.roshan.spawn()),
+                ])
             ]),
-            tg.fork(friendlyHeroesInfo.map(friendlyHero => tg.faceTowards(ctx => ctx[friendlyHero.name], Vector(0, 0, 0)))),
-            tg.immediate(() => {
-                goalPickupAegis.start()
-                canPlayerIssueOrders = true
 
-                const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
-
-                if (droppedItems) {
-                    for (const droppedItem of droppedItems) {
-                        const itemEntity = droppedItem.GetContainedItem()
-                        print("Iterating droppped items inside Section Roshan")
-                        print(itemEntity.GetAbilityName())
-                        if (itemEntity.GetAbilityName() === shared.itemAegis) {
-                            print("Found Aegis")
-                            droppedAegisLocation = itemEntity.GetAbsOrigin()
-                            print(droppedAegisLocation)
-                        }
-                    }
-                }
-
-                if (droppedAegisLocation) {
-                    AddFOWViewer(DotaTeam.GOODGUYS, droppedAegisLocation, 500, 50, false)
-                }
-            }),
-            tg.withHighlights(
-                tg.completeOnCheck(() => !playerHero.HasItemInInventory(shared.itemAegis), 0.2),
-                // {
-                //     type: "circle",
-                //     locations: droppedAegisLocation ? [droppedAegisLocation] : undefined,
-                //     // units: (GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] as CDOTA_BaseNPC[]).concat(GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] as CDOTA_BaseNPC[]),
-                //     radius: 100
-                // }
-                _ => {
-                    return { type: "arrow", locations: droppedAegisLocation ? [droppedAegisLocation] : undefined }
-                }
-            ),
-            tg.completeOnCheck(() => playerHero.HasItemInInventory(shared.itemAegis), 0.2),
-            tg.immediate(() => goalPickupAegis.complete()),
-            tg.audioDialog(LocalizationKey.Script_5_Roshan_8, LocalizationKey.Script_5_Roshan_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-
-            // Spawn enemies and make our heroes leave the pit
-            tg.immediate(() => goalLeaveRoshPit.start()),
-            tg.goToLocation(shared.outsidePitLocation),
-            shared.spawnEnemyHeroes(shared.enemyLocation),
-            tg.immediate(() => {
-                goalLeaveRoshPit.complete()
-            }),
+            // Spawn enemies and pacify all spawned heroes
+            shared.spawnEnemyHeroes(shared.enemyLocation, true),
+            tg.fork(shared.friendlyHeroesInfo.map((heroInfo) => {
+                return tg.immediate(ctx => setUnitPacifist(ctx[heroInfo.name], true))
+            })),
             tg.wait(1)
         ])
     )
@@ -207,8 +215,6 @@ function onStop() {
 function chapterFiveRoshanOrderFilter(event: ExecuteOrderFilterEvent): boolean {
     // Allow all orders that aren't done by the player
     if (event.issuer_player_id_const != findRealPlayerID()) return true;
-
-    if (!canPlayerIssueOrders) return false;
 
     return true;
 }

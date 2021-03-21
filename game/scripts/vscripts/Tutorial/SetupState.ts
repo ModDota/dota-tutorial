@@ -456,6 +456,8 @@ function createBountyRunes() {
     if (!IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
         context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
+    
+    context[CustomEntityKeys.RadiantTopBountyRuneEntIndex] = context[CustomEntityKeys.RadiantTopBountyRune].entindex()
 
     if (!IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
         context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)

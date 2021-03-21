@@ -13,7 +13,11 @@ const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
     heroLocation: shared.outsidePitLocation,
-    heroLocationTolerance: 200,
+    /*
+    Keep heroLocationTolerance high so player doesn't get moved back if he moves towards enemies at the end of previous section
+    Might cause issues if skipping from one of the jungle sections to this one, but regular players won't be able to do that
+    */
+    heroLocationTolerance: 1500,
     heroLevel: 25,
     heroAbilityMinLevels: [4, 4, 4, 3],
     heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis, shared.itemDaedalus, "item_mysterious_hat"].map(itemName => [itemName, 1])),
@@ -65,23 +69,16 @@ function onStart(complete: () => void) {
                 playerHero.SetHealth(playerHero.GetMaxHealth())
                 playerHero.SetMana(playerHero.GetMaxMana())
             }),
-            tg.panCameraLinear(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 1),
-            shared.spawnFriendlyHeroes(shared.outsidePitLocation),
-            shared.spawnEnemyHeroes(shared.enemyLocation),
+            shared.spawnFriendlyHeroes(shared.outsidePitLocation, true),
+            shared.spawnEnemyHeroes(shared.enemyLocation, true),
 
             // Setup positions, items and abilities
-            tg.immediate(ctx => ctx[CustomNpcKeys.Pudge].SetAbsOrigin(Vector(-1825, 750, 0))),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.Pudge], Vector(-1825, 750, 0)),
             tg.immediate(ctx => setupEnemyHeroes(ctx)),
-
-            // Pacify everyone so they don't aggro before the fight starts
-            tg.fork(shared.allHeroesInfo.map((heroInfo) => {
-                return tg.immediate(ctx => setUnitPacifist(ctx[heroInfo.name], true))
-            })),
 
             // Pan to enemies and back while dialog is playing
             tg.immediate(_ => GameRules.SetTimeOfDay(0.5)),
             tg.immediate(_ => goalSpotEnemies.start()),
-            tg.immediate(_ => freezePlayerHero(true)),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_5_5v5_1, LocalizationKey.Script_5_5v5_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.seq([
@@ -91,12 +88,10 @@ function onStart(complete: () => void) {
                     tg.wait(0.75),
                     tg.immediate(_ => goalKillEnemyHeroes.start()),
                     tg.wait(0.75),
-                    tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
                 ])
             ]),
-            tg.immediate(_ => freezePlayerHero(false)),
 
-            // Start teamfight
+            // Start teamfight. Unpacify first since we specified they should be pacifist on spawn
             tg.fork(shared.allHeroesInfo.map((heroInfo) => {
                 return tg.immediate(ctx => setUnitPacifist(ctx[heroInfo.name], false))
             })),
@@ -169,33 +164,46 @@ function onStart(complete: () => void) {
             tg.immediate(_ => playerHero.AddItemByName("item_tpscroll").EndCooldown()),
             tg.audioDialog(LocalizationKey.Script_5_5v5_6, LocalizationKey.Script_5_5v5_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_7, LocalizationKey.Script_5_5v5_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_5_5v5_8, LocalizationKey.Script_5_5v5_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
-
-            // Wait for player to try to use the tp
-            tg.immediate(_ => goalUseTp.start()),
-            tg.immediate(_ => waitingForPlayerTp = true),
-            tg.completeOnCheck(_ => playerUsedTp, 0.1),
+            tg.forkAny([
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_5_5v5_8, LocalizationKey.Script_5_5v5_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.neverComplete()
+                ]),
+                tg.seq([
+                    // Wait for player to try to use the tp
+                    tg.immediate(_ => goalUseTp.start()),
+                    tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
+                    tg.immediate(_ => waitingForPlayerTp = true),
+                    tg.completeOnCheck(_ => playerUsedTp, 0.1),
+                ])
+            ]),
             tg.immediate(_ => goalUseTp.complete()),
             tg.immediate(_ => removeHighlight(tpScrollSlotUIPath)),
             
             // More dialog about importance of tps and bait player into using voice
             tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_10, LocalizationKey.Script_5_5v5_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-            tg.audioDialog(LocalizationKey.Script_5_5v5_11, LocalizationKey.Script_5_5v5_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
-            // Wait for player to use their voice, or not
-            tg.immediate(_ => goalPromiseCarryTp.start()),
             tg.forkAny([
                 tg.seq([
-                    tg.waitForVoiceChat(),
-                    tg.immediate(_ => voicePressed = true),
-                    tg.audioDialog(LocalizationKey.Script_5_5v5_12, LocalizationKey.Script_5_5v5_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_5_5v5_11, LocalizationKey.Script_5_5v5_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                    tg.neverComplete()
                 ]),
                 tg.seq([
-                    tg.wait(6),
-                    tg.completeOnCheck(_ => !voicePressed, 0.1),
-                    tg.audioDialog(LocalizationKey.Script_5_5v5_13, LocalizationKey.Script_5_5v5_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    // Wait for player to use their voice, or not
+                    tg.immediate(_ => goalPromiseCarryTp.start()),
+                    tg.forkAny([
+                        tg.seq([
+                            tg.waitForVoiceChat(),
+                            tg.immediate(_ => voicePressed = true),
+                            tg.audioDialog(LocalizationKey.Script_5_5v5_12, LocalizationKey.Script_5_5v5_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+                        ]),
+                        tg.seq([
+                            tg.wait(14),
+                            tg.completeOnCheck(_ => !voicePressed, 0.1),
+                            tg.audioDialog(LocalizationKey.Script_5_5v5_13, LocalizationKey.Script_5_5v5_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                        ])
+                    ]),
                 ])
             ]),
             tg.immediate(_ => goalPromiseCarryTp.complete()),
