@@ -37,9 +37,9 @@ export class modifier_greevil extends BaseModifier {
 
     DeclareFunctions() {
         return [
-            ModifierFunction.MODEL_CHANGE,
-            ModifierFunction.MODEL_SCALE,
-            ModifierFunction.TRANSLATE_ACTIVITY_MODIFIERS,
+            modifierfunction.MODIFIER_PROPERTY_MODEL_CHANGE,
+            modifierfunction.MODIFIER_PROPERTY_MODEL_SCALE,
+            modifierfunction.MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
         ];
     }
 
@@ -49,7 +49,7 @@ export class modifier_greevil extends BaseModifier {
         // Assign fields from params to config
         Object.assign(this.config, params);
 
-        const spawnParticle = ParticleManager.CreateParticle("particles/items_fx/item_sheepstick.vpcf", ParticleAttachment.ABSORIGIN_FOLLOW, this.GetParent());
+        const spawnParticle = ParticleManager.CreateParticle("particles/items_fx/item_sheepstick.vpcf", ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, this.GetParent());
         ParticleManager.ReleaseParticleIndex(spawnParticle);
 
         this.buildGreevil();
@@ -113,10 +113,12 @@ export class modifier_greevil extends BaseModifier {
             "particles/econ/courier/courier_greevil_black/courier_greevil_black_ambient_1.vpcf",
         ];
 
-        this.particle = ParticleManager.CreateParticle(particles[this.config.material], ParticleAttachment.ABSORIGIN_FOLLOW, this.GetParent());
+        this.particle = ParticleManager.CreateParticle(particles[this.config.material], ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, this.GetParent());
     }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
-        return this.GetParent().GetTeamNumber() == DotaTeam.GOODGUYS ? { [ModifierState.NO_HEALTH_BAR]: true } : { [ModifierState.NO_HEALTH_BAR]: false }
+    CheckState(): Partial<Record<modifierstate, boolean>> {
+        return this.GetParent().GetTeamNumber() == DOTATeam_t.DOTA_TEAM_GOODGUYS 
+            ? { [modifierstate.MODIFIER_STATE_NO_HEALTH_BAR]: true }
+            : { [modifierstate.MODIFIER_STATE_NO_HEALTH_BAR]: false }
     }
 }

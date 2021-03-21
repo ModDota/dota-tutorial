@@ -6,8 +6,8 @@ import { getPlayerHero } from "../util";
 export class modifier_nodamage_chapter2_tower extends BaseModifier {
     hitSources: TowerHitSources = TowerHitSources.NONE
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.INCOMING_DAMAGE_PERCENTAGE]
+    DeclareFunctions(): modifierfunction[] {
+        return [modifierfunction.MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE]
     }
 
     GetModifierIncomingDamage_Percentage(event: ModifierAttackEvent): number {

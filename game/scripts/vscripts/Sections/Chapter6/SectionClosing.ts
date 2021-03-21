@@ -31,7 +31,7 @@ const requiredState: RequiredState = {
     },
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS,
 }
 
 const INTERACTION_DISTANCE = 200;
@@ -74,7 +74,7 @@ class ClosingNpc {
         if (!this.spawned) {
             this.spawned = true
 
-            CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DotaTeam.GOODGUYS, unit => {
+            CreateUnitByNameAsync(this.name, this.location, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_GOODGUYS, unit => {
                 this._unit = unit
                 unit.AddNewModifier(unit, undefined, modifier_closing_npc.name, {})
 
@@ -386,7 +386,7 @@ function orderFilter(order: ExecuteOrderFilterEvent) {
         const closingNpc = npcs.find(npc => npc.unit === target);
         if (closingNpc) {
             talkTarget = closingNpc;
-            order.order_type = UnitOrder.MOVE_TO_TARGET;
+            order.order_type = dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_TARGET;
         } else {
             talkTarget = undefined;
         }
@@ -426,7 +426,7 @@ const discoLocations = [
 
 function startParty() {
     for (const npc of npcs) {
-        partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment.ABSORIGIN_FOLLOW, npc.unit))
+        partyParticles.push(ParticleManager.CreateParticle(ParticleName.DiscoLights, ParticleAttachment_t.PATTACH_ABSORIGIN_FOLLOW, npc.unit))
     }
 
     discoTimer = Timers.CreateTimer(() => {
@@ -434,7 +434,7 @@ function startParty() {
         // Spawn some discoballs
         for (const discoLocation of discoLocations) {
             const position = GetGroundPosition(discoLocation, undefined) + Vector(0, 0, 400) as Vector;
-            const particle = ParticleManager.CreateParticle(ParticleName.DiscoBall, ParticleAttachment.CUSTOMORIGIN, undefined);
+            const particle = ParticleManager.CreateParticle(ParticleName.DiscoBall, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined);
             ParticleManager.SetParticleControl(particle, 0, position);
             ParticleManager.SetParticleControl(particle, 1, position);
             ParticleManager.ReleaseParticleIndex(particle);
@@ -444,7 +444,7 @@ function startParty() {
         const randomNpc = npcs[RandomInt(0, npcs.length - 1)];
         if (randomNpc.unit) {
             const location = randomNpc.unit.GetAbsOrigin();
-            const particle = ParticleManager.CreateParticle(ParticleName.Firework, ParticleAttachment.CUSTOMORIGIN, undefined);
+            const particle = ParticleManager.CreateParticle(ParticleName.Firework, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, undefined);
             ParticleManager.SetParticleControl(particle, 0, location);
             ParticleManager.SetParticleControl(particle, 1, location + Vector(0, 0, 500) as Vector);
             ParticleManager.ReleaseParticleIndex(particle);

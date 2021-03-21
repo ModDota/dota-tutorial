@@ -37,7 +37,7 @@ const start = (complete: () => void) => {
             // Have Slacks health bar turn red, but make him invulnerable for now
             const slacks = getOrError(ctx[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC | undefined);
             setUnitPacifist(slacks, true);
-            slacks.SetTeam(DotaTeam.NEUTRALS);
+            slacks.SetTeam(DOTATeam_t.DOTA_TEAM_NEUTRALS);
             highlightUiElement(abilityBreatheFireHighlightPath)
         }),
 

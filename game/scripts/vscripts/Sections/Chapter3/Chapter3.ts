@@ -74,7 +74,7 @@ class NeutralDetector {
     }
 
     private static isValidNeutral(neutral: CDOTA_BaseNPC | undefined) {
-        return neutral && neutral.IsBaseNPC() && unitIsValidAndAlive(neutral) && neutral.GetTeam() === DotaTeam.NEUTRALS && neutral.IsNeutralUnitType() && !neutral.IsInvulnerable()
+        return neutral && neutral.IsBaseNPC() && unitIsValidAndAlive(neutral) && neutral.GetTeam() === DOTATeam_t.DOTA_TEAM_NEUTRALS && neutral.IsNeutralUnitType() && !neutral.IsInvulnerable()
     }
 
     newNeutrals = new Set<CDOTA_BaseNPC>()
@@ -334,22 +334,22 @@ const onStart = (complete: () => void) => {
                 tg.seq([
                     tg.wait(2),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, creepCampCenter, 600, 6, false)),
+                        tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, creepCampCenter, 600, 6, false)),
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), creepCampCenter, 2),
                         tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [creepCampCenter] }),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, mediumCampLocation, 600, 6, false)),
+                        tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, mediumCampLocation, 600, 6, false)),
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), mediumCampLocation, 2),
                         tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [mediumCampLocation] }),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, bigCampLocation, 600, 6, false)),
+                        tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, bigCampLocation, 600, 6, false)),
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), bigCampLocation, 2),
                         tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [bigCampLocation] }),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DotaTeam.GOODGUYS, ancientCampLocation, 600, 6, false)),
+                        tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, ancientCampLocation, 600, 6, false)),
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), ancientCampLocation, 2),
                         tg.wait(2),
                     ]), { type: "circle", radius: 200, locations: [ancientCampLocation] }),
@@ -454,7 +454,7 @@ const onStart = (complete: () => void) => {
     const stackCreepsMultiple = () => {
         return [
             tg.audioDialog(LocalizationKey.Script_3_Opening_18, LocalizationKey.Script_3_Opening_18, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            tg.spawnUnit(CustomNpcKeys.ODPixel, odPixelLocation, DotaTeam.GOODGUYS, CustomNpcKeys.ODPixel, true),
+            tg.spawnUnit(CustomNpcKeys.ODPixel, odPixelLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.ODPixel, true),
             tg.immediate(ctx => {
                 goalOptionalStackCreeps.start()
                 goalTryStackCreeps.start()
@@ -585,7 +585,7 @@ const onStart = (complete: () => void) => {
             highlightUiElement(secondNeutralItemUIPath)
         }),
         tg.completeOnCheck(_ => {
-            const item = playerHero.GetItemInSlot(InventorySlot.NEUTRAL_SLOT)
+            const item = playerHero.GetItemInSlot(DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT)
             if (item) {
                 const itemName = item.GetAbilityName()
                 return itemName === secondNeutralItemName
@@ -623,7 +623,7 @@ const onStart = (complete: () => void) => {
                 freezePlayerHero(true)
 
                 // Spawn fow viewer on Riki's location
-                fowViewer = AddFOWViewer(DotaTeam.GOODGUYS, rikiLocation, 800, 30, true)
+                fowViewer = AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, rikiLocation, 800, 30, true)
             }),
 
             // Pan to Riki and play his dialog
@@ -634,7 +634,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(ctx => {
                 ExecuteOrderFromTable({
                     UnitIndex: (ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC).GetEntityIndex(),
-                    OrderType: UnitOrder.MOVE_TO_POSITION,
+                    OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION,
                     Position: aboveRamp,
                     Queue: true
                 })
@@ -644,7 +644,7 @@ const onStart = (complete: () => void) => {
             // Remove the fow viewer, pan back and play dialog. Wait for player to move to where Riki went.
             tg.immediate(_ => {
                 if (fowViewer) {
-                    RemoveFOWViewer(DotaTeam.GOODGUYS, fowViewer)
+                    RemoveFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, fowViewer)
                     fowViewer = undefined
                 }
             }),
@@ -699,7 +699,7 @@ const onStop = () => {
         }
 
         if (fowViewer) {
-            RemoveFOWViewer(DotaTeam.GOODGUYS, fowViewer)
+            RemoveFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, fowViewer)
             fowViewer = undefined
         }
 
@@ -727,12 +727,12 @@ export const sectionOpening = new tut.FunctionalSection(
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true
 
-    if (event.order_type === UnitOrder.DROP_ITEM) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_DROP_ITEM) {
         displayDotaErrorMessage(LocalizationKey.Error_Chapter3_1)
         return false
     }
 
-    if (event.order_type === UnitOrder.MOVE_ITEM) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_ITEM) {
 
         if (playerCanMoveNeutralFromBackpack) {
             if (event.entindex_ability) {
@@ -747,7 +747,7 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 
     const item = EntIndexToHScript(event.entindex_ability) as CDOTA_Item
 
-    if (item && event.order_type === UnitOrder.DROP_ITEM_AT_FOUNTAIN) {
+    if (item && event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_DROP_ITEM_AT_FOUNTAIN) {
         if (playerExpectedToSendToNeutralStash) {
             if (item.GetAbilityName() === firstNeutralItemName) {
                 movedToStash = true
@@ -773,7 +773,7 @@ class modifier_deal_no_damage extends BaseModifier {
     }
 
     DeclareFunctions() {
-        return [ModifierFunction.TOTALDAMAGEOUTGOING_PERCENTAGE]
+        return [modifierfunction.MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE]
     }
 
     GetModifierTotalDamageOutgoing_Percentage() {
@@ -788,7 +788,7 @@ class modifier_keep_hero_alive extends BaseModifier {
     }
 
     DeclareFunctions() {
-        return [ModifierFunction.INCOMING_DAMAGE_PERCENTAGE]
+        return [modifierfunction.MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE]
     }
 
     GetModifierIncomingDamage_Percentage() {

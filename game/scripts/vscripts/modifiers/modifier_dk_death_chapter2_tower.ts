@@ -10,10 +10,12 @@ export class modifier_dk_death_chapter2_tower extends BaseModifier {
     IsDebuff() { return false }
     RemoveOnDeath() { return false }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.ON_DEATH,
-        ModifierFunction.INCOMING_DAMAGE_PERCENTAGE,
-        ModifierFunction.ON_RESPAWN]
+    DeclareFunctions(): modifierfunction[] {
+        return [
+            modifierfunction.MODIFIER_EVENT_ON_DEATH,
+            modifierfunction.MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+            modifierfunction.MODIFIER_EVENT_ON_RESPAWN
+        ]
     }
 
     OnDeath(event: ModifierAttackEvent) {
