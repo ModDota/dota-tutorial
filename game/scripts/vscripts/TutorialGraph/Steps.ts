@@ -35,7 +35,7 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
         }
 
         if (actualLocation) {
-            MinimapEvent(DotaTeam.GOODGUYS, getPlayerHero()!, actualLocation.x, actualLocation.y, MinimapEventType.TUTORIAL_TASK_FINISHED, 0.1);
+            MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, getPlayerHero()!, actualLocation.x, actualLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_FINISHED, 0.1);
             actualLocation = undefined
         }
     }
@@ -47,8 +47,8 @@ export const goToLocation = (location: tg.StepArgument<Vector>, visualIntermedia
 
         const hero = getOrError(getPlayerHero())
 
-        MinimapEvent(DotaTeam.GOODGUYS, hero, actualLocation.x, actualLocation.y, MinimapEventType.MOVE_TO_TARGET, 99999);
-        moveParticleFx = ParticleManager.CreateParticle(ParticleName.MoveToLocation, ParticleAttachment.WORLDORIGIN, undefined)
+        MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, hero, actualLocation.x, actualLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_MOVE_TO_TARGET, 99999);
+        moveParticleFx = ParticleManager.CreateParticle(ParticleName.MoveToLocation, ParticleAttachment_t.PATTACH_WORLDORIGIN, undefined)
         ParticleManager.SetParticleControl(moveParticleFx, 0, actualLocation);
 
         if (actualShowPathParticle) {
@@ -177,7 +177,7 @@ export const moveUnit = (unit: tg.StepArgument<CDOTA_BaseNPC>, moveLocation: tg.
 
         const order: ExecuteOrderOptions = {
             UnitIndex: actualUnit.GetEntityIndex(),
-            OrderType: UnitOrder.MOVE_TO_POSITION,
+            OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_POSITION,
             Position: actualMoveLocation,
             Queue: true
         }
@@ -231,7 +231,7 @@ export const spawnAndKillUnit = (unitName: tg.StepArgument<string>, spawnLocatio
         const actualSpawnLocation = tg.getArg(spawnLocation, context)
         const actualVisibleThroughFog = tg.getOptionalArg(visibleThroughFog, context)
 
-        unit = CreateUnitByName(actualUnitName, actualSpawnLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+        unit = CreateUnitByName(actualUnitName, actualSpawnLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_NEUTRALS)
 
         if (actualVisibleThroughFog) {
             setUnitVisibilityThroughFogOfWar(unit, true);

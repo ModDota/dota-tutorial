@@ -48,7 +48,7 @@ function onStart(complete: () => void) {
     const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.");
 
     const direOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"));
-    if (direOutpost && direOutpost.GetTeamNumber() === DotaTeam.GOODGUYS) direOutpost.SetTeam(DotaTeam.BADGUYS)
+    if (direOutpost && direOutpost.GetTeamNumber() === DOTATeam_t.DOTA_TEAM_GOODGUYS) direOutpost.SetTeam(DOTATeam_t.DOTA_TEAM_BADGUYS)
     allowUseItem = false;
     canPlayerTakeOutpost = false
 
@@ -80,7 +80,7 @@ function onStart(complete: () => void) {
             }),
 
             tg.goToLocation(GetGroundPosition(lastSawRikiLocation, undefined)),
-            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.NONE)),
+            tg.immediate(_ => playerHero.SetMoveCapability(DOTAUnitMoveCapability_t.DOTA_UNIT_CAP_MOVE_NONE)),
             tg.immediate(_ => {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
@@ -103,7 +103,7 @@ function onStart(complete: () => void) {
                 setUnitPacifist(playerHero, false);
             }),
 
-            tg.immediate(_ => playerHero.SetMoveCapability(UnitMoveCapability.GROUND)),
+            tg.immediate(_ => playerHero.SetMoveCapability(DOTAUnitMoveCapability_t.DOTA_UNIT_CAP_MOVE_GROUND)),
 
             // Part 1: Find Riki with dust, watch Riki escape
             tg.immediate(context => {
@@ -149,7 +149,7 @@ function onStart(complete: () => void) {
                 tg.audioDialog(LocalizationKey.Script_4_Outpost_8, LocalizationKey.Script_4_Outpost_8, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
 
                 tg.completeOnCheck(_ => {
-                    return direOutpost.GetTeam() === DotaTeam.GOODGUYS;
+                    return direOutpost.GetTeam() === DOTATeam_t.DOTA_TEAM_GOODGUYS;
                 }, 1),
             ]), { type: "circle", units: [direOutpost as CDOTA_BaseNPC_Building], radius: 300 }),
 
@@ -162,7 +162,7 @@ function onStart(complete: () => void) {
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
                 riki.RemoveModifierByName(modifier_abs_no_damage.name)
-                riki.SetAttackCapability(UnitAttackCapability.MELEE_ATTACK);
+                riki.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_MELEE_ATTACK);
                 riki.MoveToTargetToAttack(playerHero);
             }),
 
@@ -204,7 +204,7 @@ function onStop() {
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true
 
-    if (event.order_type === UnitOrder.ATTACK_TARGET && event.entindex_target) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET && event.entindex_target) {
         const target = EntIndexToHScript(event.entindex_target)
         const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top"))
         if (target === topOutpost && !canPlayerTakeOutpost) {
@@ -213,11 +213,11 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
         }
     }
 
-    if (event.order_type === UnitOrder.DROP_ITEM || event.order_type === UnitOrder.MOVE_ITEM) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_DROP_ITEM || event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_ITEM) {
         displayDotaErrorMessage(LocalizationKey.Error_Outpost_2)
         return false;
     }
-    if (event.order_type === UnitOrder.CAST_NO_TARGET && !allowUseItem) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET && !allowUseItem) {
         displayDotaErrorMessage(LocalizationKey.Error_Outpost_3)
         return false;
     }

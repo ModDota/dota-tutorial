@@ -107,43 +107,39 @@ function handleBlockades(state: FilledRequiredState) {
 function handleUnits(state: FilledRequiredState) {
     // Golems
     const golemPostCreate = (unit: CDOTA_BaseNPC, created: boolean) => {
-        const shouldGolemBeHidden = unit.GetAbsOrigin().__sub(Vector(0, 0, 0)).Length2D() < 100
+        const shouldGolemBeHidden = unit.GetAbsOrigin().__sub(defaultRequiredState.sunsFanLocation).Length2D() < 500
 
+        unit.SetTeam(DOTATeam_t.DOTA_TEAM_GOODGUYS);
         if (shouldGolemBeHidden) {
-            unit.SetTeam(DotaTeam.BADGUYS)
-            unit.AddNewModifier(undefined, undefined, "modifier_invisible", {})
             setUnitPacifist(unit, true);
-            return
         } else if (!created) {
-            if (unit.HasModifier("modifier_invisible")) unit.RemoveModifierByName("modifier_invisible")
             setUnitPacifist(unit, false);
-            unit.SetTeam(DotaTeam.GOODGUYS);
         }
     }
 
     // Requiring golem
     if (state.requireSlacksGolem) {
-        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DotaTeam.GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
+        createOrMoveUnit(CustomNpcKeys.SlacksMudGolem, DOTATeam_t.DOTA_TEAM_GOODGUYS, state.slacksLocation, state.heroLocation, golemPostCreate)
     } else {
         clearUnit(CustomNpcKeys.SlacksMudGolem)
     }
 
     if (state.requireSunsfanGolem) {
-        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DotaTeam.GOODGUYS, state.sunsFanLocation, state.heroLocation, golemPostCreate)
+        createOrMoveUnit(CustomNpcKeys.SunsFanMudGolem, DOTATeam_t.DOTA_TEAM_GOODGUYS, state.sunsFanLocation, state.heroLocation, golemPostCreate)
     } else {
         clearUnit(CustomNpcKeys.SunsFanMudGolem)
     }
 
     // Riki
     if (state.requireRiki) {
-        createOrMoveUnit(CustomNpcKeys.Riki, DotaTeam.BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {
+        createOrMoveUnit(CustomNpcKeys.Riki, DOTATeam_t.DOTA_TEAM_BADGUYS, state.rikiLocation, state.heroLocation, (riki, created) => {
             if (created) {
                 const rikiHero = riki as CDOTA_BaseNPC_Hero
                 rikiHero.SetAbilityPoints(3)
                 rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(0)!)
                 rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(2)!)
                 rikiHero.UpgradeAbility(rikiHero.GetAbilityByIndex(5)!)
-                rikiHero.SetAttackCapability(UnitAttackCapability.NO_ATTACK)
+                rikiHero.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_NO_ATTACK)
                 rikiHero.AddItemByName("item_lotus_orb")
                 rikiHero.AddItemByName("item_sange_and_yasha")
             }
@@ -165,7 +161,7 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
     freezePlayerHero(false)
 
     // Level the hero to the desired level. 1 experience per level as defined in GameMode.
-    hero.AddExperience(state.heroLevel - hero.GetLevel(), ModifyXpReason.UNSPECIFIED, false, false)
+    hero.AddExperience(state.heroLevel - hero.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, false)
 
     // Move the hero if not within tolerance
     if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
@@ -234,9 +230,9 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     // TODO: Skipping backwards combined with removeUnrequiredItems might have undesired consequences (keeping items from later sections).
 
     // Find out how many of each item currently in the inventory we have.
-    let numEmptyItemSlots = InventorySlot.NEUTRAL_SLOT - hero.GetNumItemsInInventory();
+    let numEmptyItemSlots = DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT - hero.GetNumItemsInInventory();
     let currentItems: Record<string, number> = {}
-    for (let i = 0; i <= InventorySlot.NEUTRAL_SLOT; i++) {
+    for (let i = 0; i <= DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT; i++) {
         const item = hero.GetItemInSlot(i)
         if (item) {
             const itemName = item.GetName()
@@ -273,7 +269,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
 
     // Then clear hero inventory if we don't have enough empty slots.
     if (numEmptyItemSlots < numAdditionalDesiredItems) {
-        for (let i = 0; i <= InventorySlot.NEUTRAL_SLOT; i++) {
+        for (let i = 0; i <= DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT; i++) {
             const item = hero.GetItemInSlot(i)
             if (item) {
                 item.RemoveSelf()
@@ -296,7 +292,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     let direTop = Entities.FindByClassnameNearest("npc_dota_tower", direTopTowerLocation, 200) as CDOTA_BaseNPC_Building
     if (state.topDireT1TowerStanding) {
         if (!direTop || !IsValidEntity(direTop) || !direTop.IsAlive()) {
-            direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT1Tower, direTopTowerLocation, false, undefined, undefined, DOTATeam_t.DOTA_TEAM_BADGUYS) as CDOTA_BaseNPC_Building
             direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
             direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
             direTop.RemoveModifierByName("modifier_invulnerable")
@@ -312,7 +308,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     let direTop2 = Entities.FindByClassnameNearest("npc_dota_tower", direTopTower2Location, 200) as CDOTA_BaseNPC_Building
     if (state.topDireT2TowerStanding) {
         if (!direTop2 || !IsValidEntity(direTop2) || !direTop2.IsAlive()) {
-            direTop = CreateUnitByName(CustomNpcKeys.DireTopT2Tower, direTopTower2Location, false, undefined, undefined, DotaTeam.BADGUYS) as CDOTA_BaseNPC_Building
+            direTop = CreateUnitByName(CustomNpcKeys.DireTopT2Tower, direTopTower2Location, false, undefined, undefined, DOTATeam_t.DOTA_TEAM_BADGUYS) as CDOTA_BaseNPC_Building
             direTop.AddNewModifier(undefined, undefined, "modifier_tower_truesight_aura", {})
             direTop.AddNewModifier(undefined, undefined, "modifier_tower_aura", {})
             direTop.RemoveModifierByName("modifier_invulnerable")
@@ -324,8 +320,8 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
             attacker: direTop2,
             victim: direTop2,
             damage: direTop2.GetMaxHealth(),
-            damage_type: DamageTypes.PURE,
-            damage_flags: DamageFlag.BYPASSES_INVULNERABILITY + DamageFlag.HPLOSS
+            damage_type: DAMAGE_TYPES.DAMAGE_TYPE_PURE,
+            damage_flags: DOTADamageFlag_t.DOTA_DAMAGE_FLAG_BYPASSES_INVULNERABILITY + DOTADamageFlag_t.DOTA_DAMAGE_FLAG_HPLOSS
         })
 
         UTIL_Remove(direTop2)
@@ -334,7 +330,7 @@ function handleRequiredItems(state: FilledRequiredState, hero: CDOTA_BaseNPC_Her
     const topOutpost = getOrError(Entities.FindByName(undefined, "npc_dota_watch_tower_top")) as CDOTA_BaseNPC
     if (topOutpost.GetTeamNumber() !== state.outpostTeam) {
         topOutpost.SetTeam(state.outpostTeam)
-        if (state.outpostTeam === DotaTeam.BADGUYS) {
+        if (state.outpostTeam === DOTATeam_t.DOTA_TEAM_BADGUYS) {
             if (topOutpost.HasModifier("modifier_invulnerable")) {
                 topOutpost.RemoveModifierByName("modifier_invulnerable")
             }
@@ -352,7 +348,7 @@ function handleRoshan(state: FilledRequiredState) {
 
     if (state.requireRoshan) {
         if (!unitIsValidAndAlive(roshan)) {
-            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DotaTeam.NEUTRALS)
+            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_NEUTRALS)
             roshan.AddItemByName(itemAegis)
         }
 
@@ -458,19 +454,19 @@ function createBountyRunes() {
     const context = GameRules.Addon.context
 
     if (!IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
-        context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, RuneType.BOUNTY)
+        context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
 
     if (!IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
-        context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, RuneType.BOUNTY)
+        context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
 
     if (!IsValidEntity(context[CustomEntityKeys.DireBotBountyRune])) {
-        context[CustomEntityKeys.DireBotBountyRune] = CreateRune(runeSpawnsLocations.direBotBountyPos, RuneType.BOUNTY)
+        context[CustomEntityKeys.DireBotBountyRune] = CreateRune(runeSpawnsLocations.direBotBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
 
     if (!IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
-        context[CustomEntityKeys.DireAncientsBountyRune] = CreateRune(runeSpawnsLocations.direAncientsBountyPos, RuneType.BOUNTY)
+        context[CustomEntityKeys.DireAncientsBountyRune] = CreateRune(runeSpawnsLocations.direAncientsBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
 }
 

@@ -7,7 +7,7 @@ export class modifier_no_health_bar extends BaseModifier {
     IsDebuff() { return false }
     IsPurgable() { return false }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
-        return { [ModifierState.NO_HEALTH_BAR]: true }
+    CheckState(): Partial<Record<modifierstate, boolean>> {
+        return { [modifierstate.MODIFIER_STATE_NO_HEALTH_BAR]: true }
     }
 }

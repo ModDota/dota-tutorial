@@ -234,7 +234,7 @@ export const sectionShopUI = new tut.FunctionalSection(
 function orderFilter(event: ExecuteOrderFilterEvent): boolean {
     if (event.issuer_player_id_const !== findRealPlayerID()) return true
 
-    if (event.order_type == UnitOrder.PURCHASE_ITEM) {
+    if (event.order_type == dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
         if (waitingForPlayerToPurchaseTango) {
             // Only allows buying tango in this phase
             const boughtTango = event.shop_item_name === "item_tango"
@@ -253,7 +253,10 @@ function orderFilter(event: ExecuteOrderFilterEvent): boolean {
 
 
 function checkPlayerHeroTryingToEscape(startPos: Vector, endPos: Vector): boolean {
-    const heroesTryingToEscape = FindUnitsInLine(DotaTeam.GOODGUYS, startPos, endPos, undefined, 180, UnitTargetTeam.FRIENDLY, UnitTargetType.HERO, UnitTargetFlags.NONE)
+    const heroesTryingToEscape = FindUnitsInLine(DOTATeam_t.DOTA_TEAM_GOODGUYS, startPos, endPos, undefined, 180,
+        DOTA_UNIT_TARGET_TEAM.DOTA_UNIT_TARGET_TEAM_FRIENDLY,
+        DOTA_UNIT_TARGET_TYPE.DOTA_UNIT_TARGET_HERO,
+        DOTA_UNIT_TARGET_FLAGS.DOTA_UNIT_TARGET_FLAG_NONE)
     return heroesTryingToEscape.length > 0
 }
 

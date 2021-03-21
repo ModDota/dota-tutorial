@@ -87,9 +87,9 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Golems
     requireSunsfanGolem: false,
-    sunsFanLocation: Vector(0, 0, 0),
+    sunsFanLocation: Vector(-130, -7000, 128),
     requireSlacksGolem: false,
-    slacksLocation: Vector(0, 0, 0),
+    slacksLocation: Vector(-130, -7000, 128),
 
     // Elder Dragon Form
     removeElderDragonForm: true,
@@ -99,7 +99,7 @@ export const defaultRequiredState: FilledRequiredState = {
     topDireT2TowerStanding: true,
 
     // Outpost
-    outpostTeam: DotaTeam.BADGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_BADGUYS,
 
     // Riki
     requireRiki: false,

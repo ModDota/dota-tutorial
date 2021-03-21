@@ -125,8 +125,8 @@ const onStart = (complete: () => void) => {
                         tg.fork([
                             tg.panCameraExponential(_ => getPlayerCameraLocation(), Vector(6350, -3550, 128), 2),
                             tg.seq([
-                                tg.spawnUnit(CustomNpcKeys.CrystalMaiden, Vector(6200, -3300, 128), DotaTeam.GOODGUYS, CustomNpcKeys.CrystalMaiden, true),
-                                tg.spawnUnit(CustomNpcKeys.DireMeleeMegaCreep, _ => Vector(6500, -3300, 128), DotaTeam.BADGUYS, CustomNpcKeys.DireMeleeMegaCreep, true),
+                                tg.spawnUnit(CustomNpcKeys.CrystalMaiden, Vector(6200, -3300, 128), DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.CrystalMaiden, true),
+                                tg.spawnUnit(CustomNpcKeys.DireMeleeMegaCreep, _ => Vector(6500, -3300, 128), DOTATeam_t.DOTA_TEAM_BADGUYS, CustomNpcKeys.DireMeleeMegaCreep, true),
                                 tg.immediate(ctx => {
                                     const creep = ctx[CustomNpcKeys.DireMeleeMegaCreep] as CDOTA_BaseNPC
                                     const cm = ctx[CustomNpcKeys.CrystalMaiden] as CDOTA_BaseNPC
@@ -145,8 +145,8 @@ const onStart = (complete: () => void) => {
                                 tg.audioDialog(LocalizationKey.Script_2_Opening_9_1, LocalizationKey.Script_2_Opening_9_1, context => context[CustomNpcKeys.SlacksMudGolem]),
                             ]),
                             tg.seq([
-                                tg.spawnUnit(CustomNpcKeys.Lina, Vector(6200, -3800, 128), DotaTeam.GOODGUYS, CustomNpcKeys.Lina, true),
-                                tg.spawnUnit(CustomNpcKeys.DireMeleeCreep, _ => Vector(6500, -3800, 128), DotaTeam.BADGUYS, CustomNpcKeys.DireMeleeCreep, true),
+                                tg.spawnUnit(CustomNpcKeys.Lina, Vector(6200, -3800, 128), DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Lina, true),
+                                tg.spawnUnit(CustomNpcKeys.DireMeleeCreep, _ => Vector(6500, -3800, 128), DOTATeam_t.DOTA_TEAM_BADGUYS, CustomNpcKeys.DireMeleeCreep, true),
                                 tg.immediate(ctx => {
                                     const creep = ctx[CustomNpcKeys.DireMeleeCreep] as CDOTA_BaseNPC
                                     const lina = ctx[CustomNpcKeys.Lina] as CDOTA_BaseNPC
@@ -184,7 +184,7 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Opening_10, LocalizationKey.Script_2_Opening_10, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_2_Opening_13, LocalizationKey.Script_2_Opening_13, context => context[CustomNpcKeys.SlacksMudGolem]),
 
-            tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DotaTeam.GOODGUYS, undefined, true))),
+            tg.fork(_ => radiantCreepsNames.map(unit => tg.spawnUnit(unit, radiantCreepsSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, undefined, true))),
             tg.immediate(context => {
                 // Group radiant creeps
                 const creeps = Entities.FindAllByClassname("npc_dota_creature") as CDOTA_BaseNPC[];

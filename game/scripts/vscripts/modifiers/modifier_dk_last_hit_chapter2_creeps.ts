@@ -38,11 +38,13 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
         this.SetStackCount(0);
     }
 
-    DeclareFunctions(): ModifierFunction[] {
-        return [ModifierFunction.ON_DEATH,
-        ModifierFunction.MANA_REGEN_CONSTANT,
-        ModifierFunction.ON_ATTACK_LANDED,
-        ModifierFunction.PREATTACK_BONUS_DAMAGE]
+    DeclareFunctions(): modifierfunction[] {
+        return [
+            modifierfunction.MODIFIER_EVENT_ON_DEATH,
+            modifierfunction.MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
+            modifierfunction.MODIFIER_EVENT_ON_ATTACK_LANDED,
+            modifierfunction.MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
+        ]
     }
 
     OnAttackLanded(event: ModifierAttackEvent): void {
@@ -60,7 +62,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
 
         Timers.CreateTimer(FrameTime(), () => {
             if (event.target.IsAlive() && event.target.GetHealthPercent() < 8) {
-                SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_EARLY, event.target, 500, undefined)
+                SendOverheadEventMessage(undefined, DOTA_OVERHEAD_ALERT.OVERHEAD_ALERT_LAST_HIT_EARLY, event.target, 500, undefined)
             }
         })
     }
@@ -93,8 +95,8 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
         }
     }
 
-    CheckState(): Partial<Record<ModifierState, boolean>> {
-        return { [ModifierState.LOW_ATTACK_PRIORITY]: true }
+    CheckState(): Partial<Record<modifierstate, boolean>> {
+        return { [modifierstate.MODIFIER_STATE_LOW_ATTACK_PRIORITY]: true }
     }
 
     LastHit(event: ModifierAttackEvent) {
@@ -115,7 +117,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
                             dg.playAudio(chosenLocalizaionKey, chosenLocalizaionKey, GameRules.Addon.context[CustomNpcKeys.Sheepsticked])
                         }
 
-                        SendOverheadEventMessage(undefined, OverheadAlert.LAST_HIT_MISS, event.unit, 0, undefined)
+                        SendOverheadEventMessage(undefined, DOTA_OVERHEAD_ALERT.OVERHEAD_ALERT_LAST_HIT_MISS, event.unit, 0, undefined)
                     }
                 }
             }
@@ -143,7 +145,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             }
         }
 
-        const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
+        const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment_t.PATTACH_OVERHEAD_FOLLOW, event.attacker)
         ParticleManager.SetParticleControl(fxIndex, 0, (event.attacker.GetAbsOrigin().__add(Vector(0, 150, 0))))
         ParticleManager.SetParticleControl(fxIndex, 1, Vector(this.greatMsgIndex, this.msgSize, 0))
         ParticleManager.SetParticleControl(fxIndex, 15, Vector(220, 170, 30)) // color
@@ -165,7 +167,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
             if (event.unit.GetTeamNumber() == this.GetParent().GetTeamNumber()) return;
         }
 
-        const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
+        const fxIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment_t.PATTACH_OVERHEAD_FOLLOW, event.attacker)
         ParticleManager.SetParticleControl(fxIndex, 0, (event.attacker.GetAbsOrigin()))
         ParticleManager.SetParticleControl(fxIndex, 1, Vector(this.greatMsgIndex, this.msgSize, 0))
         ParticleManager.SetParticleControl(fxIndex, 15, Vector(220, 170, 30)) // color
@@ -187,7 +189,7 @@ export class modifier_dk_last_hit_chapter2_creeps extends BaseModifier {
         }
 
 
-        const nFXIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment.OVERHEAD_FOLLOW, event.attacker)
+        const nFXIndex = ParticleManager.CreateParticle(this.lastHitMessageParticleName, ParticleAttachment_t.PATTACH_OVERHEAD_FOLLOW, event.attacker)
         ParticleManager.SetParticleControl(nFXIndex, 0, (event.attacker.GetAbsOrigin()))
         ParticleManager.SetParticleControl(nFXIndex, 1, Vector(1, this.msgSize, 0))
         ParticleManager.SetParticleControl(nFXIndex, 15, Vector(220, 170, 30)) // color

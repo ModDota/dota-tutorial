@@ -31,7 +31,7 @@ const requiredState: RequiredState = {
     removeElderDragonForm: false,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
-    outpostTeam: DotaTeam.GOODGUYS,
+    outpostTeam: DOTATeam_t.DOTA_TEAM_GOODGUYS,
 }
 
 const radiantFountainLocation = Vector(-6850, -6500, 384)
@@ -102,8 +102,8 @@ function onStart(complete: () => void) {
             })),
             tg.immediate(ctx => shared.getLivingHeroes(ctx).forEach(hero => {
                 ExecuteOrderFromTable({
-                    OrderType: UnitOrder.ATTACK_MOVE,
-                    Position: (hero.GetTeam() === DotaTeam.GOODGUYS ? shared.enemyLocation : shared.outsidePitLocation).__add(RandomVector(300)),
+                    OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_MOVE,
+                    Position: (hero.GetTeam() === DOTATeam_t.DOTA_TEAM_GOODGUYS ? shared.enemyLocation : shared.outsidePitLocation).__add(RandomVector(300)),
                     UnitIndex: hero.entindex(),
                 })
             })),
@@ -120,7 +120,7 @@ function onStart(complete: () => void) {
                 ]),
 
                 // Friendlies teamfight logic
-                useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", UnitOrder.CAST_POSITION),
+                useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION),
                 tg.seq([
                     tg.fork(shared.friendlyHeroesInfo.map(friendlyHeroInfo => {
                         return tg.completeOnCheck(ctx => ctx[friendlyHeroInfo.name].IsAttacking(), 1)
@@ -128,41 +128,41 @@ function onStart(complete: () => void) {
                     tg.forkAny([
                         tg.completeOnCheck(ctx => shared.getLivingEnemyHeroes(ctx).length === 0, 1),
                         tg.seq([
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", UnitOrder.CAST_NO_TARGET),
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", UnitOrder.CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
                             tg.completeOnCheck(ctx => !ctx[CustomNpcKeys.Windrunner].IsStunned(), 1),
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", UnitOrder.CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                             tg.wait(2),
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_voodoo", UnitOrder.CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_voodoo", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                         ]),
                     ])
                 ]),
 
                 // Enemies teamfight logic
-                useAbilityStep(ctx => ctx[CustomNpcKeys.Pudge], _ => playerHero.GetAbsOrigin(), "pudge_meat_hook", UnitOrder.CAST_POSITION),
+                useAbilityStep(ctx => ctx[CustomNpcKeys.Pudge], _ => playerHero.GetAbsOrigin(), "pudge_meat_hook", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION),
                 tg.seq([
                     tg.forkAny([
                         tg.completeOnCheck(ctx => shared.getLivingEnemyHeroes(ctx).length === 0, 1),
                         tg.fork([
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Wisp], "wisp_overcharge", UnitOrder.CAST_NO_TARGET),
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Luna], "wisp_tether", UnitOrder.CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Wisp], "wisp_overcharge", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Wisp], ctx => ctx[CustomNpcKeys.Luna], "wisp_tether", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                             tg.seq([
-                                useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_ice_path", UnitOrder.CAST_POSITION),
+                                useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_ice_path", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION),
                                 tg.wait(1),
-                                useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_macropyre", UnitOrder.CAST_POSITION),
+                                useAbilityStep(ctx => ctx[CustomNpcKeys.Jakiro], ctx => ctx[CustomNpcKeys.Tidehunter], "jakiro_macropyre", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION),
                                 tg.wait(1),
-                                useAbilityStep(ctx => ctx[CustomNpcKeys.Luna], ctx => ctx[CustomNpcKeys.Luna], "luna_eclipse", UnitOrder.CAST_NO_TARGET),
+                                useAbilityStep(ctx => ctx[CustomNpcKeys.Luna], ctx => ctx[CustomNpcKeys.Luna], "luna_eclipse", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
                             ]),
                             tg.wait(1),
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], ctx => ctx[CustomNpcKeys.Tidehunter], "windrunner_shackleshot", UnitOrder.CAST_TARGET),
-                            useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], _ => playerHero, "windrunner_focusfire", UnitOrder.CAST_TARGET)
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], ctx => ctx[CustomNpcKeys.Tidehunter], "windrunner_shackleshot", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.Windrunner], _ => playerHero, "windrunner_focusfire", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET)
                         ]),
                     ])
                 ])
             ]),
 
             // Play win dialog
-            tg.immediate(ctx => shared.getLivingFriendlyHeroes(ctx).forEach(hero => hero.StartGesture(GameActivity.DOTA_VICTORY))),
+            tg.immediate(ctx => shared.getLivingFriendlyHeroes(ctx).forEach(hero => hero.StartGesture(GameActivity_t.ACT_DOTA_VICTORY))),
             tg.audioDialog(LocalizationKey.Script_5_5v5_5, LocalizationKey.Script_5_5v5_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             // Add tp scroll
@@ -228,7 +228,7 @@ function onStop() {
 }
 
 function orderFilter(event: ExecuteOrderFilterEvent) {
-    if (event.order_type === UnitOrder.CAST_POSITION) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION) {
         // Prevent the player from using their tp.
         const ability = getOrError(EntIndexToHScript(event.entindex_ability) as CDOTABaseAbility | undefined, "Could not get ability")
         if (ability.GetAbilityName() === "item_tpscroll") {
@@ -339,7 +339,7 @@ const useAbilityStep = (unit: tg.StepArgument<CDOTA_BaseNPC>, target: tg.StepArg
         }
 
         if (typeof actualTarget === typeof CDOTA_BaseNPC) {
-            if (orderType === UnitOrder.CAST_TARGET)
+            if (orderType === dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET)
                 order.TargetIndex = (actualTarget as CDOTA_BaseNPC).GetEntityIndex()
             else
                 order.Position = (actualTarget as CDOTA_BaseNPC).GetAbsOrigin()
