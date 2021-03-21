@@ -21,17 +21,7 @@ const requiredState: RequiredState = {
     heroLevel: 25,
     heroAbilityMinLevels: [4, 4, 4, 3],
     heroItems: Object.fromEntries([...shared.preRoshKillItems, shared.itemAegis, shared.itemDaedalus, "item_mysterious_hat"].map(itemName => [itemName, 1])),
-    blockades: [
-        shared.chapter5Blockades.direJungleLowgroundRiver,
-        shared.chapter5Blockades.topLaneRiver,
-        shared.chapter5Blockades.radiantSecretShopRiver,
-        shared.chapter5Blockades.direOutpostRiver,
-        shared.chapter5Blockades.radiantAncientsRiver,
-        shared.chapter5Blockades.radiantMidTopRiver,
-        shared.chapter5Blockades.direMidTopRiver,
-        shared.chapter5Blockades.midRiverTopSide,
-        shared.chapter5Blockades.roshan,
-    ],
+    blockades: Object.values(shared.chapter5Blockades).filter(blockade => blockade !== shared.chapter5Blockades.roshan),
     removeElderDragonForm: false,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -115,7 +105,6 @@ function onStart(complete: () => void) {
                 ]),
 
                 // Friendlies teamfight logic
-                useAbilityStep(ctx => ctx[CustomNpcKeys.Mirana], ctx => ctx[CustomNpcKeys.Pudge], "mirana_arrow", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_POSITION),
                 tg.seq([
                     tg.fork(shared.friendlyHeroesInfo.map(friendlyHeroInfo => {
                         return tg.completeOnCheck(ctx => ctx[friendlyHeroInfo.name].IsAttacking(), 1)
@@ -125,6 +114,7 @@ function onStart(complete: () => void) {
                         tg.seq([
                             useAbilityStep(ctx => ctx[CustomNpcKeys.Juggernaut], ctx => ctx[CustomNpcKeys.Juggernaut], "juggernaut_blade_fury", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
                             useAbilityStep(ctx => ctx[CustomNpcKeys.Tidehunter], ctx => ctx[CustomNpcKeys.Tidehunter], "tidehunter_ravage", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_NO_TARGET),
+                            useAbilityStep(ctx => ctx[CustomNpcKeys.ShadowShaman], ctx => ctx[CustomNpcKeys.Luna], "shadow_shaman_shackles", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                             tg.completeOnCheck(ctx => !ctx[CustomNpcKeys.Windrunner].IsStunned(), 1),
                             useAbilityStep(ctx => ctx[CustomNpcKeys.Lion], ctx => ctx[CustomNpcKeys.Windrunner], "lion_impale", dotaunitorder_t.DOTA_UNIT_ORDER_CAST_TARGET),
                             tg.wait(2),
@@ -159,9 +149,10 @@ function onStart(complete: () => void) {
             // Play win dialog
             tg.immediate(ctx => shared.getLivingFriendlyHeroes(ctx).forEach(hero => hero.StartGesture(GameActivity_t.ACT_DOTA_VICTORY))),
             tg.audioDialog(LocalizationKey.Script_5_5v5_5, LocalizationKey.Script_5_5v5_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-
-            // Add tp scroll
+            
+            // Add tp scroll and highlight it
             tg.immediate(_ => playerHero.AddItemByName("item_tpscroll").EndCooldown()),
+            tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
             tg.audioDialog(LocalizationKey.Script_5_5v5_6, LocalizationKey.Script_5_5v5_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_7, LocalizationKey.Script_5_5v5_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.forkAny([
@@ -172,7 +163,6 @@ function onStart(complete: () => void) {
                 tg.seq([
                     // Wait for player to try to use the tp
                     tg.immediate(_ => goalUseTp.start()),
-                    tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
                     tg.immediate(_ => waitingForPlayerTp = true),
                     tg.completeOnCheck(_ => playerUsedTp, 0.1),
                 ])

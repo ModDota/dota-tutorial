@@ -34,7 +34,7 @@ export type HeroInfo = {
 export const friendlyHeroesInfo: HeroInfo[] = [
     { name: CustomNpcKeys.Tidehunter },
     { name: CustomNpcKeys.Juggernaut },
-    { name: CustomNpcKeys.Mirana },
+    { name: CustomNpcKeys.ShadowShaman },
     { name: CustomNpcKeys.Lion },
 ]
 

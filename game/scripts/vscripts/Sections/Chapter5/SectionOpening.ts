@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, DirectionToPosition, displayDotaErrorMessage, Distance2D, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
+import { DirectionToPosition, displayDotaErrorMessage, Distance2D, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
 import * as shared from "./Shared";
 import { HeroInfo } from "./Shared";
 
@@ -17,17 +17,7 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 800,
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    blockades: [
-        shared.chapter5Blockades.direJungleLowgroundRiver,
-        shared.chapter5Blockades.topLaneRiver,
-        shared.chapter5Blockades.radiantSecretShopRiver,
-        shared.chapter5Blockades.direOutpostRiver,
-        shared.chapter5Blockades.roshan,
-        shared.chapter5Blockades.radiantAncientsRiver,
-        shared.chapter5Blockades.radiantMidTopRiver,
-        shared.chapter5Blockades.direMidTopRiver,
-        shared.chapter5Blockades.midRiverTopSide,
-    ],
+    blockades: Object.values(shared.chapter5Blockades),
     requireBountyRunes: true,
     requireRoshan: true,
     roshanHitsLikeATruck: true,
@@ -38,12 +28,12 @@ const requiredState: RequiredState = {
 };
 
 const powerRuneRangersInfo: HeroInfo[] = [
-    { name: CustomNpcKeys.Juggernaut },
-    { name: CustomNpcKeys.Mirana },
-    { name: CustomNpcKeys.MiranaIllusionOne },
-    { name: CustomNpcKeys.MiranaIllusionTwo },
-    { name: CustomNpcKeys.CrystalMaiden },
-    { name: CustomNpcKeys.Lion },
+    { name: CustomNpcKeys.Ursa },
+    { name: CustomNpcKeys.EmberSpirit },
+    { name: CustomNpcKeys.EmberIllusionOne },
+    { name: CustomNpcKeys.EmberIllusionTwo },
+    { name: CustomNpcKeys.Grimstroke },
+    { name: CustomNpcKeys.Undying },
     { name: CustomNpcKeys.Zuus },
     { name: CustomNpcKeys.StormSpirit },
 ];
@@ -150,67 +140,67 @@ function onStart(complete: () => void) {
             }),
 
             // DD power rune ranger sequence
-            tg.spawnUnit(CustomNpcKeys.Juggernaut, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Juggernaut, true),
-            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Juggernaut]),
+            tg.spawnUnit(CustomNpcKeys.Ursa, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Ursa, true),
+            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Ursa]),
             tg.immediate(ctx => {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, DOTA_RUNES.DOTA_RUNE_DOUBLEDAMAGE)
             }),
             tg.spawnUnit(CustomNpcKeys.Sniper, rangerLineStart, DOTATeam_t.DOTA_TEAM_BADGUYS, CustomNpcKeys.Sniper, true),
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], true)),
-            tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_DOUBLEDAMAGE, ctx[CustomNpcKeys.Juggernaut])),
-            tg.audioDialog(LocalizationKey.Script_5_Opening_8, LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Juggernaut]),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.Ursa], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_DOUBLEDAMAGE, ctx[CustomNpcKeys.Ursa])),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_8, LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Ursa]),
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], false)),
             tg.completeOnCheck((ctx) => !unitIsValidAndAlive(ctx[CustomNpcKeys.Sniper]), 1),
-            tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], rangerLineStart),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.Juggernaut], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.Ursa], rangerLineStart),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Ursa], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.wait(1),
 
             // Illusions power rune ranger sequence
-            tg.spawnUnit(CustomNpcKeys.Mirana, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Mirana, true),
-            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Mirana]),
+            tg.spawnUnit(CustomNpcKeys.EmberSpirit, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.EmberSpirit, true),
+            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.EmberSpirit]),
             tg.immediate(ctx => {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, DOTA_RUNES.DOTA_RUNE_ILLUSION)
             }),
-            tg.moveUnit(ctx => ctx[CustomNpcKeys.Mirana], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_ILLUSION, ctx[CustomNpcKeys.Mirana])),
-            tg.audioDialog(LocalizationKey.Script_5_Opening_9, LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.Mirana]),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.EmberSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_ILLUSION, ctx[CustomNpcKeys.EmberSpirit])),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_9, LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.EmberSpirit]),
             tg.immediate((ctx) => {
-                const miranaEntities = Entities.FindAllByNameWithin(CustomNpcKeys.Mirana, ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), 400) as CDOTA_BaseNPC_Hero[]
-                for (const miranaEntity of miranaEntities) {
-                    if (miranaEntity.IsIllusion()) {
-                        if (!ctx[CustomNpcKeys.MiranaIllusionOne])
-                            ctx[CustomNpcKeys.MiranaIllusionOne] = miranaEntity
+                const emberEntities = Entities.FindAllByNameWithin(CustomNpcKeys.EmberSpirit, ctx[CustomNpcKeys.EmberSpirit].GetAbsOrigin(), 400) as CDOTA_BaseNPC_Hero[]
+                for (const emberEntity of emberEntities) {
+                    if (emberEntity.IsIllusion()) {
+                        if (!ctx[CustomNpcKeys.EmberIllusionOne])
+                            ctx[CustomNpcKeys.EmberIllusionOne] = emberEntity
                         else
-                            ctx[CustomNpcKeys.MiranaIllusionTwo] = miranaEntity
+                            ctx[CustomNpcKeys.EmberIllusionTwo] = emberEntity
                     }
                 }
             }),
             tg.fork([
-                tg.moveUnit(ctx => ctx[CustomNpcKeys.Mirana], rangerLineStart.__add(rangerFirstLineDirection * 300 as Vector)),
-                tg.moveUnit(ctx => ctx[CustomNpcKeys.MiranaIllusionOne], rangerLineStart.__add(rangerFirstLineDirection * 250 as Vector)),
-                tg.moveUnit(ctx => ctx[CustomNpcKeys.MiranaIllusionTwo], rangerLineStart.__add(rangerFirstLineDirection * 350 as Vector)),
+                tg.moveUnit(ctx => ctx[CustomNpcKeys.EmberSpirit], rangerLineStart.__add(rangerFirstLineDirection * 300 as Vector)),
+                tg.moveUnit(ctx => ctx[CustomNpcKeys.EmberIllusionOne], rangerLineStart.__add(rangerFirstLineDirection * 250 as Vector)),
+                tg.moveUnit(ctx => ctx[CustomNpcKeys.EmberIllusionTwo], rangerLineStart.__add(rangerFirstLineDirection * 350 as Vector)),
             ]),
             tg.fork([
-                tg.faceTowards(ctx => ctx[CustomNpcKeys.Mirana], shared.runeSpawnsLocations.topPowerUpRunePos),
-                tg.faceTowards(ctx => ctx[CustomNpcKeys.MiranaIllusionOne], shared.runeSpawnsLocations.topPowerUpRunePos),
-                tg.faceTowards(ctx => ctx[CustomNpcKeys.MiranaIllusionTwo], shared.runeSpawnsLocations.topPowerUpRunePos),
+                tg.faceTowards(ctx => ctx[CustomNpcKeys.EmberSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
+                tg.faceTowards(ctx => ctx[CustomNpcKeys.EmberIllusionOne], shared.runeSpawnsLocations.topPowerUpRunePos),
+                tg.faceTowards(ctx => ctx[CustomNpcKeys.EmberIllusionTwo], shared.runeSpawnsLocations.topPowerUpRunePos),
             ]),
 
             // Invisibility power rune ranger sequence
-            tg.spawnUnit(CustomNpcKeys.CrystalMaiden, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.CrystalMaiden, true),
-            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.CrystalMaiden]),
+            tg.spawnUnit(CustomNpcKeys.Grimstroke, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Grimstroke, true),
+            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Grimstroke]),
             tg.immediate(ctx => {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, DOTA_RUNES.DOTA_RUNE_INVISIBILITY)
             }),
-            tg.moveUnit(ctx => ctx[CustomNpcKeys.CrystalMaiden], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_INVISIBILITY, ctx[CustomNpcKeys.CrystalMaiden])),
-            tg.audioDialog(LocalizationKey.Script_5_Opening_10, LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.CrystalMaiden]),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.Grimstroke], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_INVISIBILITY, ctx[CustomNpcKeys.Grimstroke])),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_10, LocalizationKey.Script_5_Opening_10, ctx => ctx[CustomNpcKeys.Grimstroke]),
             tg.immediate((ctx) => {
-                ctx[CustomNpcKeys.CrystalMaiden].AddNewModifier(ctx[CustomNpcKeys.CrystalMaiden], undefined, "modifier_rune_invis", { duration: runesDuration })
+                ctx[CustomNpcKeys.Grimstroke].AddNewModifier(ctx[CustomNpcKeys.Grimstroke], undefined, "modifier_rune_invis", { duration: runesDuration })
             }),
-            tg.moveUnit(ctx => ctx[CustomNpcKeys.CrystalMaiden], rangerLineStart.__add(rangerFirstLineDirection * 600 as Vector)),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.CrystalMaiden], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.Grimstroke], rangerLineStart.__add(rangerFirstLineDirection * 600 as Vector)),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Grimstroke], shared.runeSpawnsLocations.topPowerUpRunePos),
 
             // Arcane power rune ranger sequence
             tg.spawnUnit(CustomNpcKeys.Zuus, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Zuus, true),
@@ -239,26 +229,26 @@ function onStart(complete: () => void) {
             tg.wait(1),
 
             // Haste power rune ranger sequence
-            tg.spawnUnit(CustomNpcKeys.Lion, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Lion, true),
-            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Lion]),
+            tg.spawnUnit(CustomNpcKeys.Undying, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Undying, true),
+            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Undying]),
             tg.immediate(ctx => {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, DOTA_RUNES.DOTA_RUNE_HASTE)
             }),
-            tg.moveUnit(ctx => ctx[CustomNpcKeys.Lion], shared.runeSpawnsLocations.topPowerUpRunePos),
-            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_HASTE, ctx[CustomNpcKeys.Lion])),
+            tg.moveUnit(ctx => ctx[CustomNpcKeys.Undying], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_HASTE, ctx[CustomNpcKeys.Undying])),
             tg.fork([
-                tg.audioDialog(LocalizationKey.Script_5_Opening_12, LocalizationKey.Script_5_Opening_12, ctx => ctx[CustomNpcKeys.Lion]),
+                tg.audioDialog(LocalizationKey.Script_5_Opening_12, LocalizationKey.Script_5_Opening_12, ctx => ctx[CustomNpcKeys.Undying]),
                 tg.immediate((ctx) => {
-                    ctx[CustomNpcKeys.Lion].AddNewModifier(ctx[CustomNpcKeys.Lion], undefined, "modifier_rune_haste", { duration: runesDuration })
+                    ctx[CustomNpcKeys.Undying].AddNewModifier(ctx[CustomNpcKeys.Undying], undefined, "modifier_rune_haste", { duration: runesDuration })
                 }),
-                tg.moveUnitSequence(ctx => ctx[CustomNpcKeys.Lion], (ctx) => {
+                tg.moveUnitSequence(ctx => ctx[CustomNpcKeys.Undying], (ctx) => {
                     return [
-                        ...createLionMoveSequence(ctx, playerHero),
+                        ...createUndyingMoveSequence(ctx, playerHero),
                         rangerMiddlePoint.__add(rangerSecondLineDirection * 600 as Vector)
                     ]
                 }),
             ]),
-            tg.faceTowards(ctx => ctx[CustomNpcKeys.Lion], shared.runeSpawnsLocations.topPowerUpRunePos),
+            tg.faceTowards(ctx => ctx[CustomNpcKeys.Undying], shared.runeSpawnsLocations.topPowerUpRunePos),
 
             // Regen power rune ranger sequence
             tg.spawnUnit(CustomNpcKeys.StormSpirit, powerRangerSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.StormSpirit, true),
@@ -276,7 +266,6 @@ function onStart(complete: () => void) {
             tg.moveUnit(ctx => ctx[CustomNpcKeys.StormSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(DOTA_RUNES.DOTA_RUNE_REGENERATION, ctx[CustomNpcKeys.StormSpirit])),
             tg.audioDialog(LocalizationKey.Script_5_Opening_14, LocalizationKey.Script_5_Opening_14, ctx => ctx[CustomNpcKeys.StormSpirit]),
-            tg.wait(2),
             tg.immediate((ctx) => {
                 const hero = ctx[CustomNpcKeys.StormSpirit] as CDOTA_BaseNPC_Hero
                 if (hero) {
@@ -292,8 +281,8 @@ function onStart(complete: () => void) {
             tg.faceTowards(ctx => ctx[CustomNpcKeys.StormSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
 
             // Start Roshan sequence
-            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.CrystalMaiden]),
-            tg.audioDialog(LocalizationKey.Script_5_Opening_15, LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.CrystalMaiden]),
+            tg.setCameraTarget(ctx => ctx[CustomNpcKeys.Grimstroke]),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_15, LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.Grimstroke]),
             tg.immediate(_ => {
                 goalWatchRangers.complete()
                 shared.chapter5Blockades.roshan.destroy()
@@ -308,7 +297,7 @@ function onStart(complete: () => void) {
             ]),
             tg.immediate((ctx) => {
                 setUnitPacifist(roshan, false)
-                roshan.MoveToPositionAggressive(ctx[CustomNpcKeys.Juggernaut].GetAbsOrigin())
+                roshan.MoveToPositionAggressive(ctx[CustomNpcKeys.Ursa].GetAbsOrigin())
             }),
             tg.fork(powerRuneRangersInfo.map((powerRuneRanger) => {
                 return tg.immediate((ctx) => {
@@ -377,8 +366,8 @@ export const sectionOpening = new tut.FunctionalSection(
     chapterFiveOpeningOrderFilter
 );
 
-const createLionMoveSequence = (ctx: tg.TutorialContext, playerHero: CDOTA_BaseNPC_Hero) => {
-    let lionMovePoints: Vector[] = []
+const createUndyingMoveSequence = (ctx: tg.TutorialContext, playerHero: CDOTA_BaseNPC_Hero) => {
+    let undyingMovePoints: Vector[] = []
 
     const circlePointsConfig: CirclePointsConfig = {
         clockwise: true,
@@ -386,22 +375,22 @@ const createLionMoveSequence = (ctx: tg.TutorialContext, playerHero: CDOTA_BaseN
         startLeft: false
     }
 
-    lionMovePoints = lionMovePoints.concat(getPointsAroundCenter(playerHero.GetAbsOrigin(), circlePointsConfig))
+    undyingMovePoints = undyingMovePoints.concat(getPointsAroundCenter(playerHero.GetAbsOrigin(), circlePointsConfig))
 
-    lionMovePoints = lionMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.Juggernaut].GetAbsOrigin(), circlePointsConfig))
+    undyingMovePoints = undyingMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.Ursa].GetAbsOrigin(), circlePointsConfig))
 
     circlePointsConfig.startLeft = true
     circlePointsConfig.halfCircle = true
-    lionMovePoints = lionMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), circlePointsConfig))
+    undyingMovePoints = undyingMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.EmberSpirit].GetAbsOrigin(), circlePointsConfig))
 
     circlePointsConfig.clockwise = false
-    lionMovePoints = lionMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.CrystalMaiden].GetAbsOrigin(), circlePointsConfig))
+    undyingMovePoints = undyingMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.Grimstroke].GetAbsOrigin(), circlePointsConfig))
 
     circlePointsConfig.halfCircle = false
     circlePointsConfig.startLeft = false
-    lionMovePoints = lionMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.Zuus].GetAbsOrigin(), circlePointsConfig))
+    undyingMovePoints = undyingMovePoints.concat(getPointsAroundCenter(ctx[CustomNpcKeys.Zuus].GetAbsOrigin(), circlePointsConfig))
 
-    return lionMovePoints
+    return undyingMovePoints
 }
 
 function getPointsAroundCenter(centerPoint: Vector, circlePointsConfig: CirclePointsConfig): Vector[] {
@@ -435,7 +424,7 @@ export type CirclePointsConfig = {
     startLeft?: boolean,
 }
 
-function fakePickupRune(runeType: RuneType, pickingHero: CDOTA_BaseNPC_Hero) {
+function fakePickupRune(runeType: DOTA_RUNES, pickingHero: CDOTA_BaseNPC_Hero) {
     const context = GameRules.Addon.context;
     if (IsValidEntity(context[CustomEntityKeys.TopPowerRune])) {
         context[CustomEntityKeys.TopPowerRune].Destroy()

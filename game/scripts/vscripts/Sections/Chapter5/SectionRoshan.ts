@@ -2,9 +2,9 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, displayDotaErrorMessage, Distance2D, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { centerCameraOnHero, Distance2D, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
-import { chapter5Blockades, friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
+import { friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_Roshan;
 
@@ -17,7 +17,7 @@ const requiredState: RequiredState = {
     heroLocationTolerance: 2000,
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    blockades: Object.values(chapter5Blockades).filter(blockade => blockade !== chapter5Blockades.roshan),
+    blockades: Object.values(shared.chapter5Blockades).filter(blockade => blockade !== shared.chapter5Blockades.roshan),
     requireRoshan: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -133,34 +133,29 @@ function onStart(complete: () => void) {
                     tg.fork([
                         tg.immediate(_ => goalPickupAegis.start()),
                         tg.immediate(() => {
-
                             const droppedItems = Entities.FindAllByClassname("dota_item_drop") as CDOTA_Item_Physical[]
-            
+
                             if (droppedItems) {
                                 for (const droppedItem of droppedItems) {
                                     const itemEntity = droppedItem.GetContainedItem()
-                                    print("Iterating droppped items inside Section Roshan")
-                                    print(itemEntity.GetAbilityName())
                                     if (itemEntity.GetAbilityName() === shared.itemAegis) {
-                                        print("Found Aegis")
-                                        droppedAegisLocation = itemEntity.GetAbsOrigin()
-                                        print(droppedAegisLocation)
+                                        droppedAegisLocation = droppedItem.GetAbsOrigin()
                                     }
                                 }
                             }
-            
-                            if (droppedAegisLocation) {
-                                AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, droppedAegisLocation, 500, 50, false)
-                            }
                         }),
                         tg.withHighlights(
-                            tg.completeOnCheck(() => !playerHero.HasItemInInventory(shared.itemAegis), 0.2),
-                            // {
-                            //     type: "circle",
-                            //     locations: droppedAegisLocation ? [droppedAegisLocation] : undefined,
-                            //     // units: (GameRules.Addon.context[Chapter2SpecificKeys.RadiantCreeps] as CDOTA_BaseNPC[]).concat(GameRules.Addon.context[Chapter2SpecificKeys.DireCreeps] as CDOTA_BaseNPC[]),
-                            //     radius: 100
-                            // }
+                            tg.loop(
+                                _ => !playerHero.HasItemInInventory(shared.itemAegis),
+                                tg.seq([
+                                    tg.immediate(_ => {
+                                        if (droppedAegisLocation) {
+                                            AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, droppedAegisLocation, 500, 2, false)
+                                        }
+                                    }),
+                                    tg.wait(1)
+                                ])
+                            ),
                             _ => {
                                 return { type: "arrow", locations: droppedAegisLocation ? [droppedAegisLocation] : undefined }
                             }
@@ -182,7 +177,6 @@ function onStart(complete: () => void) {
                         ])
                     ]),
                     tg.immediate(_ => goalLeaveRoshPit.complete()),
-                    tg.immediate(_ => shared.chapter5Blockades.roshan.spawn()),
                 ])
             ]),
 
