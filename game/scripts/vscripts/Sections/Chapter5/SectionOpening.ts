@@ -78,7 +78,6 @@ function onStart(complete: () => void) {
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
-            tg.wait(1),
             tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
             tg.audioDialog(LocalizationKey.Script_5_Opening_1, LocalizationKey.Script_5_Opening_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_Opening_2, LocalizationKey.Script_5_Opening_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -97,9 +96,6 @@ function onStart(complete: () => void) {
                     tg.wait(visionRevealDuration),
                     tg.panCameraExponential(shared.runeSpawnsLocations.radiantTopBountyPos, shared.runeSpawnsLocations.radiantAncientsBountyPos, panCameraBountiesAlpha),
                     tg.immediate((ctx) => {
-                        if (ctx[CustomEntityKeys.RadiantTopBountyFOWViewer]) {
-                            ctx[CustomEntityKeys.RadiantTopBountyFOWViewer] = undefined
-                        }
                         ctx[CustomEntityKeys.RadiantAncientsBountyFOWViewer] = AddFOWViewer(DotaTeam.GOODGUYS, shared.runeSpawnsLocations.radiantAncientsBountyPos, 800, visionRevealDuration, false)
                     }),
                     tg.wait(visionRevealDuration),
@@ -134,10 +130,6 @@ function onStart(complete: () => void) {
                 ]),
                 tg.fork([
                     tg.seq([
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.topPowerUpRunePos, panCameraBountiesAlpha),
-                        tg.wait(1),
-                        tg.setCameraTarget(undefined),
-                        tg.immediate(_ => centerCameraOnHero()),
                         tg.immediate((ctx) => {
                             goalMoveToRune.start()
                             if (IsValidEntity(ctx[CustomEntityKeys.TopPowerRune])) {
