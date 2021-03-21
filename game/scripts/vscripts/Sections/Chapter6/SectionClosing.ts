@@ -148,7 +148,7 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),
     new ClosingNpc(CustomNpcKeys.Perry, Vector(-5150, -3540, 256), LocalizationKey.Script_6_Perry),
     new ClosingNpc(CustomNpcKeys.PongPing, Vector(-5750, -3850, 256), LocalizationKey.Script_6_PongPing),
-    new ClosingNpc(CustomNpcKeys.Shush, Vector(-5450, -3850, 256), LocalizationKey.Script_6_Shush),
+    new ClosingNpc(CustomNpcKeys.Shush, Vector(-5450, -3850, 256), LocalizationKey.Script_6_Shush, LocalizationKey.Script_6_Shush),
     new ClosingNpc(CustomNpcKeys.SinZ, Vector(-5330, -4250, 256), LocalizationKey.Script_6_SinZ),
     new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5400, -4600, 256), LocalizationKey.Script_6_SmashTheState),
     new ClosingNpc(CustomNpcKeys.Tora, Vector(-6300, -4160, 256), LocalizationKey.Script_6_Tora),
@@ -255,6 +255,7 @@ function onStart(complete: () => void) {
         // Main logic
         tg.seq([
             // Play dialog
+            tg.audioDialog(LocalizationKey.Script_6_Surprise, LocalizationKey.Script_6_Surprise, getOrError(Entities.FindByName(undefined, "ent_dota_fountain_good")) as CDOTA_BaseNPC),
             tg.audioDialog(LocalizationKey.Script_6_Closing_1, LocalizationKey.Script_6_Closing_1, slacks),
             tg.immediate(() => goalTalkToNpcs.start()),
             tg.audioDialog(LocalizationKey.Script_6_Closing_2, LocalizationKey.Script_6_Closing_2, sunsFan),

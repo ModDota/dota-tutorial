@@ -168,7 +168,7 @@ function onStart(complete: () => void) {
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], true)),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(RuneType.DOUBLEDAMAGE, ctx[CustomNpcKeys.Juggernaut])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Juggernaut], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_8, LocalizationKey.Script_5_Opening_8, ctx => ctx[CustomNpcKeys.Juggernaut]),
             tg.immediate((ctx) => setUnitPacifist(ctx[CustomNpcKeys.Sniper], false)),
             tg.completeOnCheck((ctx) => !unitIsValidAndAlive(ctx[CustomNpcKeys.Sniper]), 1),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Juggernaut], rangerLineStart),
@@ -183,7 +183,7 @@ function onStart(complete: () => void) {
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.Mirana], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(RuneType.ILLUSION, ctx[CustomNpcKeys.Mirana])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.Mirana], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_9, LocalizationKey.Script_5_Opening_9, ctx => ctx[CustomNpcKeys.Mirana]),
             tg.immediate((ctx) => {
                 const miranaEntities = Entities.FindAllByNameWithin(CustomNpcKeys.Mirana, ctx[CustomNpcKeys.Mirana].GetAbsOrigin(), 400) as CDOTA_BaseNPC_Hero[]
                 for (const miranaEntity of miranaEntities) {
@@ -277,13 +277,13 @@ function onStart(complete: () => void) {
                 ctx[CustomNpcKeys.StormSpirit].AddExperience(5, ModifyXpReason.UNSPECIFIED, false, false)
             }),
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.StormSpirit]),
-            tg.textDialog(LocalizationKey.Script_5_Opening_13, ctx => ctx[CustomNpcKeys.StormSpirit], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_13, LocalizationKey.Script_5_Opening_13, ctx => ctx[CustomNpcKeys.StormSpirit]),
             tg.immediate(ctx => {
                 ctx[CustomEntityKeys.TopPowerRune] = CreateRune(shared.runeSpawnsLocations.topPowerUpRunePos, RuneType.REGENERATION)
             }),
             tg.moveUnit(ctx => ctx[CustomNpcKeys.StormSpirit], shared.runeSpawnsLocations.topPowerUpRunePos),
             tg.immediate((ctx) => fakePickupRune(RuneType.REGENERATION, ctx[CustomNpcKeys.StormSpirit])),
-            tg.textDialog(LocalizationKey.Script_5_Opening_14, ctx => ctx[CustomNpcKeys.StormSpirit], 2),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_14, LocalizationKey.Script_5_Opening_14, ctx => ctx[CustomNpcKeys.StormSpirit]),
             tg.wait(2),
             tg.immediate((ctx) => {
                 const hero = ctx[CustomNpcKeys.StormSpirit] as CDOTA_BaseNPC_Hero
@@ -301,7 +301,7 @@ function onStart(complete: () => void) {
 
             // Start Roshan sequence
             tg.setCameraTarget(ctx => ctx[CustomNpcKeys.CrystalMaiden]),
-            tg.textDialog(LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.CrystalMaiden], 4),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_15, LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.CrystalMaiden]),
             tg.immediate(_ => {
                 goalWatchRangers.complete()
                 shared.chapter5Blockades.roshan.destroy()
