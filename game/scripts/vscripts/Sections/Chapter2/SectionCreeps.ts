@@ -7,6 +7,7 @@ import * as tg from "../../TutorialGraph/index";
 import * as dg from "../../Dialog"
 import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
+import { modifier_no_health_bar } from "../../modifiers/modifier_no_health_bar";
 
 const sectionName: SectionName = SectionName.Chapter2_Creeps
 let graph: tg.TutorialStep | undefined = undefined
@@ -152,8 +153,9 @@ const onStart = (complete: () => void) => {
                             tg.wait(1),
                             tg.spawnUnit(CustomNpcKeys.Sheepsticked, sheepstickedSpawnLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.Sheepsticked, false),
                             tg.immediate(context => {
-                                const sheepsticked = context[CustomNpcKeys.Sheepsticked]
+                                const sheepsticked = context[CustomNpcKeys.Sheepsticked] as CDOTA_BaseNPC;
                                 setUnitPacifist(sheepsticked, true);
+                                sheepsticked.AddNewModifier(undefined, undefined, modifier_no_health_bar.name, {});
                             }),
                             tg.audioDialog(LocalizationKey.Script_2_Creeps_4, LocalizationKey.Script_2_Creeps_4, context => context[CustomNpcKeys.Sheepsticked]),
                             tg.neverComplete()
