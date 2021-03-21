@@ -159,8 +159,8 @@ const npcs = [
 
     // Helpers
     new ClosingNpc(CustomNpcKeys.ValkyrjaRuby, Vector(-6250, -5500, 256), LocalizationKey.Script_6_valkyrjaRuby, LocalizationKey.Script_6_valkyrjaRuby),
-    new ClosingNpc(CustomNpcKeys.Translators, Vector(-6900, -5200, 256), LocalizationKey.Script_6_Translators, LocalizationKey.Script_6_Translators),
-    new ClosingNpc(CustomNpcKeys.Indiegogo, Vector(-6975, -5500, 256), LocalizationKey.Script_6_Indiegogo, LocalizationKey.Script_6_Indiegogo),
+    new ClosingNpc(CustomNpcKeys.Translators, Vector(-6900, -5200, 256), LocalizationKey.Script_6_Translators),
+    new ClosingNpc(CustomNpcKeys.Indiegogo, Vector(-6975, -5500, 256), LocalizationKey.Script_6_Indiegogo),
 ]
 
 const spawnNpcs = () => npcs.forEach(npc => npc.spawn())
