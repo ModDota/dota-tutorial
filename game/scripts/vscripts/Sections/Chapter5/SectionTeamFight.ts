@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { displayDotaErrorMessage, Distance2D, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
 
 const sectionName: SectionName = SectionName.Chapter5_TeamFight;
@@ -149,7 +149,7 @@ function onStart(complete: () => void) {
             // Play win dialog
             tg.immediate(ctx => shared.getLivingFriendlyHeroes(ctx).forEach(hero => hero.StartGesture(GameActivity_t.ACT_DOTA_VICTORY))),
             tg.audioDialog(LocalizationKey.Script_5_5v5_5, LocalizationKey.Script_5_5v5_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-            
+
             // Add tp scroll and highlight it
             tg.immediate(_ => playerHero.AddItemByName("item_tpscroll").EndCooldown()),
             tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
@@ -169,7 +169,7 @@ function onStart(complete: () => void) {
             ]),
             tg.immediate(_ => goalUseTp.complete()),
             tg.immediate(_ => removeHighlight(tpScrollSlotUIPath)),
-            
+
             // More dialog about importance of tps and bait player into using voice
             tg.audioDialog(LocalizationKey.Script_5_5v5_9, LocalizationKey.Script_5_5v5_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_10, LocalizationKey.Script_5_5v5_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -189,7 +189,7 @@ function onStart(complete: () => void) {
                             tg.audioDialog(LocalizationKey.Script_5_5v5_12, LocalizationKey.Script_5_5v5_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                         ]),
                         tg.seq([
-                            tg.wait(14),
+                            tg.wait(13),
                             tg.completeOnCheck(_ => !voicePressed, 0.1),
                             tg.audioDialog(LocalizationKey.Script_5_5v5_13, LocalizationKey.Script_5_5v5_13, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                         ])
@@ -200,9 +200,10 @@ function onStart(complete: () => void) {
 
             // Actually tp the player to the fountain
             tg.immediate(_ => freezePlayerHero(true)),
-            tg.immediate(_ => playerHero.RemoveItem(getOrError(playerHero.FindItemInInventory("item_tpscroll"), "Could not find tp scroll"))),
-            tg.immediate(_ => playerHero.SetAbsOrigin(radiantFountainLocation)),
-            tg.panCameraExponential(_ => getPlayerCameraLocation(), radiantFountainLocation, 2),
+            tg.immediate(_ => tpPlayerHome()),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), 2),
+            tg.completeOnCheck(_ => Distance2D(playerHero.GetAbsOrigin(), radiantFountainLocation) < 100, 0.2),
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => radiantFountainLocation, 2),
             tg.immediate(ctx => shared.disposeHeroes(ctx, shared.allHeroesInfo)),
             tg.immediate(_ => freezePlayerHero(false)),
         ])
@@ -294,6 +295,17 @@ function setupEnemyHeroes(context: tg.TutorialContext) {
 
         if (focusFire)
             focusFire.SetLevel(2)
+    }
+}
+
+// Almost same function used in Communication section in CH4, maybe refactor as util func at some point
+const tpPlayerHome = () => {
+    const hero = getOrError(getPlayerHero())
+    const tp = hero.FindItemInInventory("item_tpscroll")
+    if (!tp) {
+        Warning("Could not find tp for player hero")
+    } else {
+        hero.CastAbilityOnPosition(radiantFountainLocation, tp, 0);
     }
 }
 
