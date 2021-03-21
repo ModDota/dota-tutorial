@@ -1,6 +1,6 @@
 import { Blockade } from "../../Blockade";
 import * as tg from "../../TutorialGraph/index";
-import { removeContextEntityIfExists, unitIsValidAndAlive } from "../../util";
+import { removeContextEntityIfExists, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 
 // Chapter 5 blockades
 export const chapter5Blockades = {
@@ -57,11 +57,16 @@ export const preRoshKillItems = [
 
 export const allHeroesInfo = friendlyHeroesInfo.concat(enemyHeroesInfo)
 
-function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: DotaTeam) {
+function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: DotaTeam, pacifists: boolean = false) {
     const steps = (context: tg.TutorialContext) => heroInfos.map(heroInfo => {
         if (!unitIsValidAndAlive(context[heroInfo.name])) {
             return tg.seq([
                 tg.spawnUnit(heroInfo.name, location.__add(RandomVector(200)), team, heroInfo.name, true),
+                tg.immediate((ctx) => {
+                    if (pacifists) {
+                        setUnitPacifist(ctx[heroInfo.name], true)
+                    }
+                }),
                 tg.immediate((ctx) => ctx[heroInfo.name].AddExperience(24, EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, true, false)),
             ])
         }
@@ -72,12 +77,12 @@ function spawnHeroesIfNeeded(location: Vector, heroInfos: HeroInfo[], team: Dota
     return tg.fork(steps)
 }
 
-export function spawnFriendlyHeroes(location: Vector) {
-    return spawnHeroesIfNeeded(location, friendlyHeroesInfo, DOTATeam_t.DOTA_TEAM_GOODGUYS)
+export function spawnFriendlyHeroes(location: Vector, pacifists: boolean = false) {
+    return spawnHeroesIfNeeded(location, friendlyHeroesInfo, DOTATeam_t.DOTA_TEAM_GOODGUYS, pacifists)
 }
 
-export function spawnEnemyHeroes(location: Vector) {
-    return spawnHeroesIfNeeded(location, enemyHeroesInfo, DOTATeam_t.DOTA_TEAM_BADGUYS)
+export function spawnEnemyHeroes(location: Vector, pacifists: boolean = false) {
+    return spawnHeroesIfNeeded(location, enemyHeroesInfo, DOTATeam_t.DOTA_TEAM_BADGUYS, pacifists)
 }
 
 export function disposeHeroes(context: tg.TutorialContext, heroesInfo: HeroInfo[]) {
