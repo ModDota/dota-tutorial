@@ -137,7 +137,7 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Coccia, Vector(-7050, -6050, 384), LocalizationKey.Script_6_Alex, LocalizationKey.Script_6_Alex),
     new ClosingNpc(CustomNpcKeys.Tsunami, Vector(-7270, -6800, 384), LocalizationKey.Script_6_Tsunami, LocalizationKey.Script_6_Tsunami),
     new ClosingNpc(CustomNpcKeys.DotaU, Vector(-6900, -7050, 384), LocalizationKey.Script_6_DotaU, LocalizationKey.Script_6_DotaU),
-    new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5170, -5300, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
+    new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5100, -5250, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
     new ClosingNpc(CustomNpcKeys.BSJ, Vector(-4800, -5450, 256), LocalizationKey.Script_6_BSJ, LocalizationKey.Script_6_BSJ),
     new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4550, -5300, 256), LocalizationKey.Script_6_Bowie, LocalizationKey.Script_6_Bowie),
     new ClosingNpc(CustomNpcKeys.Angermania, Vector(-4530, -5940, 256), LocalizationKey.Script_6_anger, LocalizationKey.Script_6_anger),
@@ -145,6 +145,7 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6540, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
     new ClosingNpc(CustomNpcKeys.ZQ, Vector(-3700, -5200, 256), LocalizationKey.Script_6_ZQ, LocalizationKey.Script_6_ZQ),
     new ClosingNpc(CustomNpcKeys.Yodi, Vector(-3970, -5120, 256), LocalizationKey.Script_6_Yodi, LocalizationKey.Script_6_Yodi),
+    new ClosingNpc(CustomNpcKeys.Dotabuff, Vector(-5375, -5550, 256), LocalizationKey.Script_6_Dotabuff, LocalizationKey.Script_6_Dotabuff),
 
     // Modders
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),

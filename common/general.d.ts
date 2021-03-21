@@ -78,6 +78,7 @@ declare const enum CustomNpcKeys {
     RedditDota = "npc_dota_tutorial_redditdota",
     ZQ = "npc_dota_tutorial_zq",
     Yodi = "npc_dota_tutorial_yodi",
+    Dotabuff = "npc_dota_tutorial_dotabuff",
 
     // Modders (have no personalities apparently)
     Flam3s = "npc_dota_tutorial_flam3s",
