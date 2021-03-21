@@ -172,19 +172,18 @@ const onStart = (complete: () => void) => {
             playerOrderMustBuyRecipeAndCrystalis = false
         }),
 
-        tg.audioDialog(LocalizationKey.Script_2_Courier_6, LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
-        tg.audioDialog(LocalizationKey.Script_2_Courier_7, LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem]),
-
         // Fork dialog mentioning courier delivery button
         tg.forkAny([
             tg.seq([
+                tg.audioDialog(LocalizationKey.Script_2_Courier_6, LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.audioDialog(LocalizationKey.Script_2_Courier_7, LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem]),
+                tg.immediate(_ => highlightUiElement(deliverItemsUIPath)),
                 tg.audioDialog(LocalizationKey.Script_2_Courier_8, LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem]),
                 tg.audioDialog(LocalizationKey.Script_2_Courier_9, LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem]),
                 tg.neverComplete()
             ]),
             tg.seq([
                 tg.immediate(_ => {
-                    highlightUiElement(deliverItemsUIPath)
                     playerOrderMustDeliverItemsFromCourier = true
                     goalRequestItemsToBeDeliveredFromCourier.start()
                 }),
