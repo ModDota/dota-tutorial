@@ -237,7 +237,6 @@ function onStart(complete: () => void) {
             }
         }),
         tg.immediate(_ => centerCameraOnHero()),
-        tg.immediate(_ => npcs.forEach(npc => { if (npc.unit) { npc.unit!.FaceTowards(playerHero.GetAbsOrigin()) } })),
 
         tg.immediate(_ => {
             worldTexts.add(addWorldTextAtLocation("Modders", Vector(-6700, -4800, 256), "credit_section"))
@@ -247,6 +246,9 @@ function onStart(complete: () => void) {
 
         // Hopefully every npc will be spawned by now and this completes immediately
         waitNpcsSpawned(),
+
+        // Turn all npcs to player to get decent orientation
+        tg.immediate(_ => npcs.forEach(npc => { if (npc.unit) { npc.unit!.FaceTowards(playerHero.GetAbsOrigin()) } })),
 
         // Spawn some party stuff
         tg.immediate(_ => startParty()),
