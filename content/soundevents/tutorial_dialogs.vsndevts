@@ -1902,6 +1902,18 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Dotabuff.vsnd" ]
     }
+    "Script_6_Indiegogo" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Indiegogo.vsnd" ]
+    }
+    "Script_6_Translators" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Translators.vsnd" ]
+    }
     "Script_6_Flam3s" =
     {
         type = "dota_src1_2d"

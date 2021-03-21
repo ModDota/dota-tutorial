@@ -61,6 +61,9 @@
         "npc_dota_tutorial_flam3s" "Flam3s"
         "npc_dota_tutorial_ruby" "valkyrjaRuby"
 
+        "npc_dota_tutorial_translators" "Translators"
+        "npc_dota_tutorial_indiegogo" "Indiegogo Donators"
+
         "npc_mud_golem_sunsfan_twitter" "SUNSfanTV"
         "npc_mud_golem_sunsfan_youtube" "DotaCinema"
         "npc_mud_golem_sunsfan_discord" "sunsfan"
@@ -122,6 +125,7 @@
         "npc_dota_tutorial_tora_website" "warlock.ai"
         "npc_dota_tutorial_flam3s_website" "steamcommunity.com/id/Flam3sDota"
         "npc_dota_tutorial_ruby_twitter" "valkyrjaRuby"
+        "npc_dota_tutorial_indiegogo_website" "indiegogo.com/projects/community-made-dota-2-tutorial"
 
         "npc_dota_tutorial_shush_website" "moddota.com"
         "npc_dota_tutorial_perry_website" "moddota.com"
@@ -598,6 +602,8 @@
         "Script_6_ZQ" "Hello friend! I'm Zack, also known as ZQuixotix. I make educational content mainly for support players on my YouTube channel, youtube.com/zquixotix. I've got a special series for new players like yourself as well so drop on by if you have any questions. Welcome to Dota 2!"
         "Script_6_Alex" "Hey there, I'm Alex, and welcome to Dota! Linked here is my Dota 2 Beginners guides playlist, which has videos covering everything you need to know to get started in this amazingly complex game. I cover it all, from the absolute fundamentals to hero roles, items and even suggested heroes for new players. I'm so happy that you're here, and I hope that you enjoy your time in the Dota universe."
         "Script_6_Dotabuff" "Hey, I'm Chelsea from Dotabuff. Dotabuff provides stats and the latest hero trends, skill- and item-builds, professional teams and personal profile pages to help you improve your gameplay and understanding of Dota 2. We want to empower you to be the best player you can be. Thanks so much for listening and welcome to Dota. Good luck and have fun."
+        "Script_6_Indiegogo" "This project was only possible because of the donators on our Indiegogo. Shoutouts to Lord Novà, Sean Allan, Nicholas Popovic, Magdev, Superrodan, Valued Customer, DreamingDemon, Lilywhite, Sebastian 'Klap' Buruiana, Michael Viveros, Limpinator, moss, ZQuixotix, ILive66Failed, Dr. Orctopusaurus, Sean 'Qivers' Chivers, Somepoison, BaileyBox, Toonio, AngerMania, half a bear, Papa Boar, Sweet Peas, Magnus, HenrytheV, Krisco, David Stonecypher, Cyrus, Damascus98, Ghostly,  twitch.tv/kingrat_, hyperactiveChipmunk, thicket06, Mike 'Durandul' Hand, Matthew Kim, Loubar, Kris ‘KLLKRIS’ L, Ben 'Rami' Pottier, LowSkillN00b, Faiz Anuar (Iceray888), ISpeakForTheTrees..., Sam Just, Happygilman, CΛЯŁФS, Mr. LJ, Shrapnel, Cyanide, Ferjen P. Nigandy the 3rd, RaffCrop, DoppleDankster, Aegisworn, Tickles, Simppasaurus, BiffyTheGlorious, GenTac, Brant DH, ScreWii, Quinntard, coolnicknamebro, snow.pika, LexxieOtter, Aurum, Novu, Jerome 'Jh' Alhage, Stephanie 'StePanda-' El-Khoury, Outofanser, Nathan 'Dunk0' Whitney, Loubar, Dave Chez, Teburninator, Hemisphere, $pakowsky, Yrral, PanzerAU, Rodget aka Marcos Pinzón, Oogl, apelsinlax, Fearless Noob, NimbleDog, Andy the Keen, CHROMOS, adiboo, ATGATT, Knox 'The Goblin' Parr, Jacob 'Sensei' Flink, ConnectionLost, la_peppy, Arrow, Jason Eckstein, Jimmy Gaz Osborne, Venryx, Silvyrfir, Orangeror, Nabasky, Brandon Gallemore, Machiel de Jager, BeX, Erwin 'Ceres', Jim 'Dinomaster' Leake, ChicksWithDicks, flocker, DaVincento, Jeff Zhu, HurskyMurster, Lelugo Druid, WalterWW, Milos VLainic - wlakinsson, Dr. Nino, Tarriel, mapi, TheLibrarian, Mr. Taco, PapaRei and sambalbij."
+        "Script_6_Translators" "Thanks to all our translators who translated the entire mod within a very short time to many different languages: richard.degenne, TheLibrarian, Yoyo_Chang, LilywhiteTV, canihearawahoo, AykutComert, XavierCHN, OP_Dan, yedigen, bungiedg, guiguito48, josrenato132, Flam3s, hansong1994, DoppleDankster, flutterravie, iliadis, Silvyrfir, nnnNinja, lustiwe, jeff_zhu, ChariLive, DoctorGester, alexajax, Limie Pie, Jx-iwnl-, Tutorial- and Cage_Heiban."
         "Script_6_Flam3s" "Hello there! I'm Flam3s from the modding team. I am ex-head admin of r/Underlords & r/AutoChess subreddits, still lead dev of Legion TD: Reborn & Courier TD. I helped in a lot of mods including Castle Fight, Invoker Wars Reborn, Snipers Duel, Overthrow 2.0, Dota 12v12, Custom Hero Clash, ReIncarnation RPG, Random Farm TD. I mostly do UI/UX."
         "Script_6_Perry" "Hi I'm Perry from the modding team. Playing Dota is all about having fun during the game, don't focus too much on the result!"
         "Script_6_PongPing" "Hi I'm PongPing from the modding team. I hope you'll have fun learning this wonderful game!"
@@ -609,7 +615,7 @@
         "Script_6_VicFrank" "Please for the love of god play my custom games."
         "Script_6_Yoyo" "Hello I'm Yoyo from the modding team. If you had fun in this tutorial, you could also invite some girls to join this wonderful community. Don't underestimate anyone! And I'll see you in the pub!"
         "Script_6_Slacks" "Hello there! I'm SirActionSlacks. If you want to know less about how to play the game and more about Dota's incredible lore then come and check out my YouTube channel and watch some of my videos. Besides that you probably shouldn't take notes on how to play Dota from my channel unless you wanna learn how to play Techies and become a degenerate that everybody hates! Which I'm sure you do. Come join me you disgusting creature. Welcome to Dota 2 my friend. You're gonna have a great time."
-        "Script_6_valkyrjaRuby" "Congratulations on finishing the tutorial! I hope to see you in one of our Dota communities on Discord soon!"
+        "Script_6_valkyrjaRuby" "Hey everyone, congratulations on completing the tutorial! My name is Ruby and I do a lot of work in Dota communities. I'm really excited to meet you all, so if you ever see me in a Discord please stop me and say hello!"
 
         "MessageToTheNoobs_0" "Always remember, no matter how bad your games going it's just that, a game and there's always the mute button"
         "MessageToTheNoobs_1" "Sending out an item on the courier? Consider sending out a salve or clarity too; 50 to 110 gold now is well worth higher efficiency later"
@@ -746,5 +752,8 @@
         "npc_dota_tutorial_toyoka_titles_name" "Toyoka"
         "npc_dota_tutorial_flam3s_titles_name" "Flam3s"
         "npc_dota_tutorial_ruby_titles_name" "valkyrjaRuby"
+
+        "npc_dota_tutorial_translators_titles_name" "Translators"
+        "npc_dota_tutorial_indiegogo_titles_name" "Indiegogo Donators"
     }
 }

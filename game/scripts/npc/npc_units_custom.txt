@@ -859,4 +859,24 @@
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
         "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
     }
+
+    "npc_dota_tutorial_indiegogo"
+    {
+        "Model"						"models/items/courier/scuttling_scotty_penguin/scuttling_scotty_penguin.vmdl"
+        "ModelScale" 				"1.4"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
+
+    "npc_dota_tutorial_translators"
+    {
+        "Model"						"models/heroes/shopkeeper/shopkeeper.vmdl"
+        "ModelScale" 				"1.1"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
 }

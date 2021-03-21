@@ -114,7 +114,7 @@ class ClosingNpc {
             if (this.soundName) {
                 this.dialogToken = dg.playAudio(this.soundName, this.text, this.unit, undefined, () => this.dialogToken = undefined)
             } else {
-                this.dialogToken = dg.playText(this.text, this.unit, 5, () => this.dialogToken = undefined)
+                this.dialogToken = dg.playText(this.text, this.unit, 20, () => this.dialogToken = undefined)
             }
         }
         CustomGameEventManager.Send_ServerToAllClients("credits_interact", { name: this.name, description: this.text });
@@ -130,8 +130,6 @@ class ClosingNpc {
 }
 
 const npcs = [
-    // TODO: Pass in the actual text and sound keys once we have them
-
     // Personalities / Guides
     new ClosingNpc(CustomNpcKeys.PurgePugna, Vector(-7250, -6400, 384), LocalizationKey.Script_6_Purge, LocalizationKey.Script_6_Purge),
     new ClosingNpc(CustomNpcKeys.Coccia, Vector(-7050, -6050, 384), LocalizationKey.Script_6_Alex, LocalizationKey.Script_6_Alex),
@@ -157,10 +155,12 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Tora, Vector(-6300, -4160, 256), LocalizationKey.Script_6_Tora),
     new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-6700, -4600, 256), LocalizationKey.Script_6_Toyoka),
     new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-5940, -4680, 256), LocalizationKey.Script_6_VicFrank),
-    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-6550, -3880, 256), LocalizationKey.Script_6_Yoyo),
+    new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-6550, -3880, 256), LocalizationKey.Script_6_Yoyo, LocalizationKey.Script_6_Yoyo),
 
     // Helpers
-    new ClosingNpc(CustomNpcKeys.ValkyrjaRuby, Vector(-6250, -5500, 256), LocalizationKey.Script_6_valkyrjaRuby),
+    new ClosingNpc(CustomNpcKeys.ValkyrjaRuby, Vector(-6250, -5500, 256), LocalizationKey.Script_6_valkyrjaRuby, LocalizationKey.Script_6_valkyrjaRuby),
+    new ClosingNpc(CustomNpcKeys.Translators, Vector(-6900, -5200, 256), LocalizationKey.Script_6_Translators, LocalizationKey.Script_6_Translators),
+    new ClosingNpc(CustomNpcKeys.Indiegogo, Vector(-6975, -5500, 256), LocalizationKey.Script_6_Indiegogo, LocalizationKey.Script_6_Indiegogo),
 ]
 
 const spawnNpcs = () => npcs.forEach(npc => npc.spawn())
