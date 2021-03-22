@@ -56,9 +56,11 @@
     background-color: #bb5c2c;
     box-shadow: #000000aa -4px -4px 8px 8px;
     border-radius: 2px;
-    width: 26%;
+    width: fit-children;
     margin-top: 14px;
     margin-left: 25px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .VideoContinue {
