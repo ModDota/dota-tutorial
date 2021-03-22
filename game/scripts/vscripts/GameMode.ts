@@ -232,7 +232,15 @@ export class GameMode {
             GameRules.SetTimeOfDay(0.5) // Set to day
             this.Game.SetDaynightCycleDisabled(true)
 
-            Timers.CreateTimer(3, () => this.StartGame());
+            const tryStart = () => {
+                if (!getPlayerHero()) {
+                    return 0.1;
+                }
+
+                this.StartGame();
+            };
+
+            Timers.CreateTimer(0.1, () => tryStart());
         }
 
         if (state === DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) { }
