@@ -240,7 +240,7 @@ export class GameMode {
                 this.StartGame();
             };
 
-            Timers.CreateTimer(0.1, tryStart);
+            Timers.CreateTimer(0.1, () => tryStart());
         }
 
         if (state === DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) { }
