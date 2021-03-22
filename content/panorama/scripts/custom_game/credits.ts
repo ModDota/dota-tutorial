@@ -8,6 +8,7 @@ const socialsCol2 = $("#CreditsSocialsColumn2");
 const portraits: Record<string, string> = {
     [CustomNpcKeys.Angermania]: "file://{images}/custom_game/credits/avatars/Angermania.png",
     [CustomNpcKeys.Tsunami]: "file://{images}/custom_game/credits/avatars/Tsunami.png",
+    [CustomNpcKeys.Translators]: "file://{images}/custom_game/credits/avatars/Translators.png",
     [CustomNpcKeys.Coccia]: "file://{images}/custom_game/credits/avatars/alexander_coccia.png",
     [CustomNpcKeys.BSJ]: "file://{images}/custom_game/credits/avatars/bsj.png",
     [CustomNpcKeys.Bowie]: "file://{images}/custom_game/credits/avatars/d2bowie.png",
