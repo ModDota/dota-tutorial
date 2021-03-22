@@ -42,6 +42,19 @@
             <Label text="#Misc_3_SkipStacking" />
         </Button>
 
+        <Panel id="Chapter3SkipConfirmationRoot">
+            <Label id="Chapter3SkipTitle" text="#Confirm_Skip_Stack_Title" />
+            <Label id="Chapter3SkipMessage" text="#Confirm_Skip_Stack_Message" />
+            <Panel class="Chapter3SkipRootBottom">
+                <Button id="Chapter3SkipConfirmationButtonYes" onactivate="Chapter3SkipButtonYes()">
+                    <Label text="#Yes"/>
+                </Button>
+                <Button id="Chapter3SkipConfirmationButtonNo" onactivate="Chapter3SkipButtonNo()">
+                    <Label text="#No"/>
+                </Button>
+            </Panel>
+        </Panel>
+
         <Panel id="ChaptersMenu" hittest="false">
             <Panel class="ChaptersMenuHeader">
                 <Label class="ChaptersTitle" text="#Chapters" hittest="false"/>
