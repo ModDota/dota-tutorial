@@ -1347,7 +1347,7 @@
 "[english]npc_dota_hero_keeper_of_the_light_titles_name" "Tsunami"
 "npc_dota_hero_keeper_of_the_light_titles_num" "3"
 "[english]npc_dota_hero_keeper_of_the_light_titles_num" "3"
-"npc_dota_hero_keeper_of_the_light_titles_0" "{s:name}, объяснятель игры"
+"npc_dota_hero_keeper_of_the_light_titles_0" "{s:name} Мудрый"
 "[english]npc_dota_hero_keeper_of_the_light_titles_0" "{s:name} the Gamesplainer"
 "npc_dota_hero_keeper_of_the_light_titles_1" "Бородатый {s:name}"
 "[english]npc_dota_hero_keeper_of_the_light_titles_1" "{s:name} the Bewhiskered"
@@ -1363,7 +1363,7 @@
 "[english]npc_dota_hero_storm_spirit_titles_name" "Pyrion"
 "npc_dota_hero_storm_spirit_titles_num" "1"
 "[english]npc_dota_hero_storm_spirit_titles_num" "1"
-"npc_dota_hero_storm_spirit_titles_0" "{s:name} с кашей в голове"
+"npc_dota_hero_storm_spirit_titles_0" "Путающийся в мыслях {s:name}"
 "[english]npc_dota_hero_storm_spirit_titles_0" "{s:name} the Jumbled Mess"
 "npc_dota_hero_ursa_titles_name" "DotACapitalist"
 "[english]npc_dota_hero_ursa_titles_name" "Cap"
@@ -1435,7 +1435,7 @@
 "[english]npc_dota_tutorial_ruby_titles_name" "valkyrjaRuby"
 "npc_dota_tutorial_translators_titles_name" "Переводчики"
 "[english]npc_dota_tutorial_translators_titles_name" "Translators"
-"npc_dota_tutorial_indiegogo_titles_name" "Все те, кто поддержал проект на Indiegogo"
+"npc_dota_tutorial_indiegogo_titles_name" "Спосоры на Indiegogo"
 "[english]npc_dota_tutorial_indiegogo_titles_name" "Indiegogo Donators"
 }
 }
