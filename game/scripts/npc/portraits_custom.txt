@@ -187,4 +187,36 @@
 			}
 		}
 	}
+
+	"models/heroes/shopkeeper/shopkeeper.vmdl"
+	{
+        "PortraitLightPosition"		"113.84 26.72 182.67"
+		"PortraitLightAngles"		"46.66 201.60 0.00"
+		"PortraitLightFOV"		    "55"
+		"PortraitLightDistance"		"232"
+		"PortraitLightColor"		"254 240 224"
+		"PortraitShadowColor"		"79 79 38"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"97 136 136"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"	"materials/vgui/hud/heroportraits/portraitbackground_desert.vmat"
+		"PortraitBackgroundColor1"	"0 0 0"
+		"PortraitBackgroundColor2"	".6 1 .2"
+		"PortraitBackgroundColor3"	".8 1 0"
+		"PortraitBackgroundColor4"	"1 1 1"
+		"PortraitLightScale"		"1.600000"
+		"PortraitGroundShadowScale"	"1.500000"
+		"PortraitAmbientDirection"	"-24.790 15.480 1.020"
+		"PortraitAnimationActivity"	"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"	"100.90 46.94 150"
+				"PortraitAngles"	"13.80 201.81 0.00"
+				"PortraitFOV"		"70"
+			}
+		}
+	}
 }
