@@ -238,7 +238,7 @@ export class GameMode {
                 }
 
                 this.StartGame();
-            }
+            };
 
             Timers.CreateTimer(0.1, tryStart);
         }
