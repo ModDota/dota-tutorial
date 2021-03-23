@@ -328,6 +328,9 @@
         "Goal_6_Opening_2" "Watch Phantom Assassin's (Agility) skill showcase."
         "Goal_6_Opening_3" "Watch Invoker's (Intelligence) skill showcase."
         "Goal_6_Closing_1"  "Destroy the enemy towers defending the Ancient"
+        "Goal_6_Closing_2a"  "Destroy the enemy's tier 1 mid tower."
+        "Goal_6_Closing_2b"  "Destroy the enemy's tier 2 mid tower."
+        "Goal_6_Closing_2c"  "Destroy the enemy's tier 3 mid tower."
         "Goal_6_Closing_2"  "Destroy the enemy Ancient."
         "Goal_6_Closing_3"  "(Optional) Right click people in your base to talk to them!"
 
