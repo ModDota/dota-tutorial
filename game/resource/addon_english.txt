@@ -207,6 +207,7 @@
         // Press key messages
         "PressKey_ChatWheel" "Hold {s:key} to open the chat wheel."
         "PressKey_Voice" "Hold {s:key} to speak."
+        "PressKey_Deny" "Press {s:key} and left-click your creeps to attack them."
 
         // Errors
         "Error_Leveling_1"     "Train the ability you are instructed to."
@@ -260,7 +261,7 @@
         "Goal_2_Opening_6" "Move behind the creeps and prepare for combat."
         "Goal_2_Creeps_1" "Last hit enemy creeps"
         "Goal_2_Creeps_2" "Last hit enemy creeps using Breathe Fire"
-        "Goal_2_Creeps_3" "Deny friendly creeps"
+        "Goal_2_Creeps_3" "Attack your own creeps to deny the last hit"
         "Goal_2_Creeps_4" "Kill Sniper."
         "Goal_2_Tower_1" "Attack the enemy's top tower."
         "Goal_2_Tower_2" "Wait to respawn."

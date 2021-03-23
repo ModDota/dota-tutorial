@@ -1,6 +1,7 @@
 declare const enum LocalizationKey {
     PressKey_ChatWheel = "PressKey_ChatWheel",
     PressKey_Voice = "PressKey_Voice",
+    PressKey_Deny = "PressKey_Deny",
 
     Goal_1_Camera_1 = "#Goal_1_Camera_1",
     Goal_1_Camera_2 = "#Goal_1_Camera_2",
