@@ -166,7 +166,6 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
     // Move the hero if not within tolerance
     if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
         hero.Stop()
-        hero.SetAbsOrigin(state.heroLocation)
         FindClearSpaceForUnit(hero, state.heroLocation, true)
     }
 
