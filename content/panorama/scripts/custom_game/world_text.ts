@@ -111,9 +111,6 @@ type WorldText = {
         const addedNpcs = [...currentNpcs].filter(npc => !titleNpcs.has(npc) && hasTitle(npc))
         const removedNpcs = [...titleNpcs].filter(npc => !currentNpcs.has(npc))
 
-        $.Msg("Added:", addedNpcs)
-        $.Msg("Removed:", removedNpcs)
-
         for (const removedNpc of removedNpcs) {
             titleNpcs.delete(removedNpc)
 
