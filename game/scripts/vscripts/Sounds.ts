@@ -336,6 +336,7 @@ export const soundDurations: Record<string, number> = {
     "Script_6_ZQ": 16.505562,
     "Script_6_Alex": 21.416000,
     "Script_6_Dotabuff": 20.128250,
+    "Script_6_Jenkins": 15.174240,
     "Script_6_Shush": 12.987125,
     "Script_6_Yoyo": 11.553688,
     "Script_6_Slacks": 26.643875,

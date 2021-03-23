@@ -144,6 +144,18 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.ZQ, Vector(-3700, -5200, 256), LocalizationKey.Script_6_ZQ, LocalizationKey.Script_6_ZQ),
     new ClosingNpc(CustomNpcKeys.Yodi, Vector(-3970, -5120, 256), LocalizationKey.Script_6_Yodi, LocalizationKey.Script_6_Yodi),
     new ClosingNpc(CustomNpcKeys.Dotabuff, Vector(-5375, -5550, 256), LocalizationKey.Script_6_Dotabuff, LocalizationKey.Script_6_Dotabuff),
+    new ClosingNpc(CustomNpcKeys.Sniper, Vector(-5700, -6400, 256), LocalizationKey.Script_6_Jenkins, LocalizationKey.Script_6_Jenkins),
+    new ClosingNpc(CustomNpcKeys.Sheepsticked, Vector(-4400, -6630, 256), LocalizationKey.Script_6_Sheepsticked),
+    new ClosingNpc(CustomNpcKeys.Mirana, Vector(-4050, -6100, 256), LocalizationKey.Script_6_Sheever),
+    new ClosingNpc(CustomNpcKeys.ODPixel, Vector(-4900, -6755, 256), LocalizationKey.Script_6_ODPixel),
+    new ClosingNpc(CustomNpcKeys.Kunkka, Vector(-3900, -5700, 256), LocalizationKey.Script_6_Mason),
+    new ClosingNpc(CustomNpcKeys.Ursa, Vector(-5150, -4900, 256), LocalizationKey.Script_6_Cap),
+    new ClosingNpc(CustomNpcKeys.EmberSpirit, Vector(-4900, -4750, 256), LocalizationKey.Script_6_Blitz),
+    new ClosingNpc(CustomNpcKeys.Grimstroke, Vector(-4800, -5000, 256), LocalizationKey.Script_6_Trent),
+    new ClosingNpc(CustomNpcKeys.Undying, Vector(-4450, -5050, 256), LocalizationKey.Script_6_Synderen),
+    new ClosingNpc(CustomNpcKeys.Zuus, Vector(-4600, -4850, 256), LocalizationKey.Script_6_Lyrical),
+    new ClosingNpc(CustomNpcKeys.StormSpirit, Vector(-4325, -4500, 256), LocalizationKey.Script_6_PyrionFlax),
+    new ClosingNpc(CustomNpcKeys.Riki, Vector(-4250, -5550, 256), LocalizationKey.Script_6_Arteezy),
 
     // Modders
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),

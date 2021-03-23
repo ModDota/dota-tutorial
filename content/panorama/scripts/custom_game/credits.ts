@@ -26,7 +26,7 @@ const portraits: Record<string, string> = {
     [CustomNpcKeys.Tora]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.Toyoka]: "file://{images}/custom_game/credits/avatars/moddota.png",
     [CustomNpcKeys.VicFrank]: "file://{images}/custom_game/credits/avatars/moddota.png",
-    [CustomNpcKeys.Yoyo]: "file://{images}/custom_game/credits/avatars/moddota.png",
+    [CustomNpcKeys.Yoyo]: "file://{images}/custom_game/credits/avatars/Yoyo.png",
     [CustomNpcKeys.ValkyrjaRuby]: "file://{images}/custom_game/credits/avatars/Ruby.png",
     [CustomNpcKeys.ZQ]: "file://{images}/custom_game/credits/avatars/ZQ.png",
     [CustomNpcKeys.Yodi]: "file://{images}/custom_game/credits/avatars/Yodi.png",
@@ -34,6 +34,18 @@ const portraits: Record<string, string> = {
     [CustomNpcKeys.Indiegogo]: "file://{images}/custom_game/credits/avatars/Indiegogo.png",
     [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/credits/avatars/Slacks.png",
     [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/credits/avatars/Sunsfan.png",
+    [CustomNpcKeys.Sniper]: "file://{images}/custom_game/credits/avatars/Jenkins.png",
+    [CustomNpcKeys.Sheepsticked]: "file://{images}/custom_game/credits/avatars/Sheepsticked.png",
+    [CustomNpcKeys.Mirana]: "file://{images}/custom_game/credits/avatars/Sheever.png",
+    [CustomNpcKeys.ODPixel]: "file://{images}/custom_game/credits/avatars/ODPixel.png",
+    [CustomNpcKeys.Kunkka]: "file://{images}/custom_game/credits/avatars/Mason.png",
+    [CustomNpcKeys.Ursa]: "file://{images}/custom_game/credits/avatars/Capitalist.png",
+    [CustomNpcKeys.EmberSpirit]: "file://{images}/custom_game/credits/avatars/Blitz.png",
+    [CustomNpcKeys.Grimstroke]: "file://{images}/custom_game/credits/avatars/TrentPax.png",
+    [CustomNpcKeys.Zuus]: "file://{images}/custom_game/credits/avatars/Lyrical.png",
+    [CustomNpcKeys.Undying]: "file://{images}/custom_game/credits/avatars/Synderen.png",
+    [CustomNpcKeys.Riki]: "file://{images}/custom_game/credits/avatars/Artour.png",
+    [CustomNpcKeys.StormSpirit]: "file://{images}/custom_game/credits/avatars/PyrionFlax.png",
 };
 
 enum SocialType {
