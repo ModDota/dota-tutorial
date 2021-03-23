@@ -106,7 +106,7 @@
         "npc_dota_tutorial_bowie_twitch" "d2bowi3"
         "npc_dota_tutorial_angermania_twitter" "AngermaniaP"
         "npc_dota_tutorial_angermania_youtube" "AngerMania"
-        "npc_dota_tutorial_angermania_twitch" "AngerMania"
+        "npc_dota_tutorial_angermania_twitch" "anger_"
         "npc_dota_tutorial_redditdota_website" "reddit.com/r/dota2"
         "npc_dota_tutorial_redditdota_twitter" "redditdota2"
         "npc_dota_tutorial_redditdota_twitch" "redditdota2"
