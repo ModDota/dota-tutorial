@@ -251,14 +251,27 @@ GameUI.SetCameraPitchMax(60)
 
 // Chapter 3 skip
 const chapter3SkipButton = $("#Chapter3SkipButton");
+const chapter3ConfirmationPanel = $("#Chapter3SkipConfirmationRoot");
 chapter3SkipButton.visible = false;
 
 function skipChapter3() {
     GameEvents.SendCustomGameEventToServer("skip_chapter3", {});
+    chapter3ConfirmationPanel.RemoveClass("Visible");
     chapter3SkipButton.visible = false;
 }
 
+function showSkipChapter3Confirmation(show: boolean) {
+    chapter3SkipButton.visible = !show;
+
+    if (show) {
+        chapter3ConfirmationPanel.AddClass("Visible");
+    } else {
+        chapter3ConfirmationPanel.RemoveClass("Visible");
+    }
+}
+
 function onShowSkipChapter3Button(show: boolean) {
+    chapter3ConfirmationPanel.RemoveClass("Visible");
     chapter3SkipButton.visible = show;
 }
 
