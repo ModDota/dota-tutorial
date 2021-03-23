@@ -1908,6 +1908,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Jenkins.vsnd" ]
     }
+    "Script_6_DotaFire" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_DotaFire.vsnd" ]
+    }
     "Script_6_Indiegogo" =
     {
         type = "dota_src1_2d"

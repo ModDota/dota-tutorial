@@ -879,4 +879,24 @@
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
         "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
     }
+    
+    "npc_dota_tutorial_awesomedota"
+    {
+        "Model"						"models/items/broodmother/spiderling/perceptive_spiderling/perceptive_spiderling.vmdl"
+        "ModelScale" 				"1.1"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
+
+    "npc_dota_tutorial_dotafire"
+    {
+        "Model"						"models/items/courier/butch_pudge_dog/butch_pudge_dog.vmdl"
+        "ModelScale" 				"1.1"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
 }
