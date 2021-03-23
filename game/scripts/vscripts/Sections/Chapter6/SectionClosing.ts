@@ -135,40 +135,40 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Coccia, Vector(-7050, -6050, 384), LocalizationKey.Script_6_Alex, LocalizationKey.Script_6_Alex),
     new ClosingNpc(CustomNpcKeys.Tsunami, Vector(-7270, -6800, 384), LocalizationKey.Script_6_Tsunami, LocalizationKey.Script_6_Tsunami),
     new ClosingNpc(CustomNpcKeys.DotaU, Vector(-6900, -7050, 384), LocalizationKey.Script_6_DotaU, LocalizationKey.Script_6_DotaU),
-    new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5100, -5250, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
-    new ClosingNpc(CustomNpcKeys.BSJ, Vector(-4800, -5450, 256), LocalizationKey.Script_6_BSJ, LocalizationKey.Script_6_BSJ),
-    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4550, -5300, 256), LocalizationKey.Script_6_Bowie, LocalizationKey.Script_6_Bowie),
-    new ClosingNpc(CustomNpcKeys.Angermania, Vector(-4530, -5940, 256), LocalizationKey.Script_6_anger, LocalizationKey.Script_6_anger),
-    new ClosingNpc(CustomNpcKeys.RedditDota, Vector(-4820, -6330, 256), LocalizationKey.Script_6_Reddit, LocalizationKey.Script_6_Reddit),
-    new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6540, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
-    new ClosingNpc(CustomNpcKeys.ZQ, Vector(-3700, -5200, 256), LocalizationKey.Script_6_ZQ, LocalizationKey.Script_6_ZQ),
-    new ClosingNpc(CustomNpcKeys.Yodi, Vector(-3970, -5120, 256), LocalizationKey.Script_6_Yodi, LocalizationKey.Script_6_Yodi),
-    new ClosingNpc(CustomNpcKeys.Dotabuff, Vector(-5375, -5550, 256), LocalizationKey.Script_6_Dotabuff, LocalizationKey.Script_6_Dotabuff),
-    new ClosingNpc(CustomNpcKeys.Sniper, Vector(-5700, -6400, 256), LocalizationKey.Script_6_Jenkins, LocalizationKey.Script_6_Jenkins),
-    new ClosingNpc(CustomNpcKeys.Sheepsticked, Vector(-4400, -6630, 256), LocalizationKey.Script_6_Sheepsticked),
-    new ClosingNpc(CustomNpcKeys.Mirana, Vector(-4050, -6100, 256), LocalizationKey.Script_6_Sheever),
-    new ClosingNpc(CustomNpcKeys.ODPixel, Vector(-4900, -6755, 256), LocalizationKey.Script_6_ODPixel),
-    new ClosingNpc(CustomNpcKeys.Kunkka, Vector(-3900, -5700, 256), LocalizationKey.Script_6_Mason),
-    new ClosingNpc(CustomNpcKeys.Ursa, Vector(-5150, -4900, 256), LocalizationKey.Script_6_Cap),
-    new ClosingNpc(CustomNpcKeys.EmberSpirit, Vector(-4900, -4750, 256), LocalizationKey.Script_6_Blitz),
-    new ClosingNpc(CustomNpcKeys.Grimstroke, Vector(-4800, -5000, 256), LocalizationKey.Script_6_Trent),
-    new ClosingNpc(CustomNpcKeys.Undying, Vector(-4450, -5050, 256), LocalizationKey.Script_6_Synderen),
-    new ClosingNpc(CustomNpcKeys.Zuus, Vector(-4600, -4850, 256), LocalizationKey.Script_6_Lyrical),
+    new ClosingNpc(CustomNpcKeys.DotaFromZero, Vector(-5100, -5700, 256), LocalizationKey.Script_6_DFZ, LocalizationKey.Script_6_DFZ),
+    new ClosingNpc(CustomNpcKeys.BSJ, Vector(-6000, -6400, 256), LocalizationKey.Script_6_BSJ, LocalizationKey.Script_6_BSJ),
+    new ClosingNpc(CustomNpcKeys.Bowie, Vector(-4650, -5700, 256), LocalizationKey.Script_6_Bowie, LocalizationKey.Script_6_Bowie),
+    new ClosingNpc(CustomNpcKeys.Angermania, Vector(-4350, -6050, 256), LocalizationKey.Script_6_anger, LocalizationKey.Script_6_anger),
+    new ClosingNpc(CustomNpcKeys.RedditDota, Vector(-4550, -6330, 256), LocalizationKey.Script_6_Reddit, LocalizationKey.Script_6_Reddit),
+    new ClosingNpc(CustomNpcKeys.Liquipedia, Vector(-5150, -6450, 256), LocalizationKey.Script_6_Liquipedia, LocalizationKey.Script_6_Liquipedia),
+    new ClosingNpc(CustomNpcKeys.ZQ, Vector(-4850, -6600, 256), LocalizationKey.Script_6_ZQ, LocalizationKey.Script_6_ZQ),
+    new ClosingNpc(CustomNpcKeys.Yodi, Vector(-5600, -6500, 256), LocalizationKey.Script_6_Yodi, LocalizationKey.Script_6_Yodi),
+    new ClosingNpc(CustomNpcKeys.Dotabuff, Vector(-4100, -6650, 256), LocalizationKey.Script_6_Dotabuff, LocalizationKey.Script_6_Dotabuff),
+    new ClosingNpc(CustomNpcKeys.Sniper, Vector(-4900, -6000, 256), LocalizationKey.Script_6_Jenkins, LocalizationKey.Script_6_Jenkins),
+    new ClosingNpc(CustomNpcKeys.Sheepsticked, Vector(-4100, -5450, 256), LocalizationKey.Script_6_Sheepsticked),
+    new ClosingNpc(CustomNpcKeys.Mirana, Vector(-3950, -4900, 256), LocalizationKey.Script_6_Sheever),
+    new ClosingNpc(CustomNpcKeys.ODPixel, Vector(-3900, -4500, 256), LocalizationKey.Script_6_ODPixel),
+    new ClosingNpc(CustomNpcKeys.Kunkka, Vector(-3700, -5450, 256), LocalizationKey.Script_6_Mason),
+    new ClosingNpc(CustomNpcKeys.Ursa, Vector(-5150, -5000, 256), LocalizationKey.Script_6_Cap),
+    new ClosingNpc(CustomNpcKeys.EmberSpirit, Vector(-4800, -4300, 256), LocalizationKey.Script_6_Blitz),
+    new ClosingNpc(CustomNpcKeys.Grimstroke, Vector(-4950, -4700, 256), LocalizationKey.Script_6_Trent),
+    new ClosingNpc(CustomNpcKeys.Undying, Vector(-3850, -5150, 256), LocalizationKey.Script_6_Synderen),
+    new ClosingNpc(CustomNpcKeys.Zuus, Vector(-4500, -4150, 256), LocalizationKey.Script_6_Lyrical),
     new ClosingNpc(CustomNpcKeys.StormSpirit, Vector(-4325, -4500, 256), LocalizationKey.Script_6_PyrionFlax),
-    new ClosingNpc(CustomNpcKeys.Riki, Vector(-4250, -5550, 256), LocalizationKey.Script_6_Arteezy),
-    new ClosingNpc(CustomNpcKeys.Awesomedota, Vector(-3700, -5450, 256), LocalizationKey.Script_6_Awesome, LocalizationKey.Script_6_Awesome),
-    new ClosingNpc(CustomNpcKeys.DotaFire, Vector(-4550, -5700, 256), LocalizationKey.Script_6_DotaFire, LocalizationKey.Script_6_DotaFire),
+    new ClosingNpc(CustomNpcKeys.Riki, Vector(-4700, -3800, 256), LocalizationKey.Script_6_Arteezy),
+    new ClosingNpc(CustomNpcKeys.Awesomedota, Vector(-4000, -6250, 256), LocalizationKey.Script_6_Awesome, LocalizationKey.Script_6_Awesome),
+    new ClosingNpc(CustomNpcKeys.DotaFire, Vector(-5475, -5650, 256), LocalizationKey.Script_6_DotaFire, LocalizationKey.Script_6_DotaFire),
 
     // Modders
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),
     new ClosingNpc(CustomNpcKeys.Perry, Vector(-5150, -3540, 256), LocalizationKey.Script_6_Perry),
     new ClosingNpc(CustomNpcKeys.PongPing, Vector(-5750, -3850, 256), LocalizationKey.Script_6_PongPing),
     new ClosingNpc(CustomNpcKeys.Shush, Vector(-5450, -3850, 256), LocalizationKey.Script_6_Shush, LocalizationKey.Script_6_Shush),
-    new ClosingNpc(CustomNpcKeys.SinZ, Vector(-5330, -4250, 256), LocalizationKey.Script_6_SinZ),
-    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5400, -4600, 256), LocalizationKey.Script_6_SmashTheState),
+    new ClosingNpc(CustomNpcKeys.SinZ, Vector(-5600, -4250, 256), LocalizationKey.Script_6_SinZ),
+    new ClosingNpc(CustomNpcKeys.SmashTheState, Vector(-5800, -4600, 256), LocalizationKey.Script_6_SmashTheState),
     new ClosingNpc(CustomNpcKeys.Tora, Vector(-6300, -4160, 256), LocalizationKey.Script_6_Tora),
     new ClosingNpc(CustomNpcKeys.Toyoka, Vector(-6700, -4600, 256), LocalizationKey.Script_6_Toyoka),
-    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-5940, -4680, 256), LocalizationKey.Script_6_VicFrank),
+    new ClosingNpc(CustomNpcKeys.VicFrank, Vector(-6200, -4680, 256), LocalizationKey.Script_6_VicFrank),
     new ClosingNpc(CustomNpcKeys.Yoyo, Vector(-6550, -3880, 256), LocalizationKey.Script_6_Yoyo, LocalizationKey.Script_6_Yoyo),
 
     // Helpers
@@ -255,8 +255,9 @@ function onStart(complete: () => void) {
 
         tg.immediate(_ => {
             worldTexts.add(addWorldTextAtLocation("Modders", Vector(-6700, -4800, 256), "credit_section"))
-            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-5500, -6000, 256), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Resources", Vector(-5500, -5900, 256), "credit_section"))
             worldTexts.add(addWorldTextAtLocation("Resources", Vector(-7000, -6500, 384), "credit_section"))
+            worldTexts.add(addWorldTextAtLocation("Voice actors", Vector(-4600, -4850, 256), "credit_section"))
         }),
 
         // Hopefully every npc will be spawned by now and this completes immediately
