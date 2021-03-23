@@ -453,6 +453,20 @@ const onStart = (complete: () => void) => {
         stackKey = randomChoice(stackDialogKeys[Math.min(stacks, stackDialogKeys.length - 1)])
     }
 
+    const stackCreepsMultipleIfNotSkipped = () => {
+        return tg.seq(_ => requestedSkipStacking 
+            ? [
+                // If skip stacking was requested just clean up and continue 
+                tg.immediate(context => {
+                    removeHighlight(clockUIPath)
+                    playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
+                    playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
+                })
+            ]
+            // Otherwise continue with stacking championship
+            : stackCreepsMultiple());
+    }
+
     const stackCreepsMultiple = () => {
         return [
             tg.audioDialog(LocalizationKey.Script_3_Opening_18, LocalizationKey.Script_3_Opening_18, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
@@ -668,7 +682,7 @@ const onStart = (complete: () => void) => {
             ...respawnCreepsInitially(),
             ...pressAlt(),
             ...stackCreepsPractice(),
-            ...stackCreepsMultiple(),
+            stackCreepsMultipleIfNotSkipped(),
             ...killStackedCamp(),
             ...pickUpItems(),
             ...killThirdSpawn(),

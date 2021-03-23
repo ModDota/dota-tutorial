@@ -38,7 +38,7 @@
 
         <Label id="PressKeyMessage" />
 
-        <Button id="Chapter3SkipButton" class="ButtonBevel" onactivate="skipChapter3()">
+        <Button id="Chapter3SkipButton" class="ButtonBevel" onactivate="showSkipChapter3Confirmation(true)" onmouseover="UIShowTextTooltip('#SkipStackHover')" onmouseout="UIHideTextTooltip()">
             <Label text="#Misc_3_SkipStacking" />
         </Button>
 
@@ -46,11 +46,11 @@
             <Label id="Chapter3SkipTitle" text="#Confirm_Skip_Stack_Title" />
             <Label id="Chapter3SkipMessage" text="#Confirm_Skip_Stack_Message" />
             <Panel class="Chapter3SkipRootBottom">
-                <Button id="Chapter3SkipConfirmationButtonYes" onactivate="Chapter3SkipButtonYes()">
-                    <Label text="#Yes"/>
+                <Button id="Chapter3SkipConfirmationButtonYes" onactivate="skipChapter3()">
+                    <Label text="#GameUI_Yes"/>
                 </Button>
-                <Button id="Chapter3SkipConfirmationButtonNo" onactivate="Chapter3SkipButtonNo()">
-                    <Label text="#No"/>
+                <Button id="Chapter3SkipConfirmationButtonNo" onactivate="showSkipChapter3Confirmation(false)">
+                    <Label text="#GameUI_No"/>
                 </Button>
             </Panel>
         </Panel>

@@ -136,7 +136,11 @@ export const seq = (steps: StepArgument<TutorialStep[]>): TutorialStep => {
             }
         }
 
-        startStep(0)
+        if (actualSteps.length > 0) {
+            startStep(0)
+        } else {
+            onComplete()
+        }
     }, context => {
         if (actualSteps) {
             actualSteps.forEach(step => step.stop(context))
