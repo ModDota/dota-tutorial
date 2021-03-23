@@ -207,7 +207,7 @@
         // Press key messages
         "PressKey_ChatWheel" "Hold {s:key} to open the chat wheel."
         "PressKey_Voice" "Hold {s:key} to speak."
-        "PressKey_Deny" "Press {s:key} and left-click your creeps to attack them."
+        "PressKey_Deny" "Press {s:key} and left-click your low-health creeps to attack them."
 
         // Errors
         "Error_Leveling_1"     "Train the ability you are instructed to."

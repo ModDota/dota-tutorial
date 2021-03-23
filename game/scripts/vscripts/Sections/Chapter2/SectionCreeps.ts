@@ -368,6 +368,8 @@ const onStop = () => {
         currentDialogToken = undefined
     }
 
+    hidePressKeyMessage()
+
     stopListeningToBreatheFireCasts()
 
     const context = GameRules.Addon.context;
