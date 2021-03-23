@@ -29,8 +29,11 @@
         "Continue" "Continue"
         "RandomTip" "Random Tip"
         "RandomTipHover" "Random tips from our community"
-
         "dota_fountain" "Community"
+        "Confirm_Skip_Stack_Title" "Confirm Skip Stacking"
+        "Confirm_Skip_Stack_Message" "Do you really wish to skip stacking?"
+        "Yes" "Yes"
+        "No" "No"
 
         "npc_mud_golem_sunsfan" "SUNSfan"
         "npc_mud_golem_slacks" "Slacks"
