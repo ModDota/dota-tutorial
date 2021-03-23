@@ -117,7 +117,7 @@ type WorldText = {
         for (const removedNpc of removedNpcs) {
             titleNpcs.delete(removedNpc)
 
-            worldTexts.delete(getLocalWorldTextIndex(removedNpc))
+            removeWorldText(getLocalWorldTextIndex(removedNpc))
         }
 
         for (const addedNpc of addedNpcs) {
