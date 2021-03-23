@@ -30,7 +30,7 @@
             </Button>
         </Panel>
 
-        <Label id="MessageToTheNoobsMessage" text="Hello" />
+        <Label id="MessageToTheNoobsMessage" text="Hello"  onactivate="cancelMessageToTheNoobs()" />
         <Panel id="MessageToTheNoobsButton" onactivate="showMessageToTheNoobs()" hittest="true" onmouseover="UIShowTextTooltip('#RandomTipHover')" onmouseout="UIHideTextTooltip()">
             <Panel id="MessageToTheNoobsImage" hittest="false" />
             <Label id="MessageToTheNoobsText" text="#RandomTip" hittest="false" />
