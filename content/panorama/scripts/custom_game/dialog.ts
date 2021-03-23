@@ -39,6 +39,9 @@ function handleSpecialUnitPortrait(unitName: string): boolean {
         [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/portraits/sunsfan_greevil.png",
         [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/portraits/slacks_greevil.png",
         [CustomNpcKeys.ODPixel]: "file://{images}/custom_game/portraits/odpixel_lion.png",
+        [CustomNpcKeys.ValkyrjaRuby]: "file://{images}/custom_game/credits/avatars/Ruby.png",
+        [CustomNpcKeys.Yodi]: "file://{images}/custom_game/credits/avatars/Yodi.png",
+        [CustomNpcKeys.Yoyo]: "file://{images}/custom_game/credits/avatars/Yoyo.png",
     };
 
     if (unitPortraits[unitName] !== undefined) {
