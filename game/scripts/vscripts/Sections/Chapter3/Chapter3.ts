@@ -630,7 +630,7 @@ const onStart = (complete: () => void) => {
             tg.immediate((ctx) => {
                 goalMoveToRiki.start()
                 let riki = ctx[CustomNpcKeys.Riki] as CDOTA_BaseNPC
-                riki.SetAbsOrigin(rikiLocation)
+                FindClearSpaceForUnit(riki, rikiLocation, true)
                 let backstab = riki.FindAbilityByName("riki_backstab")
                 backstab!.SetLevel(0)
                 riki.RemoveModifierByName("modifier_invisible")

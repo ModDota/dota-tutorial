@@ -167,6 +167,7 @@ function handleHeroCreationAndLevel(state: FilledRequiredState): CDOTA_BaseNPC_H
     if (state.heroLocation.__sub(hero.GetAbsOrigin()).Length2D() > state.heroLocationTolerance) {
         hero.Stop()
         hero.SetAbsOrigin(state.heroLocation)
+        FindClearSpaceForUnit(hero, state.heroLocation, true)
     }
 
     hero.SetGold(state.heroGold, false)
@@ -354,7 +355,7 @@ function handleRoshan(state: FilledRequiredState) {
 
         if (roshanLocation.__sub(roshan.GetAbsOrigin()).Length2D() > 0) {
             roshan.Stop()
-            roshan.SetAbsOrigin(roshanLocation)
+            FindClearSpaceForUnit(roshan, roshanLocation, true)
         }
 
         roshan.FaceTowards(outsidePitLocation)
@@ -381,7 +382,7 @@ function createOrMoveUnit(unitName: string, team: DotaTeam, location: Vector, fa
 
     const postCreate = (unit: CDOTA_BaseNPC) => {
         if (unit.GetAbsOrigin().__sub(location).Length2D() > 100) {
-            unit.SetAbsOrigin(location)
+            FindClearSpaceForUnit(unit, location, true)
             unit.Stop()
         }
 
