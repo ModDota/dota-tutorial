@@ -206,16 +206,20 @@ function onStart(complete: () => void) {
 
     const goalTracker = new GoalTracker()
     const goalTalkToNpcs = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_3);
-    const goalDestroyTowers = goalTracker.addNumeric(LocalizationKey.Goal_6_Closing_1, 2);
+    const goalDestroyTier1 = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2a);
+    const goalDestroyTier2 = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2b);
+    const goalDestroyTier3 = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2c);
+    const goalDestroyTier4s = goalTracker.addNumeric(LocalizationKey.Goal_6_Closing_1, 2);
     const goalDestroyAncient = goalTracker.addBoolean(LocalizationKey.Goal_6_Closing_2);
 
     const playerHero = getOrError(getPlayerHero(), "Can not get player hero")
 
-    const topTower = getDireAncientTower("top")
-    const botTower = getDireAncientTower("bot")
-    let towersToDestroy: CDOTA_BaseNPC_Building[] = [];
-    if (topTower && unitIsValidAndAlive(topTower)) towersToDestroy.push(topTower)
-    if (botTower && unitIsValidAndAlive(botTower)) towersToDestroy.push(botTower)
+    const midTier1Tower = getTower(DOTATeam_t.DOTA_TEAM_BADGUYS, "mid", 1);
+    const midTier2Tower = getTower(DOTATeam_t.DOTA_TEAM_BADGUYS, "mid", 2);
+    const midTier3Tower = getTower(DOTATeam_t.DOTA_TEAM_BADGUYS, "mid", 3);
+    const topTier4Tower = getTower(DOTATeam_t.DOTA_TEAM_BADGUYS, "top", 4);
+    const botTier4Tower = getTower(DOTATeam_t.DOTA_TEAM_BADGUYS, "bot", 4);
+
     const ancient = Entities.FindByName(undefined, "dota_badguys_fort") as CDOTA_BaseNPC
 
     const pathLocations: Vector[] = [Vector(-4422, -3970, 256), Vector(-3966, -3467, 136.75), Vector(-2366, -2057, 133.000000), Vector(-922, -786, 128), Vector(-49, 44, 128), Vector(1559, 1173, 128), Vector(3442, 2938, 136), Vector(4105, 3560, 256), Vector(5093, 4629, 264)]
@@ -282,18 +286,45 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_6_Closing_3, LocalizationKey.Script_6_Closing_3, slacks),
             tg.audioDialog(LocalizationKey.Script_6_Closing_4, LocalizationKey.Script_6_Closing_4, sunsFan),
 
-            tg.withHighlights(tg.forkAny([
+            tg.forkAny([
                 tg.seq([
+                    // Create path particle down mid lane
                     tg.immediate(_ => {
-                        goalDestroyTowers.start()
                         pathParticleID = createPathParticle([...pathLocations, ancient.GetAbsOrigin()])
                     }),
-                    tg.completeOnCheck(_ => {
-                        towersToDestroy = towersToDestroy.filter(tower => unitIsValidAndAlive(tower))
-                        goalDestroyTowers.setValue(2 - towersToDestroy.length)
-
-                        return towersToDestroy.length === 0
-                    }, 0.1),
+                    // Goal: Destroy T1
+                    tg.immediate(_ => goalDestroyTier1.start()),
+                    tg.withHighlights(
+                        tg.completeOnCheck(_ => !unitIsValidAndAlive(midTier1Tower), 0.1),
+                        {type: "arrow_enemy", units: midTier1Tower ? [midTier1Tower] : [], attach: true}
+                    ),
+                    tg.immediate(_ => goalDestroyTier1.complete()),
+                    // Goal:Destroy T2
+                    tg.immediate(_ => goalDestroyTier2.start()),
+                    tg.withHighlights(
+                        tg.completeOnCheck(_ => !unitIsValidAndAlive(midTier2Tower), 0.1),
+                        {type: "arrow_enemy", units: midTier2Tower ? [midTier2Tower] : [], attach: true}
+                    ),
+                    tg.immediate(_ => goalDestroyTier2.complete()),
+                    // Goal: Destroy T3
+                    tg.immediate(_ => goalDestroyTier3.start()),
+                    tg.withHighlights(
+                        tg.completeOnCheck(_ => !unitIsValidAndAlive(midTier3Tower), 0.1),
+                        {type: "arrow_enemy", units: midTier3Tower ? [midTier3Tower] : [], attach: true}
+                    ),
+                    tg.immediate(_ => goalDestroyTier3.complete()),
+                    // Goal: Destroy T4s
+                    tg.immediate(_ => goalDestroyTier4s.start()),
+                    tg.withHighlights(tg.completeOnCheck(_ => {
+                            let deadCount = 0;
+                            if (!unitIsValidAndAlive(botTier4Tower)) deadCount++;
+                            if (!unitIsValidAndAlive(topTier4Tower)) deadCount++;
+                            goalDestroyTier4s.setValue(deadCount);
+                            return deadCount === 2;
+                        }, 0.1),
+                        {type: "arrow_enemy", units: (topTier4Tower && botTier4Tower) ? [topTier4Tower, botTier4Tower] : [], attach: true}
+                    ),
+                    tg.immediate(_ => goalDestroyTier4s.complete()),
                 ]),
 
                 tg.seq([
@@ -311,15 +342,11 @@ function onStart(complete: () => void) {
                     tg.immediate(_ => canInteract = true),
                     tg.neverComplete(),
                 ]),
-            ]), {
-                type: "arrow_enemy",
-                units: towersToDestroy,
-                attach: true,
-            }),
+            ]),
 
             tg.withHighlights(tg.seq([
                 tg.immediate(_ => {
-                    goalDestroyTowers.complete()
+                    goalDestroyTier4s.complete()
                     goalDestroyAncient.start()
                 }),
                 tg.completeOnCheck(() => { return !unitIsValidAndAlive(ancient) }, 0.1),
@@ -421,15 +448,12 @@ export const sectionClosing = new tut.FunctionalSection(
     orderFilter
 )
 
-function getDireAncientTower(towerLoc: "top" | "bot"): CDOTA_BaseNPC_Building | undefined {
-    const enemyTowerAncientTopLocation = Vector(4944, 4776, 256)
-    const enemyTowerAncientBotLocation = Vector(5280, 4432, 256)
+function getTower(team: DOTATeam_t, lane: "mid" | "top" | "bot", tier: 1 | 2 | 3 | 4): CDOTA_BaseNPC_Building | undefined {
+    const towers = Entities.FindAllByClassname("npc_dota_tower") as CDOTA_BaseNPC_Building[];
 
-    const tower = towerLoc === "top" ?
-        Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientTopLocation, 200) as CDOTA_BaseNPC_Building :
-        Entities.FindByClassnameNearest("npc_dota_tower", enemyTowerAncientBotLocation, 200) as CDOTA_BaseNPC_Building
-
-    return tower
+    const teamName = team === DOTATeam_t.DOTA_TEAM_GOODGUYS ? "goodguys" : "badguys";
+    const towerName = `dota_${teamName}_tower${tier}_${lane}`;
+    return towers.find(t => t.GetName() === towerName);
 }
 
 let partyParticles: ParticleID[] = [];
