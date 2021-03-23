@@ -1902,6 +1902,18 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Dotabuff.vsnd" ]
     }
+    "Script_6_Jenkins" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Jenkins.vsnd" ]
+    }
+    "Script_6_DotaFire" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_DotaFire.vsnd" ]
+    }
     "Script_6_Indiegogo" =
     {
         type = "dota_src1_2d"
@@ -1985,5 +1997,71 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_6_valkyrjaRuby.vsnd" ]
+    }
+    "Script_6_Sheepsticked" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Sheepsticked.vsnd" ]
+    }
+    "Script_6_Sheever" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Sheever.vsnd" ]
+    }
+    "Script_6_ODPixel" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_ODPixel.vsnd" ]
+    }
+    "Script_6_Mason" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Mason.vsnd" ]
+    }
+    "Script_6_Cap" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Cap.vsnd" ]
+    }
+    "Script_6_Blitz" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Blitz.vsnd" ]
+    }
+    "Script_6_Synderen" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Synderen.vsnd" ]
+    }
+    "Script_6_Lyrical" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Lyrical.vsnd" ]
+    }
+    "Script_6_Trent" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Trent.vsnd" ]
+    }
+    "Script_6_Arteezy" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_Arteezy.vsnd" ]
+    }
+    "Script_6_PyrionFlax" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_6_PyrionFlax.vsnd" ]
     }
 }
