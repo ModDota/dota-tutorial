@@ -207,6 +207,15 @@ function playChapter(chapterNumber: number) {
 const numMessagesToTheNoobs = 78; // This needs to be updated when the messages are updated too
 const messageToTheNoobsMessage = $("#MessageToTheNoobsMessage") as LabelPanel;
 let hideMessageToTheNoobsTimer: ScheduleID | undefined = undefined
+
+function cancelMessageToTheNoobs() {
+    messageToTheNoobsMessage.visible = false;
+    if (hideMessageToTheNoobsTimer) {
+        $.CancelScheduled(hideMessageToTheNoobsTimer);
+        hideMessageToTheNoobsTimer = undefined;
+    }
+}
+
 function showMessageToTheNoobs() {
     if (hideMessageToTheNoobsTimer) {
         $.CancelScheduled(hideMessageToTheNoobsTimer);
