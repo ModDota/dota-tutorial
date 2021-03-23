@@ -90,45 +90,51 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
         return;
     }
 
-    const element = findPanelAtPath(path);
-    // Can't highlight if the scale is too small/large/uninitialized
-    if (element && element.actualuiscale_x > 0.01) {
-        const pos = element.GetPositionWithinAncestor(hudRoot);
+    // Select player hero in case they selected something else
+    GameUI.SelectUnit(Players.GetPlayerHeroEntityIndex(Players.GetLocalPlayer()), false);
 
-        const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
-        highlightPanel.hittest = false; // Dont block interactions
-        highlightPanel.AddClass("UIHighlightScalingAnimation")
-        $.Schedule(0.5, () => {
-            if (highlightPanel.IsValid()) {
-                highlightPanel.RemoveClass("UIHighlightScalingAnimation")
-                highlightPanel.AddClass("UIHighlight");
+    // Need to delay this a little bit to allow reselection of the hero
+    $.Schedule(0.05, () => {
+        const element = findPanelAtPath(path);
+        // Can't highlight if the scale is too small/large/uninitialized
+        if (element && element.actualuiscale_x > 0.01) {
+            const pos = element.GetPositionWithinAncestor(hudRoot);
+
+            const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
+            highlightPanel.hittest = false; // Dont block interactions
+            highlightPanel.AddClass("UIHighlightScalingAnimation")
+            $.Schedule(0.5, () => {
+                if (highlightPanel.IsValid()) {
+                    highlightPanel.RemoveClass("UIHighlightScalingAnimation")
+                    highlightPanel.AddClass("UIHighlight");
+                }
+            })
+
+            highlightPanel.SetParent(hudRoot);
+
+            // Set size/position
+            highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
+            highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
+            highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
+
+            highlightedPanels[path] = highlightPanel;
+
+            if (duration) {
+                $.Schedule(duration, () => removeHighlight({ path }));
             }
-        })
 
-        highlightPanel.SetParent(hudRoot);
+            // Shop guide items
+            const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
+            if (isShopGuideItem) {
+                checkShopHighlightItemPanel(highlightPanel, element)
+            }
 
-        // Set size/position
-        highlightPanel.style.width = (element.actuallayoutwidth / element.actualuiscale_x) + "px";
-        highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
-        highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
-
-        highlightedPanels[path] = highlightPanel;
-
-        if (duration) {
-            $.Schedule(duration, () => removeHighlight({ path }));
+            // Deliver Courier path
+            if (path === "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton") {
+                highlightPanel.AddClass("UIHighlightCourierDeliverButton")
+            }
         }
-
-        // Shop guide items
-        const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
-        if (isShopGuideItem) {
-            checkShopHighlightItemPanel(highlightPanel, element)
-        }
-
-        // Deliver Courier path
-        if (path === "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton") {
-            highlightPanel.AddClass("UIHighlightCourierDeliverButton")
-        }
-    }
+    });
 }
 
 function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel) {

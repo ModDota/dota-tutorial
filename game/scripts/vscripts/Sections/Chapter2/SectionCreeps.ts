@@ -5,7 +5,7 @@ import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
 import * as dg from "../../Dialog"
-import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist } from "../../util";
+import { clearAttachedHighlightParticlesFromUnits, findRealPlayerID, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, hidePressKeyMessage, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist, showPressKeyMessage } from "../../util";
 import { Chapter2SpecificKeys, LastHitStages, radiantCreepsNames, direCreepNames, chapter2Blockades } from "./shared";
 import { modifier_no_health_bar } from "../../modifiers/modifier_no_health_bar";
 
@@ -264,6 +264,7 @@ const onStart = (complete: () => void) => {
                     tg.immediate(() => {
                         goalDenyOwnCreeps.start()
                         currentLastHitStage = LastHitStages.LAST_HIT_DENY
+                        showPressKeyMessage(17, LocalizationKey.PressKey_Deny); // DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_ATTACK
                         if (radiantCreeps) {
                             highlight({
                                 type: "arrow_enemy",
@@ -290,6 +291,7 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(chosenSniperAdmitsDefeatLocalizationOption, chosenSniperAdmitsDefeatLocalizationOption, context => context[Chapter2SpecificKeys.sniperEnemyHero]),
                     tg.immediate(() => {
                         goalDenyOwnCreeps.complete()
+                        hidePressKeyMessage()
                         currentLastHitStage = undefined
                         if (radiantCreeps) clearAttachedHighlightParticlesFromUnits(radiantCreeps)
                     }),
@@ -365,6 +367,8 @@ const onStop = () => {
         dg.stop(currentDialogToken)
         currentDialogToken = undefined
     }
+
+    hidePressKeyMessage()
 
     stopListeningToBreatheFireCasts()
 
