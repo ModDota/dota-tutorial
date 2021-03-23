@@ -505,7 +505,6 @@ const onStart = (complete: () => void) => {
             tg.immediate(context => {
                 removeHighlight(clockUIPath)
                 playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
-                playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
                 goalOptionalStackCreeps.complete()
                 goalTryStackCreeps.complete()
             }),
@@ -614,6 +613,7 @@ const onStart = (complete: () => void) => {
             goalSwapItems.complete()
             removeHighlight(firstNeutralSlotUIPath)
             removeHighlight(secondNeutralItemUIPath)
+            playerHero.RemoveModifierByName(modifier_keep_hero_alive.name)
         }),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_10, LocalizationKey.Script_3_Neutrals_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
         tg.audioDialog(LocalizationKey.Script_3_Neutrals_11, LocalizationKey.Script_3_Neutrals_11, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
