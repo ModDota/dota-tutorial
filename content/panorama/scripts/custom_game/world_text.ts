@@ -6,12 +6,6 @@ type WorldText = {
 }
 
 (() => {
-    let nextLocalWorldTextIndex = 100000000
-    function getLocalWorldTextIndex() {
-        return nextLocalWorldTextIndex++
-    }
-
-    const localWorldTexts = new Set<number>()
     const root = $.GetContextPanel()
     const worldTexts = new Map<number, WorldText>()
 
@@ -42,28 +36,6 @@ type WorldText = {
 
     function update() {
         const ratio = 1080 / Game.GetScreenHeight()
-
-        // Check if local world texts are still valid. Hide them on invis.
-        for (const worldTextIndex of localWorldTexts) {
-            const worldText = worldTexts.get(worldTextIndex)
-            if (worldText) {
-                if (worldText.entity) {
-                    if (!Entities.IsValidEntity(worldText.entity) || !Entities.IsAlive(worldText.entity)) {
-                        worldTexts.delete(worldTextIndex)
-                        localWorldTexts.delete(worldTextIndex)
-                        worldText.panel.DeleteAsync(0)
-                    } else {
-                        worldText.panel.visible = !Entities.IsInvisible(worldText.entity)
-                    }
-                } else {
-                    worldTexts.delete(worldTextIndex)
-                    localWorldTexts.delete(worldTextIndex)
-                    worldText.panel.DeleteAsync(0)
-                }
-            } else {
-                localWorldTexts.delete(worldTextIndex)
-            }
-        }
 
         for (const worldText of worldTexts.values()) {
             const panel = worldText.panel
@@ -101,54 +73,91 @@ type WorldText = {
 
     // Add names / titles
 
+    const localizationCache = new Map<string, string | undefined>();
+
     function localizeIfExists(key: string, parent?: PanelBase | undefined): string | undefined {
+        if (!parent && localizationCache.has(key)) {
+            return localizationCache.get(key)
+        }
+
         const localized = parent !== undefined ? $.Localize(key, parent) : $.Localize(key)
-        return localized === key ? undefined : localized
+        const localizedOrUndefined = localized === key ? undefined : localized
+        if (!parent) {
+            localizationCache.set(key, localizedOrUndefined)
+        }
+        return localizedOrUndefined
     }
 
-    function onNpcSpawned(event: NpcSpawnedEvent) {
-        const unitName = Entities.GetUnitName(event.entindex)
+    /**
+     * Gets a unique world text index for an entity
+     */
+    function getLocalWorldTextIndex(entityIndex: EntityIndex) {
+        return entityIndex + 1000000
+    }
 
+    const titleNpcs = new Set<EntityIndex>();
+
+    function hasTitle(entityIndex: EntityIndex) {
         // Check if unit has a name
-        const name = localizeIfExists(`${unitName}_titles_name`)
-        if (name) {
-            // Add name floating text
-            const index = getLocalWorldTextIndex()
+        const unitName = Entities.GetUnitName(entityIndex)
+        return localizeIfExists(`${unitName}_titles_name`) !== undefined
+    }
 
-            localWorldTexts.add(index)
-            addWorldText({
-                type: "npc_title",
-                index: index,
-                location: { x: 0, y: 0, z: 300 },
-                text: name,
-                entity: event.entindex,
-            })
-            const worldText = worldTexts.get(index)
+    function updateNpcs() {
+        // Find all current NPCs
+        const currentNpcs = new Set<EntityIndex>(Entities.GetAllHeroEntities().concat(Entities.GetAllEntitiesByClassname("npc_dota_creature")));
 
-            // Add title if exists
-            if (worldText) {
-                const titleCount = localizeIfExists(`${unitName}_titles_num`)
+        // Find added and removed npcs
+        const addedNpcs = [...currentNpcs].filter(npc => !titleNpcs.has(npc) && hasTitle(npc))
+        const removedNpcs = [...titleNpcs].filter(npc => !currentNpcs.has(npc))
 
-                if (titleCount && parseInt(titleCount) > 0) {
-                    const chosenTitleIndex = Math.floor(Math.random() * 100000000) % parseInt(titleCount)
-                    worldText.panel.SetDialogVariable("name", name)
-                    const chosenTitle = localizeIfExists(`${unitName}_titles_${chosenTitleIndex}`, worldText.panel)
-                    if (chosenTitle) {
-                        worldText.panel.text = chosenTitle
+        for (const removedNpc of removedNpcs) {
+            titleNpcs.delete(removedNpc)
+
+            removeWorldText(getLocalWorldTextIndex(removedNpc))
+        }
+
+        for (const addedNpc of addedNpcs) {
+            titleNpcs.add(addedNpc)
+
+            const unitName = Entities.GetUnitName(addedNpc)
+
+            // Check if unit has a name
+            const name = localizeIfExists(`${unitName}_titles_name`)
+            if (name) {
+                // Add name floating text
+                const index = getLocalWorldTextIndex(addedNpc)
+
+                addWorldText({
+                    type: "npc_title",
+                    index: index,
+                    location: { x: 0, y: 0, z: 300 },
+                    text: name,
+                    entity: addedNpc,
+                })
+                const worldText = worldTexts.get(index)
+
+                // Add title if exists
+                if (worldText) {
+                    const titleCount = localizeIfExists(`${unitName}_titles_num`)
+
+                    if (titleCount && parseInt(titleCount) > 0) {
+                        const chosenTitleIndex = Math.floor(Math.random() * 100000000) % parseInt(titleCount)
+                        worldText.panel.SetDialogVariable("name", name)
+                        const chosenTitle = localizeIfExists(`${unitName}_titles_${chosenTitleIndex}`, worldText.panel)
+                        if (chosenTitle) {
+                            worldText.panel.text = chosenTitle
+                        }
                     }
+                } else {
+                    $.Warning("Could not find world text that was created locally for titles")
                 }
-            } else {
-                $.Warning("Could not find world text that was created locally for titles")
             }
         }
+
+        $.Schedule(0.5, updateNpcs)
     }
 
-    GameEvents.Subscribe("npc_spawned", onNpcSpawned)
-
-    // Add all existing npcs
-    for (const entity of Entities.GetAllEntities()) {
-        onNpcSpawned({ entindex: entity })
-    }
-
+    $.Schedule(0.5, updateNpcs)
     $.Schedule(0.1, update)
 })()
