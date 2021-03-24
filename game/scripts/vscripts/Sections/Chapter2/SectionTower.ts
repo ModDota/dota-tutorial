@@ -139,7 +139,7 @@ const onStart = (complete: () => void) => {
                 goalAttemptToAttackTower.complete()
                 goalwaitToRespawn.start()
                 freezePlayerHero(true)
-                respawnTimerPaths.forEach(highlightUiElement)
+                respawnTimerPaths.forEach(path => highlightUiElement(path))
             }),
 
             tg.audioDialog(LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_3, context => context[CustomNpcKeys.SlacksMudGolem]),
