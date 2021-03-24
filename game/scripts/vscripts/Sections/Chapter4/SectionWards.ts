@@ -27,6 +27,8 @@ const requiredState: RequiredState = {
 const markerLocation = Vector(-2200, 3700, 256);
 const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
+const betweenWardsLocation = (wardLocationObs.__add(wardLocationSentry).__mul(0.5))
+
 const rikiName = CustomNpcKeys.Riki;
 const panCameraWardSpotsAlpha = 1.5;
 
@@ -99,6 +101,7 @@ function onStart(complete: () => void) {
             tg.immediate(_ => goalFetchWard.start()),
             tg.fork([
                 tg.audioDialog(LocalizationKey.Script_4_Wards_1, LocalizationKey.Script_4_Wards_1, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.panCameraExponential(_ => getPlayerCameraLocation(), betweenWardsLocation, 1),
                 tg.withHighlights(tg.seq([
                     tg.immediate(_ => {
                         CreateItemOnPositionSync(wardLocationObs, observerWardItem);

@@ -33,7 +33,7 @@ export class modifier_dk_death_chapter2_tower extends BaseModifier {
         if (!IsServer()) return 0;
         if (event.attacker.GetUnitName() != CustomNpcKeys.DireTopT1Tower) return 0
 
-        return 300
+        return 800
     }
 
     OnRespawn(event: ModifierUnitEvent) {
