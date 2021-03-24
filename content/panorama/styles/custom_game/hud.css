@@ -696,11 +696,36 @@
     color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
     text-shadow: 0px 0px 3px 5.0 #000000;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 22px;
     letter-spacing: 1px;
-    margin-top: 18px;
+    margin-top: 14px;
     margin-left: 238px;
     width: 210px;
     text-overflow: shrink;
     font-family: titleFont;
+}
+
+.TextGlow {
+    animation-name: textGlow;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+}
+
+@keyframes 'textGlow' {
+    0% {
+        text-shadow: 0px 0px 3px gold;
+    }
+    25% {
+        text-shadow: 0px 0px 7px gold;
+    }
+    50% {
+        text-shadow: 0px 0px 15px gold;
+    }
+    75% {
+        text-shadow: 0px 0px 7px gold;
+    }
+    100% {
+        text-shadow: 0px 0px 3px gold;
+    }
 }
