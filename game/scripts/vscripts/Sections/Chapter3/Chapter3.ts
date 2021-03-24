@@ -598,7 +598,7 @@ const onStart = (complete: () => void) => {
             playerCanMoveNeutralFromBackpack = true
             goalSwapItems.start()
             highlightUiElement(firstNeutralSlotUIPath)
-            highlightUiElement(secondNeutralItemUIPath, undefined, HighlightMouseButton.Right)
+            highlightUiElement(secondNeutralItemUIPath, undefined, HighlightMouseButton.Left)
         }),
         tg.completeOnCheck(_ => {
             const item = playerHero.GetItemInSlot(DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT)
