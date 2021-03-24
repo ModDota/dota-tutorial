@@ -61,7 +61,7 @@ function except<T>(a: Set<T>, b: Set<T>): Set<T> {
 /** UI Highlighting */
 
 const hudRoot = $.GetContextPanel().GetParent()!.GetParent()!.GetParent()!;
-let highlightedPanels: { [key: string]: Panel } = {};
+let highlightedPanels: { [key: string]: Panel[] } = {};
 
 function findPanelAtPath(path: string): Panel | undefined {
     const splitPath = path.split("/");
@@ -84,13 +84,13 @@ function removeHighlight(event: RemoveHighlightEvent) {
         return;
     }
 
-    highlightedPanels[path].DeleteAsync(0);
+    highlightedPanels[path].forEach(p => p.DeleteAsync(0));
     delete highlightedPanels[path];
 }
 
 function clearUiHighlights() {
-    for (const panel of Object.values(highlightedPanels)) {
-        panel.DeleteAsync(0);
+    for (const panels of Object.values(highlightedPanels)) {
+        panels.forEach(p => p.DeleteAsync(0));
     }
     highlightedPanels = {};
 }
@@ -107,7 +107,9 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
     }
 
     // Select player hero in case they selected something else
-    GameUI.SelectUnit(Players.GetPlayerHeroEntityIndex(Players.GetLocalPlayer()), false);
+    if (path.includes("/center_with_stats/")) {
+        GameUI.SelectUnit(Players.GetPlayerHeroEntityIndex(Players.GetLocalPlayer()), false);
+    }
 
     // Need to delay this a little bit to allow reselection of the hero
     $.Schedule(0.05, () => {
@@ -133,7 +135,20 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
             highlightPanel.style.height = (element.actuallayoutheight / element.actualuiscale_y) + "px";
             highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
 
-            highlightedPanels[path] = highlightPanel;
+            highlightedPanels[path] = [highlightPanel];
+            
+            if (event.mouseIcon !== undefined) {
+                const mouseButtonPanel = $.CreatePanel("Image", $.GetContextPanel(), "UIHighlightMouseButton");
+                mouseButtonPanel.hittest = false; // Dont block interactions
+                mouseButtonPanel.AddClass(event.mouseIcon === HighlightMouseButton.Left ? "Left" : "Right");
+
+                mouseButtonPanel.SetParent(hudRoot);
+
+                // Set size position
+                mouseButtonPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
+
+                highlightedPanels[path].push(mouseButtonPanel);
+            }
 
             if (duration) {
                 $.Schedule(duration, () => removeHighlight({ path }));
@@ -142,7 +157,7 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
             // Shop guide items
             const isShopGuideItem = path.includes("HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer")
             if (isShopGuideItem) {
-                checkShopHighlightItemPanel(highlightPanel, element)
+                checkShopHighlightItemPanel(highlightedPanels[path], element)
             }
 
             // Deliver Courier path
@@ -153,28 +168,31 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
     });
 }
 
-function checkShopHighlightItemPanel(highlightPanel: Panel, originalPanel: Panel) {
-    if (!highlightPanel.IsValid()) return
+function checkShopHighlightItemPanel(highlightPanels: Panel[], originalPanel: Panel) {
+    highlightPanels = highlightPanels.filter(p => p.IsValid());
+    if (highlightPanels.length === 0) return
 
     const isShopOpen = Game.IsShopOpen()
 
     // Manage visibility
-    isShopOpen ? highlightPanel.style.visibility = "visible" :
-        highlightPanel.style.visibility = "collapse"
+    highlightPanels.forEach(p => p.style.visibility = isShopOpen ? "visible" : "collapse");
 
     // Adjust position of the panel if needed
     if (!isShopOpen) {
-        $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel))
+        $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanels, originalPanel))
         return;
     }
     else {
         const pos = originalPanel.GetPositionWithinAncestor(hudRoot);
         const originalPanelPosition = `${pos.x / originalPanel.actualuiscale_x}px ${pos.y / originalPanel.actualuiscale_y}px 0px`;
-        if (highlightPanel.style.position !== originalPanelPosition)
-            highlightPanel.style.position = originalPanelPosition
+        for (const highlightPanel of highlightPanels) {
+            if (highlightPanel.style.position !== originalPanelPosition) {
+                highlightPanel.style.position = originalPanelPosition
+            }
+        }
     }
 
-    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanel, originalPanel))
+    $.Schedule(0.03, () => checkShopHighlightItemPanel(highlightPanels, originalPanel))
 }
 
 GameEvents.Subscribe("highlight_element", highlightUiElement);

@@ -38,9 +38,15 @@ interface ClockTimeEvent {
     minutes?: number;
 }
 
+declare const enum HighlightMouseButton {
+    Left,
+    Right
+}
+
 interface HighlightElementEvent {
     path: string;
     duration?: number;
+    mouseIcon?: HighlightMouseButton
 }
 
 interface RemoveHighlightEvent {

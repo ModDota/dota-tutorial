@@ -65,7 +65,42 @@
 {
     border: 8px solid    #CFB53B;
     border-radius: 50%;
-    margin-left: -5px;
+    margin-left: -5px;    
+}
+
+#UIHighlightMouseButton {
+    width: 35px;
+    height: 50px;
+    margin-left: -50px;
+    margin-top: -10px;
+    opacity: 0.6;
+
+    animation-name: mouseAnim;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes 'mouseAnim' {
+    0% {
+        opacity: 0.9;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+.Left {
+    background-image: url("file://{images}/custom_game/hud/mouse-l.png");
+    background-size: 100% 100%;
+}
+
+.Right {
+    background-image: url("file://{images}/custom_game/hud/mouse-r.png");
+    background-size: 100% 100%;
 }
 
 #ChaptersMenu {
