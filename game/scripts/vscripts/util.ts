@@ -174,8 +174,8 @@ export function displayDotaErrorMessage(message: string) {
  * @param path The path along the ui to take, such as "HUDElements/lower_hud/center_with_stats/center_block/inventory"
  * @param duration Optional time in seconds after which to remove the highlight
  */
-export function highlightUiElement(path: string, duration?: number) {
-    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration });
+export function highlightUiElement(path: string, duration?: number, mouseIcon?: HighlightMouseButton) {
+    CustomGameEventManager.Send_ServerToAllClients("highlight_element", { path, duration, mouseIcon });
 }
 
 /**

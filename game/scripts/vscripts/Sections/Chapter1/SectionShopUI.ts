@@ -108,7 +108,7 @@ const onStart = (complete: () => void) => {
                     // Give the player some gold and wait for them to buy a tango.
                     tg.immediate(_ => {
                         goalBuyTango.start();
-                        highlightUiElement(tangoInGuideUIPath);
+                        highlightUiElement(tangoInGuideUIPath, undefined, HighlightMouseButton.Right);
                         playerHero.SetGold(90, true);
                         waitingForPlayerToPurchaseTango = true;
                     }),
