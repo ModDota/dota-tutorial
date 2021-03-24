@@ -36,6 +36,22 @@ GameEvents.Subscribe("section_started", event => {
     }
 });
 
+function checkQueryToCourier() {
+
+    const currentlySelectedUnit = Players.GetLocalPlayerPortraitUnit()
+    if (Entities.IsCourier(currentlySelectedUnit)) {
+        const playerID = Players.GetLocalPlayer()
+        if (playerID !== undefined) {
+            const playerHero = Players.GetPlayerHeroEntityIndex(playerID)
+            if (playerHero !== undefined) {
+                GameUI.SelectUnit(playerHero, false)
+            }
+        }
+    }
+}
+
+GameEvents.Subscribe("dota_player_update_selected_unit", () => checkQueryToCourier())
+
 function except<T>(a: Set<T>, b: Set<T>): Set<T> {
     const result = new Set(a);
     b.forEach(e => result.delete(e));
