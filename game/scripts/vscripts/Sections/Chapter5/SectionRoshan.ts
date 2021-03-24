@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { centerCameraOnHero, Distance2D, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { centerCameraOnHero, displayDotaErrorMessage, Distance2D, findRealPlayerID, getOrError, getPlayerHero, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import * as shared from "./Shared";
 import { friendlyHeroesInfo, runeSpawnsLocations } from "./Shared";
 
@@ -209,6 +209,11 @@ function onStop() {
 function chapterFiveRoshanOrderFilter(event: ExecuteOrderFilterEvent): boolean {
     // Allow all orders that aren't done by the player
     if (event.issuer_player_id_const != findRealPlayerID()) return true;
+
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
+        displayDotaErrorMessage(LocalizationKey.Error_BuyingItemsDisabled)
+        return false
+    }
 
     return true;
 }

@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import { GoalTracker } from "../../Goals";
-import { getOrError, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, getOrError, getPlayerHero, removeContextEntityIfExists, setUnitPacifist } from "../../util";
 
 const sectionName: SectionName = SectionName.Chapter6_Opening;
 
@@ -284,5 +284,16 @@ export const sectionOpening = new tut.FunctionalSection(
     sectionName,
     requiredState,
     onStart,
-    onStop
+    onStop,
+    orderFilterChapter6Opening
 );
+
+
+function orderFilterChapter6Opening(event: ExecuteOrderFilterEvent) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
+        displayDotaErrorMessage(LocalizationKey.Error_BuyingItemsDisabled)
+        return false
+    }
+
+    return true
+}

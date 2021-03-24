@@ -80,6 +80,7 @@ declare const enum LocalizationKey {
     Goal_4_Communication_3 = "#Goal_4_Communication_3",
     Goal_5_Opening_1 = "#Goal_5_Opening_1",
     Goal_5_Opening_2 = "#Goal_5_Opening_2",
+    Goal_5_Opening_3 = "Goal_5_Opening_3",
     Goal_5_Roshan_1 = "#Goal_5_Roshan_1",
     Goal_5_Roshan_2 = "#Goal_5_Roshan_2",
     Goal_5_Roshan_3 = "#Goal_5_Roshan_3",
@@ -472,5 +473,7 @@ declare const enum LocalizationKey {
     Error_Communications_1 = "Error_Communications_1",
     Error_Communications_2 = "Error_Communications_2",
     Error_Chapter5_1 = "Error_Chapter5_1",
+    Error_Chapter5_2 = "Error_Chapter5_2",
     Error_Teamfight_1 = "Error_Teamfight_1",
+    Error_BuyingItemsDisabled = "Error_BuyingItemsDisabled",
 }

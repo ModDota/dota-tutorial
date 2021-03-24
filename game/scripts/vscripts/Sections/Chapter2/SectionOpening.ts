@@ -2,7 +2,7 @@ import { GoalTracker } from "../../Goals";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { findRealPlayerID, freezePlayerHero, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists, setUnitPacifist, unitIsValidAndAlive } from "../../util";
+import { findRealPlayerID, freezePlayerHero, getCameraDummy, getPlayerCameraLocation, getPlayerHero, removeContextEntityIfExists, setUnitPacifist, unitIsValidAndAlive } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Opening
@@ -122,7 +122,10 @@ const onStart = (complete: () => void) => {
                             tg.completeOnCheck(_ => creepDialogOver, 0.1),
                         ]),
                         tg.fork([
-                            tg.panCameraExponential(_ => getPlayerCameraLocation(), Vector(6350, -3550, 128), 2),
+                            tg.seq([
+                                tg.panCameraExponential(_ => getPlayerCameraLocation(), Vector(6350, -3550, 128), 2),
+                                tg.setCameraTarget(() => getCameraDummy(Vector(6350, -3550, 128)))
+                            ]),
                             tg.seq([
                                 tg.spawnUnit(CustomNpcKeys.CrystalMaiden, Vector(6200, -3300, 128), DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.CrystalMaiden, true),
                                 tg.spawnUnit(CustomNpcKeys.DireMeleeMegaCreep, _ => Vector(6500, -3300, 128), DOTATeam_t.DOTA_TEAM_BADGUYS, CustomNpcKeys.DireMeleeMegaCreep, true),

@@ -3,7 +3,7 @@ import * as tg from "../../TutorialGraph/index"
 import * as dg from "../../Dialog"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
-import { centerCameraOnHero, createPathParticle, Distance2D, getOrError, getPlayerCameraLocation, getPlayerHero, unitIsValidAndAlive } from "../../util"
+import { centerCameraOnHero, createPathParticle, displayDotaErrorMessage, Distance2D, getOrError, getPlayerCameraLocation, getPlayerHero, unitIsValidAndAlive } from "../../util"
 import { modifier_closing_npc } from "../../modifiers/modifier_closing_npc"
 import { addWorldTextAtLocation, removeWorldText } from "../../WorldText"
 
@@ -436,6 +436,11 @@ function orderFilter(order: ExecuteOrderFilterEvent) {
         } else {
             talkTarget = undefined;
         }
+    }
+
+    if (order.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
+        displayDotaErrorMessage(LocalizationKey.Error_BuyingItemsDisabled)
+        return false
     }
 
     return true;

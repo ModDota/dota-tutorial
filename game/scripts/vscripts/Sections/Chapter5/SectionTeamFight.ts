@@ -244,6 +244,11 @@ function orderFilter(event: ExecuteOrderFilterEvent) {
         }
     }
 
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
+        displayDotaErrorMessage(LocalizationKey.Error_BuyingItemsDisabled)
+        return false
+    }
+
     return true
 }
 

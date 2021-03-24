@@ -243,7 +243,9 @@
         "Error_Communications_1" "You cannot pick up items in this section."
         "Error_Communications_2" "You cannot destroy items in this section."
         "Error_Chapter5_1"     "Picking up runes is currently disabled."
+        "Error_Chapter5_2"     "Attacking runes is not allowed."
         "Error_Teamfight_1"    "Teleport to your fountain by double-tapping the Town Portal Scroll."
+        "Error_BuyingItemsDisabled" "Purchasing items is disabled in the following sections."
 
         // Goals
         "Goal_1_Camera_1" "Move your camera by dragging the cursor to the edge of your screen."
@@ -323,6 +325,7 @@
         "Goal_4_Communication_3" "Go to the marked location."
         "Goal_5_Opening_1" "Move to the marker near the power rune spawn."
         "Goal_5_Opening_2" "Watch and learn from the Power Rune Rangers!"
+        "Goal_5_Opening_3"  "Pick up the Bounty Rune."
         "Goal_5_Roshan_1" "Walk into Roshan's pit."
         "Goal_5_Roshan_2" "Choose and pick between the available talents."
         "Goal_5_Roshan_3" "Defeat Roshan!"
