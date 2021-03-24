@@ -297,7 +297,7 @@ GameEvents.Subscribe("show_chapter3_skip_button", event => onShowSkipChapter3But
 GameEvents.Subscribe("section_started", event => {
     const chapterName = event.section.split("_")[0];
     const currentChapterLabel = $("#CurrentChapter") as LabelPanel;
-    currentChapterLabel.text = $.Localize(`#Chapter_${chapterName.substr(chapterName.length - 1)}`);
+    currentChapterLabel.text = $.Localize(`#Chapter_${chapterName.substr(chapterName.length - 1)}`).toLocaleUpperCase();
     currentChapterLabel.RemoveClass("TextGlow");
     currentChapterLabel.AddClass("TextGlow");
 });
