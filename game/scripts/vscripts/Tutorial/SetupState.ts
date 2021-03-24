@@ -1,5 +1,5 @@
 import { defaultRequiredState, FilledRequiredState, RequiredState } from "./RequiredState"
-import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
+import { centerCameraOnHero, findAllPlayersID, freezePlayerHero, getOrError, getPlayerHero, removeContextEntityIfExists, setRespawnSettings, setUnitPacifist, unitIsValidAndAlive } from "../util"
 import { Blockade } from "../Blockade"
 import { itemAegis, outsidePitLocation, roshanLocation, runeSpawnsLocations } from "../Sections/Chapter5/Shared"
 import { modifier_greevil, GreevilConfig } from "../modifiers/modifier_greevil"
@@ -345,10 +345,29 @@ function handleRequiredRespawn(state: FilledRequiredState) {
 
 function handleRoshan(state: FilledRequiredState) {
     let roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
+    let customRoshan = Entities.FindAllByName(CustomNpcKeys.CustomRoshan)[0] as CDOTA_BaseNPC
+    let roshEntityKey: string;
 
     if (state.requireRoshan) {
+
+        if (state.customRoshanUnit) {
+
+            if (unitIsValidAndAlive(roshan))
+                roshan.Destroy()
+    
+            roshEntityKey = CustomNpcKeys.CustomRoshan
+            roshan = customRoshan
+        } else {
+
+            if (unitIsValidAndAlive(customRoshan))
+                customRoshan.Destroy()
+
+            roshEntityKey = CustomNpcKeys.Roshan
+        }
+
         if (!unitIsValidAndAlive(roshan)) {
-            roshan = CreateUnitByName(CustomNpcKeys.Roshan, roshanLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_NEUTRALS)
+            roshan = CreateUnitByName(roshEntityKey, roshanLocation, true, undefined, undefined, DOTATeam_t.DOTA_TEAM_NEUTRALS)
+            roshan.SetEntityName(roshEntityKey)
             roshan.AddItemByName(itemAegis)
         }
 
@@ -365,14 +384,12 @@ function handleRoshan(state: FilledRequiredState) {
         roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
         // Add modifier since attack speed is part of the devotion modifier, and his attacks don't look genuine without this
         roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
-
-        if (state.roshanHitsLikeATruck)
-            roshan.SetBaseDamageMin(600)
-        else
-            roshan.SetBaseDamageMin(75) // Standard Rosh base dmg, patch 7.28c
     } else {
         if (unitIsValidAndAlive(roshan))
             roshan.Destroy()
+
+        if (unitIsValidAndAlive(customRoshan))
+            customRoshan.Destroy()
     }
 }
 
@@ -456,7 +473,7 @@ function createBountyRunes() {
     if (!IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
         context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
-    
+
     context[CustomEntityKeys.RadiantTopBountyRuneEntIndex] = context[CustomEntityKeys.RadiantTopBountyRune].entindex()
 
     if (!IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
