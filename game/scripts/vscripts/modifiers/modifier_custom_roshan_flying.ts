@@ -5,7 +5,6 @@ export class modifier_custom_roshan_flying extends BaseModifier {
     IsHidden() { return true }
     IsPurgable() { return false }
     IsDebuff() { return false }
-    RemoveOnDeath() { return false }
 
     CheckState(): Partial<Record<modifierstate, boolean>> {
         return {
