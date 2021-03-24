@@ -53,6 +53,7 @@ function onStart(complete: () => void) {
     const panCameraBountiesAlpha = 2
 
     const goalTracker = new GoalTracker();
+    const goalPickupBountyRune = goalTracker.addBoolean(LocalizationKey.Goal_5_Opening_3)
     const goalMoveToRune = goalTracker.addBoolean(LocalizationKey.Goal_5_Opening_1);
     const goalWatchRangers = goalTracker.addBoolean(LocalizationKey.Goal_5_Opening_2);
 
@@ -106,12 +107,25 @@ function onStart(complete: () => void) {
                 ]),
             ]),
 
-            // Return camera to player
-            tg.fork([
-                tg.audioDialog(LocalizationKey.Script_5_Opening_4, LocalizationKey.Script_5_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
-                tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), panCameraBountiesAlpha),
-            ]),
+            // Return camera to player and wait until he picks up a Bounty Rune
+            tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), panCameraBountiesAlpha),
+            tg.withHighlights(
+                tg.seq([
+                    tg.immediate(() => {
+                        goalPickupBountyRune.start()
+                    }),
+                    tg.completeOnCheck(context => {
+                        const runeExist = IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])
+                        return !runeExist
+                    }, 0.1)
+                ]),
+                {
+                    type: "arrow_trees",
+                    locations: [shared.runeSpawnsLocations.radiantTopBountyPos],
+                }),
 
+            tg.immediate(() => goalPickupBountyRune.complete()),
+            tg.audioDialog(LocalizationKey.Script_5_Opening_4, LocalizationKey.Script_5_Opening_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_Opening_5, LocalizationKey.Script_5_Opening_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.forkAny([
                 tg.seq([
@@ -353,6 +367,16 @@ function chapterFiveOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean 
             displayDotaErrorMessage(LocalizationKey.Error_Chapter5_1)
             return false
         }
+    }
+
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
+        displayDotaErrorMessage(LocalizationKey.Error_BuyingItemsDisabled)
+        return false
+    }
+
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET && event.entindex_target === GameRules.Addon.context[CustomEntityKeys.RadiantTopBountyRuneEntIndex]) {
+        displayDotaErrorMessage(LocalizationKey.Error_Chapter5_2)
+        return false
     }
 
     return true;
