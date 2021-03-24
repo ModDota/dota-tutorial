@@ -45,6 +45,10 @@ const requiredState: RequiredState = {
 
 // UI Highlighting Paths
 const glyphUIPath = "HUDElements/minimap_container/GlyphScanContainer/glyph/NormalRoot/GlyphButton"
+const respawnTimerPaths = [
+    "HUDElements/topbar/TopBarRadiantTeamContainer/TopBarRadiantTeam/RadiantTeamScorePlayers/TopBarRadiantPlayersContainer/RadiantPlayer0/RespawnContainer/RespawnTimer/RespawnTimerLabel",
+    "HUDElements/lower_hud/center_with_stats/center_block/PortraitGroup/PortraitContainer",
+]
 
 const onStart = (complete: () => void) => {
     print("Starting", sectionName);
@@ -135,6 +139,7 @@ const onStart = (complete: () => void) => {
                 goalAttemptToAttackTower.complete()
                 goalwaitToRespawn.start()
                 freezePlayerHero(true)
+                respawnTimerPaths.forEach(highlightUiElement)
             }),
 
             tg.audioDialog(LocalizationKey.Script_2_Tower_3, LocalizationKey.Script_2_Tower_3, context => context[CustomNpcKeys.SlacksMudGolem]),
@@ -143,6 +148,7 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_2_Tower_6, LocalizationKey.Script_2_Tower_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
             tg.immediate(() => {
                 if (!playerHero.IsAlive()) playerHero.RespawnHero(false, false)
+                respawnTimerPaths.forEach(removeHighlight)
             }),
             tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => fountainLocation, 1.5),
             tg.completeOnCheck(() => {
@@ -476,8 +482,8 @@ const onStop = () => {
         removeHighlight(getPathToHighlightAbility(index))
     }
 
-
     removeHighlight(glyphUIPath);
+    respawnTimerPaths.forEach(removeHighlight)
     const context = GameRules.Addon.context
     removeContextEntityIfExists(context, Chapter2SpecificKeys.RadiantCreeps)
 
