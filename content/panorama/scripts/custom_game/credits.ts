@@ -33,6 +33,7 @@ const portraits: Record<string, string> = {
     [CustomNpcKeys.Yodi]: "file://{images}/custom_game/credits/avatars/Yodi.png",
     [CustomNpcKeys.Dotabuff]: "file://{images}/custom_game/credits/avatars/Dotabuff.png",
     [CustomNpcKeys.DotaFire]: "file://{images}/custom_game/credits/avatars/DotaFire.png",
+    [CustomNpcKeys.Torte]: "file://{images}/custom_game/credits/avatars/Torte.png",
     [CustomNpcKeys.Indiegogo]: "file://{images}/custom_game/credits/avatars/Indiegogo.png",
     [CustomNpcKeys.SlacksMudGolem]: "file://{images}/custom_game/credits/avatars/Slacks.png",
     [CustomNpcKeys.SunsFanMudGolem]: "file://{images}/custom_game/credits/avatars/Sunsfan.png",

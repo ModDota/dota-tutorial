@@ -879,7 +879,7 @@
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
         "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
     }
-    
+
     "npc_dota_tutorial_awesomedota"
     {
         "Model"						"models/items/broodmother/spiderling/perceptive_spiderling/perceptive_spiderling.vmdl"
@@ -898,5 +898,25 @@
         "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
         "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
         "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+    }
+
+    "npc_dota_tutorial_torte"
+    {
+        "Model"						"models/heroes/life_stealer/life_stealer.vmdl"
+        "ModelScale" 				"1.0"
+        "BaseClass"					"npc_dota_creature"
+        "AttackCapabilities"		"DOTA_UNIT_CAP_NO_ATTACK"
+        "UnitRelationshipClass"		"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_DEFAULT"
+        "MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+
+        "Creature"
+        {
+            "AttachWearables"
+            {
+                "Wearable1" { "ItemDef" "13818" } // Golden Dark Maw Inhibitor
+                "Wearable2" { "ItemDef" "9215" } // Golden Profane Union
+                "Wearable3" { "ItemDef" "12998" } // Golden Dread Requisition
+            }
+        }
     }
 }

@@ -158,6 +158,7 @@ const npcs = [
     new ClosingNpc(CustomNpcKeys.Riki, Vector(-4700, -3800, 256), LocalizationKey.Script_6_Arteezy),
     new ClosingNpc(CustomNpcKeys.Awesomedota, Vector(-4000, -6250, 256), LocalizationKey.Script_6_Awesome, LocalizationKey.Script_6_Awesome),
     new ClosingNpc(CustomNpcKeys.DotaFire, Vector(-5475, -5650, 256), LocalizationKey.Script_6_DotaFire, LocalizationKey.Script_6_DotaFire),
+    new ClosingNpc(CustomNpcKeys.Torte, Vector(-4800, -6270, 256), LocalizationKey.Script_6_Torte, LocalizationKey.Script_6_Torte),
 
     // Modders
     new ClosingNpc(CustomNpcKeys.Flam3s, Vector(-5850, -3300, 256), LocalizationKey.Script_6_Flam3s),
