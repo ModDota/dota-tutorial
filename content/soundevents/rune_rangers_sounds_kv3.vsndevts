@@ -1,0 +1,696 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+    "grimstroke_grimstroke_death_01" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_01.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_02" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_02.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_03" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_03.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_04" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_04.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_06" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_06.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_07" =
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/grimstroke/grimstroke_death_07.vsnd",
+		]
+		volume = "0.100000"
+		pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_08" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_08.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_09" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_09.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_10" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_10.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_11" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_11.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_12" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_12.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_13" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_13.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_14" =
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/grimstroke/grimstroke_death_14.vsnd",
+		]
+		volume = "0.100000"
+		pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_15" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_15.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_16" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_16.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_17" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_17.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	"grimstroke_grimstroke_death_18" =
+	{
+			type = "dota_update_vo_switch"
+			vsnd_files = 
+			[
+				"sounds/vo/grimstroke/grimstroke_death_18.vsnd",
+			]
+			volume = "0.100000"
+			pitch = "1.000000"
+	}
+
+	Hero_Grimstroke.preAttack = 
+	{
+			type = "dota_src1_3d"
+			volume = 0.200000
+			pitch_rand_min = -0.050000
+			pitch_rand_max = 0.050000
+			pitch = 1.000000
+			soundlevel = 72.000000
+			distance_max = 1500.000000
+			event_type = 1.000000
+			vsnd_files = 
+			[
+				"sounds/weapons/hero/grimstroke/preattack01.vsnd",
+				"sounds/weapons/hero/grimstroke/preattack02.vsnd",
+			]
+			vsnd_duration = 1.141361
+	}
+
+	Hero_Grimstroke.Attack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 75.000000
+		distance_max = 2500.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/grimstroke/attack01.vsnd",
+			"sounds/weapons/hero/grimstroke/attack02.vsnd",
+		]
+		vsnd_duration = 0.998980
+	}
+	
+	Hero_Ursa.PreAttack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 75.000000
+		distance_max = 1500.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/earthshaker/fist_swing1.vsnd",
+			"sounds/weapons/hero/earthshaker/fist_swing2.vsnd",
+			"sounds/weapons/hero/earthshaker/fist_swing3.vsnd",
+		]
+		vsnd_duration = 0.627755
+	}
+
+	Hero_Ursa.Attack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 81.000000
+		mixgroup = "BaseAttacks"
+		distance_max = 2500.000000
+		soundevent_layer2 = "Hero_Ursa.Attack.Post"
+		soundevent_layer2_on = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/ursa/ursa_attack_01.vsnd",
+			"sounds/weapons/hero/ursa/ursa_attack_02.vsnd",
+			"sounds/weapons/hero/ursa/ursa_attack_03.vsnd",
+		]
+		vsnd_duration = 0.421134
+	}
+
+	Hero_Undying.PreAttack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 78.000000
+		distance_max = 1500.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/axe/preattack01.vsnd",
+			"sounds/weapons/hero/axe/preattack02.vsnd",
+			"sounds/weapons/hero/axe/preattack03.vsnd",
+		]
+		vsnd_duration = 1.081565
+	}
+
+	Hero_Undying.Attack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.100000
+		soundlevel = 78.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "Hero_Undying.Attack.Post"
+		soundevent_layer2_on = 1.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/lifestealer/attack01.vsnd",
+			"sounds/weapons/hero/lifestealer/attack02.vsnd",
+			"sounds/weapons/hero/lifestealer/attack03.vsnd",
+		]
+		vsnd_duration = 0.450091
+	}
+
+	ember_spirit_embr_death_01 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_01.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_02 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_02.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_03 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_03.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_04 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_04.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_05 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_05.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_06 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_06.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_07 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_07.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_08 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_08.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_09 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_09.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_10 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_10.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_12 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_12.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_13 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_13.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	ember_spirit_embr_death_14 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/ember_spirit/embr_death_14.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	Hero_EmberSpirit.PreAttack = 
+	{
+		type = "dota_src1_3d"
+		volume_rand_min = -0.149902
+		volume_rand_max = 0.149902
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 72.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "Hero_EmberSpirit.PreAttack.Flame"
+		soundevent_layer2_on = 1.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/shared/small_blade/whoosh01.vsnd",
+			"sounds/weapons/hero/shared/small_blade/whoosh02.vsnd",
+			"sounds/weapons/hero/shared/small_blade/whoosh03.vsnd",
+			"sounds/weapons/hero/shared/small_blade/whoosh04.vsnd",
+		]
+	}
+	Hero_EmberSpirit.Attack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.300000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 78.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "Hero_EmberSpirit.Attack.Rip"
+		soundevent_layer2_on = 1.000000
+		soundevent_layer3 = "Hero_EmberSpirit.Attack.Ring"
+		soundevent_layer3_on = 1.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/shared/small_blade/attack_long01.vsnd",
+			"sounds/weapons/hero/shared/small_blade/attack_long02.vsnd",
+			"sounds/weapons/hero/shared/small_blade/attack_long03.vsnd",
+		]
+	}
+
+	zuus_zuus_death_01 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_01.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_02 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_02.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_03 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_03.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_04 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_04.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_05 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_05.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_06 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_06.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_07 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_07.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_08 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_08.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	zuus_zuus_death_09 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/zuus/zuus_death_09.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	Hero_Zuus.Attack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.100000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 81.000000
+		distance_max = 2500.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/zuus/general_attack4.vsnd",
+			"sounds/weapons/hero/zuus/general_attack5.vsnd",
+			"sounds/weapons/hero/zuus/general_attack6.vsnd",
+		]
+		vsnd_duration = 0.781769
+	}
+
+	stormspirit_ss_death_01 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_01.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_02 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_02.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_03 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_03.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_04 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_04.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_05 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_05.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_06 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_06.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_07 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_07.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_08 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_08.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	stormspirit_ss_death_09 = 
+	{
+		type = "dota_update_vo_switch"
+		vsnd_files = 
+		[
+			"sounds/vo/stormspirit/ss_death_09.vsnd",
+		]
+		volume = "0.200000"
+		pitch = "1.000000"
+	}
+	Hero_StormSpirit.Attack = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.100000
+		pitch = 1.000000
+		soundlevel = 75.000000
+		distance_max = 2500.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/storm_spirit/attack1.vsnd",
+			"sounds/weapons/hero/storm_spirit/attack2.vsnd",
+			"sounds/weapons/hero/storm_spirit/attack3.vsnd",
+			"sounds/weapons/hero/storm_spirit/attack4.vsnd",
+		]
+		vsnd_duration = 1.157211
+	}
+}

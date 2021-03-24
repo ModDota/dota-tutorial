@@ -48,6 +48,8 @@ export class GameMode {
         PrecacheResource("soundfile", "soundevents/tutorial_dialogs.vsndevts", context);
         PrecacheResource("soundfile", "soundevents/community.vsndevts", context);
         PrecacheResource("soundfile", "soundevents/roshan_sounds_custom.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/rune_rangers_sounds.vsndevts", context);
+        PrecacheResource("soundfile", "soundevents/rune_rangers_sounds_kv3.vsndevts", context);
         PrecacheResource("particle", ParticleName.HighlightCircle, context);
         PrecacheResource("particle", ParticleName.HighlightOrangeArrow, context);
         PrecacheResource("particle", ParticleName.HighlightOrangeCircle, context);

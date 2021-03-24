@@ -1,4 +1,5 @@
 import { GoalTracker } from "../../Goals";
+import { modifier_custom_roshan_flying } from "../../modifiers/modifier_custom_roshan_flying";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
@@ -21,7 +22,6 @@ const requiredState: RequiredState = {
     requireBountyRunes: true,
     requireRoshan: true,
     customRoshanUnit: true,
-    roshanHitsLikeATruck: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
     heroItems: { [shared.itemDaedalus]: 1, "item_mysterious_hat": 1 },
@@ -286,13 +286,14 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_5_Opening_15, LocalizationKey.Script_5_Opening_15, ctx => ctx[CustomNpcKeys.Grimstroke]),
             tg.immediate(_ => {
                 goalWatchRangers.complete()
-                shared.chapter5Blockades.roshan.destroy()
             }),
             tg.playGlobalSound("RoshanDT.Scream"),
             tg.fork(powerRuneRangersInfo.map((powerRuneRanger) =>
                 tg.faceTowards(ctx => ctx[powerRuneRanger.name], shared.outsidePitLocation)
             )),
             tg.fork([
+                // Add flying for pathing modifier since we need the barrier to keep the player from seeing rosh unit changing inside pit on section transition
+                tg.immediate(_ => roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_flying.name, undefined)),
                 tg.moveUnit(roshan, shared.runeSpawnsLocations.topPowerUpRunePos),
                 tg.setCameraTarget(roshan),
             ]),

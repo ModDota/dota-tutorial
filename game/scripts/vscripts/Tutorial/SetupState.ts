@@ -384,11 +384,6 @@ function handleRoshan(state: FilledRequiredState) {
         roshan.RemoveModifierByName("modifier_roshan_devotion_aura")
         // Add modifier since attack speed is part of the devotion modifier, and his attacks don't look genuine without this
         roshan.AddNewModifier(roshan, undefined, modifier_custom_roshan_attack_speed.name, undefined)
-
-        if (state.roshanHitsLikeATruck)
-            roshan.SetBaseDamageMin(600)
-        else
-            roshan.SetBaseDamageMin(75) // Standard Rosh base dmg, patch 7.28c
     } else {
         if (unitIsValidAndAlive(roshan))
             roshan.Destroy()

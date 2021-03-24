@@ -49,6 +49,7 @@
         "npc_dota_hero_grimstroke" "Trent"
         "npc_dota_hero_riki" "Arteezy"
         "npc_dota_hero_storm_spirit" "PyrionFlax"
+        "npc_dota_custom_roshan" "Roshan"
 
         "npc_dota_tutorial_coccia" "Alexander Coccia"
         "npc_dota_tutorial_dotau" "Dota University"
