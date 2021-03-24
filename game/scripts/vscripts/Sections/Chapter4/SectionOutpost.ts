@@ -161,9 +161,8 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                riki.RemoveModifierByName(modifier_abs_no_damage.name)
+                riki.RemoveModifierByName(modifier_abs_no_damage.name);
                 riki.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_MELEE_ATTACK);
-                riki.MoveToTargetToAttack(playerHero);
             }),
 
             tg.forkAny([
@@ -171,13 +170,21 @@ function onStart(complete: () => void) {
                     tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                     tg.neverComplete()
                 ]),
-                tg.seq([
-                    tg.completeOnCheck(context => {
-                        const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                        return !IsValidEntity(riki) || !riki.IsAlive();
-                    }, 1),
-                ])
+                tg.loop(context => {
+                    const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                    return riki.IsAlive();
+                },
+                    tg.seq([
+                        tg.immediate(context => {
+                            const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                            if (playerHero.IsAlive())
+                                riki.MoveToTargetToAttack(playerHero);
+                        }),
+                        tg.wait(2)
+                    ])
+                ),
             ]),
+
             tg.audioDialog(LocalizationKey.Script_4_RTZ_pain, LocalizationKey.Script_4_RTZ_pain, ctx => ctx[rikiName]),
             tg.audioDialog(LocalizationKey.Script_4_RTZ_death, LocalizationKey.Script_4_RTZ_death, ctx => ctx[rikiName]),
             tg.immediate(_ => goalKillRiki.complete()),
