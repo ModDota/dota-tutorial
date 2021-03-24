@@ -291,3 +291,10 @@ function onShowSkipChapter3Button(show: boolean) {
 }
 
 GameEvents.Subscribe("show_chapter3_skip_button", event => onShowSkipChapter3Button(event.show !== 0));
+
+// Current chapter display
+
+GameEvents.Subscribe("section_started", event => {
+    const chapterName = event.section.split("_")[0];
+    ($("#CurrentChapter") as LabelPanel).text = $.Localize(`#Chapter_${chapterName.substr(chapterName.length - 1)}`);
+});

@@ -688,3 +688,19 @@
 #Chapter3SkipConfirmationButtonYes:active {
     sound: "ui_generic_button_click";
 }
+
+#CurrentChapter {
+    text-align: center;
+    align: left top;
+    text-transform: uppercase;
+    color: gradient( linear, 0% 0%, 100% 0%, from( #F8E8B9 ), color-stop( 0.5, #E4C269), to( #C79123 ) );
+    text-shadow: 0px 0px 3px 5.0 #000000;
+    font-weight: bold;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-top: 18px;
+    margin-left: 238px;
+    width: 210px;
+    text-overflow: shrink;
+    font-family: titleFont;
+}
