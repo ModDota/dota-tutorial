@@ -6,7 +6,7 @@ import { getSoundDuration } from "../../Sounds";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToHighlightAbility, getPathToHighlightUpgradeAbility, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeContextEntityIfExists, removeHighlight, setRespawnSettings, setUnitPacifist } from "../../util";
 import { chapter2Blockades, Chapter2SpecificKeys, radiantCreepsNames, TowerHitSources } from "./shared";
 
 const sectionName: SectionName = SectionName.Chapter2_Tower
@@ -306,7 +306,7 @@ const onStart = (complete: () => void) => {
                                 playerHero.AddExperience(levelsToGrant, EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, true)
                                 const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
                                 if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
-                                highlightUiElement(getPathToHighlightAbility(3), undefined, HighlightMouseButton.Left)
+                                highlightUiElement(getPathToHighlightUpgradeAbility(3), undefined, HighlightMouseButton.Left)
                                 ignorePlayerOrders = false
                                 playerMustOrderTrainUltimate = true
                                 playerMustOrderTrainAbilities = true
@@ -323,7 +323,7 @@ const onStart = (complete: () => void) => {
                                 const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
                                 if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
                                 if (dragonFormAbilityHandle.GetLevel() > 0) {
-                                    removeHighlight(getPathToHighlightAbility(3))
+                                    removeHighlight(getPathToHighlightUpgradeAbility(3))
                                     playerMustOrderTrainUltimate = false
                                     return true
                                 }
@@ -332,9 +332,9 @@ const onStart = (complete: () => void) => {
                             tg.immediate(() => {
                                 goalTrainUltimate.complete()
                                 goalTrainAbilities.start()
-                                highlightUiElement(getPathToHighlightAbility(0), undefined, HighlightMouseButton.Left)
-                                highlightUiElement(getPathToHighlightAbility(1))
-                                highlightUiElement(getPathToHighlightAbility(2))
+                                highlightUiElement(getPathToHighlightUpgradeAbility(0), undefined, HighlightMouseButton.Left)
+                                highlightUiElement(getPathToHighlightUpgradeAbility(1))
+                                highlightUiElement(getPathToHighlightUpgradeAbility(2))
                             }),
                             tg.completeOnCheck(() => {
                                 if (playerHero.GetAbilityPoints() === 0) {
@@ -348,9 +348,9 @@ const onStart = (complete: () => void) => {
                     ]),
                     tg.immediate(() => {
                         goalTrainAbilities.complete()
-                        removeHighlight(getPathToHighlightAbility(0))
-                        removeHighlight(getPathToHighlightAbility(1))
-                        removeHighlight(getPathToHighlightAbility(2))
+                        removeHighlight(getPathToHighlightUpgradeAbility(0))
+                        removeHighlight(getPathToHighlightUpgradeAbility(1))
+                        removeHighlight(getPathToHighlightUpgradeAbility(2))
                     }),
 
                     // Fork use ulti dialogue
@@ -479,8 +479,10 @@ const onStop = () => {
     print("Stopping", sectionName);
 
     for (let index = 0; index <= 3; index++) {
-        removeHighlight(getPathToHighlightAbility(index))
+        removeHighlight(getPathToHighlightUpgradeAbility(index))
     }
+
+    removeHighlight(getPathToHighlightAbility(3))
 
     removeHighlight(glyphUIPath);
     respawnTimerPaths.forEach(removeHighlight)
