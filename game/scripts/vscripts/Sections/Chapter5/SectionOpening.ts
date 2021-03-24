@@ -334,6 +334,15 @@ function onStop() {
 
     shared.disposeHeroes(GameRules.Addon.context, powerRuneRangersInfo)
 
+    const roshan = Entities.FindAllByName(CustomNpcKeys.CustomRoshan)[0] as CDOTA_BaseNPC
+    if (roshan) {
+        const roshanFlyingModifier = roshan.FindModifierByName(modifier_custom_roshan_flying.name)
+        if (roshanFlyingModifier) {
+            roshan.RemoveModifierByName(roshanFlyingModifier.GetName())
+        }
+    }
+
+
     if (IsValidEntity(GameRules.Addon.context[CustomEntityKeys.TopPowerRune])) {
         GameRules.Addon.context[CustomEntityKeys.TopPowerRune].Destroy()
         GameRules.Addon.context[CustomEntityKeys.TopPowerRune] = undefined
