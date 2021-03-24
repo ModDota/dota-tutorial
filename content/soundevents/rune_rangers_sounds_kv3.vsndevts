@@ -7,7 +7,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_01.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -18,7 +18,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_02.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -29,7 +29,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_03.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -40,7 +40,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_04.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -51,7 +51,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_06.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -62,7 +62,7 @@
 		[
 			"sounds/vo/grimstroke/grimstroke_death_07.vsnd",
 		]
-		volume = "0.100000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 
@@ -73,7 +73,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_08.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -84,7 +84,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_09.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -95,7 +95,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_10.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -106,7 +106,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_11.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -117,7 +117,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_12.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -128,7 +128,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_13.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -139,7 +139,7 @@
 		[
 			"sounds/vo/grimstroke/grimstroke_death_14.vsnd",
 		]
-		volume = "0.100000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 
@@ -150,7 +150,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_15.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -161,7 +161,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_16.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -172,7 +172,7 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_17.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
@@ -183,14 +183,14 @@
 			[
 				"sounds/vo/grimstroke/grimstroke_death_18.vsnd",
 			]
-			volume = "0.100000"
+			volume = "0.150000"
 			pitch = "1.000000"
 	}
 
 	Hero_Grimstroke.preAttack = 
 	{
 			type = "dota_src1_3d"
-			volume = 0.200000
+			volume = 0.300000
 			pitch_rand_min = -0.050000
 			pitch_rand_max = 0.050000
 			pitch = 1.000000
@@ -208,7 +208,7 @@
 	Hero_Grimstroke.Attack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.200000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -226,7 +226,7 @@
 	Hero_Ursa.PreAttack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.200000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -245,7 +245,7 @@
 	Hero_Ursa.Attack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.200000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -263,10 +263,35 @@
 		vsnd_duration = 0.421134
 	}
 
+	Hero_Ursa.Footsteps = 
+	{
+		type = "dota_src1_3d_footsteps"
+		volume_rand_min = -0.049988
+		volume_rand_max = 0.049988
+		volume = 0.449890
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 0.850000
+		soundlevel = 75.000000
+		distance_max = 2000.000000
+		event_type = 4.000000
+		vsnd_files = 
+		[
+			"sounds/physics/footsteps/hero/shared/general01.vsnd",
+			"sounds/physics/footsteps/hero/shared/general02.vsnd",
+			"sounds/physics/footsteps/hero/shared/general03.vsnd",
+			"sounds/physics/footsteps/hero/shared/general04.vsnd",
+			"sounds/physics/footsteps/hero/shared/general05.vsnd",
+			"sounds/physics/footsteps/hero/shared/general06.vsnd",
+			"sounds/physics/footsteps/hero/shared/general07.vsnd",
+		]
+		vsnd_duration = 0.453787
+	}
+
 	Hero_Undying.PreAttack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.200000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -285,7 +310,7 @@
 	Hero_Undying.Attack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.200000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.100000
@@ -303,6 +328,33 @@
 		vsnd_duration = 0.450091
 	}
 
+	Hero_Undying.Footsteps = 
+	{
+		type = "dota_src1_3d_footsteps"
+		volume_rand_min = -0.049988
+		volume_rand_max = 0.049988
+		volume = 0.399841
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 72.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "Hero_Undying.Foley"
+		soundevent_layer2_on = 1.000000
+		event_type = 4.000000
+		vsnd_files = 
+		[
+			"sounds/physics/footsteps/hero/shared/general01.vsnd",
+			"sounds/physics/footsteps/hero/shared/general02.vsnd",
+			"sounds/physics/footsteps/hero/shared/general03.vsnd",
+			"sounds/physics/footsteps/hero/shared/general04.vsnd",
+			"sounds/physics/footsteps/hero/shared/general05.vsnd",
+			"sounds/physics/footsteps/hero/shared/general06.vsnd",
+			"sounds/physics/footsteps/hero/shared/general07.vsnd",
+		]
+		vsnd_duration = 0.453787
+	}
+
 	ember_spirit_embr_death_01 = 
 	{
 		type = "dota_update_vo_switch"
@@ -310,7 +362,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_01.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_02 = 
@@ -320,7 +372,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_02.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_03 = 
@@ -330,7 +382,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_03.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_04 = 
@@ -340,7 +392,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_04.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_05 = 
@@ -350,7 +402,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_05.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_06 = 
@@ -360,7 +412,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_06.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_07 = 
@@ -370,7 +422,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_07.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_08 = 
@@ -380,7 +432,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_08.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_09 = 
@@ -390,7 +442,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_09.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_10 = 
@@ -400,7 +452,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_10.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_12 = 
@@ -410,7 +462,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_12.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_13 = 
@@ -420,7 +472,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_13.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	ember_spirit_embr_death_14 = 
@@ -430,7 +482,7 @@
 		[
 			"sounds/vo/ember_spirit/embr_death_14.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	Hero_EmberSpirit.PreAttack = 
@@ -438,7 +490,7 @@
 		type = "dota_src1_3d"
 		volume_rand_min = -0.149902
 		volume_rand_max = 0.149902
-		volume = 0.200000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -476,6 +528,68 @@
 			"sounds/weapons/hero/shared/small_blade/attack_long03.vsnd",
 		]
 	}
+	Hero_EmberSpirit.Attack.Ring = 
+	{
+		type = "dota_src1_3d"
+		volume_rand_min = -0.300000
+		volume_rand_max = 0.300000
+		volume = 0.300000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 75.000000
+		distance_max = 2500.000000
+		event_type = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/shared/small_blade/ring01.vsnd",
+			"sounds/weapons/hero/shared/small_blade/ring02.vsnd",
+			"sounds/weapons/hero/shared/small_blade/ring03.vsnd",
+		]
+	}
+	Hero_EmberSpirit.Attack.Rip = 
+	{
+		type = "dota_src1_3d"
+		volume = 0.300000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 72.000000
+		distance_max = 2000.000000
+		soundevent_layer2 = "Damage_Melee.Gore"
+		soundevent_layer2_on = 0.000000
+		limiter_on = 0.000000
+		vsnd_files = 
+		[
+			"sounds/physics/damage/npc/rip01.vsnd",
+			"sounds/physics/damage/npc/rip02.vsnd",
+			"sounds/physics/damage/npc/rip03.vsnd",
+			"sounds/physics/damage/npc/rip04.vsnd",
+		]
+	}
+	Hero_EmberSpirit.Footsteps = 
+	{
+		type = "dota_src1_3d_footsteps"
+		volume_rand_min = -0.099976
+		volume_rand_max = 0.099976
+		volume = 0.299927
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 72.000000
+		distance_max = 2000.000000
+		event_type = 4.000000
+		vsnd_files = 
+		[
+			"sounds/physics/footsteps/hero/shared/general01.vsnd",
+			"sounds/physics/footsteps/hero/shared/general02.vsnd",
+			"sounds/physics/footsteps/hero/shared/general03.vsnd",
+			"sounds/physics/footsteps/hero/shared/general04.vsnd",
+			"sounds/physics/footsteps/hero/shared/general05.vsnd",
+			"sounds/physics/footsteps/hero/shared/general06.vsnd",
+			"sounds/physics/footsteps/hero/shared/general07.vsnd",
+		]
+	}
 
 	zuus_zuus_death_01 = 
 	{
@@ -484,7 +598,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_01.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_02 = 
@@ -494,7 +608,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_02.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_03 = 
@@ -504,7 +618,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_03.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_04 = 
@@ -514,7 +628,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_04.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_05 = 
@@ -524,7 +638,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_05.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_06 = 
@@ -534,7 +648,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_06.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_07 = 
@@ -544,7 +658,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_07.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_08 = 
@@ -554,7 +668,7 @@
 		[
 			"sounds/vo/zuus/zuus_death_08.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	zuus_zuus_death_09 = 
@@ -564,13 +678,13 @@
 		[
 			"sounds/vo/zuus/zuus_death_09.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	Hero_Zuus.Attack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.100000
+		volume = 0.300000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -585,6 +699,46 @@
 		]
 		vsnd_duration = 0.781769
 	}
+	Hero_Zuus.Footsteps = 
+	{
+		type = "dota_src1_3d_footsteps"
+		volume_rand_min = -0.099976
+		volume_rand_max = 0.099976
+		volume = 0.399780
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 72.000000
+		distance_max = 2000.000000
+		event_type = 4.000000
+		vsnd_files = 
+		[
+			"sounds/physics/footsteps/hero/shared/general01.vsnd",
+			"sounds/physics/footsteps/hero/shared/general02.vsnd",
+			"sounds/physics/footsteps/hero/shared/general03.vsnd",
+			"sounds/physics/footsteps/hero/shared/general04.vsnd",
+			"sounds/physics/footsteps/hero/shared/general05.vsnd",
+			"sounds/physics/footsteps/hero/shared/general06.vsnd",
+			"sounds/physics/footsteps/hero/shared/general07.vsnd",
+		]
+		vsnd_duration = 0.453787
+	}
+	Hero_Zuus.LightningBolt = 
+	{
+		type = "dota_update_default"
+		volume = 1.000000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 81.000000
+		mixgroup = "Weapons"
+		spread_radius = 300.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/zuus/lightning_bolt.vsnd",
+		]
+		vsnd_duration = 4.651565
+	}
 
 	stormspirit_ss_death_01 = 
 	{
@@ -593,7 +747,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_01.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_02 = 
@@ -603,7 +757,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_02.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_03 = 
@@ -613,7 +767,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_03.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_04 = 
@@ -623,7 +777,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_04.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_05 = 
@@ -633,7 +787,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_05.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_06 = 
@@ -643,7 +797,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_06.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_07 = 
@@ -653,7 +807,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_07.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_08 = 
@@ -663,7 +817,7 @@
 		[
 			"sounds/vo/stormspirit/ss_death_08.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	stormspirit_ss_death_09 = 
@@ -673,13 +827,13 @@
 		[
 			"sounds/vo/stormspirit/ss_death_09.vsnd",
 		]
-		volume = "0.200000"
+		volume = "0.150000"
 		pitch = "1.000000"
 	}
 	Hero_StormSpirit.Attack = 
 	{
 		type = "dota_src1_3d"
-		volume = 0.100000
+		volume = 0.300000
 		pitch = 1.000000
 		soundlevel = 75.000000
 		distance_max = 2500.000000
@@ -692,5 +846,81 @@
 			"sounds/weapons/hero/storm_spirit/attack4.vsnd",
 		]
 		vsnd_duration = 1.157211
+	}
+	Hero_StormSpirit.ProjectileImpact = 
+	{
+		type = "dota_src1_3d"
+		volume_rand_min = -0.099976
+		volume_rand_max = 0.099976
+		volume = 0.300000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.100000
+		soundlevel = 72.000000
+		distance_max = 1000.000000
+		limiter_on = 0.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/zuus/general_attack1.vsnd",
+			"sounds/weapons/hero/zuus/general_attack2.vsnd",
+			"sounds/weapons/hero/zuus/general_attack3.vsnd",
+		]
+		vsnd_duration = 1.363719
+	}
+	Hero_StormSpirit.BallLightning = 
+	{
+		type = "dota_update_default"
+		volume = 0.800000
+		pitch = 1.000000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		soundlevel = 81.000000
+		mixgroup = "Ultimates"
+		spread_radius = 300.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/storm_spirit/ball_lightning.vsnd",
+		]
+		vsnd_duration = 1.447188
+	}
+	Hero_StormSpirit.BallLightning.Loop = 
+	{
+		type = "dota_update_default"
+		volume = 1.000000
+		pitch = 1.000000
+		soundlevel = 81.000000
+		mixgroup = "Weapons"
+		volume_fade_out = 1.000000
+		stop_at_time = 10.000000
+		spread_radius = 300.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/storm_spirit/ball_lightning_loop.vsnd",
+		]
+		vsnd_duration = 3.902517
+	}
+	Hero_StormSpirit.Footsteps = 
+	{
+		type = "dota_src1_3d_footsteps"
+		volume_rand_min = -0.099976
+		volume_rand_max = 0.099976
+		volume = 0.299927
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 0.900000
+		soundlevel = 72.000000
+		distance_max = 2000.000000
+		event_type = 4.000000
+		vsnd_files = 
+		[
+			"sounds/physics/footsteps/hero/shared/general01.vsnd",
+			"sounds/physics/footsteps/hero/shared/general02.vsnd",
+			"sounds/physics/footsteps/hero/shared/general03.vsnd",
+			"sounds/physics/footsteps/hero/shared/general04.vsnd",
+			"sounds/physics/footsteps/hero/shared/general05.vsnd",
+			"sounds/physics/footsteps/hero/shared/general06.vsnd",
+			"sounds/physics/footsteps/hero/shared/general07.vsnd",
+		]
+		vsnd_duration = 0.453787
 	}
 }

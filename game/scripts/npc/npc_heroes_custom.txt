@@ -25,31 +25,37 @@
     //=================================================================================
     "npc_dota_hero_ursa"
     {
+        "GameSoundsFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
         "VoiceFile" "soundevents/rune_rangers_sounds.vsndevts"
     }
     
     "npc_dota_hero_ember_spirit"
     {
+        "GameSoundsFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
         "VoiceFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
     }
 
     "npc_dota_hero_grimstroke"
     {
+        "GameSoundsFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
         "VoiceFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
     }
 
     "npc_dota_hero_zuus"
     {
+        "GameSoundsFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
         "VoiceFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
     }
 
     "npc_dota_hero_undying"
     {
+        "GameSoundsFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
         "VoiceFile" "soundevents/rune_rangers_sounds.vsndevts"
     }
 
     "npc_dota_hero_storm_spirit"
     {
+        "GameSoundsFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
         "VoiceFile" "soundevents/rune_rangers_sounds_kv3.vsndevts"
     }
 }

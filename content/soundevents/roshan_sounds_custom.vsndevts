@@ -3,7 +3,7 @@
 	RoshanCustom.PreAttack = 
 	{
 		type = "dota_update_default"
-		volume = 0.200000
+		volume = 0.050000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 0.950000
@@ -25,7 +25,7 @@
 		type = "dota_update_default"
 		volume_rand_min = -0.149902
 		volume_rand_max = 0.149902
-		volume = 0.300000
+		volume = 0.050000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -49,7 +49,7 @@
 		type = "dota_update_default"
 		volume_rand_min = -0.449951
 		volume_rand_max = 0.449951
-		volume = 0.300000
+		volume = 0.100000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -69,7 +69,7 @@
 	RoshanCustom.Attack.Post = 
 	{
 		type = "dota_update_default"
-		volume = 0.200000
+		volume = 0.050000
 		pitch_rand_min = -0.050000
 		pitch_rand_max = 0.050000
 		pitch = 1.000000
@@ -81,6 +81,56 @@
 			"sounds/weapons/hero/shared/large_blade/follow_thru01.vsnd",
 			"sounds/weapons/hero/shared/large_blade/follow_thru02.vsnd",
 			"sounds/weapons/hero/shared/large_blade/follow_thru03.vsnd",
+		]
+	}
+	Roshan.PreAttack = 
+	{
+		type = "dota_update_default"
+		volume = 0.40000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 0.950000
+		soundlevel = 90.000000
+		mixgroup = "Weapons"
+		spread_radius = 300.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "RoshanCustom.Grunt"
+		soundevent_layer2_on = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/shared/large_blade/whoosh01.vsnd",
+			"sounds/weapons/hero/shared/large_blade/whoosh02.vsnd",
+			"sounds/weapons/hero/shared/large_blade/whoosh03.vsnd",
+		]
+	}
+	Roshan.Bash = 
+	{
+		type = "dota_update_default"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 84.000000
+		mixgroup = "Ultimates"
+		spread_radius = 300.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/creep/roshan/bash.vsnd",
+		]
+	}
+	Roshan.Slam = 
+	{
+		type = "dota_update_default"
+		volume = 0.400000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 84.000000
+		mixgroup = "Ultimates"
+		spread_radius = 600.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/creep/roshan/slam.vsnd",
 		]
 	}
 }
