@@ -38,6 +38,8 @@
 
         <Label id="PressKeyMessage" />
 
+        <Label id="CurrentChapter" text="#Chapter_1" onmouseover="UIShowTextTooltip('#CurrentChapterTooltip')" onmouseout="UIHideTextTooltip()" />
+
         <Button id="Chapter3SkipButton" class="ButtonBevel" onactivate="showSkipChapter3Confirmation(true)" onmouseover="UIShowTextTooltip('#SkipStackHover')" onmouseout="UIHideTextTooltip()">
             <Label text="#Misc_3_SkipStacking" />
         </Button>

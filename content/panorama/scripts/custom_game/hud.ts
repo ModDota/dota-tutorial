@@ -36,6 +36,22 @@ GameEvents.Subscribe("section_started", event => {
     }
 });
 
+function checkQueryToCourier() {
+
+    const currentlySelectedUnit = Players.GetLocalPlayerPortraitUnit()
+    if (Entities.IsCourier(currentlySelectedUnit)) {
+        const playerID = Players.GetLocalPlayer()
+        if (playerID !== undefined) {
+            const playerHero = Players.GetPlayerHeroEntityIndex(playerID)
+            if (playerHero !== undefined) {
+                GameUI.SelectUnit(playerHero, false)
+            }
+        }
+    }
+}
+
+GameEvents.Subscribe("dota_player_update_selected_unit", () => checkQueryToCourier())
+
 function except<T>(a: Set<T>, b: Set<T>): Set<T> {
     const result = new Set(a);
     b.forEach(e => result.delete(e));
@@ -291,3 +307,13 @@ function onShowSkipChapter3Button(show: boolean) {
 }
 
 GameEvents.Subscribe("show_chapter3_skip_button", event => onShowSkipChapter3Button(event.show !== 0));
+
+// Current chapter display
+
+GameEvents.Subscribe("section_started", event => {
+    const chapterName = event.section.split("_")[0];
+    const currentChapterLabel = $("#CurrentChapter") as LabelPanel;
+    currentChapterLabel.text = $.Localize(`#Chapter_${chapterName.substr(chapterName.length - 1)}`).toLocaleUpperCase();
+    currentChapterLabel.RemoveClass("TextGlow");
+    currentChapterLabel.AddClass("TextGlow");
+});

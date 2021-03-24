@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
+import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID, unitIsValidAndAlive } from "../../util";
 import { GoalTracker } from "../../Goals";
 import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
 
@@ -161,9 +161,8 @@ function onStart(complete: () => void) {
 
             tg.immediate(context => {
                 const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                riki.RemoveModifierByName(modifier_abs_no_damage.name)
+                riki.RemoveModifierByName(modifier_abs_no_damage.name);
                 riki.SetAttackCapability(DOTAUnitAttackCapability_t.DOTA_UNIT_CAP_MELEE_ATTACK);
-                riki.MoveToTargetToAttack(playerHero);
             }),
 
             tg.forkAny([
@@ -171,13 +170,20 @@ function onStart(complete: () => void) {
                     tg.audioDialog(LocalizationKey.Script_4_Outpost_9, LocalizationKey.Script_4_Outpost_9, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                     tg.neverComplete()
                 ]),
-                tg.seq([
-                    tg.completeOnCheck(context => {
-                        const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                        return !IsValidEntity(riki) || !riki.IsAlive();
-                    }, 1),
-                ])
+                tg.loop(context => {
+                    return unitIsValidAndAlive(context[CustomNpcKeys.Riki])
+                },
+                    tg.seq([
+                        tg.immediate(context => {
+                            const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
+                            if (playerHero.IsAlive())
+                                riki.MoveToTargetToAttack(playerHero);
+                        }),
+                        tg.wait(1)
+                    ])
+                ),
             ]),
+
             tg.audioDialog(LocalizationKey.Script_4_RTZ_pain, LocalizationKey.Script_4_RTZ_pain, ctx => ctx[rikiName]),
             tg.audioDialog(LocalizationKey.Script_4_RTZ_death, LocalizationKey.Script_4_RTZ_death, ctx => ctx[rikiName]),
             tg.immediate(_ => goalKillRiki.complete()),

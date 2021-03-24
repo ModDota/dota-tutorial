@@ -5,6 +5,7 @@ import * as tut from "./Tutorial/Core";
 import { TutorialContext } from "./TutorialGraph";
 import { centerCameraOnHero, findAllPlayersID, findRealPlayerID, getCameraDummy, getOrError, getPlayerHero, isPlayerHeroFrozen, setUnitPacifist } from "./util";
 import * as dg from "./Dialog"
+import { modifier_unit_unselectable } from "./modifiers/modifier_unit_unselectable";
 
 declare global {
     interface CDOTAGamerules {
@@ -302,6 +303,8 @@ export class GameMode {
                     if (hero) {
                         hero.SetGold(0, true);
                     }
+
+                    unit.AddNewModifier(undefined, undefined, modifier_unit_unselectable.name, {})
                 });
             }
         }

@@ -20,12 +20,13 @@ const requiredState: RequiredState = {
     blockades: [
         chapter2Blockades.radiantJungleStairs,
         chapter2Blockades.radiantBaseT2Divider,
+        chapter2Blockades.radiantBaseTop,
         chapter2Blockades.radiantBaseMid,
         chapter2Blockades.radiantBaseBottom,
         chapter2Blockades.direTopDividerCliff,
         chapter2Blockades.direTopJungleBlocker,
         chapter2Blockades.aboveRoshanBlocker,
-        chapter2Blockades.belowRoshanBlocker
+        chapter2Blockades.belowRoshanBlocker,
     ],
     topDireT1TowerStanding: false,
     centerCameraOnHero: true,
@@ -201,15 +202,15 @@ const onStart = (complete: () => void) => {
             playerCourier.AddNewModifier(undefined, undefined, modifier_courier_chapter_2_ms_bonus.name, {})
             playerOrderMustDeliverItemsFromCourier = false
             removeHighlight(deliverItemsUIPath)
-            freezePlayerHero(true)
         }),
 
         tg.setCameraTarget(playerCourier),
+        tg.wait(3),
+        tg.panCameraLinear(() => getPlayerCameraLocation(), () => playerHero.GetAbsOrigin(), 1),
         tg.completeOnCheck(() => {
             return playerHero.HasItemInInventory(daedalusName)
         }, 0.2),
         tg.immediate(() => {
-            freezePlayerHero(false)
             goalWaitToCourierToDeliverItems.complete()
             playerCourier.RemoveModifierByName(modifier_courier_chapter_2_ms_bonus.name)
         }),
