@@ -19,4 +19,42 @@
         "AttributeBaseStrength"		"5"
         "StatusHealth"		"100"
     }
+
+    //=================================================================================
+    // Power rune rangers hero voices
+    //=================================================================================
+    "npc_dota_hero_ursa"
+    {
+        "VoiceFile" ""
+    }
+    
+    "npc_dota_hero_ember_spirit"
+    {
+        "VoiceFile" ""
+    }
+
+    "npc_dota_hero_grimstroke"
+    {
+        "VoiceFile" ""
+    }
+
+    "npc_dota_hero_zuus"
+    {
+        "VoiceFile" ""
+    }
+
+    "npc_dota_hero_undying"
+    {
+        "VoiceFile" ""
+    }
+
+    "npc_dota_hero_undying"
+    {
+        "VoiceFile" ""
+    }
+
+    "npc_dota_hero_storm_spirit"
+    {
+        "VoiceFile" ""
+    }
 }

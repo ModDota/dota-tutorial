@@ -54,6 +54,7 @@ declare const enum CustomNpcKeys {
     Pudge = "npc_dota_hero_pudge",
     Wisp = "npc_dota_hero_wisp",
     Roshan = "npc_dota_roshan",
+    CustomRoshan = "npc_dota_custom_roshan",
     Axe = "npc_dota_hero_axe",
     Centaur = "npc_dota_hero_centaur",
     Invoker = "npc_dota_hero_invoker",

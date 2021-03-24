@@ -55,6 +55,7 @@ export type RequiredState = {
 
     // Roshan
     requireRoshan?: boolean
+    customRoshanUnit?: boolean
     roshanHitsLikeATruck?: boolean
 
     // Planted wards
@@ -120,6 +121,7 @@ export const defaultRequiredState: FilledRequiredState = {
 
     // Roshan
     requireRoshan: false,
+    customRoshanUnit: false,
     roshanHitsLikeATruck: false,
 
     // Planted wards

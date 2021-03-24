@@ -20,6 +20,7 @@ const requiredState: RequiredState = {
     blockades: Object.values(shared.chapter5Blockades),
     requireBountyRunes: true,
     requireRoshan: true,
+    customRoshanUnit: true,
     roshanHitsLikeATruck: true,
     topDireT1TowerStanding: false,
     topDireT2TowerStanding: false,
@@ -64,7 +65,7 @@ function onStart(complete: () => void) {
     const rangerFirstLineDirection = DirectionToPosition(rangerLineStart, rangerMiddlePoint)
     const rangerSecondLineDirection = DirectionToPosition(rangerMiddlePoint, rangerLineEnd)
 
-    const roshan = Entities.FindAllByName(CustomNpcKeys.Roshan)[0] as CDOTA_BaseNPC
+    const roshan = Entities.FindAllByName(CustomNpcKeys.CustomRoshan)[0] as CDOTA_BaseNPC
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([

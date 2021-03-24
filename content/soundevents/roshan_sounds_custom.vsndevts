@@ -1,0 +1,116 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+    RoshanCustom.PreAttack = 
+	{
+		type = "dota_update_default"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 0.950000
+		soundlevel = 90.000000
+		mixgroup = "Weapons"
+		spread_radius = 300.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "RoshanCustom.Grunt"
+		soundevent_layer2_on = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/shared/large_blade/whoosh01.vsnd",
+			"sounds/weapons/hero/shared/large_blade/whoosh02.vsnd",
+			"sounds/weapons/hero/shared/large_blade/whoosh03.vsnd",
+		]
+	}
+	RoshanCustom.Attack = 
+	{
+		type = "dota_update_default"
+		volume_rand_min = -0.000000
+		volume_rand_max = 0.000000
+		volume = 0.300000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 90.000000
+		mixgroup = "Weapons"
+		spread_radius = 300.000000
+		distance_max = 2500.000000
+		soundevent_layer2 = "Damage_Melee.Gore"
+		soundevent_layer2_on = 1.000000
+		soundevent_layer3 = "RoshanCustom.Attack.Post"
+		soundevent_layer3_on = 1.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/creep/roshan/attack01.vsnd",
+			"sounds/weapons/creep/roshan/attack02.vsnd",
+			"sounds/weapons/creep/roshan/attack03.vsnd",
+		]
+	}
+	RoshanCustom.Grunt = 
+	{
+		type = "dota_update_default"
+		volume_rand_min = -0.449951
+		volume_rand_max = 0.449951
+		volume = 0.300000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 81.000000
+		mixgroup = "Weapons"
+		spread_radius = 300.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/creep/roshan/grunt01.vsnd",
+			"sounds/weapons/creep/roshan/grunt02.vsnd",
+			"sounds/weapons/creep/roshan/grunt03.vsnd",
+			"sounds/weapons/creep/roshan/grunt04.vsnd",
+			"sounds/weapons/creep/roshan/grunt05.vsnd",
+			"sounds/weapons/creep/roshan/grunt06.vsnd",
+		]
+	}
+	RoshanCustom.Attack.Post = 
+	{
+		type = "dota_update_default"
+		volume = 0.200000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 75.000000
+		mixgroup = "Weapons"
+		spread_radius = 150.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/hero/shared/large_blade/follow_thru01.vsnd",
+			"sounds/weapons/hero/shared/large_blade/follow_thru02.vsnd",
+			"sounds/weapons/hero/shared/large_blade/follow_thru03.vsnd",
+		]
+	}
+	Roshan.Bash = 
+	{
+		type = "dota_update_default"
+		volume = 0.000000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 84.000000
+		mixgroup = "Ultimates"
+		spread_radius = 300.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/creep/roshan/bash.vsnd",
+		]
+	}
+	Roshan.Slam = 
+	{
+		type = "dota_update_default"
+		volume = 0.000000
+		pitch_rand_min = -0.050000
+		pitch_rand_max = 0.050000
+		pitch = 1.000000
+		soundlevel = 84.000000
+		mixgroup = "Ultimates"
+		spread_radius = 600.000000
+		vsnd_files = 
+		[
+			"sounds/weapons/creep/roshan/slam.vsnd",
+		]
+	}
+}
