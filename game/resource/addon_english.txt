@@ -178,6 +178,8 @@
         "npc_dota_tutorial_tora_website" "warlock.ai"
         "npc_dota_tutorial_flam3s_website" "steamcommunity.com/id/Flam3sDota"
         "npc_dota_tutorial_ruby_twitter" "valkyrjaRuby"
+        "npc_dota_tutorial_ruby_twitch" "valkyrjaRuby"
+        "npc_dota_tutorial_ruby_discord" "fJN8gjnyWZ"
         "npc_dota_tutorial_indiegogo_website" "indiegogo.com/projects/community-made-dota-2-tutorial"
 
         "npc_dota_tutorial_shush_website" "moddota.com"
@@ -186,7 +188,7 @@
         "npc_dota_tutorial_sinz_website" "moddota.com"
         "npc_dota_tutorial_vicfrank_website" "moddota.com"
         "npc_dota_tutorial_toyoka_website" "moddota.com"
-        "npc_dota_tutorial_yoyo_website" "steamcommunity.com/id/yoyoyoyo999/"
+        "npc_dota_tutorial_yoyo_website" "steamcommunity.com/id/yoyoyoyo999"
 
         "npc_dota_tutorial_tora_discord" "gRmZgvz"
         "npc_dota_tutorial_shush_discord" "gRmZgvz"
