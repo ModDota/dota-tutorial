@@ -598,6 +598,15 @@ export function getPathToHighlightAbility(index: number) {
 }
 
 /**
+ * Returns the path to highlight an ability upgrade, based on its index. The indices are based on their location in the ability bar, starting from 0.
+ * @param index The slot the ability is in, starting from 0.
+ * @returns The path that can be used in highlightUiElement to highlight an ability.
+ */
+ export function getPathToHighlightUpgradeAbility(index: number) {
+    return "HUDElements/lower_hud/center_with_stats/center_block/AbilitiesAndStatBranch/abilities/Ability" + index + "/ButtonAndLevel/ButtonWithLevelUpTab/LevelUpTab"
+}
+
+/**
  * Displays a message indicating to the player that they should press a key.
  * @param command DOTAKeybindCommand_t for which we want to display the hotkey.
  * @param text Text to display. Should use {key} to display the hotkey.

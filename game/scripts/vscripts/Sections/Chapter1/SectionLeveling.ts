@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { displayDotaErrorMessage, freezePlayerHero, getOrError, getPathToHighlightAbility, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
+import { displayDotaErrorMessage, getOrError, getPathToHighlightAbility, getPathToHighlightUpgradeAbility, getPlayerHero, highlightUiElement, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { GoalTracker } from "../../Goals"
 import { slacksFountainLocation } from "./Shared"
@@ -29,7 +29,6 @@ const start = (complete: () => void) => {
     print("Started section leveling")
 
     const hero = getOrError(getPlayerHero(), "Could not find the player's hero.")
-    const abilityDragonTailHighlightPath = getPathToHighlightAbility(1);
 
     const goalTracker = new GoalTracker()
     const goalLevelDragonTail = goalTracker.addBoolean(LocalizationKey.Goal_1_Leveling_2)
@@ -50,10 +49,10 @@ const start = (complete: () => void) => {
             tg.seq([
                 tg.immediate(_ => {
                     goalLevelDragonTail.start()
-                    highlightUiElement(getPathToHighlightAbility(1))
+                    highlightUiElement(getPathToHighlightUpgradeAbility(1), undefined, HighlightMouseButton.Left)
                 }),
                 tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg)),
-                tg.immediate(() => removeHighlight(getPathToHighlightAbility(1)))
+                tg.immediate(() => removeHighlight(getPathToHighlightUpgradeAbility(1)))
             ]),
         ]),
         tg.immediate(_ => goalLevelDragonTail.complete()),
@@ -97,7 +96,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => goalKillPurge.start()),
         tg.immediate(_ => {
             hero.SetIdleAcquire(false)
-            highlightUiElement(abilityDragonTailHighlightPath)
+            highlightUiElement(getPathToHighlightAbility(1), undefined, HighlightMouseButton.Left)
         }),
         tg.immediate(context => setUnitPacifist(context[CustomNpcKeys.PurgePugna], false)),
 
@@ -135,7 +134,7 @@ const start = (complete: () => void) => {
         ]),
 
         tg.immediate(_ => {
-            removeHighlight(abilityDragonTailHighlightPath)
+            removeHighlight(getPathToHighlightAbility(1))
             goalKillPurge.complete()
             hero.SetIdleAcquire(true)
         }),
@@ -162,9 +161,9 @@ const start = (complete: () => void) => {
                 tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
                 tg.immediate(_ => hero.HeroLevelUp(true)),
                 tg.immediate(_ => goalLevelBreatheFire.start()),
-                tg.immediate(_ => highlightUiElement(getPathToHighlightAbility(0))),
+                tg.immediate(_ => highlightUiElement(getPathToHighlightUpgradeAbility(0), undefined, HighlightMouseButton.Left)),
                 tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
-                tg.immediate(_ => removeHighlight(getPathToHighlightAbility(0)))
+                tg.immediate(_ => removeHighlight(getPathToHighlightUpgradeAbility(0)))
             ])
         ]),
         tg.immediate(_ => goalLevelBreatheFire.complete()),
@@ -197,7 +196,8 @@ const stop = () => {
     hero.SetIdleAcquire(true)
 
     removeHighlight(getPathToHighlightAbility(0))
-    removeHighlight(getPathToHighlightAbility(1))
+    removeHighlight(getPathToHighlightUpgradeAbility(0))
+    removeHighlight(getPathToHighlightUpgradeAbility(1))
 
     if (graph) {
         graph.stop(GameRules.Addon.context)

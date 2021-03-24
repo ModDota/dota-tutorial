@@ -85,7 +85,7 @@ function onStart(complete: () => void) {
                 goalGoToLastLocationSawRiki.complete();
                 goalUseDust.start();
                 allowUseItem = true;
-                highlightUiElement(inventorySlot1UIPath);
+                highlightUiElement(inventorySlot1UIPath, undefined, HighlightMouseButton.Left);
             }),
 
             tg.forkAny([

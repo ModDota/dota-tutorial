@@ -186,7 +186,7 @@ const onStart = (complete: () => void) => {
                             tg.immediate(() => {
                                 currentLastHitStage = LastHitStages.LAST_HIT_BREATHE_FIRE
                                 goalLastHitCreepsWithBreatheFire.start()
-                                highlightUiElement(breatheFireAbilityHighlightPath)
+                                highlightUiElement(breatheFireAbilityHighlightPath, undefined, HighlightMouseButton.Left)
                                 if (playerHero.HasModifier(modifier_dk_last_hit_chapter2_creeps.name)) {
                                     const modifier = playerHero.FindModifierByName(modifier_dk_last_hit_chapter2_creeps.name) as modifier_dk_last_hit_chapter2_creeps
                                     if (modifier) modifier.setCurrentState(LastHitStages.LAST_HIT_BREATHE_FIRE)

@@ -80,7 +80,7 @@ const onStart = (complete: () => void) => {
             // Wait for the player to open their shop.
             tg.immediate(_ => {
                 goalOpenShop.start();
-                highlightUiElement(shopBtnUIPath);
+                highlightUiElement(shopBtnUIPath, undefined, HighlightMouseButton.Left);
             }),
             tg.completeOnCheck(_ => isShopOpen(), 0.1),
             tg.immediate(_ => {
@@ -119,7 +119,7 @@ const onStart = (complete: () => void) => {
             tg.immediate(_ => {
                 removeHighlight(tangoInGuideUIPath);
                 goalBuyTango.complete();
-                highlightUiElement(inventorySlot0UIPath);
+                highlightUiElement(inventorySlot0UIPath, undefined, HighlightMouseButton.Left);
             }),
 
             tg.forkAny([
