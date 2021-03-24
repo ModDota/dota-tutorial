@@ -171,7 +171,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Opening_9, LocalizationKey.Script_4_Opening_9, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             // Behold the scan icon
             tg.immediate(_ => {
-                highlightUiElement(scanUIPath)
+                highlightUiElement(scanUIPath, undefined, HighlightMouseButton.Left)
                 goalScanFailed.start();
             }),
             tg.audioDialog(LocalizationKey.Script_4_Opening_10, LocalizationKey.Script_4_Opening_10, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
@@ -201,7 +201,7 @@ function onStart(complete: () => void) {
                 waitingForPlayerToScan = true
                 currentRequiredScanLocation = secondScanLocation;
                 goalScanSucceed.start();
-                highlightUiElement(scanUIPath);
+                highlightUiElement(scanUIPath, undefined, HighlightMouseButton.Left);
                 MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, playerHero, secondScanLocation.x, secondScanLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
             }),
             tg.completeOnCheck(context => checkIfScanCoversTheLocation(secondScanLocation, context), 1),

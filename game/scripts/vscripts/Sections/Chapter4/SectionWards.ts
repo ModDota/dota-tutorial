@@ -137,7 +137,7 @@ function onStart(complete: () => void) {
             ]),
             tg.panCameraExponential(_ => getPlayerCameraLocation(), _ => playerHero.GetAbsOrigin(), panCameraWardSpotsAlpha),
             tg.immediate(_ => {
-                highlightUiElement(inventorySlot1UIPath);
+                highlightUiElement(inventorySlot1UIPath, undefined, HighlightMouseButton.Left);
                 goalPlaceObserverWard.start();
                 MinimapEvent(DOTATeam_t.DOTA_TEAM_GOODGUYS, getPlayerHero() as CBaseEntity, markerLocation.x, markerLocation.y, DOTAMinimapEvent_t.DOTA_MINIMAP_EVENT_TUTORIAL_TASK_ACTIVE, 1);
                 wardMarkerActive = true;

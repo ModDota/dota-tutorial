@@ -38,11 +38,11 @@ const start = (complete: () => void) => {
             const slacks = getOrError(ctx[CustomNpcKeys.SlacksMudGolem] as CDOTA_BaseNPC | undefined);
             setUnitPacifist(slacks, true);
             slacks.SetTeam(DOTATeam_t.DOTA_TEAM_NEUTRALS);
-            highlightUiElement(abilityBreatheFireHighlightPath)
+            highlightUiElement(abilityBreatheFireHighlightPath, undefined, HighlightMouseButton.Left);
         }),
 
         tg.audioDialog(LocalizationKey.Script_1_BreatheFire_1, LocalizationKey.Script_1_BreatheFire_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
-        
+
         // Fork use breathe fire dialogs
         tg.forkAny([
             tg.seq([

@@ -152,7 +152,7 @@ function onStart(complete: () => void) {
 
             // Add tp scroll and highlight it
             tg.immediate(_ => playerHero.AddItemByName("item_tpscroll").EndCooldown()),
-            tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath)),
+            tg.immediate(_ => highlightUiElement(tpScrollSlotUIPath, undefined, HighlightMouseButton.Left)),
             tg.audioDialog(LocalizationKey.Script_5_5v5_6, LocalizationKey.Script_5_5v5_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.audioDialog(LocalizationKey.Script_5_5v5_7, LocalizationKey.Script_5_5v5_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.forkAny([

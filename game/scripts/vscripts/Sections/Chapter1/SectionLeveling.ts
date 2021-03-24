@@ -50,7 +50,7 @@ const start = (complete: () => void) => {
             tg.seq([
                 tg.immediate(_ => {
                     goalLevelDragonTail.start()
-                    highlightUiElement(getPathToHighlightAbility(1))
+                    highlightUiElement(getPathToHighlightAbility(1), undefined, HighlightMouseButton.Left)
                 }),
                 tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg)),
                 tg.immediate(() => removeHighlight(getPathToHighlightAbility(1)))
@@ -97,7 +97,7 @@ const start = (complete: () => void) => {
         tg.immediate(_ => goalKillPurge.start()),
         tg.immediate(_ => {
             hero.SetIdleAcquire(false)
-            highlightUiElement(abilityDragonTailHighlightPath)
+            highlightUiElement(abilityDragonTailHighlightPath, undefined, HighlightMouseButton.Left)
         }),
         tg.immediate(context => setUnitPacifist(context[CustomNpcKeys.PurgePugna], false)),
 
@@ -162,7 +162,7 @@ const start = (complete: () => void) => {
                 tg.immediate(_ => learnAbilityAllowedName = abilNameBreatheFire),
                 tg.immediate(_ => hero.HeroLevelUp(true)),
                 tg.immediate(_ => goalLevelBreatheFire.start()),
-                tg.immediate(_ => highlightUiElement(getPathToHighlightAbility(0))),
+                tg.immediate(_ => highlightUiElement(getPathToHighlightAbility(0), undefined, HighlightMouseButton.Left)),
                 tg.upgradeAbility(getOrError(hero.FindAbilityByName(abilNameBreatheFire), "Breathe Fire was not found.")),
                 tg.immediate(_ => removeHighlight(getPathToHighlightAbility(0)))
             ])

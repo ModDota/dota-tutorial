@@ -126,7 +126,7 @@ const onStart = (complete: () => void) => {
         // Don't fork this since dialogue only mentions buying the Demon Edge at the end, so maybe it'll confuse player if he follows the highlights immediately
         tg.audioDialog(LocalizationKey.Script_2_Courier_4, LocalizationKey.Script_2_Courier_4, context => context[CustomNpcKeys.SunsFanMudGolem]),
         tg.immediate(() => {
-            highlightUiElement(shopBtnUIPath)
+            highlightUiElement(shopBtnUIPath, undefined, HighlightMouseButton.Left)
             goalOpenShop.start()
         }),
         tg.completeOnCheck(() => {
@@ -139,7 +139,7 @@ const onStart = (complete: () => void) => {
             playerHero.SetGold(5150, false)
             playerOrderMustBuyDemonEdge = true
             Timers.CreateTimer(() => {
-                highlightUiElement(demonEdgeGuideUIPath);
+                highlightUiElement(demonEdgeGuideUIPath, undefined, HighlightMouseButton.Right);
             })
         }),
         tg.completeOnCheck(() => {
@@ -160,7 +160,7 @@ const onStart = (complete: () => void) => {
             tg.seq([
                 tg.immediate(() => {
                     playerOrderMustBuyRecipeAndCrystalis = true
-                    highlightUiElement(crystalisGuideUIPath);
+                    highlightUiElement(crystalisGuideUIPath, undefined, HighlightMouseButton.Right);
                     highlightUiElement(daedalusGuideUIPath);
                     goalBuyCrystalisAndRecipe.start()
                 }),
@@ -181,7 +181,7 @@ const onStart = (complete: () => void) => {
             tg.seq([
                 tg.audioDialog(LocalizationKey.Script_2_Courier_6, LocalizationKey.Script_2_Courier_6, context => context[CustomNpcKeys.SunsFanMudGolem]),
                 tg.audioDialog(LocalizationKey.Script_2_Courier_7, LocalizationKey.Script_2_Courier_7, context => context[CustomNpcKeys.SunsFanMudGolem]),
-                tg.immediate(_ => highlightUiElement(deliverItemsUIPath)),
+                tg.immediate(_ => highlightUiElement(deliverItemsUIPath, undefined, HighlightMouseButton.Left)),
                 tg.audioDialog(LocalizationKey.Script_2_Courier_8, LocalizationKey.Script_2_Courier_8, context => context[CustomNpcKeys.SlacksMudGolem]),
                 tg.audioDialog(LocalizationKey.Script_2_Courier_9, LocalizationKey.Script_2_Courier_9, context => context[CustomNpcKeys.SlacksMudGolem]),
                 tg.neverComplete()

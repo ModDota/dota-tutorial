@@ -454,9 +454,9 @@ const onStart = (complete: () => void) => {
     }
 
     const stackCreepsMultipleIfNotSkipped = () => {
-        return tg.seq(_ => requestedSkipStacking 
+        return tg.seq(_ => requestedSkipStacking
             ? [
-                // If skip stacking was requested just clean up and continue 
+                // If skip stacking was requested just clean up and continue
                 tg.immediate(context => {
                     removeHighlight(clockUIPath)
                     playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
@@ -578,7 +578,7 @@ const onStart = (complete: () => void) => {
                 tg.immediate(_ => {
                     goalStash.start()
                     removeHighlight(secondNeutralItemUIPath)
-                    highlightUiElement(firstNeutralSlotUIPath)
+                    highlightUiElement(firstNeutralSlotUIPath, undefined, HighlightMouseButton.Right)
                 }),
                 tg.neverComplete()
             ]),
@@ -598,7 +598,7 @@ const onStart = (complete: () => void) => {
             playerCanMoveNeutralFromBackpack = true
             goalSwapItems.start()
             highlightUiElement(firstNeutralSlotUIPath)
-            highlightUiElement(secondNeutralItemUIPath)
+            highlightUiElement(secondNeutralItemUIPath, undefined, HighlightMouseButton.Right)
         }),
         tg.completeOnCheck(_ => {
             const item = playerHero.GetItemInSlot(DOTAScriptInventorySlot_t.DOTA_ITEM_NEUTRAL_SLOT)

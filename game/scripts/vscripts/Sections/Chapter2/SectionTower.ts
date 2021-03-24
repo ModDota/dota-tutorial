@@ -306,7 +306,7 @@ const onStart = (complete: () => void) => {
                                 playerHero.AddExperience(levelsToGrant, EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, true)
                                 const dragonFormAbilityHandle = playerHero.FindAbilityByName(elderDragonFormAbility)
                                 if (!dragonFormAbilityHandle) error("Could not find the Elder Dragon Form ability")
-                                highlightUiElement(getPathToHighlightAbility(3))
+                                highlightUiElement(getPathToHighlightAbility(3), undefined, HighlightMouseButton.Left)
                                 ignorePlayerOrders = false
                                 playerMustOrderTrainUltimate = true
                                 playerMustOrderTrainAbilities = true
@@ -332,7 +332,7 @@ const onStart = (complete: () => void) => {
                             tg.immediate(() => {
                                 goalTrainUltimate.complete()
                                 goalTrainAbilities.start()
-                                highlightUiElement(getPathToHighlightAbility(0))
+                                highlightUiElement(getPathToHighlightAbility(0), undefined, HighlightMouseButton.Left)
                                 highlightUiElement(getPathToHighlightAbility(1))
                                 highlightUiElement(getPathToHighlightAbility(2))
                             }),
@@ -363,7 +363,7 @@ const onStart = (complete: () => void) => {
                         tg.seq([
                             tg.immediate(() => {
                                 goalUseUltimate.start()
-                                highlightUiElement(elderDragonFormHighlightAbilityPath)
+                                highlightUiElement(elderDragonFormHighlightAbilityPath, undefined, HighlightMouseButton.Left)
                                 playerOrderMustCastUltimate = true
                             }),
                             tg.completeOnCheck(() => {
@@ -414,7 +414,7 @@ const onStart = (complete: () => void) => {
                     tg.audioDialog(LocalizationKey.Script_2_Tower_16, LocalizationKey.Script_2_Tower_16, context => context[CustomNpcKeys.SlacksMudGolem]),
                     tg.immediate(() => {
                         goalUseGlyph.start()
-                        highlightUiElement(glyphUIPath)
+                        highlightUiElement(glyphUIPath, undefined, HighlightMouseButton.Left)
                         playerMustOrderGlyph = true
                         direTopTowerNoDamageModifier.hitSources = TowerHitSources.NONE
                     }),
