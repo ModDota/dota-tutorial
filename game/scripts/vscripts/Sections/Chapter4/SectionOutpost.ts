@@ -2,7 +2,7 @@ import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import * as shared from "./Shared"
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID } from "../../util";
+import { getOrError, getPlayerHero, highlightUiElement, removeHighlight, displayDotaErrorMessage, setUnitPacifist, getPlayerCameraLocation, findRealPlayerID, unitIsValidAndAlive } from "../../util";
 import { GoalTracker } from "../../Goals";
 import { modifier_abs_no_damage } from "../../modifiers/modifier_abs_no_damage";
 
@@ -171,8 +171,7 @@ function onStart(complete: () => void) {
                     tg.neverComplete()
                 ]),
                 tg.loop(context => {
-                    const riki = getOrError(context[CustomNpcKeys.Riki] as CDOTA_BaseNPC | undefined);
-                    return riki.IsAlive();
+                    return unitIsValidAndAlive(context[CustomNpcKeys.Riki])
                 },
                     tg.seq([
                         tg.immediate(context => {
@@ -180,7 +179,7 @@ function onStart(complete: () => void) {
                             if (playerHero.IsAlive())
                                 riki.MoveToTargetToAttack(playerHero);
                         }),
-                        tg.wait(2)
+                        tg.wait(1)
                     ])
                 ),
             ]),
