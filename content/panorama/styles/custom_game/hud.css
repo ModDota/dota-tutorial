@@ -563,9 +563,8 @@
     color: #EEEEEE;
 
     horizontal-align: center;
-    vertical-align: center;
-    margin-left: 600px;
-    margin-bottom: 250px;
+    vertical-align: bottom;
+    margin-bottom: 300px;
 
     opacity: 0.9;
     transform: scale3d(0, 0, 1);
