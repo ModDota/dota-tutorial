@@ -106,7 +106,7 @@
     width: 180px;
     height: 180px;
     transform: translateY(0px) translateX(0px);
-    opacity-mask: url("s2r://panorama/images/masks/killcammask_left_psd.vtex") 1;
+    opacity-mask: url("file://panorama/images/masks/killcammask_left_psd.png") 1;
 }
 
 .AbilityInsetShadowLeft,
@@ -250,7 +250,7 @@
 .CheckMark {
     width: 32px;
     height: 32px;
-    background-image: url("s2r://panorama/images/interface/check_psd.vtex");
+    background-image: url("file://panorama/images/interface/check_psd.png");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -290,7 +290,7 @@
 }
 
 .WardenNote #JournalPageBackground {
-    background-image: url("s2r://panorama/images/interface/warden_paper_psd.vtex");
+    background-image: url("file://panorama/images/interface/warden_paper_psd.png");
     visibility: visible;
 }
 
@@ -315,7 +315,7 @@
 #JournalPageBackground {
     width: 420px;
     height: 560px;
-    background-image: url("s2r://panorama/images/interface/journal_paper_psd.vtex");
+    background-image: url("file://panorama/images/interface/journal_paper_psd.png");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -483,7 +483,7 @@
 }
 
 #GlassBallOverlay {
-    background-image: url("s2r://panorama/images/interface/glassoverlay_psd.vtex");
+    background-image: url("file://panorama/images/interface/glassoverlay_psd.png");
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
@@ -660,46 +660,46 @@
 #BossIcon {
     height: 48px;
     width: 48px;
-    background-image: url("s2r://panorama/images/interface/minimap_boss_icon_png.vtex");
+    background-image: url("file://panorama/images/interface/minimap_boss_icon_png.png");
     background-size: cover;
     border: 1px solid #444444;
     border-radius: 50%;
 }
 
 #BossIcon.npc_dota_creature_lycan_boss {
-    background-image: url("s2r://panorama/images/interface/boss/lycan_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/lycan_psd.png");
 }
 
 #BossIcon.npc_dota_creature_ogre_tank_boss {
-    background-image: url("s2r://panorama/images/interface/boss/bogdugg_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/bogdugg_psd.png");
 }
 
 #BossIcon.npc_dota_creature_spider_boss {
-    background-image: url("s2r://panorama/images/interface/boss/ankaboot_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/ankaboot_psd.png");
 }
 
 #BossIcon.npc_dota_creature_temple_guardian {
-    background-image: url("s2r://panorama/images/interface/boss/templeguards_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/templeguards_psd.png");
 }
 
 #BossIcon.npc_dota_creature_sand_king {
-    background-image: url("s2r://panorama/images/interface/boss/sandking_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/sandking_psd.png");
 }
 
 #BossIcon.npc_dota_creature_ice_boss {
-    background-image: url("s2r://panorama/images/interface/boss/karaul_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/karaul_psd.png");
 }
 
 #BossIcon.npc_dota_creature_elder_tiny {
-    background-image: url("s2r://panorama/images/interface/boss/storegga_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/storegga_psd.png");
 }
 
 #BossIcon.npc_dota_creature_amoeba_boss {
-    background-image: url("s2r://panorama/images/interface/boss/amoeba_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/amoeba_psd.png");
 }
 
 #BossIcon.npc_dota_creature_siltbreaker {
-    background-image: url("s2r://panorama/images/interface/boss/siltbreaker_psd.vtex");
+    background-image: url("file://panorama/images/interface/boss/siltbreaker_psd.png");
 }
 
 #OverlayMapContainer {
@@ -717,7 +717,7 @@
     transform: translateX(700px) translateY(-310px);
 
     opacity: 1;
-    opacity-mask: url("s2r://panorama/images/masks/softedge_circle_sharper_png.vtex")
+    opacity-mask: url("file://panorama/images/masks/softedge_circle_sharper_png.png")
         1;
     background-color: #000d;
     background-color: gradient(
@@ -760,7 +760,7 @@
         color-stop(0.5, #000d),
         to(#00000000)
     );
-    opacity-mask: url("s2r://panorama/images/masks/softedge_box_png.vtex") 1;
+    opacity-mask: url("file://panorama/images/masks/softedge_box_png.png") 1;
 }
 
 #OverlayMap {
@@ -794,7 +794,7 @@
 .MinimapImage {
     width: 5px;
     height: 5px;
-    background-image: url("s2r://panorama/images/interface/minimap_creep_icon_psd.vtex");
+    background-image: url("file://panorama/images/interface/minimap_creep_icon_psd.png");
     background-position: center;
     background-size: contain;
     wash-color: #0f0;
@@ -808,7 +808,7 @@
 
 .MinimapImage.npc_dota_dungeon_checkpoint,
 .MinimapImage.npc_dota_dungeon_checkpoint.Enemy {
-    background-image: url("s2r://panorama/images/interface/minimap_checkpoint_icon_psd.vtex");
+    background-image: url("file://panorama/images/interface/minimap_checkpoint_icon_psd.png");
     wash-color: #0f0;
     width: 12px;
     height: 12px;
@@ -824,7 +824,7 @@
 }
 
 .MinimapImage.npc_dota_forest_camp_chief {
-    background-image: url("s2r://panorama/images/interface/minimap_camp_chief_icon_psd.vtex");
+    background-image: url("file://panorama/images/interface/minimap_camp_chief_icon_psd.png");
     wash-color: #fff;
     width: 16px;
     height: 16px;
@@ -841,7 +841,7 @@
 .MinimapImage.Boss {
     width: 24px;
     height: 24px;
-    background-image: url("s2r://panorama/images/interface/minimap_boss_icon_png.vtex");
+    background-image: url("file://panorama/images/interface/minimap_boss_icon_png.png");
     background-position: center;
     background-size: contain;
     //background-color: red;
@@ -911,25 +911,25 @@
 }
 
 #Page01 {
-    background-image: url("s2r://panorama/images/comic/01_psd.vtex");
+    background-image: url("file://panorama/images/comic/01_psd.png");
 }
 #Page02 {
-    background-image: url("s2r://panorama/images/comic/02_psd.vtex");
+    background-image: url("file://panorama/images/comic/02_psd.png");
 }
 #Page03 {
-    background-image: url("s2r://panorama/images/comic/03_psd.vtex");
+    background-image: url("file://panorama/images/comic/03_psd.png");
 }
 #Page04 {
-    background-image: url("s2r://panorama/images/comic/04_psd.vtex");
+    background-image: url("file://panorama/images/comic/04_psd.png");
 }
 #Page05 {
-    background-image: url("s2r://panorama/images/comic/05_psd.vtex");
+    background-image: url("file://panorama/images/comic/05_psd.png");
 }
 #Page06 {
-    background-image: url("s2r://panorama/images/comic/06_psd.vtex");
+    background-image: url("file://panorama/images/comic/06_psd.png");
 }
 #Page07 {
-    background-image: url("s2r://panorama/images/comic/07_psd.vtex");
+    background-image: url("file://panorama/images/comic/07_psd.png");
 }
 
 .Page01Visible #Page01,
@@ -1314,7 +1314,7 @@
 #QuestCompleteIcon {
     width: 32px;
     height: 32px;
-    background-image: url("s2r://panorama/images/interface/quest_pip_complete_psd.vtex");
+    background-image: url("file://panorama/images/interface/quest_pip_complete_psd.png");
     background-size: 100%;
     margin-left: -8px;
 }
@@ -1422,11 +1422,11 @@
     margin-right: 2px;
     margin-left: 10px;
     background-size: cover;
-    background-image: url("s2r://panorama/images/hud/reborn/gold_small_psd.vtex");
+    background-image: url("file://panorama/images/hud/reborn/gold_small_psd.png");
 }
 
 #DungeonCompleteXPReward {
-    background-image: url("s2r://panorama/images/interface/xp_icon_psd.vtex");
+    background-image: url("file://panorama/images/interface/xp_icon_psd.png");
 }
 
 #1UpPopup {
@@ -1485,7 +1485,7 @@
 .1upicon {
     width: 64px;
     height: 48px;
-    background-image: url("s2r://panorama/images/interface/1up_psd.vtex");
+    background-image: url("file://panorama/images/interface/1up_psd.png");
     background-position: center;
     background-size: cover;
     horizontal-align: left;
@@ -1493,7 +1493,7 @@
 }
 
 .LifeLost .1upicon {
-    background-image: url("s2r://panorama/images/interface/1down_psd.vtex");
+    background-image: url("file://panorama/images/interface/1down_psd.png");
 }
 
 #BuybackLifeCost {
@@ -1657,7 +1657,7 @@
     overflow: clip scroll;
 
     horizontal-align: center;
-    background-image: url("s2r://panorama/images/hud/reborn/ability_bg_psd.vtex");
+    background-image: url("file://panorama/images/hud/reborn/ability_bg_psd.png");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -1756,7 +1756,7 @@
 }
 
 #ArtifactCoinIcon {
-    background-image: url("s2r://panorama/images/interface/artifact_coin_psd.vtex");
+    background-image: url("file://panorama/images/interface/artifact_coin_psd.png");
     background-size: 100% 100%;
     width: 20px;
     height: 20px;
@@ -1808,7 +1808,7 @@
     vertical-align: middle;
     margin-bottom: 160px;
     margin-left: 30px;
-    opacity-mask: url("s2r://panorama/images/masks/softedge_circle_sharper_png.vtex")
+    opacity-mask: url("file://panorama/images/masks/softedge_circle_sharper_png.png")
         1;
     opacity: 0;
 

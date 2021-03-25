@@ -3,7 +3,7 @@
         <include src="file://{resources}/scripts/custom_game/credits.js" />
     </scripts>
     <styles>
-        <include src="s2r://panorama/styles/dotastyles.css" />
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
         <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
         <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
         <include src="file://{resources}/styles/custom_game/credits.css" />
