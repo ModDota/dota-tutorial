@@ -65,7 +65,7 @@
 {
     border: 8px solid    #CFB53B;
     border-radius: 50%;
-    margin-left: -5px;    
+    margin-left: -5px;
 }
 
 #UIHighlightMouseButton {
@@ -692,7 +692,7 @@
 #Chapter3SkipConfirmationButtonNo {
     width: 150px;
     height: 40px;
-    background-image: url("s2r://panorama/images/red_large_off_png.vtex");
+    background-image: url("file://panorama/images/red_large_off_png.png");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     border-top: 1px solid #ffffff05;
