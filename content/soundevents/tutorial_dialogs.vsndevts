@@ -222,6 +222,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_1.vsnd" ]
     }
+    "Script_1_Leveling_1_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Leveling_1_2.vsnd" ]
+    }
     "Script_1_Leveling_2" =
     {
         type = "dota_src1_2d"
@@ -401,6 +407,12 @@
         type = "dota_src1_2d"
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_6.vsnd" ]
+    }
+    "Script_1_Closing_6_2" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Closing_6_2.vsnd" ]
     }
     "Script_2_Opening_1" =
     {
