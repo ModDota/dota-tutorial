@@ -452,7 +452,7 @@
         "Script_2_Creeps_18_2" "Hm, not that bad... for a dragon."
         "Script_2_Creeps_18_3" "Okay, okay."
         "Script_2_Creeps_19" "As you can see, Sniper is actually getting the last hit on some of his own creeps. Why would someone ever do such a thing?"
-        "Script_2_Creeps_20" "This is called denying. When an allied creep is at low health, you can actually attack it by hitting the 'A' key and selecting your creep. If you get the last hit then the enemy will actually get less experience. This is what separates us from the plebians over at League."
+        "Script_2_Creeps_20" "This is called denying. When an allied creep is at low health, you can actually attack it by hitting the 'A' key and selecting your creep. If you get the last hit then the enemy will actually get less experience."
         "Script_2_Creeps_21" "Try denying some of your creeps now."
         "Script_2_Creeps_22" "Great, you’ve denied some creeps, which means Sniper is less powerful than you right now. Take advantage of this by destroying him."
         "Script_2_Creeps_23" "Yes, do the community a favor and kill that mother fucker."
