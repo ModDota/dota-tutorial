@@ -187,7 +187,10 @@ const onStart = (complete: () => void) => {
             // Tell player to follow the markers.
             tg.immediate(_ => freezePlayerHero(false)),
             tg.fork([
-                tg.audioDialog(LocalizationKey.Script_1_Closing_6, LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                tg.seq([
+                    tg.audioDialog(LocalizationKey.Script_1_Closing_6, LocalizationKey.Script_1_Closing_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                    tg.audioDialog(LocalizationKey.Script_1_Closing_6_2, LocalizationKey.Script_1_Closing_6_2, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
+                ]),
                 tg.seq([
                     tg.goToLocation(rightOfFountain),
                     tg.goToLocation(overFountain),

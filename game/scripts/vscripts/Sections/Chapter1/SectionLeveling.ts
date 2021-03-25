@@ -44,6 +44,7 @@ const start = (complete: () => void) => {
                 // Check if level is 0 incase we skipped from a later section
                 tg.completeOnCheck(_ => getOrError(hero.FindAbilityByName(abilNameDragonTail), dragonTailNotFoundMsg).GetLevel() === 0, 1),
                 tg.audioDialog(LocalizationKey.Script_1_Leveling_1, LocalizationKey.Script_1_Leveling_1, ctx => ctx[CustomNpcKeys.SlacksMudGolem]), // take W
+                tg.audioDialog(LocalizationKey.Script_1_Leveling_1_2, LocalizationKey.Script_1_Leveling_1_2, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
                 tg.neverComplete()
             ]),
             tg.seq([
