@@ -600,16 +600,16 @@ export function getPathToHighlightAbility(index: number) {
 /**
  * Returns the path to highlight an ability upgrade, based on its index. The indices are based on their location in the ability bar, starting from 0.
  * @param index The slot the ability upgrade is in, starting from 0.
- * @returns The path that can be used in highlightUiElement to highlight an ability.
+ * @returns The path that can be used in highlightUiElement to highlight an ability upgrade.
  */
 export function getPathToHighlightUpgradeAbility(index: number) {
     return "HUDElements/lower_hud/center_with_stats/center_block/AbilitiesAndStatBranch/abilities/Ability" + index + "/ButtonAndLevel/ButtonWithLevelUpTab/LevelUpTab"
 }
 
 /**
- * Returns the path to highlight an item in the new player shop, based on its index. The indices are based on their location in the ability bar, starting from 0.
+ * Returns the path to highlight an item in the new player shop, based on its index. The indices are based on their location in the new player shop, starting from 0.
  * @param index The slot the item is in, starting from 0.
- * @returns The path that can be used in highlightUiElement to highlight an ability.
+ * @returns The path that can be used in highlightUiElement to highlight an item in the new player shop.
  */
 export function getPathToNoobShopItem(index: number) {
     return `HUDElements/shop/Main/HeightLimiter/GridMainShop/GridMainShopContents/GridNewShopCategory/NewPlayerShopItemContainer/NewPlayerShopItemContainerItems/NewShopItem${index + 1}/NewShopItem`
