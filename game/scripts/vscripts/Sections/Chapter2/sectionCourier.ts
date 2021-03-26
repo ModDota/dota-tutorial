@@ -3,7 +3,7 @@ import { isShopOpen } from "../../Shop";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { DirectionToPosition, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
+import { DirectionToPosition, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPathToItemInGuideByID, getPathToNoobShopItem, getPlayerCameraLocation, getPlayerHero, highlightUiElement, removeHighlight } from "../../util";
 import { chapter2Blockades } from "./shared";
 import { modifier_courier_chapter_2_ms_bonus } from "../../modifiers/modifier_courier_chapter_2_ms_bonus";
 
@@ -71,8 +71,11 @@ const onStart = (complete: () => void) => {
 
     const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
     const demonEdgeGuideUIPath = getPathToItemInGuideByID(51)
-    const crystalisGuideUIPath = getPathToItemInGuideByID(149)
+    const demonEdgeNoobShopPath = getPathToNoobShopItem(1)
+    const crystalysGuideUIPath = getPathToItemInGuideByID(149)
+    const crystalysNoobShopPath = getPathToNoobShopItem(2)
     const daedalusGuideUIPath = getPathToItemInGuideByID(140)
+    const daedalusNoobShopPath = getPathToNoobShopItem(3)
     const deliverItemsUIPath = "HUDElements/lower_hud/shop_launcher_block/quickbuy/ShopCourierControls/CourierControls/DeliverItemsButton"
     requiredItemCount = 0;
 
@@ -140,6 +143,7 @@ const onStart = (complete: () => void) => {
             playerOrderMustBuyDemonEdge = true
             Timers.CreateTimer(() => {
                 highlightUiElement(demonEdgeGuideUIPath, undefined, HighlightMouseButton.Right);
+                highlightUiElement(demonEdgeNoobShopPath, undefined, HighlightMouseButton.Right);
             })
         }),
         tg.completeOnCheck(() => {
@@ -148,6 +152,7 @@ const onStart = (complete: () => void) => {
         tg.immediate(() => {
             playerOrderMustBuyDemonEdge = false
             removeHighlight(demonEdgeGuideUIPath)
+            removeHighlight(demonEdgeNoobShopPath)
             goalBuyDemonEdge.complete()
         }),
 
@@ -160,8 +165,10 @@ const onStart = (complete: () => void) => {
             tg.seq([
                 tg.immediate(() => {
                     playerOrderMustBuyRecipeAndCrystalis = true
-                    highlightUiElement(crystalisGuideUIPath, undefined, HighlightMouseButton.Right);
+                    highlightUiElement(crystalysGuideUIPath, undefined, HighlightMouseButton.Right);
+                    highlightUiElement(crystalysNoobShopPath, undefined, HighlightMouseButton.Right);
                     highlightUiElement(daedalusGuideUIPath);
+                    highlightUiElement(daedalusNoobShopPath);
                     goalBuyCrystalisAndRecipe.start()
                 }),
                 tg.completeOnCheck(() => {
@@ -171,8 +178,10 @@ const onStart = (complete: () => void) => {
         ]),
         tg.immediate(() => {
             goalBuyCrystalisAndRecipe.complete()
-            removeHighlight(crystalisGuideUIPath)
+            removeHighlight(crystalysGuideUIPath)
+            removeHighlight(crystalysNoobShopPath)
             removeHighlight(daedalusGuideUIPath)
+            removeHighlight(daedalusNoobShopPath)
             playerOrderMustBuyRecipeAndCrystalis = false
         }),
 
