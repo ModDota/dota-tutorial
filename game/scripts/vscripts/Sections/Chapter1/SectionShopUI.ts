@@ -1,7 +1,7 @@
 import * as tut from "../../Tutorial/Core";
 import * as tg from "../../TutorialGraph/index";
 import { RequiredState } from "../../Tutorial/RequiredState";
-import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight, getPlayerCameraLocation } from "../../util";
+import { displayDotaErrorMessage, findRealPlayerID, getPathToItemInGuideByID, freezePlayerHero, getPlayerHero, highlightUiElement, removeHighlight, getPlayerCameraLocation, getPathToNoobShopItem } from "../../util";
 import { isShopOpen } from "../../Shop";
 import { GoalTracker } from "../../Goals";
 import { Blockade } from "../../Blockade";
@@ -24,7 +24,8 @@ let playerBoughtTango = false;
 
 // UI Highlighting Paths
 const shopBtnUIPath = "HUDElements/lower_hud/shop_launcher_block/ShopCourierControls/ShopButton"
-const tangoInGuideUIPath = "HUDElements/shop/GuideFlyout/ItemsArea/ItemBuildContainer/ItemBuild/Categories/ItemList/Item44"
+const tangoInGuideUIPath = getPathToItemInGuideByID(44)
+const tangoInNoobShopPath = getPathToNoobShopItem(0)
 const inventorySlot0UIPath = "HUDElements/lower_hud/center_with_stats/center_block/inventory/inventory_items/InventoryContainer/inventory_list_container/inventory_list/inventory_slot_0"
 
 // Blockades
@@ -109,6 +110,7 @@ const onStart = (complete: () => void) => {
                     tg.immediate(_ => {
                         goalBuyTango.start();
                         highlightUiElement(tangoInGuideUIPath, undefined, HighlightMouseButton.Right);
+                        highlightUiElement(tangoInNoobShopPath, undefined, HighlightMouseButton.Right);
                         playerHero.SetGold(90, true);
                         waitingForPlayerToPurchaseTango = true;
                     }),
@@ -118,6 +120,7 @@ const onStart = (complete: () => void) => {
 
             tg.immediate(_ => {
                 removeHighlight(tangoInGuideUIPath);
+                removeHighlight(tangoInNoobShopPath);
                 goalBuyTango.complete();
                 highlightUiElement(inventorySlot0UIPath, undefined, HighlightMouseButton.Left);
             }),
@@ -214,9 +217,6 @@ const onStart = (complete: () => void) => {
 
 function onStop() {
     print("Stopping", sectionName);
-    removeHighlight(shopBtnUIPath);
-    removeHighlight(tangoInGuideUIPath);
-    removeHighlight(inventorySlot0UIPath);
     blockadeRadiantBaseMid.destroy();
     blockadeRadiantBaseBottom.destroy();
     blockadeRadiantBaseTop.destroy();
