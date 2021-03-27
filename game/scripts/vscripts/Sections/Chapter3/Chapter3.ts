@@ -6,7 +6,7 @@ import { getCommunitySpeaker, getRandomCommunitySound } from "../../Sounds"
 import * as tut from "../../Tutorial/Core"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import * as tg from "../../TutorialGraph/index"
-import { DestroyNeutrals, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist, unitIsValidAndAlive } from "../../util"
+import { DestroyNeutrals, displayDotaErrorMessage, findRealPlayerID, freezePlayerHero, getOrError, getPlayerCameraLocation, getPlayerHero, highlight, highlightUiElement, printEventTable, randomChoice, removeContextEntityIfExists, removeHighlight, setUnitPacifist, unitIsValidAndAlive, clearAttachedHighlightParticlesFromUnits } from "../../util"
 
 let graph: tg.TutorialStep | undefined = undefined
 
@@ -29,6 +29,15 @@ const stackTryCount = 5
 const firstNeutralItemName = "item_arcane_ring"
 const secondNeutralItemName = "item_mysterious_hat"
 
+const creepCampUnitNames = new Map<string,string[]>([
+    ["kobold_camp",["npc_dota_neutral_kobold", "npc_dota_neutral_kobold", "npc_dota_neutral_kobold","npc_dota_neutral_kobold_tunneler","npc_dota_neutral_kobold_taskmaster"]],
+    ["hill_troll_camp",["npc_dota_neutral_forest_troll_berserker", "npc_dota_neutral_forest_troll_berserker", "npc_dota_neutral_forest_troll_high_priest"]],
+    ["hill_troll_and_kobold_camp",["npc_dota_neutral_forest_troll_berserker", "npc_dota_neutral_forest_troll_berserker", "npc_dota_neutral_kobold_taskmaster"]],
+    ["vhoul_assassin_camp",["npc_dota_neutral_gnoll_assassin", "npc_dota_neutral_gnoll_assassin", "npc_dota_neutral_gnoll_assassin"]],
+    ["ghost_camp",["npc_dota_neutral_ghost", "npc_dota_neutral_ghost", "npc_dota_wraith_ghost"]],
+    ["harpy_camp",["npc_dota_neutral_harpy_scout", "npc_dota_neutral_harpy_scout", "npc_dota_neutral_harpy_storm"]],
+])
+
 const firstNeutralSlotUIPath =
     "HUDElements/lower_hud/center_with_stats/inventory_composition_layer_container/inventory_neutral_slot_container/inventory_neutral_slot"
 const secondNeutralItemUIPath =
@@ -43,6 +52,7 @@ let playerCanMoveNeutralFromBackpack = false
 
 class NeutralDetector {
     private _neutrals = new Set<CDOTA_BaseNPC>()
+    private _lastSpawn = "";
 
     /**
      * Whether to remove all newly spawned creeps in the box.
@@ -80,6 +90,80 @@ class NeutralDetector {
 
     newNeutrals = new Set<CDOTA_BaseNPC>()
     newNeutralsTimer: string | undefined
+
+    /**
+     * Spawns new neutrals
+     */
+    public spawnNeutrals () {
+        // Prevent spawning the same camp twice in a row
+        const setCopy = creepCampUnitNames;
+        if (setCopy.has(this._lastSpawn)) {
+            setCopy.delete(this._lastSpawn);
+        }
+        const rnd = RandomInt(0,setCopy.size -1);
+        
+        // Array.from not supported (yet)
+        const setCopyArray:string[] = [];
+        setCopy.forEach((_, key)=> {
+            setCopyArray.push(key);
+        })
+        const campName = setCopyArray[rnd];
+        //const campName = Array.from(setCopy.keys())[rnd]
+
+        const names = setCopy.get(campName);
+        this._lastSpawn = campName;
+
+        const units:CDOTA_BaseNPC[] = [];
+        if (!names) {
+            print(rnd, campName)
+            return;
+        } else {
+            names.forEach((n) => {
+                const unit = CreateUnitByName(n,creepCampCenter,true,undefined,undefined,DOTATeam_t.DOTA_TEAM_NEUTRALS) //fix location
+                units.push(unit);
+                this._neutrals.add(unit);
+            });
+            
+            this.onNeutralsAdded(units);
+        }
+       
+    }
+
+
+    /**
+     * Checks if the box is empty and assists the player if it returns false
+     */
+    public isBoxEmpty() {
+        const playerHero = getOrError(getPlayerHero(), "Could not find the player's hero.")
+        if (this.isEntityOverlapping(playerHero)) {
+            // Warn the player that they are inside the box and blocking the stacking
+            let particles = highlight({
+                units: [playerHero],
+                type: "circle"
+            });
+            Timers.CreateTimer(3,(() => {
+                clearAttachedHighlightParticlesFromUnits([playerHero]);
+            }));
+            return false;
+        }
+
+        const overlappingNeutrals = (Entities.FindAllByClassname("npc_dota_creep_neutral") as CDOTA_BaseNPC[])
+            .filter(neutral => NeutralDetector.isValidNeutral(neutral))
+            .filter(neutral => this.isEntityOverlapping(neutral));
+            
+        if (overlappingNeutrals.length !== 0) {
+            // Warn the player that a few neutrals are still in the box, highlight the box and the units
+            let particles = highlight({
+                units: overlappingNeutrals,
+                type: "circle"
+            });
+            Timers.CreateTimer(3,(() => {
+                clearAttachedHighlightParticlesFromUnits([playerHero]);
+            }));
+            return false
+        }
+        return true;
+    }
 
     /**
      * Detects new neutral creeps and removes dead or invalid ones.
@@ -132,7 +216,7 @@ class NeutralDetector {
 const respawnNeutrals = (neutralDetector: NeutralDetector) => tg.seq([
     tg.wait(0),
     tg.immediate(_ => neutralDetector.removeNew = false),
-    tg.immediate(_ => GameRules.SpawnNeutralCreeps()),
+    tg.immediate(_ => neutralDetector.spawnNeutrals()),
     tg.wait(0),
     tg.completeOnCheck(_ => neutralDetector.neutralCount > 0, 0),
     tg.immediate(_ => neutralDetector.removeNew = true),
@@ -217,7 +301,9 @@ const stack = (count: number, neutralDetector: NeutralDetector, onStacked: (trie
                 // Otherwise we would get two spawns.
                 const realSeconds = GameRules.GetDOTATime(false, false) % 60;
                 if (realSeconds > 1 && realSeconds < 59) {
-                    GameRules.SpawnNeutralCreeps()
+                    if (neutralDetector.isBoxEmpty()) {
+                        neutralDetector.spawnNeutrals();
+                    }
                 }
                 tries++
             }))
