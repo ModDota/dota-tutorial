@@ -1,6 +1,6 @@
 import * as tg from "../../TutorialGraph/index"
 import * as tut from "../../Tutorial/Core"
-import { findRealPlayerID, getOrError, getPlayerHero } from "../../util"
+import { findRealPlayerID, getOrError, getPlayerHero, highlightUiElement, removeHighlight } from "../../util"
 import { RequiredState } from "../../Tutorial/RequiredState"
 import { slacksFountainLocation, slacksInitialLocation, sunsfanFountainLocation } from "./Shared"
 
@@ -20,6 +20,10 @@ const onStart = (complete: () => void) => {
     if (!playerHero) error("Could not find the player's hero.");
 
     const ancient = getOrError(Entities.FindByName(undefined, "dota_badguys_fort") as CDOTA_BaseNPC)
+
+    const customUiContainerPath = "CustomUIRoot/CustomUIContainer_Hud/"
+    const msgLogPath = customUiContainerPath + "DialogLogButton"
+    const chapterSelectPath = customUiContainerPath + "SkipButton"
 
     graph = tg.seq([
         tg.immediate(() => canPlayerIssueOrders = false),
@@ -62,6 +66,18 @@ const onStart = (complete: () => void) => {
         ),
         tg.panCameraExponential(ancient.GetAbsOrigin(), _ => playerHero.GetAbsOrigin(), 0.5),
         tg.setCameraTarget(playerHero),
+        tg.forkAny([
+            tg.audioDialog(LocalizationKey.Script_1_Opening_12, LocalizationKey.Script_1_Opening_12, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
+            tg.seq([
+                tg.wait(4),
+                tg.immediate(_ => highlightUiElement(msgLogPath, 6, undefined, true)),
+                tg.wait(8),
+                tg.immediate(_ => highlightUiElement(chapterSelectPath, undefined, undefined, true)),
+                tg.neverComplete()
+            ])
+        ]),
+        tg.wait(1),
+        tg.immediate(_ => removeHighlight(chapterSelectPath))
     ])
 
     graph.start(GameRules.Addon.context, () => {

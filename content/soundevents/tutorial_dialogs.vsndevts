@@ -72,6 +72,12 @@
         volume = "1.0"
         vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_11.vsnd" ]
     }
+    "Script_1_Opening_12" =
+    {
+        type = "dota_src1_2d"
+        volume = "1.0"
+        vsnd_files = [ "sounds/tutorial_dialogs/Script_1_Opening_12.vsnd" ]
+    }
     "Script_1_Movement_1" =
     {
         type = "dota_src1_2d"

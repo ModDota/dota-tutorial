@@ -37,6 +37,7 @@ export const soundDurations: Record<string, number> = {
     "Script_1_Opening_9": 4.959875,
     "Script_1_Opening_10": 6.263000,
     "Script_1_Opening_11": 2.249375,
+    "Script_1_Opening_12": 13.328957,
     "Script_1_Movement_1": 11.657937,
     "Script_1_Movement_2": 2.301500,
     "Script_1_Movement_3": 4.230125,

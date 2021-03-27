@@ -361,6 +361,7 @@
         "Script_1_Opening_9" "This is also where you will respawn after you die, which I'm sure is coming up very soon."
         "Script_1_Opening_10" "This, all the way over here, is the enemy ancient, this is what you are trying to destroy."
         "Script_1_Opening_11" "But we have a long way to go before that."
+        "Script_1_Opening_12" "If you ever get lost there is a chat log, you can find that right here and if you need to leave the tutorial to go make yourself a sandwich and come back there is a chapter select right here."
         "Script_1_Movement_1" "So, let's start off with baby steps. Let's get you to move. Move your cursor over this very generic tutorial-type waypoint and then click the right mouse button to move your hero."
         "Script_1_Movement_2" "That’s mean, I think it looks pretty."
         "Script_1_Movement_3" "You would. Something as ugly as you would think that.. BROTHER."
