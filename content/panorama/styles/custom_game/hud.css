@@ -35,6 +35,38 @@
     }
 }
 
+.UIHighlightScalingAnimationBelow
+{
+    animation-name: scalingAnimationUIBelow;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+}
+
+@keyframes 'scalingAnimationUIBelow' {
+    0% {
+        box-shadow: 0 0 5px gold;
+        transform: translate3d( 25px, 620px, -0px );
+        pre-transform-scale2d: 5, 5;
+    }
+    25% {
+        box-shadow: 0 0 10px gold;
+        pre-transform-scale2d: 4, 4;
+    }
+    50% {
+        box-shadow: 0 0 20px gold;
+        pre-transform-scale2d: 3, 3;
+    }
+    75% {
+        box-shadow: 0 0 10px gold;
+        pre-transform-scale2d: 2, 2;
+    }
+    100% {
+        box-shadow: 0 0 5px gold;
+        pre-transform-scale2d: 1, 1;
+    }
+}
+
 .UIHighlight {
     z-index: 100;
     animation-name: highlightGlow;

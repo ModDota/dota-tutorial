@@ -46,7 +46,8 @@ declare const enum HighlightMouseButton {
 interface HighlightElementEvent {
     path: string;
     duration?: number;
-    mouseIcon?: HighlightMouseButton
+    mouseIcon?: HighlightMouseButton;
+    animateFromBelow?: boolean;
 }
 
 interface RemoveHighlightEvent {

@@ -112,6 +112,7 @@ declare const enum LocalizationKey {
     Script_1_Opening_9 = "Script_1_Opening_9",
     Script_1_Opening_10 = "Script_1_Opening_10",
     Script_1_Opening_11 = "Script_1_Opening_11",
+    Script_1_Opening_12 = "Script_1_Opening_12",
     Script_1_Movement_1 = "Script_1_Movement_1",
     Script_1_Movement_2 = "Script_1_Movement_2",
     Script_1_Movement_3 = "Script_1_Movement_3",

@@ -120,10 +120,13 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
 
             const highlightPanel = $.CreatePanel("Panel", $.GetContextPanel(), "UIHighlight");
             highlightPanel.hittest = false; // Dont block interactions
-            highlightPanel.AddClass("UIHighlightScalingAnimation")
+
+            const animationClass = event.animateFromBelow ? "UIHighlightScalingAnimationBelow" : "UIHighlightScalingAnimation"
+
+            highlightPanel.AddClass(animationClass)
             $.Schedule(0.5, () => {
                 if (highlightPanel.IsValid()) {
-                    highlightPanel.RemoveClass("UIHighlightScalingAnimation")
+                    highlightPanel.RemoveClass(animationClass)
                     highlightPanel.AddClass("UIHighlight");
                 }
             })
