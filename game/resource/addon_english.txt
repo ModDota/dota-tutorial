@@ -250,6 +250,7 @@
         "Error_Chapter5_2"     "Attacking runes is not allowed."
         "Error_Teamfight_1"    "Teleport to your fountain by double-tapping the Town Portal Scroll."
         "Error_BuyingItemsDisabled" "Purchasing items is disabled in the following sections."
+        "Error_InteractNpcsDisabled" "Finish the dialog before talking to characters."
 
         // Goals
         "Goal_1_Camera_1" "Move your camera by dragging the cursor to the edge of your screen."

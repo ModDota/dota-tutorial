@@ -297,33 +297,33 @@ function onStart(complete: () => void) {
                     tg.immediate(_ => goalDestroyTier1.start()),
                     tg.withHighlights(
                         tg.completeOnCheck(_ => !unitIsValidAndAlive(midTier1Tower), 0.1),
-                        {type: "arrow_enemy", units: midTier1Tower ? [midTier1Tower] : [], attach: true}
+                        { type: "arrow_enemy", units: midTier1Tower ? [midTier1Tower] : [], attach: true }
                     ),
                     tg.immediate(_ => goalDestroyTier1.complete()),
                     // Goal:Destroy T2
                     tg.immediate(_ => goalDestroyTier2.start()),
                     tg.withHighlights(
                         tg.completeOnCheck(_ => !unitIsValidAndAlive(midTier2Tower), 0.1),
-                        {type: "arrow_enemy", units: midTier2Tower ? [midTier2Tower] : [], attach: true}
+                        { type: "arrow_enemy", units: midTier2Tower ? [midTier2Tower] : [], attach: true }
                     ),
                     tg.immediate(_ => goalDestroyTier2.complete()),
                     // Goal: Destroy T3
                     tg.immediate(_ => goalDestroyTier3.start()),
                     tg.withHighlights(
                         tg.completeOnCheck(_ => !unitIsValidAndAlive(midTier3Tower), 0.1),
-                        {type: "arrow_enemy", units: midTier3Tower ? [midTier3Tower] : [], attach: true}
+                        { type: "arrow_enemy", units: midTier3Tower ? [midTier3Tower] : [], attach: true }
                     ),
                     tg.immediate(_ => goalDestroyTier3.complete()),
                     // Goal: Destroy T4s
                     tg.immediate(_ => goalDestroyTier4s.start()),
                     tg.withHighlights(tg.completeOnCheck(_ => {
-                            let deadCount = 0;
-                            if (!unitIsValidAndAlive(botTier4Tower)) deadCount++;
-                            if (!unitIsValidAndAlive(topTier4Tower)) deadCount++;
-                            goalDestroyTier4s.setValue(deadCount);
-                            return deadCount === 2;
-                        }, 0.1),
-                        {type: "arrow_enemy", units: (topTier4Tower && botTier4Tower) ? [topTier4Tower, botTier4Tower] : [], attach: true}
+                        let deadCount = 0;
+                        if (!unitIsValidAndAlive(botTier4Tower)) deadCount++;
+                        if (!unitIsValidAndAlive(topTier4Tower)) deadCount++;
+                        goalDestroyTier4s.setValue(deadCount);
+                        return deadCount === 2;
+                    }, 0.1),
+                        { type: "arrow_enemy", units: (topTier4Tower && botTier4Tower) ? [topTier4Tower, botTier4Tower] : [], attach: true }
                     ),
                     tg.immediate(_ => goalDestroyTier4s.complete()),
                 ]),
@@ -426,16 +426,18 @@ function orderFilter(order: ExecuteOrderFilterEvent) {
         return true;
     }
 
-    if (canInteract) {
-        const target = EntIndexToHScript(order.entindex_target);
+    const target = EntIndexToHScript(order.entindex_target);
 
-        const closingNpc = npcs.find(npc => npc.unit === target);
-        if (closingNpc) {
+    const closingNpc = npcs.find(npc => npc.unit === target);
+    if (closingNpc) {
+        if (canInteract) {
             talkTarget = closingNpc;
             order.order_type = dotaunitorder_t.DOTA_UNIT_ORDER_MOVE_TO_TARGET;
         } else {
-            talkTarget = undefined;
+            displayDotaErrorMessage(LocalizationKey.Error_InteractNpcsDisabled)
         }
+    } else {
+        talkTarget = undefined;
     }
 
     if (order.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PURCHASE_ITEM) {
