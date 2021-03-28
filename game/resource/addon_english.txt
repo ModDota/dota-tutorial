@@ -107,6 +107,7 @@
         "npc_dota_tutorial_bsj_youtube" "BananaSlamJamma"
         "npc_dota_tutorial_bsj_twitter" "bananaslamjamma"
         "npc_dota_tutorial_bsj_twitch" "bananaslamjamma"
+        "npc_dota_tutorial_bsj_website" "youtube.com/watch?v=sG9g9-9uPNc&list=PLZ7yVl4cw_JvEP3H-1HS0dr2hop8UhNO2"
         "npc_dota_tutorial_bowie_youtube" "D2BOWIE"
         "npc_dota_tutorial_bowie_twitter" "D2BOWIE"
         "npc_dota_tutorial_bowie_twitch" "d2bowi3"
