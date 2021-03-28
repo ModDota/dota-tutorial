@@ -479,4 +479,5 @@ declare const enum LocalizationKey {
     Error_Chapter5_2 = "Error_Chapter5_2",
     Error_Teamfight_1 = "Error_Teamfight_1",
     Error_BuyingItemsDisabled = "Error_BuyingItemsDisabled",
+    Error_InteractNpcsDisabled = "Error_InteractNpcsDisabled",
 }
