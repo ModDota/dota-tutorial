@@ -300,6 +300,8 @@
         "Goal_3_4" "Press 'ALT' to see the spawn box."
         "Goal_3_5" "Stack the creeps by attacking them once and running away at XX:53."
         "Goal_3_6" "Try to stack the creeps again, do it successfully at least once"
+        "Goal_3_6" "Stack the creeps at least one more time."
+        "Goal_3_6_1" "Keep trying to stack the creeps. Attempts left"
         "Goal_3_7" "(Optional) Successfully stack the creeps again"
         "Goal_3_8" "Kill the stacked creeps."
         "Goal_3_9" "Pick up the dropped item."

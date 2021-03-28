@@ -51,7 +51,7 @@ export class TrackableGoalBoolean extends TrackableGoal {
 export class TrackableGoalNumeric extends TrackableGoal {
     private _value: number = 0
 
-    constructor(readonly text: string, readonly maximum: number) {
+    constructor(readonly text: string, readonly maximum?: number) {
         super()
     }
 
@@ -60,7 +60,7 @@ export class TrackableGoalNumeric extends TrackableGoal {
      * @param value Value of the numeric goal.
      */
     setValue(value: number) {
-        if (value < 0 || value > this.maximum) {
+        if (value < 0 || (this.maximum && value > this.maximum)) {
             Warning("Set numeric goal value outside of its range")
         }
 
@@ -77,7 +77,7 @@ export class TrackableGoalNumeric extends TrackableGoal {
     getGoal(): Goal {
         return {
             completed: this.completed,
-            text: this.text + ": " + this._value + "/" + this.maximum
+            text: this.maximum ? this.text + ": " + this._value + "/" + this.maximum : this.text + ": " + this._value
         }
     }
 }
@@ -103,7 +103,7 @@ export class GoalTracker {
      * @param text Text for the goal.
      * @param maximum Maximum number for the goal.
      */
-    addNumeric(text: string, maximum: number): TrackableGoalNumeric {
+    addNumeric(text: string, maximum?: number): TrackableGoalNumeric {
         const state = new TrackableGoalNumeric(text, maximum)
         this.states.push(state)
         return state

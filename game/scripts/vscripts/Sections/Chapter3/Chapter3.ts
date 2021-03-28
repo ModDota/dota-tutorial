@@ -25,7 +25,7 @@ const ancientCampLocation = Vector(-4870, -390, 256)
 const stackClockStartTime = 44
 const stackClockEndTime = 3
 
-const stackTryCount = 5
+const stackTryCount = 4
 const firstNeutralItemName = "item_arcane_ring"
 const secondNeutralItemName = "item_mysterious_hat"
 
@@ -281,8 +281,9 @@ const onStart = (complete: () => void) => {
     const goalMoveToTarget = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_3)
     const goalPressAlt = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_4)
     const goalStackCreeps = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_5)
-    const goalTryStackCreeps = goalTrackerCamp.addNumeric(LocalizationKey.Goal_3_6, 5)
-    const goalOptionalStackCreeps = goalTrackerCamp.addNumeric(LocalizationKey.Goal_3_7, 5)
+    const goalStackCreepsOnceAgain = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_6)
+    const goalStackCreepsAttemptsLeft = goalTrackerCamp.addNumeric(LocalizationKey.Goal_3_6_1)
+    const goalOptionalStackCreeps = goalTrackerCamp.addNumeric(LocalizationKey.Goal_3_7, stackTryCount)
     const goalKillStackedCreeps = goalTrackerCamp.addBoolean(LocalizationKey.Goal_3_8)
 
     const goalTrackerNeutrals = new GoalTracker()
@@ -472,8 +473,8 @@ const onStart = (complete: () => void) => {
             tg.audioDialog(LocalizationKey.Script_3_Opening_18, LocalizationKey.Script_3_Opening_18, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
             tg.spawnUnit(CustomNpcKeys.ODPixel, odPixelLocation, DOTATeam_t.DOTA_TEAM_GOODGUYS, CustomNpcKeys.ODPixel, true),
             tg.immediate(ctx => {
+                goalStackCreepsOnceAgain.start()
                 goalOptionalStackCreeps.start()
-                goalTryStackCreeps.start()
                 const odPixel = ctx[CustomNpcKeys.ODPixel] as CDOTA_BaseNPC
                 setUnitPacifist(odPixel, true)
                 if (!odPixel.HasModifier(modifier_no_health_bar.name)) odPixel.AddNewModifier(undefined, undefined, modifier_no_health_bar.name, {})
@@ -485,7 +486,16 @@ const onStart = (complete: () => void) => {
             stack(stackTryCount, neutralDetector,
                 (tries, stacks) => tg.seq([
                     tg.immediate(_ => {
-                        goalTryStackCreeps.setValue(tries)
+                        if (stacks === 1) {
+                            goalStackCreepsOnceAgain.complete()
+                        }
+
+                        if (goalStackCreepsOnceAgain.completed && !goalStackCreepsAttemptsLeft.started)
+                            goalStackCreepsAttemptsLeft.start()
+
+                        if (goalStackCreepsAttemptsLeft.started)
+                            goalStackCreepsAttemptsLeft.setValue(stackTryCount - tries)
+
                         goalOptionalStackCreeps.setValue(stacks)
                         updateStackKey(stacks)
                     }),
@@ -493,7 +503,9 @@ const onStart = (complete: () => void) => {
                 ]),
                 (tries, stacks) => tg.seq([
                     tg.immediate(_ => {
-                        goalTryStackCreeps.setValue(tries)
+                        if (goalStackCreepsAttemptsLeft.started)
+                            goalStackCreepsAttemptsLeft.setValue(stackTryCount - tries)
+
                         goalOptionalStackCreeps.setValue(stacks)
                         updateStackKey(0)
                     }),
@@ -502,11 +514,11 @@ const onStart = (complete: () => void) => {
             ),
             tg.immediate(_ => neutralDetector.removeNew = true),
 
-            tg.immediate(context => {
+            tg.immediate(_ => {
                 removeHighlight(clockUIPath)
                 playerHero.RemoveModifierByName(modifier_deal_no_damage.name)
                 goalOptionalStackCreeps.complete()
-                goalTryStackCreeps.complete()
+                goalStackCreepsAttemptsLeft.complete()
             }),
         ]
     }
