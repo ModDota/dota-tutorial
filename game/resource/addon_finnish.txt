@@ -747,7 +747,7 @@
 "[english]Script_4_Opening_16" "Oh my goodness, the enemy is right up that hill! What should we do?"
 "Script_4_Opening_17" "Rynnistää ylämäkeen sokeasti ilman suunnitelmaa?"
 "[english]Script_4_Opening_17" "Charge up blindly with no plan?"
-"Script_4_Opening_18" "Se olisi mitä useimmat idiootit tekisivät, mutta emme me! Aiomme käyttää NÄKYVYYTTÄ! Katso ja jumaloi pelin tärkeintä esinettä.. wardia."
+"Script_4_Opening_18" "Se olisi mitä useimmat idiootit tekisivät, mutta emme me! Aiomme käyttää NÄKYVYYTTÄ! Katso ja jumaloi pelin tärkeintä esinettä... Wardia."
 "[english]Script_4_Opening_18" "That's what most idiots would do, but not us! We are going to use VISION! Behold, the most important item in the game... the ward."
 "Script_4_Wards_1" "Mene hakemaan ja tuo ne tänne."
 "[english]Script_4_Wards_1" "Go pick those up and come back here."
