@@ -140,7 +140,7 @@ export class GameMode {
         this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_ILLUSION, false);
         this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_INVISIBILITY, false);
         this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_REGENERATION, false);
-        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_XP, false);
+        this.Game.SetRuneEnabled(DOTA_RUNES.DOTA_RUNE_WATER, false);
 
         // Leveling rules
         // +1 exp = 1 level, to make it easy to level up our hero in code later.
