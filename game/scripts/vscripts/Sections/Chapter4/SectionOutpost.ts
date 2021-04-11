@@ -29,7 +29,6 @@ let canPlayerTakeOutpost = false
 let allowUseItem = false;
 const dustName = "item_dust";
 const dustLocation = Vector(-1700, 3800, 256);
-const outpostLocation = Vector(-2000, 4300);
 const lastSawRikiLocation = Vector(-1300, 4200);
 const rikiName = CustomNpcKeys.Riki;
 // UI Highlighting Paths
