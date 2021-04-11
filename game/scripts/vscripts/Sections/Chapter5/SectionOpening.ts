@@ -1,9 +1,10 @@
+import { Blockade } from "../../Blockade";
 import { GoalTracker } from "../../Goals";
 import { modifier_custom_roshan_flying } from "../../modifiers/modifier_custom_roshan_flying";
 import * as tut from "../../Tutorial/Core";
 import { RequiredState } from "../../Tutorial/RequiredState";
 import * as tg from "../../TutorialGraph/index";
-import { DirectionToPosition, displayDotaErrorMessage, Distance2D, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
+import { DirectionToPosition, displayDotaErrorMessage, findRealPlayerID, getOrError, getPlayerCameraLocation, getPlayerHero, setUnitPacifist, unitIsValidAndAlive, useAbility } from "../../util";
 import * as shared from "./Shared";
 import { HeroInfo } from "./Shared";
 
@@ -11,14 +12,21 @@ const sectionName: SectionName = SectionName.Chapter5_Opening;
 
 let graph: tg.TutorialStep | undefined = undefined
 
+const extraBlockades = {
+    leftSideJungle: new Blockade(Vector(-5100, 2530, 128), Vector(-5400, 1060, 128)),
+    leftSideJungleNextToRamp: new Blockade(Vector(-5400, 1060, 128), Vector(-4830, 450, 128)),
+    belowRune: new Blockade(Vector(-4780, -520, 128), Vector(-3310, -480, 128)),
+    rampRightOfRune: new Blockade(Vector(-3320, -45, 128), Vector(-3320, -470, 128)),
+}
+
 const requiredState: RequiredState = {
     requireSlacksGolem: true,
     requireSunsfanGolem: true,
-    heroLocation: Vector(-4150, 2568, 0),
+    heroLocation: Vector(-4200, 330, 256),
     heroLocationTolerance: 800,
     heroLevel: 6,
     heroAbilityMinLevels: [1, 1, 1, 1],
-    blockades: Object.values(shared.chapter5Blockades),
+    blockades: Object.values(shared.chapter5Blockades).filter(b => b !== shared.chapter5Blockades.radiantSecretShopRiver && b !== shared.chapter5Blockades.radiantAncientsRiver).concat(Object.values(extraBlockades)),
     requireBountyRunes: true,
     requireRoshan: true,
     customRoshanUnit: true,
@@ -81,25 +89,13 @@ function onStart(complete: () => void) {
 
                 // Pan camera over bounty rune spawns
                 tg.seq([
-                    tg.panCameraLinear(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.radiantTopBountyPos, 0.5),
-                    tg.immediate((ctx) => {
-                        ctx[CustomEntityKeys.RadiantTopBountyFOWViewer] = AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, shared.runeSpawnsLocations.radiantTopBountyPos, 800, visionRevealDuration, false)
-                    }),
-                    tg.wait(visionRevealDuration),
-                    tg.panCameraExponential(shared.runeSpawnsLocations.radiantTopBountyPos, shared.runeSpawnsLocations.radiantAncientsBountyPos, panCameraBountiesAlpha),
+                    tg.panCameraExponential(_ => getPlayerCameraLocation(), shared.runeSpawnsLocations.radiantAncientsBountyPos, panCameraBountiesAlpha),
                     tg.immediate((ctx) => {
                         ctx[CustomEntityKeys.RadiantAncientsBountyFOWViewer] = AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, shared.runeSpawnsLocations.radiantAncientsBountyPos, 800, visionRevealDuration, false)
                     }),
                     tg.wait(visionRevealDuration),
 
-                    tg.panCameraExponential(shared.runeSpawnsLocations.radiantAncientsBountyPos, shared.runeSpawnsLocations.direBotBountyPos, panCameraBountiesAlpha),
-                    tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.DireBotBountyRune]),
-                    tg.immediate((ctx) => {
-                        ctx[CustomEntityKeys.DireBotBountyFOWViewer] = AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, shared.runeSpawnsLocations.direBotBountyPos, 800, visionRevealDuration, false)
-                    }),
-                    tg.wait(visionRevealDuration),
-
-                    tg.panCameraExponential(shared.runeSpawnsLocations.direBotBountyPos, shared.runeSpawnsLocations.direAncientsBountyPos, panCameraBountiesAlpha),
+                    tg.panCameraExponential(shared.runeSpawnsLocations.radiantAncientsBountyPos, shared.runeSpawnsLocations.direAncientsBountyPos, panCameraBountiesAlpha),
                     tg.setCameraTarget((ctx) => ctx[CustomEntityKeys.DireAncientsBountyRune]),
                     tg.immediate((ctx) => {
                         ctx[CustomEntityKeys.DireAncientsBountyFOWViewer] = AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, shared.runeSpawnsLocations.direAncientsBountyPos, 800, visionRevealDuration, false)
@@ -116,13 +112,13 @@ function onStart(complete: () => void) {
                         goalPickupBountyRune.start()
                     }),
                     tg.completeOnCheck(context => {
-                        const runeExist = IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])
+                        const runeExist = IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])
                         return !runeExist
                     }, 0.1)
                 ]),
                 {
                     type: "arrow_trees",
-                    locations: [shared.runeSpawnsLocations.radiantTopBountyPos],
+                    locations: [shared.runeSpawnsLocations.radiantAncientsBountyPos],
                 }),
 
             tg.immediate(() => goalPickupBountyRune.complete()),
@@ -141,10 +137,14 @@ function onStart(complete: () => void) {
                             ctx[CustomEntityKeys.TopPowerRune] = undefined
                         }
                     }),
-                    tg.goToLocation(shared.runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3250, 1600), undefined)]),
+                    tg.goToLocation(shared.runeSpawnsLocations.topPowerUpRunePos.__add(Vector(-300, 100, 0)), [GetGroundPosition(Vector(-3300, 470), undefined)]),
                 ]),
             ]),
             tg.immediate(_ => {
+                // Spawn the blockades we initially removed to block the radiant jungle
+                shared.chapter5Blockades.radiantSecretShopRiver.spawn()
+                shared.chapter5Blockades.radiantAncientsRiver.spawn()
+
                 setUnitPacifist(playerHero, true)
                 goalMoveToRune.complete()
             }),
@@ -356,6 +356,9 @@ function onStop() {
         }
     }
 
+    // These were spawned in code so we need to destroy them when skipping
+    shared.chapter5Blockades.radiantSecretShopRiver.destroy()
+    shared.chapter5Blockades.radiantAncientsRiver.destroy()
 
     if (IsValidEntity(GameRules.Addon.context[CustomEntityKeys.TopPowerRune])) {
         GameRules.Addon.context[CustomEntityKeys.TopPowerRune].Destroy()
@@ -374,7 +377,7 @@ function chapterFiveOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean 
 
     if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_PICKUP_RUNE) {
         // Only allow picking up the first bounty rune
-        if (event.entindex_target !== GameRules.Addon.context[CustomEntityKeys.RadiantTopBountyRuneEntIndex]) {
+        if (event.entindex_target !== GameRules.Addon.context[CustomEntityKeys.RadiantAncientsBountyRuneEntIndex]) {
             displayDotaErrorMessage(LocalizationKey.Error_Chapter5_1)
             return false
         }
@@ -385,7 +388,7 @@ function chapterFiveOpeningOrderFilter(event: ExecuteOrderFilterEvent): boolean 
         return false
     }
 
-    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET && event.entindex_target === GameRules.Addon.context[CustomEntityKeys.RadiantTopBountyRuneEntIndex]) {
+    if (event.order_type === dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET && event.entindex_target === GameRules.Addon.context[CustomEntityKeys.RadiantAncientsBountyRuneEntIndex]) {
         displayDotaErrorMessage(LocalizationKey.Error_Chapter5_2)
         return false
     }

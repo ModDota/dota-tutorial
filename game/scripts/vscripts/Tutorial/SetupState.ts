@@ -354,7 +354,7 @@ function handleRoshan(state: FilledRequiredState) {
 
             if (unitIsValidAndAlive(roshan))
                 roshan.Destroy()
-    
+
             roshEntityKey = CustomNpcKeys.CustomRoshan
             roshan = customRoshan
         } else {
@@ -470,19 +470,11 @@ function clearUnit(unitName: string) {
 function createBountyRunes() {
     const context = GameRules.Addon.context
 
-    if (!IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
-        context[CustomEntityKeys.RadiantTopBountyRune] = CreateRune(runeSpawnsLocations.radiantTopBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
-    }
-
-    context[CustomEntityKeys.RadiantTopBountyRuneEntIndex] = context[CustomEntityKeys.RadiantTopBountyRune].entindex()
-
     if (!IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
         context[CustomEntityKeys.RadiantAncientsBountyRune] = CreateRune(runeSpawnsLocations.radiantAncientsBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
     }
 
-    if (!IsValidEntity(context[CustomEntityKeys.DireBotBountyRune])) {
-        context[CustomEntityKeys.DireBotBountyRune] = CreateRune(runeSpawnsLocations.direBotBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
-    }
+    context[CustomEntityKeys.RadiantAncientsBountyRuneEntIndex] = context[CustomEntityKeys.RadiantAncientsBountyRune].entindex()
 
     if (!IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
         context[CustomEntityKeys.DireAncientsBountyRune] = CreateRune(runeSpawnsLocations.direAncientsBountyPos, DOTA_RUNES.DOTA_RUNE_BOUNTY)
@@ -492,19 +484,9 @@ function createBountyRunes() {
 function removeBountyRunes() {
     const context = GameRules.Addon.context
 
-    if (IsValidEntity(context[CustomEntityKeys.RadiantTopBountyRune])) {
-        context[CustomEntityKeys.RadiantTopBountyRune].Destroy()
-        context[CustomEntityKeys.RadiantTopBountyRune] = undefined
-    }
-
     if (IsValidEntity(context[CustomEntityKeys.RadiantAncientsBountyRune])) {
         context[CustomEntityKeys.RadiantAncientsBountyRune].Destroy()
         context[CustomEntityKeys.RadiantAncientsBountyRune] = undefined
-    }
-
-    if (IsValidEntity(context[CustomEntityKeys.DireBotBountyRune])) {
-        context[CustomEntityKeys.DireBotBountyRune].Destroy()
-        context[CustomEntityKeys.DireBotBountyRune] = undefined
     }
 
     if (IsValidEntity(context[CustomEntityKeys.DireAncientsBountyRune])) {
