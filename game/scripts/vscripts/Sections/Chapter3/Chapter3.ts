@@ -11,16 +11,16 @@ import { DestroyNeutrals, displayDotaErrorMessage, findRealPlayerID, freezePlaye
 let graph: tg.TutorialStep | undefined = undefined
 
 let movedToStash = false
-const markerLocation = Vector(-3250, 4917, 128)
+const markerLocation = Vector(-3800, 4344, 128)
 const odPixelLocation = Vector(-3635, 5330, 128)
 
-const creepCampMin = Vector(-2911, 4373)
-const creepCampMax = Vector(-2142, 5203)
+const creepCampMin = Vector(-3776, 4544)
+const creepCampMax = Vector(-2944, 5248)
 const creepCampCenter = creepCampMin.__add(creepCampMax).__mul(0.5)
 
-const mediumCampLocation = Vector(-500, 5200, 384)
+const mediumCampLocation = Vector(-1930, 4520, 384)
 const bigCampLocation = Vector(-4300, 3550, 256)
-const ancientCampLocation = Vector(-4870, -390, 256)
+const ancientCampLocation = Vector(-4870, -150, 256)
 
 const stackClockStartTime = 44
 const stackClockEndTime = 3
@@ -633,9 +633,9 @@ const onStart = (complete: () => void) => {
     ]
 
     const chaseRiki = () => {
-        const belowRamp = GetGroundPosition(Vector(-2500, 4000), undefined)
+        const belowRamp = GetGroundPosition(Vector(-3000, 4120), undefined)
         const aboveRamp = GetGroundPosition(Vector(-2250, 3850), undefined)
-        const rikiLocation = GetGroundPosition(Vector(-2700, 4200), undefined)
+        const rikiLocation = GetGroundPosition(Vector(-2900, 4200), undefined)
 
         return [
             // Spawn Riki and make sure he's visible
