@@ -24,7 +24,7 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 };
 
-const markerLocation = Vector(-2200, 3700, 256);
+const markerLocation = Vector(-2467, 3870, 256);
 const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
 const betweenWardsLocation = (wardLocationObs.__add(wardLocationSentry).__mul(0.5))
@@ -36,13 +36,13 @@ let allowUseItem = false;
 let wardMarkerActive = false
 
 //dire jungle top
-const cliffLocation1 = Vector(1027, 4881);
+const cliffLocation1 = Vector(510, 4109);
 //dire mid top
-const cliffLocation2 = Vector(-261, 2047);
+const cliffLocation2 = Vector(-767, 2059);
 //radiant jungle top
 const cliffLocation3 = Vector(-4354, -1006);
 //radiant top tower
-const cliffLocation4 = Vector(-5371, 2321);
+const cliffLocation4 = Vector(-4095, 1565);
 
 const invisHeroInfo = [
     { name: "npc_dota_hero_clinkz", loc: Vector(-2200, 3600, 256) },

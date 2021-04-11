@@ -136,7 +136,7 @@ function onStart(complete: () => void) {
             tg.audioDialog(LocalizationKey.Script_4_Outpost_5, LocalizationKey.Script_4_Outpost_5, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
             tg.withHighlights(tg.seq([
-                tg.panCameraLinear(_ => getPlayerCameraLocation(), outpostLocation, 2),
+                tg.panCameraLinear(_ => getPlayerCameraLocation(), direOutpost.GetAbsOrigin(), 2),
                 tg.audioDialog(LocalizationKey.Script_4_Outpost_6, LocalizationKey.Script_4_Outpost_6, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
                 tg.audioDialog(LocalizationKey.Script_4_Outpost_7, LocalizationKey.Script_4_Outpost_7, ctx => ctx[CustomNpcKeys.SlacksMudGolem]),
 
