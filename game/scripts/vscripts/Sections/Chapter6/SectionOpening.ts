@@ -72,7 +72,6 @@ function onStart(complete: () => void) {
         tg.setCameraTarget(context => context[centaurName]),
         tg.immediate(context => {
             const centaur: CDOTA_BaseNPC_Hero = context[centaurName];
-            centaur.AddItemByName("item_blink");
             centaur.AddExperience(30 - centaur.GetLevel(), EDOTA_ModifyXP_Reason.DOTA_ModifyXP_Unspecified, false, false);
             const basicAbilities = [0, 1, 2].map(abilityIndex => getOrError(centaur.GetAbilityByIndex(abilityIndex)));
             const ultAbility = getOrError(centaur.GetAbilityByIndex(5));
@@ -82,13 +81,21 @@ function onStart(complete: () => void) {
         tg.seq([
             tg.wait(2),
             castNoTarget(centaurName, 5),
-            tg.moveUnit(context => context[centaurName], showcaseHeroLocation.__add(Vector(200, 200)), true),
+            tg.immediate(context => {
+                const centaur = context[centaurName] as CDOTA_BaseNPC_Hero
+                const stampedeAbility = centaur.FindAbilityByName("centaur_stampede")
+                centaur.AddNewModifier(centaur, stampedeAbility, "modifier_centaur_stampede", {duration: 5})
+            }),
             tg.immediate(context => {
                 const centaur: CDOTA_BaseNPC_Hero = context[centaurName];
-                const blink = getOrError(centaur.GetItemInSlot(0) as CDOTABaseAbility | undefined);
-                centaur.CastAbilityOnPosition(dummyLocation, blink, 0);
+                const axe: CDOTA_BaseNPC_Hero = context[axeName]
+                ExecuteOrderFromTable({
+                    OrderType: dotaunitorder_t.DOTA_UNIT_ORDER_ATTACK_TARGET,
+                    UnitIndex: centaur.entindex(),
+                    TargetIndex: axe.entindex()
+                })
             }),
-            tg.wait(0.5),
+            tg.wait(2),
             castNoTarget(centaurName, 0),
             tg.wait(2),
             castOnTarget(axeName, centaurName, 1),
