@@ -25,7 +25,7 @@ const requiredState: RequiredState = {
 };
 
 const allyHeroStartLocation = Vector(-3000, 3800, 128);
-const bountyRuneLocation = Vector(-3850, 2570);
+const bountyRuneLocation = Vector(-4200, 330, 256);
 const tsunamiName = CustomNpcKeys.Tsunami;
 const kunkkaName = CustomNpcKeys.Kunkka;
 const tsunamiHighgroundLocation = Vector(-2000, 3600, 256)
