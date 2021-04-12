@@ -16,8 +16,7 @@ const odPixelLocation = Vector(-3635, 5330, 128)
 
 const creepCampMin = Vector(-3776, 4544)
 const creepCampMax = Vector(-2944, 5248)
-const creepCampCenter = creepCampMin.__add(creepCampMax).__mul(0.5)
-
+const smallCampLocation = Vector(-3091, 4756, 128)
 const mediumCampLocation = Vector(-1930, 4520, 384)
 const bigCampLocation = Vector(-4300, 3550, 256)
 const ancientCampLocation = Vector(-4870, -150, 256)
@@ -336,10 +335,10 @@ const onStart = (complete: () => void) => {
                 tg.seq([
                     tg.wait(2),
                     tg.withHighlights(tg.seq([
-                        tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, creepCampCenter, 600, 6, false)),
-                        tg.panCameraExponential(_ => getPlayerCameraLocation(), creepCampCenter, 2),
+                        tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, smallCampLocation, 600, 6, false)),
+                        tg.panCameraExponential(_ => getPlayerCameraLocation(), smallCampLocation, 2),
                         tg.wait(2),
-                    ]), { type: "circle", radius: 200, locations: [creepCampCenter] }),
+                    ]), { type: "circle", radius: 200, locations: [smallCampLocation] }),
                     tg.withHighlights(tg.seq([
                         tg.immediate(_ => AddFOWViewer(DOTATeam_t.DOTA_TEAM_GOODGUYS, mediumCampLocation, 600, 6, false)),
                         tg.panCameraExponential(_ => getPlayerCameraLocation(), mediumCampLocation, 2),
@@ -535,11 +534,15 @@ const onStart = (complete: () => void) => {
     ]
 
     const pickUpItems = () => [
-        tg.immediate(_ => DropNeutralItemAtPositionForHero(firstNeutralItemName, creepCampCenter, playerHero, 0, true)),
+        tg.immediate(_ => DropNeutralItemAtPositionForHero(firstNeutralItemName, smallCampLocation, playerHero, 0, true)),
         tg.immediate(_ => goalPickupItem.start()),
-        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(firstNeutralItemName), 0.1), {
-            type: "arrow",
-            locations: [creepCampCenter],
+        tg.wait(1),
+        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(firstNeutralItemName), 0.1), _ => {
+            const firstNeutralItem = getOrError(Entities.FindAllByName(firstNeutralItemName)[0] as CDOTA_Item)
+            return {
+                type: "arrow",
+                locations: [firstNeutralItem.GetContainer()!.GetAbsOrigin()],
+            }
         }),
         tg.immediate(_ => {
             highlightUiElement(firstNeutralSlotUIPath)
@@ -572,12 +575,16 @@ const onStart = (complete: () => void) => {
             goalPickUpSecondItem.start()
         }),
 
-        tg.immediate(_ => DropNeutralItemAtPositionForHero(secondNeutralItemName, creepCampCenter, playerHero, 0, true)),
+        tg.immediate(_ => DropNeutralItemAtPositionForHero(secondNeutralItemName, smallCampLocation, playerHero, 0, true)),
+        tg.wait(1),
 
         // Wait for player to pick up item
-        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(secondNeutralItemName), 0.1), {
-            type: "arrow",
-            locations: [creepCampCenter],
+        tg.withHighlights(tg.completeOnCheck(() => playerHero.HasItemInInventory(secondNeutralItemName), 0.1), _ => {
+            const secondNeutralItem = getOrError(Entities.FindAllByName(secondNeutralItemName)[0] as CDOTA_Item)
+            return {
+                type: "arrow",
+                locations: [secondNeutralItem.GetContainer()!.GetAbsOrigin()],
+            }
         }),
         tg.immediate(_ => goalPickUpSecondItem.complete()),
     ]

@@ -24,7 +24,7 @@ const requiredState: RequiredState = {
     topDireT1TowerStanding: false
 };
 
-const markerLocation = Vector(-2467, 3870, 256);
+const markerLocation = Vector(-2800, 3590, 512);
 const wardLocationObs = Vector(-3400, 3800);
 const wardLocationSentry = Vector(-3400, 4000);
 const betweenWardsLocation = (wardLocationObs.__add(wardLocationSentry).__mul(0.5))

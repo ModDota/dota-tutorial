@@ -45,7 +45,7 @@ function onStart(complete: () => void) {
 
     // DK lvl 25 talents
     const dragonBlood25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight")
-    const dragonTail25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight_2")
+    const dragonTailAoe25Talent = playerHero.FindAbilityByName("special_bonus_unique_dragon_knight_8")
 
     graph = tg.withGoals(_ => goalTracker.getGoals(),
         tg.seq([
@@ -74,8 +74,8 @@ function onStart(complete: () => void) {
             // Don't fork since it seems there's no way to prevent a player from upgrading talents, so let the dialogue play out normally - player can skip it if needed
             tg.audioDialog(LocalizationKey.Script_5_Roshan_4, LocalizationKey.Script_5_Roshan_4, ctx => ctx[CustomNpcKeys.SunsFanMudGolem]),
             tg.completeOnCheck(_ => {
-                if (dragonBlood25Talent && dragonTail25Talent)
-                    return ((dragonBlood25Talent.GetLevel() >= 1 || dragonTail25Talent.GetLevel() >= 1))
+                if (dragonBlood25Talent && dragonTailAoe25Talent)
+                    return ((dragonBlood25Talent.GetLevel() >= 1 || dragonTailAoe25Talent.GetLevel() >= 1))
                 else {
                     error("Hero talents/abilities not found!")
                 }
