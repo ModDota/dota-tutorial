@@ -16,6 +16,7 @@ const odPixelLocation = Vector(-3635, 5330, 128)
 
 const creepCampMin = Vector(-3776, 4544)
 const creepCampMax = Vector(-2944, 5248)
+
 const smallCampLocation = Vector(-3091, 4756, 128)
 const mediumCampLocation = Vector(-1930, 4520, 384)
 const bigCampLocation = Vector(-4300, 3550, 256)
