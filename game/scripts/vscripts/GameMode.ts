@@ -305,6 +305,7 @@ export class GameMode {
                     }
 
                     unit.AddNewModifier(undefined, undefined, modifier_unit_unselectable.name, {})
+                    FindClearSpaceForUnit(unit, unit.GetAbsOrigin().__add(Vector(-450, 0, 0)), true)
                 });
             }
         }
