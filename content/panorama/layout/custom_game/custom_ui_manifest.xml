@@ -8,6 +8,9 @@
         <include src="file://{resources}/scripts/custom_game/chatwheel-detection.js" />
         <include src="file://{resources}/scripts/custom_game/shop-detection.js" />
     </scripts>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/preload-images.css" />
+    </styles>
     <Panel>
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/world_text.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/dialog.xml" />
@@ -23,46 +26,3 @@
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/sectionCameraUnlock.xml" />
     </Panel>
 </root>
-
-<!--
-    Preload some images, these will not be compiled otherwise because they are only set form code!
-    This does not have to be uncommented, panorama is too dumb to realise
-    <Image src="file://{images}/custom_game/portraits/sunsfan_greevil.png" />
-    <Image src="file://{images}/custom_game/portraits/slacks_greevil.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/AngerMania.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Tsunami.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Translators.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/alexander_coccia.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/bsj.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/d2bowie.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/dota_from_zero.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/dota_university.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/liquipedia.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/purge.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/redditdota2.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/ZQ.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Yodi.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Dotabuff.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Awesomedota.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/DotaFire.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Torte.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Indiegogo.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/moddota.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Ruby.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Slacks.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/sunsfan.png" />
-    <Image src="file://{images}/custom_game/portraits/odpixel_lion.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Jenkins.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Sheepsticked.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Sheever.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/ODPixel.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Mason.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Capitalist.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Blitz.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/TrentPax.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Lyrical.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Synderen.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Artour.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/Yoyo.png" />
-    <Image src="file://{images}/custom_game/credits/avatars/PyrionFlax.png" />
--->
