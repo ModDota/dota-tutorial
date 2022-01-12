@@ -20,9 +20,6 @@
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/videos.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/credits.xml" />
 
-        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/section01.xml" />
-        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/section02.xml" />
-        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/section03.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/sections/sectionCameraUnlock.xml" />
     </Panel>
 </root>
