@@ -2,14 +2,14 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/hud.js" />
         <include src="file://{resources}/scripts/custom_game/fade-screen.js" />
-        <include src="s2r://panorama/scripts/custom_game/dialog_log.vjs_c" />
+        <include src="file://{resources}/scripts/custom_game/dialog_log.js" />
     </scripts>
     <styles>
         <include src="s2r://panorama/styles/dotastyles.vcss_c" />
         <include src="file://{resources}/styles/custom_game/hud.css" />
         <include src="s2r://panorama/styles/hudstyles.vcss_c"/>
         <include src="s2r://panorama/styles/hud/hud_reborn.vcss_c" />
-        <include src="s2r://panorama/styles/custom_game/dialog_log.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/dialog_log.css" />
     </styles>
     <snippets>
 

@@ -10,8 +10,8 @@
     border-bottom-left-radius: 10px;
     background-color: #181818dd;
     border: 2px solid #222222;
-    box-shadow: #000000aa -4px -4px 8px 8px;
-    
+    box-shadow: #000000aa 0px 0px 4px 4px;
+
     /* Make invisible by default */
     opacity: 0;
 }
@@ -28,7 +28,7 @@
     font-size: 24;
     text-align: center;
     background-color: #00000099;
-    box-shadow: #00000033 -2px -2px 1px 4px;
+    box-shadow: #00000033 0px 0px 0px 2px;
     transform: rotateZ(-90deg);
     position: -185px 0px 0px;
     vertical-align: center;

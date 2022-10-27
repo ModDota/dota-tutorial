@@ -84,9 +84,9 @@ GameEvents.Subscribe("credits_interact", event => {
         avatarPanel.SetImage("");
     }
 
-    nameLabel.text = $.Localize(event.name);
+    nameLabel.text = $.Localize("#" + event.name);
     if (event.description) {
-        descriptionLabel.text = $.Localize(event.description);
+        descriptionLabel.text = $.Localize("#" + event.description);
     } else {
         descriptionLabel.text = "";
     }
