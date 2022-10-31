@@ -278,7 +278,7 @@
     //  border-bottom-left-radius: 50%;
     //  border-bottom-right-radius: 50%;
     border-radius: 50%;
-    box-shadow: fill #000000af -6px -6px 12px 12px;
+    box-shadow: fill #000000af 0px 0px 6px 6px;
     border: 2px solid black;
     z-index: 1;
 }
@@ -1180,7 +1180,7 @@
 
 .DialogButtonContainer {
     horizontal-align: right;
-    vertical-align: bottom;
+    vertical-align: top;
     margin-right: 0px;
     margin-bottom: -20px;
 }
@@ -1198,9 +1198,11 @@
     horizontal-align: right;
     vertical-align: bottom;
     margin: 0px;
-    margin-bottom: 28px;
-    min-width: 38px;
-    min-height: 38px;
+    margin-top: 20px;
+    min-width: 25px;
+    min-height: 25px;
+    width: 25px;
+    height: 25px;
     border-color: #8490af;
     wash-color: white;
 }

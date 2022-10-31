@@ -147,7 +147,7 @@
     z-index: 5;
     background-color: #000000ef;
     border-radius: 5px;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
 }
 
 #ChaptersMenu.Visible {
@@ -364,7 +364,7 @@
     background-color: #111920ff;
     background-repeat: no-repeat;
     border-radius: 5px;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
 }
 
 #GuidesMenu.Visible {
@@ -431,7 +431,7 @@
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     border: 2px solid #222222;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     background-size: 140% 102%;
     background-position: -38px -34px;
     transition-property: background-image;
@@ -550,7 +550,7 @@
     background-color: #000000ef;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     tooltip-position: top;
     width: fit-children;
 }

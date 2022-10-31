@@ -22,11 +22,11 @@ function OnDialogReceived(data: NetworkedData<DialogReceivedEvent>) {
         dialogPortrait.visible = true;
         dialogPortrait.SetUnit(unitName, "", true);
     }
-    dialogTitle.text = $.Localize(unitName);
+    dialogTitle.text = $.Localize("#" + unitName);
 
     currentCharacter = 0;
     dialogAdvanceTime = Game.GetGameTime() + data.DialogAdvanceTime;
-    pendingDialog = $.Localize(data.DialogText);
+    pendingDialog = $.Localize("#" + data.DialogText);
     dialogLabelSizer.text = pendingDialog;
 
     currentToken = data.Token;

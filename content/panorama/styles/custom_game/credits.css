@@ -16,7 +16,7 @@
     align: left top;
     margin-top: 240px;
     background-color: #000000ef;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     flow-children: right;
@@ -181,7 +181,7 @@
     align: left top;
     margin-top: 400px;
     background-color: #000000ef;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     overflow: clip;

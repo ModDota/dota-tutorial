@@ -139,7 +139,7 @@ function highlightUiElement(event: NetworkedData<HighlightElementEvent>) {
             highlightPanel.style.position = `${pos.x / element.actualuiscale_x}px ${pos.y / element.actualuiscale_y}px 0px`;
 
             highlightedPanels[path] = [highlightPanel];
-            
+
             if (event.mouseIcon !== undefined) {
                 const mouseButtonPanel = $.CreatePanel("Image", $.GetContextPanel(), "UIHighlightMouseButton");
                 mouseButtonPanel.hittest = false; // Dont block interactions
@@ -287,7 +287,7 @@ const pressKeyMessagePanel = $("#PressKeyMessage") as LabelPanel;
 function showPressKeyMessage(command: DOTAKeybindCommand_t, text: string) {
     pressKeyMessagePanel.AddClass("Visible");
     pressKeyMessagePanel.SetDialogVariable("key", Game.GetKeybindForCommand(command));
-    pressKeyMessagePanel.text = $.Localize(text, pressKeyMessagePanel);
+    pressKeyMessagePanel.text = $.Localize("#" + text, pressKeyMessagePanel);
 }
 
 function hidePressKeyMessage() {

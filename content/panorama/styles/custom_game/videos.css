@@ -24,7 +24,7 @@
     align: center center;
     background-color: #111920ff;
     border-radius: 5px;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
 }
 
 .BlurBackground {
@@ -40,7 +40,7 @@
     height: 583px;
     align: center center;
     background-size: 100% 100%;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     border-radius: 2px;
     margin-top: 00px;
 }
@@ -54,7 +54,7 @@
     font-size: 25px;
     letter-spacing: 2px;
     background-color: #bb5c2c;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     border-radius: 2px;
     width: fit-children;
     margin-top: 14px;
@@ -70,7 +70,7 @@
     vertical-align: bottom;
     margin-bottom: 10px;
     background-color: #bb5c2c;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     border-radius: 2px;
 }
 
@@ -82,7 +82,7 @@
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 1px;
-    text-shadow: #000000aa -4px -4px 8px 8px;
+    text-shadow: #000000aa 0px 0px 4px 4px;
     color: white;
     align: center center;
     text-align: center;
@@ -110,7 +110,7 @@
     align: center center;
     background-color: #111920ff;
     border-radius: 5px;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
 }
 
 .CustomMoviePanelGuides {
@@ -118,7 +118,7 @@
     height: 852px;
     align: center center;
     background-size: 100% 100%;
-    box-shadow: #000000aa -4px -4px 8px 8px;
+    box-shadow: #000000aa 0px 0px 4px 4px;
     border-radius: 2px;
     margin-top: 00px;
 }

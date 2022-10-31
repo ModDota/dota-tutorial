@@ -13,7 +13,7 @@
     transition-property: background-image;
     transition-timing-function: ease-in-out;
     background-color: #00000099;
-    box-shadow: #00000033 -2px -2px 1px 4px;
+    box-shadow: #00000033 0px 0px 1px 2px;
     border-radius: 5px;
 }
 
@@ -55,7 +55,7 @@
 }
 
 #DialogLogButton:hover,
-#SkipButton:hover, {
+#SkipButton:hover {
     opacity: 0.5;
     transition-duration: 0.3s;
     transition-property: opacity;
@@ -129,7 +129,7 @@
     width: 128px;
     height: 128px;
     border-radius: 50%;
-    box-shadow: fill #000000af -6px -6px 12px 12px;
+    box-shadow: fill #000000af 0px 0px 6px 6px;
     border: 2px solid black;
     z-index: 1;
 }
@@ -205,7 +205,7 @@
     width: 128px;
     height: 128px;
     border-radius: 50%;
-    box-shadow: fill #000000af -6px -6px 12px 12px;
+    box-shadow: fill #000000af 0px 0px 6px 6px;
     border: 2px solid black;
     z-index: 1;
 }
